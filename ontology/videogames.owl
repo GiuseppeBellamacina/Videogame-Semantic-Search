@@ -1,0 +1,340 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns="http://www.videogame-ontology.org/ontology#"
+     xml:base="http://www.videogame-ontology.org/ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+    <owl:Ontology rdf:about="http://www.videogame-ontology.org/ontology">
+        <rdfs:label>Video Game Ontology</rdfs:label>
+        <rdfs:comment>An ontology for describing video games, their developers, publishers, genres, platforms, characters, franchises, and awards. Covers games from 2015 onwards.</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+    -->
+
+    <owl:Class rdf:about="http://www.videogame-ontology.org/ontology#VideoGame">
+        <rdfs:label>Video Game</rdfs:label>
+        <rdfs:comment>A video game product</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://www.videogame-ontology.org/ontology#Developer">
+        <rdfs:label>Developer</rdfs:label>
+        <rdfs:comment>A company or studio that develops video games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://www.videogame-ontology.org/ontology#Publisher">
+        <rdfs:label>Publisher</rdfs:label>
+        <rdfs:comment>A company that publishes video games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://www.videogame-ontology.org/ontology#Genre">
+        <rdfs:label>Genre</rdfs:label>
+        <rdfs:comment>A category or genre of video games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://www.videogame-ontology.org/ontology#Platform">
+        <rdfs:label>Platform</rdfs:label>
+        <rdfs:comment>A hardware or software platform on which a game can be played</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://www.videogame-ontology.org/ontology#Character">
+        <rdfs:label>Character</rdfs:label>
+        <rdfs:comment>A fictional character appearing in a video game</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://www.videogame-ontology.org/ontology#Franchise">
+        <rdfs:label>Franchise</rdfs:label>
+        <rdfs:comment>A series or franchise of video games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://www.videogame-ontology.org/ontology#Award">
+        <rdfs:label>Award</rdfs:label>
+        <rdfs:comment>An award or recognition given to a video game</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://www.videogame-ontology.org/ontology#GameEngine">
+        <rdfs:label>Game Engine</rdfs:label>
+        <rdfs:comment>A software framework used to develop video games</rdfs:comment>
+    </owl:Class>
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+    -->
+
+    <!-- developedBy / developerOf -->
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#developedBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#Developer"/>
+        <owl:inverseOf rdf:resource="http://www.videogame-ontology.org/ontology#developerOf"/>
+        <rdfs:label>developed by</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#developerOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Developer"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:label>developer of</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- publishedBy / publisherOf -->
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#publishedBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#Publisher"/>
+        <owl:inverseOf rdf:resource="http://www.videogame-ontology.org/ontology#publisherOf"/>
+        <rdfs:label>published by</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#publisherOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Publisher"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:label>publisher of</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- hasGenre -->
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#hasGenre">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#Genre"/>
+        <rdfs:label>has genre</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- availableOn -->
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#availableOn">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#Platform"/>
+        <rdfs:label>available on</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- hasCharacter / appearsIn -->
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#hasCharacter">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#Character"/>
+        <owl:inverseOf rdf:resource="http://www.videogame-ontology.org/ontology#appearsIn"/>
+        <rdfs:label>has character</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#appearsIn">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Character"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:label>appears in</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- belongsTo / includes (Franchise) -->
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#belongsTo">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#Franchise"/>
+        <owl:inverseOf rdf:resource="http://www.videogame-ontology.org/ontology#includes"/>
+        <rdfs:label>belongs to</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#includes">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Franchise"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:label>includes</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- wonAward -->
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#wonAward">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#Award"/>
+        <rdfs:label>won award</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- sequelOf -->
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#sequelOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:label>sequel of</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- gameMode -->
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#hasGameMode">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+        <rdfs:label>has game mode</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- madeWith (game engine) -->
+    <owl:ObjectProperty rdf:about="http://www.videogame-ontology.org/ontology#madeWith">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.videogame-ontology.org/ontology#GameEngine"/>
+        <rdfs:label>made with</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+    -->
+
+    <!-- name (general) -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#name">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- gameName -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#gameName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.videogame-ontology.org/ontology#name"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>game name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- gameDescription -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#gameDescription">
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>game description</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- releaseDate -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#releaseDate">
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
+        <rdfs:label>release date</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- metacriticScore -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#metacriticScore">
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label>Metacritic score</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- developerName -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#developerName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Developer"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.videogame-ontology.org/ontology#name"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>developer name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- publisherName -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#publisherName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Publisher"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.videogame-ontology.org/ontology#name"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>publisher name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- genreName -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#genreName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Genre"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.videogame-ontology.org/ontology#name"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>genre name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- platformName -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#platformName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Platform"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.videogame-ontology.org/ontology#name"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>platform name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- characterName -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#characterName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Character"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.videogame-ontology.org/ontology#name"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>character name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- franchiseName -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#franchiseName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Franchise"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.videogame-ontology.org/ontology#name"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>franchise name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- awardName -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#awardName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Award"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.videogame-ontology.org/ontology#name"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>award name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- awardYear -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#awardYear">
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#Award"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label>award year</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- description (general) -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#description">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>description</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- officialWebsite -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#officialWebsite">
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+        <rdfs:label>official website</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- countryOfOrigin -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#countryOfOrigin">
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#VideoGame"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>country of origin</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- engineName -->
+    <owl:DatatypeProperty rdf:about="http://www.videogame-ontology.org/ontology#engineName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.videogame-ontology.org/ontology#GameEngine"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.videogame-ontology.org/ontology#name"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>engine name</rdfs:label>
+    </owl:DatatypeProperty>
+
+</rdf:RDF>
