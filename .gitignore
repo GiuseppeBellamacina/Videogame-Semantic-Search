@@ -5,9 +5,6 @@ __pycache__/
 *.pyo
 .venv/
 
-# Ontology generated files — tracked via Git LFS
-# (videogames_wikidata.owl is committed via LFS, not ignored)
-
 # Frontend
 frontend/node_modules/
 frontend/dist/
@@ -25,5 +22,4 @@ frontend/tsconfig.tsbuildinfo
 # Linting and formatting
 .ruff_cache/
 
-# Query cache (server-side, not committed)
 debug_images/

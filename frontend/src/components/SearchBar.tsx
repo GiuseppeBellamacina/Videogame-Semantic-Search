@@ -43,8 +43,8 @@ export function SearchBar({ onSearch, onCancel, loading }: SearchBarProps) {
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-            placeholder="Cerca videogiochi in linguaggio naturale..."
-            className="w-full pl-12 pr-32 py-4 bg-gray-900 border border-gray-700 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-lg"
+            placeholder="Cerca in linguaggio naturale..."
+            className="w-full pl-12 pr-28 sm:pr-32 py-3 sm:py-4 bg-gray-900 border border-gray-700 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-base sm:text-lg"
             disabled={loading}
           />
           <button
@@ -70,7 +70,7 @@ export function SearchBar({ onSearch, onCancel, loading }: SearchBarProps) {
 
       {/* Suggestions dropdown */}
       {showSuggestions && !loading && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden z-50 animate-fade-in">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-y-auto max-h-64 z-50 animate-fade-in">
           <div className="px-4 py-2 text-xs text-gray-500 uppercase tracking-wide border-b border-gray-800">
             Suggerimenti
           </div>

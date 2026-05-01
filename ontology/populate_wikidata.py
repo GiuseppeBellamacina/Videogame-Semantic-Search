@@ -29,7 +29,7 @@ GAMES_CORE_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?releaseDate ?devLabel ?pubLabel ?dev ?pub WHERE {{
   ?game wdt:P31 wd:Q7889 .          # instance of video game
   ?game wdt:P577 ?releaseDate .      # publication date
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   
   OPTIONAL {{ ?game wdt:P178 ?dev . ?dev rdfs:label ?devLabel . FILTER(LANG(?devLabel) = "en") }}
   OPTIONAL {{ ?game wdt:P123 ?pub . ?pub rdfs:label ?pubLabel . FILTER(LANG(?pubLabel) = "en") }}
@@ -44,7 +44,7 @@ GAMES_GENRE_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?genreLabel ?genre WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P136 ?genre .
   ?genre rdfs:label ?genreLabel . FILTER(LANG(?genreLabel) = "en")
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
@@ -57,7 +57,7 @@ GAMES_PLATFORM_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?platformLabel ?platform WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P400 ?platform .
   ?platform rdfs:label ?platformLabel . FILTER(LANG(?platformLabel) = "en")
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
@@ -70,7 +70,7 @@ GAMES_CHARACTER_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?charLabel ?char WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P674 ?char .
   ?char rdfs:label ?charLabel . FILTER(LANG(?charLabel) = "en")
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
@@ -83,7 +83,7 @@ GAMES_FRANCHISE_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?seriesLabel ?series WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P179 ?series .
   ?series rdfs:label ?seriesLabel . FILTER(LANG(?seriesLabel) = "en")
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
@@ -96,7 +96,7 @@ GAMES_MODE_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?modeLabel WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P404 ?mode .
   ?mode rdfs:label ?modeLabel . FILTER(LANG(?modeLabel) = "en")
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
@@ -109,7 +109,7 @@ GAMES_SCORE_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?score WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game p:P444 ?reviewStatement .
   ?reviewStatement ps:P444 ?score .
   ?reviewStatement pq:P447 wd:Q150248 .  # Metacritic
@@ -123,7 +123,7 @@ GAMES_ENGINE_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?engine ?engineLabel WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P408 ?engine .
   ?engine rdfs:label ?engineLabel . FILTER(LANG(?engineLabel) = "en")
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
@@ -136,7 +136,7 @@ GAMES_COUNTRY_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?countryLabel WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P495 ?country .
   ?country rdfs:label ?countryLabel . FILTER(LANG(?countryLabel) = "en")
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
@@ -149,7 +149,7 @@ GAMES_WEBSITE_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?website WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P856 ?website .
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
 }}
@@ -161,7 +161,7 @@ GAMES_AWARD_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?award ?awardLabel WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P166 ?award .
   ?award rdfs:label ?awardLabel . FILTER(LANG(?awardLabel) = "en")
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
@@ -174,7 +174,7 @@ GAMES_DESC_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?desc WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year})
+  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game schema:description ?desc .
   FILTER(LANG(?desc) = "en")
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
@@ -198,8 +198,9 @@ def run_query(sparql: SPARQLWrapper, query: str, description: str) -> list:
     for attempt in range(3):
         try:
             logger.info(f"Executing query: {description} (attempt {attempt + 1})")
-            results = sparql.query().convert()
-            bindings = results["results"]["bindings"]
+            raw = sparql.query().convert()
+            results: dict = raw  # type: ignore[assignment]
+            bindings: list = results["results"]["bindings"]
             logger.info(f"  -> Got {len(bindings)} results")
             return bindings
         except Exception as e:
@@ -210,21 +211,14 @@ def run_query(sparql: SPARQLWrapper, query: str, description: str) -> list:
                 time.sleep(wait)
             else:
                 logger.error(f"  -> All attempts failed for: {description}")
-                return []
+
+    return []
 
 
 QID_PATTERN = re.compile(r"^Q\d+$")
 
 YEARS = list(range(2010, 2027))
 MONTHS = list(range(1, 13))
-
-
-def _inject_month(query: str, year: int, month: int) -> str:
-    """Inject a MONTH filter into an already year-formatted query."""
-    return query.replace(
-        f"FILTER(YEAR(?releaseDate) = {year})",
-        f"FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})",
-    )
 
 
 def run_per_year_month_queries(
@@ -239,11 +233,8 @@ def run_per_year_month_queries(
     with tqdm(pairs, desc=description, unit="month") as pbar:
         for year, month in pbar:
             pbar.set_postfix(year=year, month=f"{month:02d}")
-            year_query = query_template.format(year=year)
-            month_query = _inject_month(year_query, year, month)
-            bindings = run_query(
-                sparql, month_query, f"{description} ({year}-{month:02d})"
-            )
+            query = query_template.format(year=year, month=month)
+            bindings = run_query(sparql, query, f"{description} ({year}-{month:02d})")
             all_bindings.extend(bindings)
             time.sleep(delay)
     logger.info(f"  Total bindings for '{description}': {len(all_bindings)}")
@@ -359,8 +350,7 @@ def populate_from_wikidata():
     with tqdm(pairs, desc="Core game data", unit="month") as pbar:
         for year, month in pbar:
             pbar.set_postfix(year=year, month=f"{month:02d}", games=len(games_seen))
-            year_query = GAMES_CORE_QUERY.format(year=year)
-            query = _inject_month(year_query, year, month)
+            query = GAMES_CORE_QUERY.format(year=year, month=month)
             bindings = run_query(sparql, query, f"Core game data ({year}-{month:02d})")
 
             for row in bindings:

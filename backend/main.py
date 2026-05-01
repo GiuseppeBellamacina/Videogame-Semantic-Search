@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.routers import games, graph, query
+from backend.routers import graph, query
 from backend.services.ontology_service import OntologyService
 
 
@@ -39,7 +39,6 @@ app.add_middleware(
 
 app.include_router(query.router, prefix="/api")
 app.include_router(graph.router, prefix="/api")
-app.include_router(games.router, prefix="/api")
 
 
 @app.get("/api/health")

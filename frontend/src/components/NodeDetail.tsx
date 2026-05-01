@@ -43,7 +43,7 @@ export function NodeDetail({ uri, onClose, onNavigate }: NodeDetailProps) {
   if (!uri) return null;
 
   return (
-    <div className="fixed inset-y-0 right-0 w-96 bg-gray-900 border-l border-gray-700 shadow-2xl z-50 animate-slide-in overflow-y-auto">
+    <div className="fixed inset-y-0 right-0 w-full sm:w-96 bg-gray-900 border-l border-gray-700 shadow-2xl z-50 animate-slide-in overflow-y-auto">
       {/* Header */}
       <div className="sticky top-0 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 p-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-white truncate">
