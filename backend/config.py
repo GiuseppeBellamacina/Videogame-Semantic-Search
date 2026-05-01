@@ -28,3 +28,8 @@ ONTOLOGY_NS = "http://www.videogame-ontology.org/ontology#"
 
 # Agent settings
 MAX_SPARQL_RETRIES = 3
+
+# Upstash Redis — set both vars to enable persistent caching
+# If not set, falls back to in-memory cache
+UPSTASH_REDIS_REST_URL = os.getenv("UPSTASH_REDIS_REST_URL", "")
+UPSTASH_REDIS_REST_TOKEN = os.getenv("UPSTASH_REDIS_REST_TOKEN", "")

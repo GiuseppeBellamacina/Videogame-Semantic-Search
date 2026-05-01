@@ -24,3 +24,6 @@ frontend/tsconfig.tsbuildinfo
 
 # Linting and formatting
 .ruff_cache/
+
+# Query cache (server-side, not committed)
+debug_images/

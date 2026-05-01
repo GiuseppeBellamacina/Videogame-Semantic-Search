@@ -40,145 +40,145 @@ LIMIT 5000
 
 # Query 2: Genres for the games
 GAMES_GENRE_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?genreLabel ?genre WHERE {
+SELECT DISTINCT ?game ?gameLabel ?genreLabel ?genre WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game wdt:P136 ?genre .
   ?genre rdfs:label ?genreLabel . FILTER(LANG(?genreLabel) = "en")
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 30000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 # Query 3: Platforms for the games
 GAMES_PLATFORM_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?platformLabel ?platform WHERE {
+SELECT DISTINCT ?game ?gameLabel ?platformLabel ?platform WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game wdt:P400 ?platform .
   ?platform rdfs:label ?platformLabel . FILTER(LANG(?platformLabel) = "en")
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 40000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 # Query 4: Characters
 GAMES_CHARACTER_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?charLabel ?char WHERE {
+SELECT DISTINCT ?game ?gameLabel ?charLabel ?char WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game wdt:P674 ?char .
   ?char rdfs:label ?charLabel . FILTER(LANG(?charLabel) = "en")
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 20000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 # Query 5: Franchise / series
 GAMES_FRANCHISE_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?seriesLabel ?series WHERE {
+SELECT DISTINCT ?game ?gameLabel ?seriesLabel ?series WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game wdt:P179 ?series .
   ?series rdfs:label ?seriesLabel . FILTER(LANG(?seriesLabel) = "en")
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 15000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 # Query 6: Game mode
 GAMES_MODE_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?modeLabel WHERE {
+SELECT DISTINCT ?game ?gameLabel ?modeLabel WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game wdt:P404 ?mode .
   ?mode rdfs:label ?modeLabel . FILTER(LANG(?modeLabel) = "en")
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 30000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 # Query 7: Review scores (Metacritic)
 GAMES_SCORE_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?score WHERE {
+SELECT DISTINCT ?game ?gameLabel ?score WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game p:P444 ?reviewStatement .
   ?reviewStatement ps:P444 ?score .
   ?reviewStatement pq:P447 wd:Q150248 .  # Metacritic
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 10000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 # Query 9: Game engines (P408)
 GAMES_ENGINE_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?engine ?engineLabel WHERE {
+SELECT DISTINCT ?game ?gameLabel ?engine ?engineLabel WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game wdt:P408 ?engine .
   ?engine rdfs:label ?engineLabel . FILTER(LANG(?engineLabel) = "en")
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 15000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 # Query 10: Country of origin (P495)
 GAMES_COUNTRY_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?countryLabel WHERE {
+SELECT DISTINCT ?game ?gameLabel ?countryLabel WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game wdt:P495 ?country .
   ?country rdfs:label ?countryLabel . FILTER(LANG(?countryLabel) = "en")
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 20000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 # Query 11: Official website (P856)
 GAMES_WEBSITE_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?website WHERE {
+SELECT DISTINCT ?game ?gameLabel ?website WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game wdt:P856 ?website .
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 15000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 # Query 12: Awards (P166)
 GAMES_AWARD_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?award ?awardLabel WHERE {
+SELECT DISTINCT ?game ?gameLabel ?award ?awardLabel WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game wdt:P166 ?award .
   ?award rdfs:label ?awardLabel . FILTER(LANG(?awardLabel) = "en")
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 20000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 # Query 13: Description (schema:description)
 GAMES_DESC_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?desc WHERE {
+SELECT DISTINCT ?game ?gameLabel ?desc WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) >= 2010 && YEAR(?releaseDate) <= 2026)
+  FILTER(YEAR(?releaseDate) = {year})
   ?game schema:description ?desc .
   FILTER(LANG(?desc) = "en")
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 20000
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}
+LIMIT 5000
 """
 
 
@@ -213,6 +213,21 @@ def run_query(sparql: SPARQLWrapper, query: str, description: str) -> list:
 
 
 QID_PATTERN = re.compile(r"^Q\d+$")
+
+YEARS = list(range(2010, 2027))
+
+
+def run_per_year_queries(
+    sparql: SPARQLWrapper, query_template: str, description: str, delay: float = 2.0
+) -> list:
+    """Run a per-year parameterised query for all years and return combined bindings."""
+    all_bindings = []
+    for year in YEARS:
+        bindings = run_query(sparql, query_template.format(year=year), f"{description} ({year})")
+        all_bindings.extend(bindings)
+        time.sleep(delay)
+    logger.info(f"  Total bindings for '{description}': {len(all_bindings)}")
+    return all_bindings
 
 
 # Name properties used to identify entities by label for deduplication
@@ -397,12 +412,12 @@ def populate_from_wikidata():
         time.sleep(3)  # Be polite to Wikidata
 
     logger.info(f"Total games loaded: {len(games_seen)}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 2: Genres ---
     logger.info("=" * 60)
     logger.info("STEP 2: Fetching genre data...")
-    bindings = run_query(sparql, GAMES_GENRE_QUERY, "Genre data")
+    bindings = run_per_year_queries(sparql, GAMES_GENRE_QUERY, "Genre data")
 
     genres_added = 0
     for row in bindings:
@@ -424,12 +439,12 @@ def populate_from_wikidata():
         genres_added += 1
 
     logger.info(f"Genre associations added: {genres_added}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 3: Platforms ---
     logger.info("=" * 60)
     logger.info("STEP 3: Fetching platform data...")
-    bindings = run_query(sparql, GAMES_PLATFORM_QUERY, "Platform data")
+    bindings = run_per_year_queries(sparql, GAMES_PLATFORM_QUERY, "Platform data")
 
     platforms_added = 0
     for row in bindings:
@@ -457,12 +472,12 @@ def populate_from_wikidata():
         platforms_added += 1
 
     logger.info(f"Platform associations added: {platforms_added}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 4: Characters ---
     logger.info("=" * 60)
     logger.info("STEP 4: Fetching character data...")
-    bindings = run_query(sparql, GAMES_CHARACTER_QUERY, "Character data")
+    bindings = run_per_year_queries(sparql, GAMES_CHARACTER_QUERY, "Character data")
 
     chars_added = 0
     for row in bindings:
@@ -484,12 +499,12 @@ def populate_from_wikidata():
         chars_added += 1
 
     logger.info(f"Character associations added: {chars_added}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 5: Franchise ---
     logger.info("=" * 60)
     logger.info("STEP 5: Fetching franchise/series data...")
-    bindings = run_query(sparql, GAMES_FRANCHISE_QUERY, "Franchise data")
+    bindings = run_per_year_queries(sparql, GAMES_FRANCHISE_QUERY, "Franchise data")
 
     franchises_added = 0
     for row in bindings:
@@ -517,12 +532,12 @@ def populate_from_wikidata():
         franchises_added += 1
 
     logger.info(f"Franchise associations added: {franchises_added}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 6: Game modes ---
     logger.info("=" * 60)
     logger.info("STEP 6: Fetching game mode data...")
-    bindings = run_query(sparql, GAMES_MODE_QUERY, "Game mode data")
+    bindings = run_per_year_queries(sparql, GAMES_MODE_QUERY, "Game mode data")
 
     modes_added = 0
     for row in bindings:
@@ -546,12 +561,12 @@ def populate_from_wikidata():
         modes_added += 1
 
     logger.info(f"Game mode associations added: {modes_added}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 7: Metacritic scores ---
     logger.info("=" * 60)
     logger.info("STEP 7: Fetching Metacritic score data...")
-    bindings = run_query(sparql, GAMES_SCORE_QUERY, "Metacritic scores")
+    bindings = run_per_year_queries(sparql, GAMES_SCORE_QUERY, "Metacritic scores")
 
     scores_added = 0
     for row in bindings:
@@ -580,12 +595,12 @@ def populate_from_wikidata():
             pass
 
     logger.info(f"Metacritic scores added: {scores_added}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 8: Game engines ---
     logger.info("=" * 60)
     logger.info("STEP 8: Fetching game engine data...")
-    bindings = run_query(sparql, GAMES_ENGINE_QUERY, "Game engine data")
+    bindings = run_per_year_queries(sparql, GAMES_ENGINE_QUERY, "Game engine data")
 
     engines_added = 0
     for row in bindings:
@@ -607,12 +622,12 @@ def populate_from_wikidata():
         engines_added += 1
 
     logger.info(f"Game engine associations added: {engines_added}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 9: Country of origin ---
     logger.info("=" * 60)
     logger.info("STEP 9: Fetching country of origin data...")
-    bindings = run_query(sparql, GAMES_COUNTRY_QUERY, "Country data")
+    bindings = run_per_year_queries(sparql, GAMES_COUNTRY_QUERY, "Country data")
 
     countries_added = 0
     for row in bindings:
@@ -632,12 +647,12 @@ def populate_from_wikidata():
         countries_added += 1
 
     logger.info(f"Country associations added: {countries_added}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 10: Official website ---
     logger.info("=" * 60)
     logger.info("STEP 10: Fetching official website data...")
-    bindings = run_query(sparql, GAMES_WEBSITE_QUERY, "Website data")
+    bindings = run_per_year_queries(sparql, GAMES_WEBSITE_QUERY, "Website data")
 
     websites_added = 0
     for row in bindings:
@@ -655,12 +670,12 @@ def populate_from_wikidata():
         websites_added += 1
 
     logger.info(f"Websites added: {websites_added}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 11: Awards ---
     logger.info("=" * 60)
     logger.info("STEP 11: Fetching award data...")
-    bindings = run_query(sparql, GAMES_AWARD_QUERY, "Award data")
+    bindings = run_per_year_queries(sparql, GAMES_AWARD_QUERY, "Award data")
 
     awards_added = 0
     for row in bindings:
@@ -682,12 +697,12 @@ def populate_from_wikidata():
         awards_added += 1
 
     logger.info(f"Award associations added: {awards_added}")
-    time.sleep(5)
+    time.sleep(3)
 
     # --- Step 12: Descriptions ---
     logger.info("=" * 60)
     logger.info("STEP 12: Fetching description data...")
-    bindings = run_query(sparql, GAMES_DESC_QUERY, "Description data")
+    bindings = run_per_year_queries(sparql, GAMES_DESC_QUERY, "Description data")
 
     descs_added = 0
     for row in bindings:

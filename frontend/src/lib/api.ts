@@ -2,11 +2,15 @@ import type { NodeDetailResponse, OntologyStats, QueryResponse } from "@/types";
 
 const API_BASE = `${import.meta.env.VITE_API_URL ?? ""}/api`;
 
-export async function queryOntology(question: string): Promise<QueryResponse> {
+export async function queryOntology(
+  question: string,
+  signal?: AbortSignal,
+): Promise<QueryResponse> {
   const res = await fetch(`${API_BASE}/query`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ question }),
+    signal,
   });
 
   if (!res.ok) {

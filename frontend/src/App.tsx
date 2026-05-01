@@ -11,7 +11,7 @@ import { useQuery } from "@/hooks/useQuery";
 import type { GraphData } from "@/types";
 
 export default function App() {
-  const { data, loading, error, search } = useQuery();
+  const { data, loading, error, search, cancel } = useQuery();
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [highlightNode, setHighlightNode] = useState<string | null>(null);
 
@@ -45,7 +45,7 @@ export default function App() {
               </p>
             </div>
           </div>
-          <SearchBar onSearch={search} loading={loading} />
+          <SearchBar onSearch={search} onCancel={cancel} loading={loading} />
         </div>
       </header>
 

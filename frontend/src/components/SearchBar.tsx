@@ -1,21 +1,14 @@
 import { useState } from "react";
-import { Search, Sparkles, Loader2 } from "lucide-react";
+import { Search, Sparkles, Loader2, X } from "lucide-react";
+import { SUGGESTIONS } from "@/lib/queryCache";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
+  onCancel: () => void;
   loading: boolean;
 }
 
-const SUGGESTIONS = [
-  "Quali giochi ha sviluppato FromSoftware?",
-  "Top 10 giochi con il punteggio Metacritic più alto",
-  "Giochi RPG usciti nel 2023",
-  "Giochi della serie Zelda",
-  "Quali giochi sono disponibili su PlayStation 5?",
-  "Giochi sviluppati da Nintendo dopo il 2020",
-];
-
-export function SearchBar({ onSearch, loading }: SearchBarProps) {
+export function SearchBar({ onSearch, onCancel, loading }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -62,6 +55,16 @@ export function SearchBar({ onSearch, loading }: SearchBarProps) {
             <Sparkles className="w-4 h-4" />
             Cerca
           </button>
+          {loading && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="absolute right-2 px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl font-medium transition-all flex items-center gap-2"
+            >
+              <X className="w-4 h-4" />
+              Annulla
+            </button>
+          )}
         </div>
       </form>
 

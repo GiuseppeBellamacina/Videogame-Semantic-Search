@@ -14,10 +14,12 @@ from backend.services.ontology_service import OntologyService
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Load ontology on startup."""
+    """Load ontology and initialise cache on startup; close cache on shutdown."""
     logging.basicConfig(level=logging.INFO)
     OntologyService.load()
+    query.init_cache()
     yield
+    query.close_cache()
 
 
 app = FastAPI(
