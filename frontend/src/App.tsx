@@ -27,6 +27,14 @@ export default function App() {
   });
 
   const handleGraphExpand = useCallback((newGraph: GraphData) => {
+    // Mark autoFetchImage only if the incoming batch is small (≤ 20 nodes)
+    const batchIsSmall = newGraph.nodes.length <= 20;
+    const taggedNodes = batchIsSmall
+      ? newGraph.nodes.map((n) =>
+          n.type === "VideoGame" ? { ...n, autoFetchImage: true } : n,
+        )
+      : newGraph.nodes;
+
     setExtraGraph((prev) => {
       const existingNodeIds = new Set(prev.nodes.map((n) => n.id));
       const existingLinkKeys = new Set(
@@ -35,9 +43,7 @@ export default function App() {
             `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`,
         ),
       );
-      const addedNodes = newGraph.nodes.filter(
-        (n) => !existingNodeIds.has(n.id),
-      );
+      const addedNodes = taggedNodes.filter((n) => !existingNodeIds.has(n.id));
       const addedLinks = newGraph.links.filter((l) => {
         const key = `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`;
         return !existingLinkKeys.has(key);
@@ -67,7 +73,18 @@ export default function App() {
     [],
   );
 
-  const graphData: GraphData = data?.graph || { nodes: [], links: [] };
+  const graphData: GraphData = useMemo(() => {
+    const raw = data?.graph || { nodes: [], links: [] };
+    // Mark autoFetchImage only if the query returned ≤ 20 VideoGame nodes
+    const gameNodes = raw.nodes.filter((n) => n.type === "VideoGame");
+    if (gameNodes.length > 20) return raw;
+    return {
+      ...raw,
+      nodes: raw.nodes.map((n) =>
+        n.type === "VideoGame" ? { ...n, autoFetchImage: true } : n,
+      ),
+    };
+  }, [data]);
 
   const mergedGraph = useMemo<GraphData>(() => {
     const existingNodeIds = new Set(graphData.nodes.map((n) => n.id));
@@ -264,6 +281,7 @@ export default function App() {
           y={contextMenu.y}
           maxResults={maxResults}
           onNavigate={handleNodeClick}
+          onGraphExpand={handleGraphExpand}
           onClose={() => setContextMenu(null)}
         />
       )}

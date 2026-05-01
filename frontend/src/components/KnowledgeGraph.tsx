@@ -23,8 +23,11 @@ const NODE_COLORS: Record<string, string> = {
   Unknown: "#6b7280",
 };
 
-// Image cache to avoid reloading
+// Image cache to avoid reloading (imageUrl → HTMLImageElement)
 const imageCache = new Map<string, HTMLImageElement | null>();
+
+// label → imageUrl (or null if not found) — persists across renders/searches
+const labelImageUrlCache = new Map<string, string | null>();
 
 // Track failed URLs to avoid infinite retries
 const failedUrls = new Set<string>();
@@ -131,33 +134,44 @@ export function KnowledgeGraph({
 
   // Fetch fallback images only for clicked/zoomed VideoGame nodes
   const fetchImageForNode = useCallback(async (node: GraphNode) => {
-    if (
-      node.type === "VideoGame" &&
-      !node.imageUrl &&
-      !fetchingLabels.has(node.label) &&
-      !failedUrls.has(node.label)
-    ) {
-      fetchingLabels.add(node.label);
-      try {
-        const result = await searchGameImage(node.label);
-        if (result.imageUrl) {
-          node.imageUrl = result.imageUrl;
-          loadImage(result.imageUrl, () => graphRef.current?.refresh());
-        } else {
-          failedUrls.add(node.label);
-        }
-      } catch {
-        failedUrls.add(node.label);
-      } finally {
-        fetchingLabels.delete(node.label);
+    if (node.type !== "VideoGame" || node.imageUrl) return;
+
+    // If we already know the URL (or that it failed), reuse it immediately
+    if (labelImageUrlCache.has(node.label)) {
+      const cached = labelImageUrlCache.get(node.label);
+      if (cached) {
+        node.imageUrl = cached;
+        loadImage(cached, () => graphRef.current?.refresh());
       }
+      return;
+    }
+
+    if (fetchingLabels.has(node.label)) return;
+
+    fetchingLabels.add(node.label);
+    try {
+      const result = await searchGameImage(node.label);
+      if (result.imageUrl) {
+        labelImageUrlCache.set(node.label, result.imageUrl);
+        node.imageUrl = result.imageUrl;
+        loadImage(result.imageUrl, () => graphRef.current?.refresh());
+      } else {
+        labelImageUrlCache.set(node.label, null);
+        failedUrls.add(node.label);
+      }
+    } catch {
+      labelImageUrlCache.set(node.label, null);
+      failedUrls.add(node.label);
+    } finally {
+      fetchingLabels.delete(node.label);
     }
   }, []);
 
-  // Eagerly fetch images for all VideoGame nodes when graph is small (≤25 nodes total)
+  // Auto-fetch images only for nodes flagged with autoFetchImage
   useEffect(() => {
-    if (data.nodes.length > 25) return;
-    const gameNodes = data.nodes.filter((n) => n.type === "VideoGame");
+    const gameNodes = data.nodes.filter(
+      (n) => n.type === "VideoGame" && n.autoFetchImage,
+    );
     for (const node of gameNodes) {
       fetchImageForNode(node);
     }

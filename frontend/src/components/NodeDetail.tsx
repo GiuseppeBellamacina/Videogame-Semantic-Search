@@ -43,7 +43,6 @@ export function NodeDetail({
     getNodeDetails(uri)
       .then((res) => {
         setDetails(res.details);
-        if (onGraphExpand) onGraphExpand(res.graph);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));

@@ -89,16 +89,23 @@ class OntologyService:
             "http://www.w3.org/2002/07/owl#equivalentClass",
             "http://www.w3.org/2002/07/owl#equivalentProperty",
         }
-        _SKIP_NS = ("http://www.w3.org/2002/07/owl#", "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "http://www.w3.org/2000/01/rdf-schema#")
+        _SKIP_NS = (
+            "http://www.w3.org/2002/07/owl#",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+            "http://www.w3.org/2000/01/rdf-schema#",
+        )
 
         seen_out: set[tuple] = set()
         seen_in: set[tuple] = set()
 
         for s, p, o in g.triples((node, None, None)):
             pred_label = cls._get_local_name(str(p))
-            if str(p) in _SKIP_PREDICATES or any(str(p).startswith(ns) for ns in _SKIP_NS):
+            if str(p) in _SKIP_PREDICATES or any(
+                str(p).startswith(ns) for ns in _SKIP_NS
+            ):
                 continue
             from rdflib import Literal
+
             if isinstance(o, Literal):
                 # Datatype property
                 properties[pred_label] = str(o)
@@ -120,7 +127,9 @@ class OntologyService:
         # Triples where this node is the object
         for s, p, o in g.triples((None, None, node)):
             pred_label = cls._get_local_name(str(p))
-            if str(p) in _SKIP_PREDICATES or any(str(p).startswith(ns) for ns in _SKIP_NS):
+            if str(p) in _SKIP_PREDICATES or any(
+                str(p).startswith(ns) for ns in _SKIP_NS
+            ):
                 continue
             source_type = cls._get_node_type(str(s))
             source_label = cls._get_node_label(str(s))
@@ -216,7 +225,14 @@ class OntologyService:
         for _, _, o in g.triples((node, RDF.type, None)):
             local = cls._get_local_name(str(o))
             # Skip OWL/RDF meta-types that are not meaningful for display
-            if local in ("Thing", "Class", "NamedIndividual", "Ontology", "ObjectProperty", "DatatypeProperty"):
+            if local in (
+                "Thing",
+                "Class",
+                "NamedIndividual",
+                "Ontology",
+                "ObjectProperty",
+                "DatatypeProperty",
+            ):
                 continue
             if "owl" in str(o) or "rdf-schema" in str(o):
                 continue

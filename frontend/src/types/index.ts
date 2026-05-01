@@ -5,6 +5,7 @@ export interface GraphNode {
   color: string;
   size: number;
   imageUrl?: string;
+  autoFetchImage?: boolean;
   x?: number;
   y?: number;
 }
