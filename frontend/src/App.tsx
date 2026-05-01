@@ -6,6 +6,7 @@ import { KnowledgeGraph } from "@/components/KnowledgeGraph";
 import { NodeDetail } from "@/components/NodeDetail";
 import { SparqlViewer } from "@/components/SparqlViewer";
 import { AddGameForm } from "@/components/AddGameForm";
+import { Analytics } from "@vercel/analytics/react";
 import { useQuery } from "@/hooks/useQuery";
 import type { GraphData } from "@/types";
 
@@ -127,6 +128,8 @@ export default function App() {
         onClose={handleCloseDetail}
         onNavigate={handleNodeClick}
       />
+
+      <Analytics />
     </div>
   );
 }

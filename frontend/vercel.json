@@ -1,7 +1,10 @@
 {
   "framework": "vite",
-  "buildCommand": "bun run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "installCommand": "bun install",
-  "ignoreCommand": "! git diff --name-only HEAD~1 HEAD | grep -qvE '^(README\\.md|docs/|backend/|ontology/)'"
+  "installCommand": "npm install",
+  "ignoreCommand": "! git diff --name-only HEAD~1 HEAD | grep -qvE '^(README\\.md|docs/|backend/|ontology/)'",
+  "env": {
+    "VITE_API_URL": "@vite_api_url"
+  }
 }
