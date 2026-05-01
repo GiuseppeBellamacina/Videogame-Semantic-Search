@@ -11,6 +11,10 @@ ontology/videogames_wikidata.owl
 # Frontend
 frontend/node_modules/
 frontend/dist/
+frontend/vite.config.js
+frontend/vite.config.d.ts
+frontend/tsconfig.node.tsbuildinfo
+frontend/tsconfig.tsbuildinfo
 
 # IDE
 .vscode/
