@@ -7,6 +7,7 @@ interface KnowledgeGraphProps {
   data: GraphData;
   onNodeClick: (nodeId: string) => void;
   highlightNode?: string | null;
+  onNodeRightClick?: (node: GraphNode, x: number, y: number) => void;
 }
 
 const NODE_COLORS: Record<string, string> = {
@@ -56,6 +57,7 @@ export function KnowledgeGraph({
   data,
   onNodeClick,
   highlightNode,
+  onNodeRightClick,
 }: KnowledgeGraphProps) {
   const graphRef = useRef<any>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -63,18 +65,59 @@ export function KnowledgeGraph({
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
   useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        setDimensions({
-          width: containerRef.current.offsetWidth,
-          height: containerRef.current.offsetHeight,
-        });
-      }
-    };
+    if (!containerRef.current) return;
 
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        const { width, height } = entry.contentRect;
+        setDimensions({ width, height });
+      }
+    });
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Apply collision force to prevent node overlap
+  useEffect(() => {
+    if (!graphRef.current) return;
+    // Strong many-body repulsion for wide spreading
+    graphRef.current.d3Force("charge")?.strength(-400);
+    // Longer link distance to spread connected nodes
+    graphRef.current.d3Force("link")?.distance(120);
+    graphRef.current.d3Force("collision", {
+      initialize(nodes: any[]) {
+        this._nodes = nodes;
+      },
+      _nodes: [] as any[],
+      force(alpha: number) {
+        const nodes = this._nodes;
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const a = nodes[i],
+              b = nodes[j];
+            const dx = (b.x ?? 0) - (a.x ?? 0);
+            const dy = (b.y ?? 0) - (a.y ?? 0);
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            const minDist = (a.size || 8) + (b.size || 8) + 30;
+            if (dist < minDist) {
+              const push = ((minDist - dist) / dist) * alpha * 0.8;
+              const fx = dx * push,
+                fy = dy * push;
+              if (a.x !== undefined) {
+                a.x -= fx;
+                a.y -= fy;
+              }
+              if (b.x !== undefined) {
+                b.x += fx;
+                b.y += fy;
+              }
+            }
+          }
+        }
+      },
+    });
   }, []);
 
   // Zoom to fit when data changes
@@ -119,6 +162,16 @@ export function KnowledgeGraph({
       fetchImageForNode(node);
     }
   }, [data, fetchImageForNode]);
+
+  const handleNodeRightClick = useCallback(
+    (node: any, event: MouseEvent) => {
+      event.preventDefault();
+      if (onNodeRightClick) {
+        onNodeRightClick(node as GraphNode, event.clientX, event.clientY);
+      }
+    },
+    [onNodeRightClick],
+  );
 
   const handleNodeClick = useCallback(
     (node: any) => {
@@ -296,7 +349,7 @@ export function KnowledgeGraph({
   }
 
   return (
-    <div ref={containerRef} className="h-full w-full relative">
+    <div ref={containerRef} className="h-full w-full relative overflow-hidden">
       {/* Legend */}
       <div className="absolute top-3 left-3 z-10 bg-gray-900/90 backdrop-blur-sm border border-gray-700 rounded-lg p-3">
         <div className="grid grid-cols-2 gap-x-4 gap-y-1">
@@ -323,6 +376,7 @@ export function KnowledgeGraph({
         nodeCanvasObject={paintNode}
         linkCanvasObject={paintLink}
         onNodeClick={handleNodeClick}
+        onNodeRightClick={handleNodeRightClick}
         onNodeHover={(node: any) => setHoveredNode(node?.id || null)}
         onZoom={handleZoom}
         nodePointerAreaPaint={(
@@ -337,10 +391,10 @@ export function KnowledgeGraph({
         }}
         linkDirectionalArrowLength={4}
         linkDirectionalArrowRelPos={0.85}
-        d3VelocityDecay={0.3}
-        d3AlphaDecay={0.02}
-        warmupTicks={50}
-        cooldownTicks={100}
+        d3VelocityDecay={0.2}
+        d3AlphaDecay={0.01}
+        warmupTicks={100}
+        cooldownTicks={200}
       />
 
       {/* Node count badge */}

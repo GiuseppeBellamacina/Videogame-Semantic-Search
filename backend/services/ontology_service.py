@@ -19,6 +19,8 @@ class OntologyService:
 
     _graph: Optional[Graph] = None
     _triple_count: int = 0
+    _label_cache: dict[str, str] = {}
+    _type_cache: dict[str, str] = {}
 
     @classmethod
     def load(cls):
@@ -36,6 +38,7 @@ class OntologyService:
         """Return the loaded graph."""
         if cls._graph is None:
             cls.load()
+        assert cls._graph is not None
         return cls._graph
 
     @classmethod
@@ -51,7 +54,7 @@ class OntologyService:
         seen = set()
         for row in results:
             row_dict = {}
-            for var in results.vars:
+            for var in results.vars or []:
                 val = getattr(row, str(var), None)
                 row_dict[str(var)] = str(val) if val is not None else None
             # Deduplicate based on frozen dict contents
@@ -78,34 +81,58 @@ class OntologyService:
         incoming_relations = []
 
         # Triples where this node is the subject
+        _SKIP_PREDICATES = {
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+            "http://www.w3.org/2000/01/rdf-schema#label",
+            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+            "http://www.w3.org/2002/07/owl#sameAs",
+            "http://www.w3.org/2002/07/owl#equivalentClass",
+            "http://www.w3.org/2002/07/owl#equivalentProperty",
+        }
+        _SKIP_NS = ("http://www.w3.org/2002/07/owl#", "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "http://www.w3.org/2000/01/rdf-schema#")
+
+        seen_out: set[tuple] = set()
+        seen_in: set[tuple] = set()
+
         for s, p, o in g.triples((node, None, None)):
             pred_label = cls._get_local_name(str(p))
-            if hasattr(o, "toPython") and isinstance(o.toPython(), str):
+            if str(p) in _SKIP_PREDICATES or any(str(p).startswith(ns) for ns in _SKIP_NS):
+                continue
+            from rdflib import Literal
+            if isinstance(o, Literal):
                 # Datatype property
                 properties[pred_label] = str(o)
             elif str(o).startswith("http"):
-                # Object property - find the label of the target
+                target_type = cls._get_node_type(str(o))
                 target_label = cls._get_node_label(str(o))
-                outgoing_relations.append(
-                    {
-                        "predicate": pred_label,
-                        "target_uri": str(o),
-                        "target_label": target_label,
-                        "target_type": cls._get_node_type(str(o)),
-                    }
-                )
+                key = (pred_label, str(o))
+                if key not in seen_out:
+                    seen_out.add(key)
+                    outgoing_relations.append(
+                        {
+                            "predicate": pred_label,
+                            "target_uri": str(o),
+                            "target_label": target_label,
+                            "target_type": target_type,
+                        }
+                    )
 
         # Triples where this node is the object
         for s, p, o in g.triples((None, None, node)):
             pred_label = cls._get_local_name(str(p))
-            if str(p) != str("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"):
-                source_label = cls._get_node_label(str(s))
+            if str(p) in _SKIP_PREDICATES or any(str(p).startswith(ns) for ns in _SKIP_NS):
+                continue
+            source_type = cls._get_node_type(str(s))
+            source_label = cls._get_node_label(str(s))
+            key = (pred_label, str(s))
+            if key not in seen_in:
+                seen_in.add(key)
                 incoming_relations.append(
                     {
                         "predicate": pred_label,
                         "source_uri": str(s),
                         "source_label": source_label,
-                        "source_type": cls._get_node_type(str(s)),
+                        "source_type": source_type,
                     }
                 )
 
@@ -146,6 +173,9 @@ class OntologyService:
     @classmethod
     def _get_node_label(cls, uri: str) -> str:
         """Get the best label for a node URI."""
+        if uri in cls._label_cache:
+            return cls._label_cache[uri]
+
         from rdflib import URIRef
 
         g = cls.get_graph()
@@ -164,22 +194,36 @@ class OntologyService:
             VG.engineName,
         ]:
             for _, _, o in g.triples((node, name_prop, None)):
+                cls._label_cache[uri] = str(o)
                 return str(o)
 
         # Fallback: extract from URI
-        return cls._get_local_name(uri)
+        label = cls._get_local_name(uri)
+        cls._label_cache[uri] = label
+        return label
 
     @classmethod
     def _get_node_type(cls, uri: str) -> str:
         """Get the type of a node."""
+        if uri in cls._type_cache:
+            return cls._type_cache[uri]
+
         from rdflib import RDF, URIRef
 
         g = cls.get_graph()
         node = URIRef(uri)
 
         for _, _, o in g.triples((node, RDF.type, None)):
-            return cls._get_local_name(str(o))
+            local = cls._get_local_name(str(o))
+            # Skip OWL/RDF meta-types that are not meaningful for display
+            if local in ("Thing", "Class", "NamedIndividual", "Ontology", "ObjectProperty", "DatatypeProperty"):
+                continue
+            if "owl" in str(o) or "rdf-schema" in str(o):
+                continue
+            cls._type_cache[uri] = local
+            return local
 
+        cls._type_cache[uri] = "Unknown"
         return "Unknown"
 
     @classmethod

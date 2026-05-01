@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { X, Loader2, ExternalLink, ArrowRight, ArrowLeft } from "lucide-react";
-import type { NodeDetails } from "@/types";
+import type { NodeDetails, GraphData } from "@/types";
 import { getNodeDetails } from "@/lib/api";
 
 interface NodeDetailProps {
   uri: string | null;
   onClose: () => void;
   onNavigate: (uri: string) => void;
+  onGraphExpand?: (graph: GraphData) => void;
 }
 
 const TYPE_BADGES: Record<string, string> = {
@@ -20,7 +21,12 @@ const TYPE_BADGES: Record<string, string> = {
   Award: "bg-orange-500/20 text-orange-300",
 };
 
-export function NodeDetail({ uri, onClose, onNavigate }: NodeDetailProps) {
+export function NodeDetail({
+  uri,
+  onClose,
+  onNavigate,
+  onGraphExpand,
+}: NodeDetailProps) {
   const [details, setDetails] = useState<NodeDetails | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +41,10 @@ export function NodeDetail({ uri, onClose, onNavigate }: NodeDetailProps) {
     setError(null);
 
     getNodeDetails(uri)
-      .then((res) => setDetails(res.details))
+      .then((res) => {
+        setDetails(res.details);
+        if (onGraphExpand) onGraphExpand(res.graph);
+      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [uri]);
@@ -72,16 +81,20 @@ export function NodeDetail({ uri, onClose, onNavigate }: NodeDetailProps) {
 
         {details && !loading && (
           <>
-            {/* Type badge */}
-            <div className="flex items-center gap-2">
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  TYPE_BADGES[details.type] || "bg-gray-700 text-gray-300"
-                }`}
-              >
-                {details.type}
-              </span>
-            </div>
+            {/* Type badge — only if meaningful */}
+            {details.type &&
+              details.type !== "Unknown" &&
+              details.type !== "Thing" && (
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      TYPE_BADGES[details.type] || "bg-gray-700 text-gray-300"
+                    }`}
+                  >
+                    {details.type}
+                  </span>
+                </div>
+              )}
 
             {/* Properties */}
             {Object.keys(details.properties).length > 0 && (
@@ -124,14 +137,18 @@ export function NodeDetail({ uri, onClose, onNavigate }: NodeDetailProps) {
                       <span className="text-sm text-indigo-400 group-hover:text-indigo-300 truncate flex-1">
                         {rel.target_label}
                       </span>
-                      <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded ${
-                          TYPE_BADGES[rel.target_type] ||
-                          "bg-gray-700 text-gray-400"
-                        }`}
-                      >
-                        {rel.target_type}
-                      </span>
+                      {rel.target_type &&
+                        rel.target_type !== "Unknown" &&
+                        rel.target_type !== "Thing" && (
+                          <span
+                            className={`text-[10px] px-1.5 py-0.5 rounded ${
+                              TYPE_BADGES[rel.target_type] ||
+                              "bg-gray-700 text-gray-400"
+                            }`}
+                          >
+                            {rel.target_type}
+                          </span>
+                        )}
                       <ExternalLink className="w-3 h-3 text-gray-600 group-hover:text-gray-400 flex-shrink-0" />
                     </button>
                   ))}
@@ -147,20 +164,24 @@ export function NodeDetail({ uri, onClose, onNavigate }: NodeDetailProps) {
                   Relazioni in entrata ({details.incoming_relations.length})
                 </h3>
                 <div className="space-y-1.5">
-                  {details.incoming_relations.slice(0, 20).map((rel, i) => (
+                  {details.incoming_relations.map((rel, i) => (
                     <button
                       key={i}
                       onClick={() => onNavigate(rel.source_uri)}
                       className="w-full flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 rounded-lg p-2.5 transition-colors text-left group"
                     >
-                      <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded ${
-                          TYPE_BADGES[rel.source_type] ||
-                          "bg-gray-700 text-gray-400"
-                        }`}
-                      >
-                        {rel.source_type}
-                      </span>
+                      {rel.source_type &&
+                        rel.source_type !== "Unknown" &&
+                        rel.source_type !== "Thing" && (
+                          <span
+                            className={`text-[10px] px-1.5 py-0.5 rounded ${
+                              TYPE_BADGES[rel.source_type] ||
+                              "bg-gray-700 text-gray-400"
+                            }`}
+                          >
+                            {rel.source_type}
+                          </span>
+                        )}
                       <span className="text-sm text-indigo-400 group-hover:text-indigo-300 truncate flex-1">
                         {rel.source_label}
                       </span>
@@ -170,9 +191,11 @@ export function NodeDetail({ uri, onClose, onNavigate }: NodeDetailProps) {
                       <ExternalLink className="w-3 h-3 text-gray-600 group-hover:text-gray-400 flex-shrink-0" />
                     </button>
                   ))}
-                  {details.incoming_relations.length > 20 && (
+                  {details.incoming_relations.length > 50 && (
                     <p className="text-xs text-gray-500 text-center py-1">
-                      ...e {details.incoming_relations.length - 20} altre
+                      Mostrando{" "}
+                      {Math.min(details.incoming_relations.length, 50)} di{" "}
+                      {details.incoming_relations.length} relazioni
                     </p>
                   )}
                 </div>

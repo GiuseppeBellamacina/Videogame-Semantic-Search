@@ -1,19 +1,53 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Gamepad2, BarChart3, Github, List, Network } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
 import { ResultList } from "@/components/ResultList";
 import { KnowledgeGraph } from "@/components/KnowledgeGraph";
 import { NodeDetail } from "@/components/NodeDetail";
+import { NodeContextMenu } from "@/components/NodeContextMenu";
 import { SparqlViewer } from "@/components/SparqlViewer";
 import { Analytics } from "@vercel/analytics/react";
 import { useQuery } from "@/hooks/useQuery";
-import type { GraphData } from "@/types";
+import type { GraphData, GraphNode } from "@/types";
 
 export default function App() {
   const { data, loading, error, search, cancel } = useQuery();
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [highlightNode, setHighlightNode] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<"results" | "graph">("results");
+  const [contextMenu, setContextMenu] = useState<{
+    node: GraphNode;
+    x: number;
+    y: number;
+  } | null>(null);
+  const [maxResults, setMaxResults] = useState(10);
+  const [extraGraph, setExtraGraph] = useState<GraphData>({
+    nodes: [],
+    links: [],
+  });
+
+  const handleGraphExpand = useCallback((newGraph: GraphData) => {
+    setExtraGraph((prev) => {
+      const existingNodeIds = new Set(prev.nodes.map((n) => n.id));
+      const existingLinkKeys = new Set(
+        prev.links.map(
+          (l) =>
+            `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`,
+        ),
+      );
+      const addedNodes = newGraph.nodes.filter(
+        (n) => !existingNodeIds.has(n.id),
+      );
+      const addedLinks = newGraph.links.filter((l) => {
+        const key = `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`;
+        return !existingLinkKeys.has(key);
+      });
+      return {
+        nodes: [...prev.nodes, ...addedNodes],
+        links: [...prev.links, ...addedLinks],
+      };
+    });
+  }, []);
 
   const handleNodeClick = useCallback((uri: string) => {
     setSelectedNode(uri);
@@ -26,7 +60,35 @@ export default function App() {
     setHighlightNode(null);
   }, []);
 
+  const handleNodeRightClick = useCallback(
+    (node: GraphNode, x: number, y: number) => {
+      setContextMenu({ node, x, y });
+    },
+    [],
+  );
+
   const graphData: GraphData = data?.graph || { nodes: [], links: [] };
+
+  const mergedGraph = useMemo<GraphData>(() => {
+    const existingNodeIds = new Set(graphData.nodes.map((n) => n.id));
+    const existingLinkKeys = new Set(
+      graphData.links.map(
+        (l) =>
+          `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`,
+      ),
+    );
+    const addedNodes = extraGraph.nodes.filter(
+      (n) => !existingNodeIds.has(n.id),
+    );
+    const addedLinks = extraGraph.links.filter((l) => {
+      const key = `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`;
+      return !existingLinkKeys.has(key);
+    });
+    return {
+      nodes: [...graphData.nodes, ...addedNodes],
+      links: [...graphData.links, ...addedLinks],
+    };
+  }, [graphData, extraGraph]);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
@@ -56,6 +118,24 @@ export default function App() {
               <Github className="w-5 h-5" />
               <span className="hidden sm:inline">GiuseppeBellamacina</span>
             </a>
+            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500">
+              <label htmlFor="max-results" className="whitespace-nowrap">
+                Max relazioni
+              </label>
+              <input
+                id="max-results"
+                type="number"
+                min={1}
+                max={200}
+                value={maxResults}
+                onChange={(e) =>
+                  setMaxResults(
+                    Math.max(1, Math.min(200, Number(e.target.value))),
+                  )
+                }
+                className="w-16 px-2 py-1 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              />
+            </div>
           </div>
           <SearchBar onSearch={search} onCancel={cancel} loading={loading} />
         </div>
@@ -159,9 +239,10 @@ export default function App() {
         >
           <div className="flex-1 h-full w-full">
             <KnowledgeGraph
-              data={graphData}
+              data={mergedGraph}
               onNodeClick={handleNodeClick}
               highlightNode={highlightNode}
+              onNodeRightClick={handleNodeRightClick}
             />
           </div>
         </div>
@@ -172,7 +253,20 @@ export default function App() {
         uri={selectedNode}
         onClose={handleCloseDetail}
         onNavigate={handleNodeClick}
+        onGraphExpand={handleGraphExpand}
       />
+
+      {/* Node Context Menu (right-click) */}
+      {contextMenu && (
+        <NodeContextMenu
+          node={contextMenu.node}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          maxResults={maxResults}
+          onNavigate={handleNodeClick}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
 
       <Analytics />
     </div>
