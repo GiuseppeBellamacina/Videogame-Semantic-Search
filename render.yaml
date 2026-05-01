@@ -15,8 +15,3 @@ services:
         value: gpt-4.1-mini
       - key: ALLOWED_ORIGINS
         sync: false # set manually in Render dashboard
-    ignoredFiles:
-      - README.md
-      - docs/**
-      - frontend/**
-      - "*.md"

@@ -1,8 +1,7 @@
 {
   "framework": "vite",
-  "rootDirectory": "frontend",
-  "buildCommand": "npm run build",
+  "buildCommand": "bun run build",
   "outputDirectory": "dist",
-  "installCommand": "npm install",
+  "installCommand": "bun install",
   "ignoreCommand": "! git diff --name-only HEAD~1 HEAD | grep -qvE '^(README\\.md|docs/|backend/|ontology/)'"
 }
