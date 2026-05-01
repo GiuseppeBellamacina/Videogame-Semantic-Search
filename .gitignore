@@ -5,8 +5,8 @@ __pycache__/
 *.pyo
 .venv/
 
-# Ontology generated files (large)
-ontology/videogames_wikidata.owl
+# Ontology generated files — tracked via Git LFS
+# (videogames_wikidata.owl is committed via LFS, not ignored)
 
 # Frontend
 frontend/node_modules/
