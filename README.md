@@ -6,26 +6,26 @@ Un progetto di Semantic Web che costruisce e interroga un'ontologia OWL sui vide
 
 ```text
 ┌─────────────────────────────────────────────────────────────────┐
-│  Frontend (React + Tailwind + react-force-graph)                │
+│         Frontend (React + Tailwind + react-force-graph)         │
 │  ┌──────────┐  ┌──────────────┐  ┌───────────────────────────┐  │
 │  │ SearchBar│  │  ResultList  │  │   Knowledge Graph (2D)    │  │
 │  └──────────┘  └──────────────┘  └───────────────────────────┘  │
-└────────────────────────────┬────────────────────────────────────┘
-                             │ HTTP (REST API)
-┌────────────────────────────▼────────────────────────────────────┐
-│   Backend (FastAPI)                                             │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │ HTTP (REST API)
+┌──────────────────────────────▼──────────────────────────────────┐
+│                        Backend (FastAPI)                        │
 │  ┌────────────────────────────────────────────────────────────┐ │
-│  │  SPARQL Agent (GPT-4.1 mini)                               │ │
-│  │  NL → SPARQL → Validate → Execute → Explain                │ │
-│  │  (retry automatico su errore, max 3 tentativi)             │ │
+│  │                 SPARQL Agent (GPT-4.1 mini)                │ │
+│  │              NL → SPARQL → Validate → Execute              │ │
+│  │        (retry automatico su errore, max 3 tentativi)       │ │
 │  └────────────────────────────────────────────────────────────┘ │
 │  ┌─────────────────────┐  ┌───────────────────────────────────┐ │
-│  │  OntologyService    │  │  GraphBuilder                     │ │
-│  │  (rdflib Graph)     │  │  (nodi + archi per frontend)      │ │
+│  │   OntologyService   │  │          GraphBuilder             │ │
+│  │   (rdflib Graph)    │  │    (nodi + archi per frontend)    │ │
 │  └─────────────────────┘  └───────────────────────────────────┘ │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-┌────────────────────────────▼────────────────────────────────────┐
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+┌──────────────────────────────▼──────────────────────────────────┐
 │  Ontologia (videogames_wikidata.owl)                            │
 │  Dati da: Wikidata                                              │
 │  Classi: VideoGame, Developer, Publisher, Genre, Platform,      │
