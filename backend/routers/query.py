@@ -36,15 +36,20 @@ def init_cache() -> None:
     """Initialise Upstash Redis client. Falls back to in-memory if env vars are not set."""
     global _redis
     if not UPSTASH_REDIS_REST_URL or not UPSTASH_REDIS_REST_TOKEN:
-        logger.info("[CACHE] UPSTASH_REDIS_REST_URL/TOKEN not set — using in-memory fallback cache")
+        logger.info(
+            "[CACHE] UPSTASH_REDIS_REST_URL/TOKEN not set — using in-memory fallback cache"
+        )
         return
     try:
         from upstash_redis import Redis
+
         _redis = Redis(url=UPSTASH_REDIS_REST_URL, token=UPSTASH_REDIS_REST_TOKEN)
         _redis.ping()
         logger.info("[CACHE] Connected to Upstash Redis")
     except Exception as e:
-        logger.warning(f"[CACHE] Upstash Redis connection failed, falling back to in-memory: {e}")
+        logger.warning(
+            f"[CACHE] Upstash Redis connection failed, falling back to in-memory: {e}"
+        )
         _redis = None
 
 
@@ -67,7 +72,9 @@ def _cache_get(key: str) -> dict | None:
 def _cache_set(key: str, value: dict) -> None:
     if _redis:
         try:
-            _redis.set(f"vg:query:{key}", json.dumps(value, ensure_ascii=False), ex=CACHE_TTL)
+            _redis.set(
+                f"vg:query:{key}", json.dumps(value, ensure_ascii=False), ex=CACHE_TTL
+            )
             return
         except Exception as e:
             logger.warning(f"[CACHE] Redis set error: {e}")
