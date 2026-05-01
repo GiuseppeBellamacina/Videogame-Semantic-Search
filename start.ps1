@@ -12,9 +12,12 @@ if ([string]::IsNullOrEmpty($ROOT_DIR)) {
     $ROOT_DIR = $PWD.Path
 }
 
+# Capture current PATH so child processes inherit it
+$currentPath = $env:PATH
+
 # Start Backend
 Write-Host "🚀 Starting Backend Server..." -ForegroundColor Yellow
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$ROOT_DIR'; Write-Host 'Backend server starting on http://localhost:8000' -ForegroundColor Cyan; uv run uvicorn backend.main:app --reload --port 8000"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "`$env:PATH = '$currentPath'; cd '$ROOT_DIR'; Write-Host 'Backend server starting on http://localhost:8000' -ForegroundColor Cyan; uv run uvicorn backend.main:app --reload --port 8000"
 $backendStarted = $?
 
 if ($backendStarted) {
@@ -33,7 +36,7 @@ Write-Host ""
 
 # Start Frontend
 Write-Host "🌐 Starting Frontend Development Server..." -ForegroundColor Yellow
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$ROOT_DIR\frontend'; Write-Host 'Frontend starting on http://localhost:5173' -ForegroundColor Cyan; bun run dev"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "`$env:PATH = '$currentPath'; cd '$ROOT_DIR\frontend'; Write-Host 'Frontend starting on http://localhost:5173' -ForegroundColor Cyan; bun run dev"
 $frontendStarted = $?
 
 if ($frontendStarted) {

@@ -28,7 +28,13 @@ const imageCache = new Map<string, HTMLImageElement | null>();
 // Track failed URLs to avoid infinite retries
 const failedUrls = new Set<string>();
 
-function loadImage(url: string): HTMLImageElement | null {
+// Track in-flight fetch requests to avoid duplicates
+const fetchingLabels = new Set<string>();
+
+function loadImage(
+  url: string,
+  onLoaded?: () => void,
+): HTMLImageElement | null {
   if (imageCache.has(url)) return imageCache.get(url)!;
   if (failedUrls.has(url)) return null;
   // Mark as loading (null means loading/failed)
@@ -36,6 +42,7 @@ function loadImage(url: string): HTMLImageElement | null {
   const img = new Image();
   img.onload = () => {
     imageCache.set(url, img);
+    onLoaded?.();
   };
   img.onerror = () => {
     failedUrls.add(url);
@@ -84,22 +91,34 @@ export function KnowledgeGraph({
     if (
       node.type === "VideoGame" &&
       !node.imageUrl &&
-      !imageCache.has(node.label) &&
+      !fetchingLabels.has(node.label) &&
       !failedUrls.has(node.label)
     ) {
+      fetchingLabels.add(node.label);
       try {
         const result = await searchGameImage(node.label);
         if (result.imageUrl) {
           node.imageUrl = result.imageUrl;
-          loadImage(result.imageUrl);
+          loadImage(result.imageUrl, () => graphRef.current?.refresh());
         } else {
           failedUrls.add(node.label);
         }
       } catch {
         failedUrls.add(node.label);
+      } finally {
+        fetchingLabels.delete(node.label);
       }
     }
   }, []);
+
+  // Eagerly fetch images for all VideoGame nodes when graph is small (≤25 nodes total)
+  useEffect(() => {
+    if (data.nodes.length > 25) return;
+    const gameNodes = data.nodes.filter((n) => n.type === "VideoGame");
+    for (const node of gameNodes) {
+      fetchImageForNode(node);
+    }
+  }, [data, fetchImageForNode]);
 
   const handleNodeClick = useCallback(
     (node: any) => {
@@ -123,7 +142,7 @@ export function KnowledgeGraph({
           (n) =>
             n.type === "VideoGame" &&
             !n.imageUrl &&
-            !imageCache.has(n.label) &&
+            !fetchingLabels.has(n.label) &&
             !failedUrls.has(n.label),
         );
         // Fetch up to 5 at a time on zoom

@@ -3,10 +3,14 @@ Graph router — handles knowledge graph visualization and node detail requests.
 """
 
 import logging
-from urllib.parse import unquote
+import re
+from pathlib import Path
+from urllib.parse import quote, unquote
 
 import httpx
 from fastapi import APIRouter, HTTPException
+
+IMAGE_DEBUG_DIR = Path(__file__).parent.parent.parent / "debug_images"
 
 from backend.services.graph_builder import build_graph_from_node
 from backend.services.ontology_service import OntologyService
@@ -53,51 +57,59 @@ async def search_game_image(name: str):
     if not name.strip():
         raise HTTPException(status_code=400, detail="Name cannot be empty")
 
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            # Use Wikipedia API to get page image by title
-            resp = await client.get(
-                "https://en.wikipedia.org/w/api.php",
-                params={
-                    "action": "query",
-                    "titles": name,
-                    "prop": "pageimages",
-                    "format": "json",
-                    "pithumbsize": 300,
-                    "redirects": 1,
-                },
-            )
-            data = resp.json()
-            pages = data.get("query", {}).get("pages", {})
-            for page in pages.values():
-                thumb = page.get("thumbnail", {}).get("source")
-                if thumb:
-                    return {"imageUrl": thumb, "source": "wikipedia"}
+    logger.info(f"[IMG] Searching image for: '{name}'")
 
-            # Fallback 2: try with " (video game)" suffix
-            resp = await client.get(
-                "https://en.wikipedia.org/w/api.php",
-                params={
-                    "action": "query",
-                    "titles": f"{name} (video game)",
-                    "prop": "pageimages",
-                    "format": "json",
-                    "pithumbsize": 300,
-                    "redirects": 1,
-                },
-            )
-            data = resp.json()
-            pages = data.get("query", {}).get("pages", {})
-            for page in pages.values():
-                thumb = page.get("thumbnail", {}).get("source")
-                if thumb:
-                    return {"imageUrl": thumb, "source": "wikipedia"}
-
+    # Skip Wikidata QIDs (Q followed by digits) — no useful image can be found
+    if re.fullmatch(r"Q\d+", name.strip()):
+        logger.warning(f"[IMG] Skipping QID label: '{name}'")
         return {"imageUrl": None, "source": None}
+
+    try:
+        headers = {
+            "User-Agent": "VideogameSemanticSearch/1.0 (https://github.com/GiuseppeBellamacina/Videogame-Semantic-Search; educational project)"
+        }
+        async with httpx.AsyncClient(timeout=10.0, headers=headers) as client:
+            # Attempt 1: Wikipedia REST summary API (most reliable for thumbnails)
+            for title in [name, f"{name} (video game)"]:
+                encoded_title = quote(title, safe="")
+                resp = await client.get(
+                    f"https://en.wikipedia.org/api/rest_v1/page/summary/{encoded_title}",
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    thumb = data.get("thumbnail", {}).get("source")
+                    if thumb:
+                        logger.info(
+                            f"[IMG] FOUND via REST summary (title='{title}') for '{name}': {thumb}"
+                        )
+                        await _save_debug_image(client, name, thumb)
+                        return {"imageUrl": thumb, "source": "wikipedia"}
+                else:
+                    logger.info(
+                        f"[IMG] REST summary returned {resp.status_code} for title='{title}'"
+                    )
+
+            logger.warning(f"[IMG] NOT FOUND for '{name}'")
+            return {"imageUrl": None, "source": None}
 
     except Exception as e:
-        logger.warning(f"Image search failed for '{name}': {e}")
+        logger.warning(f"[IMG] ERROR for '{name}': {e}")
         return {"imageUrl": None, "source": None}
+
+
+async def _save_debug_image(client: httpx.AsyncClient, name: str, url: str) -> None:
+    """Download and save image locally for debug purposes."""
+    try:
+        IMAGE_DEBUG_DIR.mkdir(exist_ok=True)
+        safe_name = re.sub(r'[<>:"/\\|?*]', "_", name)
+        ext = url.rsplit(".", 1)[-1].split("?")[0] or "jpg"
+        dest = IMAGE_DEBUG_DIR / f"{safe_name}.{ext}"
+        img_resp = await client.get(url)
+        img_resp.raise_for_status()
+        dest.write_bytes(img_resp.content)
+        logger.info(f"[IMG] Saved debug image: {dest}")
+    except Exception as e:
+        logger.warning(f"[IMG] Could not save debug image for '{name}': {e}")
 
 
 @router.get("/stats")

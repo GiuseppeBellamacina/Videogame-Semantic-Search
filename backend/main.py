@@ -2,6 +2,7 @@
 FastAPI application entry point for Videogame Semantic Search.
 """
 
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -14,6 +15,7 @@ from backend.services.ontology_service import OntologyService
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load ontology on startup."""
+    logging.basicConfig(level=logging.INFO)
     OntologyService.load()
     yield
 
