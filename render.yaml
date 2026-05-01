@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: videogame-semantic-search-backend
+    runtime: python
+    buildCommand: pip install uv && uv sync --frozen && uv cache prune --ci
+    startCommand: uv run uvicorn backend.main:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000
+      - key: OPENAI_API_KEY
+        sync: false # set manually in Render dashboard
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: ALLOWED_ORIGINS
+        sync: false # set manually in Render dashboard
+    ignoredFiles:
+      - README.md
+      - docs/**
+      - frontend/**
+      - "*.md"
