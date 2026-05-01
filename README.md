@@ -4,7 +4,7 @@ Un progetto di Semantic Web che costruisce e interroga un'ontologia OWL sui vide
 
 ## Architettura
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │  Frontend (React + Tailwind + react-force-graph)                │
 │  ┌──────────┐  ┌──────────────┐  ┌───────────────────────────┐ │
@@ -13,16 +13,16 @@ Un progetto di Semantic Web che costruisce e interroga un'ontologia OWL sui vide
 └────────────────────────────┬────────────────────────────────────┘
                              │ HTTP (REST API)
 ┌────────────────────────────▼────────────────────────────────────┐
-│  Backend (FastAPI)                                               │
+│   Backend (FastAPI)                                             │
 │  ┌────────────────────────────────────────────────────────────┐ │
 │  │  SPARQL Agent (GPT-4.1 mini)                               │ │
-│  │  NL → SPARQL → Validate → Execute → Explain               │ │
+│  │  NL → SPARQL → Validate → Execute → Explain                │ │
 │  │  (retry automatico su errore, max 3 tentativi)             │ │
 │  └────────────────────────────────────────────────────────────┘ │
-│  ┌─────────────────────┐  ┌──────────────────────────────────┐ │
-│  │  OntologyService    │  │  GraphBuilder                    │ │
-│  │  (rdflib Graph)     │  │  (nodi + archi per frontend)     │ │
-│  └─────────────────────┘  └──────────────────────────────────┘ │
+│  ┌─────────────────────┐  ┌───────────────────────────────────┐ │
+│  │  OntologyService    │  │  GraphBuilder                     │ │
+│  │  (rdflib Graph)     │  │  (nodi + archi per frontend)      │ │
+│  └─────────────────────┘  └───────────────────────────────────┘ │
 └────────────────────────────┬────────────────────────────────────┘
                              │
 ┌────────────────────────────▼────────────────────────────────────┐
@@ -86,7 +86,7 @@ npm install
 npm run dev
 ```
 
-L'app sarà disponibile su http://localhost:5173
+L'app sarà disponibile su [http://localhost:5173](http://localhost:5173)
 
 ## Funzionalità
 
@@ -113,7 +113,6 @@ Scrivi domande come:
 - Converte NL → SPARQL automaticamente
 - **Validazione sintattica** prima dell'esecuzione
 - **Retry automatico** (max 3 tentativi) su errore o risultati vuoti
-- **Spiegazione in italiano** dei risultati trovati
 - Mostra la query SPARQL generata (espandibile)
 
 ## Ontologia
