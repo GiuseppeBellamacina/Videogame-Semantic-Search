@@ -320,7 +320,7 @@ export function KnowledgeGraph({
         }
 
         if (!imageDrawn) {
-          // Solid rect with label centered inside
+          // Solid rect with random emoji + label
           ctx.beginPath();
           ctx.roundRect(rx, ry, w, h, r);
           ctx.fillStyle = isHighlighted ? color : `${color}cc`;
@@ -329,6 +329,39 @@ export function KnowledgeGraph({
           ctx.lineWidth = isHighlighted ? 2 : 0.5;
           ctx.stroke();
 
+          // Pick a stable random emoji based on node id
+          const GAME_EMOJIS = [
+            "🎮",
+            "🕹️",
+            "👾",
+            "🎯",
+            "🏆",
+            "⚔️",
+            "🧙",
+            "🚀",
+            "🐉",
+            "💎",
+            "🛡️",
+            "🔥",
+            "🌟",
+            "🎲",
+            "🗡️",
+            "🏰",
+          ];
+          const emojiIdx =
+            Math.abs(
+              node.id
+                .split("")
+                .reduce((a: number, c: string) => a + c.charCodeAt(0), 0),
+            ) % GAME_EMOJIS.length;
+          const emoji = GAME_EMOJIS[emojiIdx];
+          const emojiFontSize = Math.min(w, h) * 0.45;
+          ctx.font = `${emojiFontSize}px serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(emoji, node.x, node.y - h * 0.08);
+
+          // Label below emoji
           ctx.font = `${isHighlighted ? "bold " : ""}${fontSize}px Inter, sans-serif`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
@@ -336,7 +369,7 @@ export function KnowledgeGraph({
           const maxLen = 18;
           const displayLabel =
             label.length > maxLen ? label.slice(0, maxLen) + "…" : label;
-          ctx.fillText(displayLabel, node.x, node.y);
+          ctx.fillText(displayLabel, node.x, node.y + h * 0.3);
           return;
         }
 
