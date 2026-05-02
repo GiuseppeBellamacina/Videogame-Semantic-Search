@@ -110,7 +110,7 @@ def main():
     print(f"\n  Total orphan triples removed: {orphan_removed:,}")
 
     final = len(g)
-    print(f"\nSummary:")
+    print("\nSummary:")
     print(f"  Initial: {initial:,} triples")
     print(f"  Game triples removed: {removed:,}")
     print(f"  Orphan triples removed: {orphan_removed:,}")
