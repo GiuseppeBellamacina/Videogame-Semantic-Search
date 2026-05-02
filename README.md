@@ -6,16 +6,19 @@ Un progetto di Semantic Web che costruisce e interroga un'ontologia OWL sui vide
 
 ## Ontologia — Statistiche
 
-| Metrica                | Valore          |
-| ---------------------- | --------------- |
-| Periodo coperto        | 2010 – 2026     |
-| Triple totali (grezzo) | ~1.019.589      |
-| Triple dopo reasoning  | **~1.427.081**  |
-| Triple dopo pruning    | **~1.173.959**  |
-| Entità deduplicate     | 4.420 rimosse   |
-| Fonte                  | Wikidata SPARQL |
+| Metrica                | Valore completo | Valore demo (2020–2026) |
+| ---------------------- | --------------- | ----------------------- |
+| Periodo coperto        | 2010 – 2026     | 2020 – 2026             |
+| Triple totali (grezzo) | ~1.019.589      | —                       |
+| Triple dopo reasoning  | ~1.427.081      | —                       |
+| Triple dopo pruning    | ~1.173.959      | **~745.400**            |
+| Giochi                 | ~104.000        | ~68.700                 |
+| Entità deduplicate     | 4.420 rimosse   | —                       |
+| Fonte                  | Wikidata SPARQL | Wikidata SPARQL         |
 
 L'ontologia viene generata in circa **5 ore** di computazione (query per anno × mese per evitare i timeout di Wikidata), poi viene applicata la chiusura deduttiva OWL-RL tramite `owlrl` per materializzare le proprietà inverse e le catene `subPropertyOf`. Infine viene eseguito un pruning che rimuove triple non utilizzate (owl:sameAs riflessivi, gameDescription, officialWebsite) per ridurre il consumo di memoria a runtime.
+
+> **Demo live:** per rientrare nei limiti di RAM di Render (512 MB), la demo usa un sottoinsieme dell'ontologia limitato ai giochi dal **2020 in poi** (~745k triple, ~68.700 giochi). Il dataset completo (2010–2026, ~1.17M triple) è generabile localmente.
 
 ## Architettura
 
@@ -45,8 +48,8 @@ L'ontologia viene generata in circa **5 ore** di computazione (query per anno ×
 └──────────────────────────────┬──────────────────────────────────┘
                                │
 ┌──────────────────────────────▼──────────────────────────────────┐
-│  Ontologia (videogames_pruned.owl)                              │
-│  Store: pyoxigraph (Rust) · ~1.17M triple · ~389 MB RAM         │
+│  Ontologia (videogames_pruned_2020.owl)                         │
+│  Store: pyoxigraph (Rust) · ~745k triple · ~250 MB RAM (demo)   │
 │  Classi: VideoGame, Developer, Publisher, Genre, Platform,      │
 │          Character, Franchise, Award, GameEngine                │
 └─────────────────────────────────────────────────────────────────┘
@@ -223,9 +226,9 @@ Scrivi domande come:
 
 ## Performance
 
-| Metrica              | rdflib (prima) | pyoxigraph (dopo) |
-| -------------------- | -------------- | ----------------- |
-| RAM a runtime        | ~1.550 MB      | ~389 MB           |
-| Tempo di caricamento | ~41s           | ~2.2s             |
-| Query SPARQL tipica  | 1–23s          | 0.08–0.37s        |
-| Speedup query        | —              | 5–62×             |
+| Metrica              | rdflib (prima) | pyoxigraph (completo) | pyoxigraph (demo 2020+) |
+| -------------------- | -------------- | --------------------- | ----------------------- |
+| RAM a runtime        | ~1.550 MB      | ~389 MB               | ~250 MB                 |
+| Tempo di caricamento | ~41s           | ~2.2s                 | ~1.5s                   |
+| Query SPARQL tipica  | 1–23s          | 0.08–0.37s            | 0.05–0.25s              |
+| Speedup query        | —              | 5–62×                 |

@@ -14,11 +14,12 @@ L'ontologia **Video Game Ontology** (`vg:`) modella il dominio dei videogiochi p
 
 ## Architettura dei file OWL
 
-| File                      | Ruolo                                                                              | Cancellabile?                                        |
-| ------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `videogames.owl`          | **Schema/TBox** — definisce classi, proprietà e assiomi. NON contiene dati.        | ❌ Mai cancellare                                    |
-| `videogames_wikidata.owl` | **Dati/ABox completo** — schema + tutte le istanze (~1.427.081 triple)             | ✅ Si cancella e rigenera con `populate_wikidata.py` |
-| `videogames_pruned.owl`   | **Dati/ABox ottimizzato** — come sopra ma senza triple inutili (~1.173.959 triple) | ✅ Si cancella e rigenera con `prune_owl.py`         |
+| File                         | Ruolo                                                                                                           | Cancellabile?                                        |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `videogames.owl`             | **Schema/TBox** — definisce classi, proprietà e assiomi. NON contiene dati.                                     | ❌ Mai cancellare                                    |
+| `videogames_wikidata.owl`    | **Dati/ABox completo** — schema + tutte le istanze (~1.427.081 triple)                                          | ✅ Si cancella e rigenera con `populate_wikidata.py` |
+| `videogames_pruned.owl`      | **Dati/ABox ottimizzato** — come sopra ma senza triple inutili (~1.173.959 triple, 2010–2026)                   | ✅ Si cancella e rigenera con `prune_owl.py`         |
+| `videogames_pruned_2020.owl` | **Dati/ABox demo** — solo giochi dal 2020 in poi (~745.400 triple, ~68.700 giochi). Usato nella demo su Render. | ✅ Si cancella e rigenera con `prune_years.py`       |
 
 ### Workflow di rigenerazione
 
@@ -28,8 +29,11 @@ cd ontology/
 # 1. Popolazione (~5 ore, richiede connessione internet)
 uv run python populate_wikidata.py
 
-# 2. Pruning (pochi minuti, rimuove triple inutili a runtime)
+# 2. Pruning predicati (pochi minuti, rimuove triple inutili a runtime)
 uv run python prune_owl.py
+
+# 3. Pruning temporale (per la demo, rimuove giochi 2010-2019)
+uv run python prune_years.py
 ```
 
 Lo script di popolazione:
@@ -39,7 +43,7 @@ Lo script di popolazione:
 3. Applica OWL-RL reasoning con `owlrl` (materializza proprietà inverse)
 4. Produce `videogames_wikidata.owl` (schema + dati, ~1.4M triple)
 
-Lo script di pruning:
+Lo script di pruning predicati (`prune_owl.py`):
 
 1. Carica `videogames_wikidata.owl`
 2. Rimuove triple `owl:sameAs` (tutte riflessive, A sameAs A)
@@ -47,7 +51,14 @@ Lo script di pruning:
 4. Rimuove `vg:officialWebsite` (non usato a runtime)
 5. Produce `videogames_pruned.owl` (~1.17M triple, -253k)
 
-Il backend carica a runtime `videogames_pruned.owl` (con fallback a `videogames_wikidata.owl` → `videogames.owl`).
+Lo script di pruning temporale (`prune_years.py`):
+
+1. Carica `videogames_pruned.owl`
+2. Rimuove tutti i giochi con `releaseDate` dal 2010 al 2019
+3. Rimuove le entità orfane (developer, publisher, ecc. non più collegati a nessun gioco)
+4. Produce `videogames_pruned_2020.owl` (~745k triple, -429k)
+
+Il backend (demo) carica a runtime `videogames_pruned_2020.owl` (con fallback a `videogames_wikidata.owl` → `videogames.owl`).
 
 ---
 
@@ -278,18 +289,19 @@ Questa architettura evita chiamate HTTP ripetitive mantenendo bassa la RAM.
 
 ## Statistiche (dopo popolazione + reasoning + pruning)
 
-| Metrica                    | Valore     |
-| -------------------------- | ---------- |
-| Giochi totali              | ~104.000   |
-| Triple totali (pruned)     | ~1.173.959 |
-| Triple totali (non pruned) | ~1.427.081 |
-| Developer                  | ~13.000    |
-| Publisher                  | ~7.000     |
-| Generi                     | ~350       |
-| Piattaforme                | ~180       |
-| Personaggi                 | ~7.000     |
-| Franchise                  | ~4.500     |
-| Awards                     | ~1.800     |
-| Game Engine                | ~500       |
-| RAM a runtime (pyoxigraph) | ~389 MB    |
-| Tempo di caricamento       | ~2.2s      |
+| Metrica                    | Completo (2010–2026) | Demo (2020–2026) |
+| -------------------------- | -------------------- | ---------------- |
+| Giochi totali              | ~104.000             | ~68.700          |
+| Triple totali              | ~1.173.959           | ~745.400         |
+| Developer                  | ~13.000              | ~12.000          |
+| Publisher                  | ~7.000               | ~5.500           |
+| Generi                     | ~350                 | ~200             |
+| Piattaforme                | ~180                 | ~180             |
+| Personaggi                 | ~7.000               | ~4.600           |
+| Franchise                  | ~4.500               | ~4.000           |
+| Awards                     | ~1.800               | ~1.670           |
+| Game Engine                | ~500                 | ~350             |
+| RAM a runtime (pyoxigraph) | ~389 MB              | ~250 MB          |
+| Tempo di caricamento       | ~2.2s                | ~1.5s            |
+
+> **Nota:** La demo live su Render usa il dataset 2020–2026 per rientrare nel limite RAM di 512 MB del piano gratuito. Il dataset completo è generabile localmente.
