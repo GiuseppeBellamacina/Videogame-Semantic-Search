@@ -191,6 +191,7 @@ export function KnowledgeGraph({
           node.imageUrl = cached;
           loadImage(cached, () => graphRef.current?.refresh());
         }
+        // cached empty string means "not found" — skip API
         return;
       }
 
@@ -205,8 +206,10 @@ export function KnowledgeGraph({
           labelImageUrlCache.set(node.label, result.imageUrl);
           node.imageUrl = result.imageUrl;
           loadImage(result.imageUrl, () => graphRef.current?.refresh());
+        } else {
+          // Mark as "tried, not found" so we don't retry in this session
+          labelImageUrlCache.set(node.label, "");
         }
-        // no imageUrl → don't cache, allow retry later
       } catch {
         // do not cache errors — allow retry next time
       } finally {

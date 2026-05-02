@@ -13,9 +13,11 @@ load_dotenv(Path(__file__).parent.parent / ".env")
 # Paths
 BASE_DIR = Path(__file__).parent.parent
 ONTOLOGY_DIR = BASE_DIR / "ontology"
-ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames_wikidata.owl"
+ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames_pruned.owl"
 
-# If populated file doesn't exist, fall back to base ontology
+# Fallback chain
+if not ONTOLOGY_FILE.exists():
+    ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames_wikidata.owl"
 if not ONTOLOGY_FILE.exists():
     ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames.owl"
 
