@@ -25,6 +25,30 @@ export default function App() {
     nodes: [],
     links: [],
   });
+  const [hiddenNodeIds, setHiddenNodeIds] = useState<Set<string>>(new Set());
+
+  const handleSearch = useCallback(
+    (query: string) => {
+      setExtraGraph({ nodes: [], links: [] });
+      setHiddenNodeIds(new Set());
+      setSelectedNode(null);
+      setHighlightNode(null);
+      search(query);
+    },
+    [search],
+  );
+
+  const handleRemoveNode = useCallback(
+    (uri: string) => {
+      setHiddenNodeIds((prev) => new Set([...prev, uri]));
+      setContextMenu(null);
+      if (selectedNode === uri) {
+        setSelectedNode(null);
+        setHighlightNode(null);
+      }
+    },
+    [selectedNode],
+  );
 
   const handleGraphExpand = useCallback((newGraph: GraphData) => {
     const taggedNodes = newGraph.nodes.map((n) =>
@@ -94,11 +118,17 @@ export default function App() {
       const key = `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`;
       return !existingLinkKeys.has(key);
     });
-    return {
-      nodes: [...graphData.nodes, ...addedNodes],
-      links: [...graphData.links, ...addedLinks],
-    };
-  }, [graphData, extraGraph]);
+    const allNodes = [...graphData.nodes, ...addedNodes].filter(
+      (n) => !hiddenNodeIds.has(n.id),
+    );
+    const visibleIds = new Set(allNodes.map((n) => n.id));
+    const allLinks = [...graphData.links, ...addedLinks].filter((l) => {
+      const src = typeof l.source === "string" ? l.source : l.source.id;
+      const tgt = typeof l.target === "string" ? l.target : l.target.id;
+      return visibleIds.has(src) && visibleIds.has(tgt);
+    });
+    return { nodes: allNodes, links: allLinks };
+  }, [graphData, extraGraph, hiddenNodeIds]);
 
   const graphNodeIds = useMemo(
     () => new Set(mergedGraph.nodes.map((n) => n.id)),
@@ -152,7 +182,11 @@ export default function App() {
               />
             </div>
           </div>
-          <SearchBar onSearch={search} onCancel={cancel} loading={loading} />
+          <SearchBar
+            onSearch={handleSearch}
+            onCancel={cancel}
+            loading={loading}
+          />
         </div>
       </header>
 
@@ -281,6 +315,7 @@ export default function App() {
           graphNodeIds={graphNodeIds}
           onNavigate={handleNodeClick}
           onGraphExpand={handleGraphExpand}
+          onRemoveNode={handleRemoveNode}
           onClose={() => setContextMenu(null)}
         />
       )}

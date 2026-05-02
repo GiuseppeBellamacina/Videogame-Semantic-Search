@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { X, Loader2, ArrowRight, ArrowLeft, GitFork } from "lucide-react";
+import {
+  X,
+  Loader2,
+  Trash2,
+  ArrowRight,
+  ArrowLeft,
+  GitFork,
+} from "lucide-react";
 import { getNodeDetails } from "@/lib/api";
 import type { GraphNode, GraphData, NodeDetails } from "@/types";
 
@@ -24,6 +31,7 @@ interface NodeContextMenuProps {
   graphNodeIds: Set<string>;
   onNavigate: (uri: string) => void;
   onGraphExpand: (graph: GraphData) => void;
+  onRemoveNode: (uri: string) => void;
   onClose: () => void;
 }
 
@@ -45,6 +53,7 @@ export function NodeContextMenu({
   graphNodeIds,
   onNavigate,
   onGraphExpand,
+  onRemoveNode,
   onClose,
 }: NodeContextMenuProps) {
   const [details, setDetails] = useState<NodeDetails | null>(null);
@@ -209,16 +218,24 @@ export function NodeContextMenu({
         </button>
       </div>
 
-      {/* Open in sidebar */}
-      <div className="px-4 py-2 border-b border-gray-800">
+      {/* Open in sidebar + Remove */}
+      <div className="px-4 py-2 border-b border-gray-800 flex items-center justify-between">
         <button
           onClick={() => {
             onNavigate(node.id);
             onClose();
           }}
-          className="w-full text-xs text-indigo-400 hover:text-indigo-300 text-left transition-colors"
+          className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
         >
           Apri nella sidebar →
+        </button>
+        <button
+          onClick={() => onRemoveNode(node.id)}
+          title="Rimuovi dal grafo"
+          className="flex items-center gap-1 text-xs text-red-500 hover:text-red-400 transition-colors"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          Rimuovi
         </button>
       </div>
 

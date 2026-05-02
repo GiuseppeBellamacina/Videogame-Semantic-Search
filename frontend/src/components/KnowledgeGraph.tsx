@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect, useState } from "react";
+import { useRef, useCallback, useEffect, useState, useMemo } from "react";
 import ForceGraph2D from "react-force-graph-2d";
 import { Crosshair } from "lucide-react";
 import type { GraphData, GraphNode } from "@/types";
@@ -61,8 +61,44 @@ export function KnowledgeGraph({
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
-  // Throttle zoom-triggered fetches: don't re-fetch more than once per 800ms
   const lastZoomFetchRef = useRef<number>(0);
+
+  // Types present in the current data
+  const availableTypes = useMemo(
+    () =>
+      [...new Set(data.nodes.map((n) => n.type))].filter(
+        (t) => t !== "Unknown",
+      ),
+    [data.nodes],
+  );
+
+  // Hidden types — start with all visible
+  const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
+
+  const toggleType = useCallback((type: string) => {
+    setHiddenTypes((prev) => {
+      const next = new Set(prev);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
+    });
+  }, []);
+
+  // Filtered graph: exclude nodes of hidden types and links touching them
+  const filteredData = useMemo<GraphData>(() => {
+    if (hiddenTypes.size === 0) return data;
+    const visibleIds = new Set(
+      data.nodes.filter((n) => !hiddenTypes.has(n.type)).map((n) => n.id),
+    );
+    return {
+      nodes: data.nodes.filter((n) => visibleIds.has(n.id)),
+      links: data.links.filter((l) => {
+        const src = typeof l.source === "string" ? l.source : l.source.id;
+        const tgt = typeof l.target === "string" ? l.target : l.target.id;
+        return visibleIds.has(src) && visibleIds.has(tgt);
+      }),
+    };
+  }, [data, hiddenTypes]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -129,9 +165,13 @@ export function KnowledgeGraph({
     });
   }, []);
 
-  // Zoom to fit when data changes
+  // Zoom to fit only when a new query result arrives (nodes go from 0 to >0)
+  const prevNodeCountRef = useRef(0);
   useEffect(() => {
-    if (graphRef.current && data.nodes.length > 0) {
+    const prev = prevNodeCountRef.current;
+    const curr = data.nodes.length;
+    prevNodeCountRef.current = curr;
+    if (graphRef.current && prev === 0 && curr > 0) {
       setTimeout(() => {
         graphRef.current?.zoomToFit(400, 60);
       }, 500);
@@ -415,33 +455,47 @@ export function KnowledgeGraph({
 
   return (
     <div ref={containerRef} className="h-full w-full relative overflow-hidden">
-      {/* Legend */}
+      {/* Legend + type filter */}
       <div className="absolute top-3 left-3 z-10 bg-gray-900/90 backdrop-blur-sm border border-gray-700 rounded-lg p-3">
         <div className="grid grid-cols-2 gap-x-4 gap-y-1">
           {Object.entries(NODE_COLORS)
-            .filter(([k]) => k !== "Unknown")
-            .map(([type, color]) => (
-              <div key={type} className="flex items-center gap-1.5">
-                {type === "VideoGame" ? (
-                  <div
-                    className="w-2 h-3.5 rounded-sm flex-shrink-0"
-                    style={{ backgroundColor: color }}
-                  />
-                ) : (
-                  <div
-                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: color }}
-                  />
-                )}
-                <span className="text-[10px] text-gray-400">{type}</span>
-              </div>
-            ))}
+            .filter(([k]) => k !== "Unknown" && availableTypes.includes(k))
+            .map(([type, color]) => {
+              const hidden = hiddenTypes.has(type);
+              return (
+                <button
+                  key={type}
+                  onClick={() => toggleType(type)}
+                  className={`flex items-center gap-1.5 text-left transition-opacity ${
+                    hidden ? "opacity-35" : "opacity-100"
+                  }`}
+                  title={hidden ? `Mostra ${type}` : `Nascondi ${type}`}
+                >
+                  {type === "VideoGame" ? (
+                    <div
+                      className="w-2 h-3.5 rounded-sm flex-shrink-0"
+                      style={{ backgroundColor: hidden ? "#4b5563" : color }}
+                    />
+                  ) : (
+                    <div
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: hidden ? "#4b5563" : color }}
+                    />
+                  )}
+                  <span
+                    className={`text-[10px] ${hidden ? "text-gray-600" : "text-gray-400"}`}
+                  >
+                    {type}
+                  </span>
+                </button>
+              );
+            })}
         </div>
       </div>
 
       <ForceGraph2D
         ref={graphRef}
-        graphData={data}
+        graphData={filteredData}
         width={dimensions.width}
         height={dimensions.height}
         backgroundColor="#030712"
@@ -497,7 +551,8 @@ export function KnowledgeGraph({
         </button>
         <div className="bg-gray-900/90 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-1.5">
           <span className="text-xs text-gray-400">
-            {data.nodes.length} nodi · {data.links.length} relazioni
+            {filteredData.nodes.length} nodi · {filteredData.links.length}{" "}
+            relazioni
           </span>
         </div>
       </div>
