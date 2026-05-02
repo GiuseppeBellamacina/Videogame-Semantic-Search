@@ -27,13 +27,9 @@ export default function App() {
   });
 
   const handleGraphExpand = useCallback((newGraph: GraphData) => {
-    // Mark autoFetchImage only if the incoming batch is small (≤ 20 nodes)
-    const batchIsSmall = newGraph.nodes.length <= 20;
-    const taggedNodes = batchIsSmall
-      ? newGraph.nodes.map((n) =>
-          n.type === "VideoGame" ? { ...n, autoFetchImage: true } : n,
-        )
-      : newGraph.nodes;
+    const taggedNodes = newGraph.nodes.map((n) =>
+      n.type === "VideoGame" ? { ...n, autoFetchImage: true } : n,
+    );
 
     setExtraGraph((prev) => {
       const existingNodeIds = new Set(prev.nodes.map((n) => n.id));
@@ -75,9 +71,6 @@ export default function App() {
 
   const graphData: GraphData = useMemo(() => {
     const raw = data?.graph || { nodes: [], links: [] };
-    // Mark autoFetchImage only if the query returned ≤ 20 VideoGame nodes
-    const gameNodes = raw.nodes.filter((n) => n.type === "VideoGame");
-    if (gameNodes.length > 20) return raw;
     return {
       ...raw,
       nodes: raw.nodes.map((n) =>
@@ -185,7 +178,7 @@ export default function App() {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 flex overflow-hidden">
+      <main className="flex-1 flex overflow-hidden min-h-0">
         {/* Results panel */}
         <div
           className={`${
@@ -252,9 +245,9 @@ export default function App() {
         <div
           className={`${
             mobileTab === "graph" ? "flex" : "hidden"
-          } md:flex flex-1 relative bg-gray-950 w-full`}
+          } md:flex flex-1 relative bg-gray-950 w-full h-full min-h-0`}
         >
-          <div className="flex-1 h-full w-full">
+          <div className="flex-1 h-full w-full min-h-0">
             <KnowledgeGraph
               data={mergedGraph}
               onNodeClick={handleNodeClick}

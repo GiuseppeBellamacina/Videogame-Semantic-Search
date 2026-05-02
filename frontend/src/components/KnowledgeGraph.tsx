@@ -337,7 +337,10 @@ export function KnowledgeGraph({
 
   if (!data.nodes.length) {
     return (
-      <div className="h-full flex items-center justify-center text-gray-600">
+      <div
+        ref={containerRef}
+        className="h-full w-full relative overflow-hidden flex items-center justify-center text-gray-600"
+      >
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
             <svg

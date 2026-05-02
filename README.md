@@ -10,7 +10,7 @@ Un progetto di Semantic Web che costruisce e interroga un'ontologia OWL sui vide
 | ---------------------- | --------------- |
 | Periodo coperto        | 2010 – 2026     |
 | Triple totali (grezzo) | ~1.019.589      |
-| Triple dopo reasoning  | **~1.801.977**  |
+| Triple dopo reasoning  | **~1.427.081**  |
 | Entità deduplicate     | 4.420 rimosse   |
 | Fonte                  | Wikidata SPARQL |
 
@@ -41,7 +41,7 @@ L'ontologia viene generata in circa **5 ore** di computazione (query per anno ×
                                │
 ┌──────────────────────────────▼──────────────────────────────────┐
 │  Ontologia (videogames_wikidata.owl)                            │
-│  Dati da: Wikidata · ~1.8M triple dopo OWL-RL reasoning         │
+│  Dati da: Wikidata · ~1.4M triple dopo OWL-RL reasoning         │
 │  Classi: VideoGame, Developer, Publisher, Genre, Platform,      │
 │          Character, Franchise, Award, GameEngine                │
 └─────────────────────────────────────────────────────────────────┘
@@ -167,7 +167,7 @@ Scrivi domande come:
 
 1. **Query per anno × mese** (2010–2026) verso Wikidata per 12 tipologie di dati (core, generi, piattaforme, personaggi, franchise, game mode, Metacritic, engine, paese, sito web, premi, descrizioni)
 2. **Deduplicazione** degli URI con stesso nome (normalizzato): 4.420 entità duplicate rimosse
-3. **OWL-RL reasoning** con `owlrl`: materializzazione di proprietà inverse e catene subPropertyOf → da ~1M a ~1.8M triple
+3. **OWL-RL reasoning** con `owlrl`: materializzazione di proprietà inverse e catene subPropertyOf → da ~1M a ~1.4M triple
 
 ### Fonti dati
 

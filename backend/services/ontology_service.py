@@ -8,6 +8,7 @@ from typing import Optional
 from rdflib import Graph, Namespace
 
 from backend.config import ONTOLOGY_FILE, ONTOLOGY_NS
+from backend.services.image_cache import get_label, get_type, set_label, set_type
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +20,6 @@ class OntologyService:
 
     _graph: Optional[Graph] = None
     _triple_count: int = 0
-    _label_cache: dict[str, str] = {}
-    _type_cache: dict[str, str] = {}
 
     @classmethod
     def load(cls):
@@ -182,8 +181,9 @@ class OntologyService:
     @classmethod
     def _get_node_label(cls, uri: str) -> str:
         """Get the best label for a node URI."""
-        if uri in cls._label_cache:
-            return cls._label_cache[uri]
+        cached = get_label(uri)
+        if cached is not None:
+            return cached
 
         from rdflib import URIRef
 
@@ -203,19 +203,20 @@ class OntologyService:
             VG.engineName,
         ]:
             for _, _, o in g.triples((node, name_prop, None)):
-                cls._label_cache[uri] = str(o)
+                set_label(uri, str(o))
                 return str(o)
 
         # Fallback: extract from URI
         label = cls._get_local_name(uri)
-        cls._label_cache[uri] = label
+        set_label(uri, label)
         return label
 
     @classmethod
     def _get_node_type(cls, uri: str) -> str:
         """Get the type of a node."""
-        if uri in cls._type_cache:
-            return cls._type_cache[uri]
+        cached = get_type(uri)
+        if cached is not None:
+            return cached
 
         from rdflib import RDF, URIRef
 
@@ -236,10 +237,10 @@ class OntologyService:
                 continue
             if "owl" in str(o) or "rdf-schema" in str(o):
                 continue
-            cls._type_cache[uri] = local
+            set_type(uri, local)
             return local
 
-        cls._type_cache[uri] = "Unknown"
+        set_type(uri, "Unknown")
         return "Unknown"
 
     @classmethod

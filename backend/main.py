@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
     """Load ontology and initialise cache on startup; close cache on shutdown."""
     logging.basicConfig(level=logging.INFO)
     OntologyService.load()
-    query.init_cache()
+    await query.init_cache()
     yield
     query.close_cache()
 

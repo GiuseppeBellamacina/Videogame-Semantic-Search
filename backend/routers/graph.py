@@ -10,6 +10,7 @@ import httpx
 from fastapi import APIRouter, HTTPException
 
 from backend.services.graph_builder import build_graph_from_node
+from backend.services.image_cache import get_image, set_image
 from backend.services.ontology_service import OntologyService
 
 logger = logging.getLogger(__name__)
@@ -45,8 +46,7 @@ async def get_node_details(uri: str):
         )
 
 
-# In-memory cache: game name (lowercased) → {imageUrl, source} or None entry
-_image_cache: dict[str, dict] = {}
+# In-memory cache kept for backward compatibility (image_cache.py is the source of truth)
 
 
 @router.get("/image-search")
@@ -54,7 +54,7 @@ async def search_game_image(name: str):
     """
     Image search via Wikipedia REST summary API.
     Tries the exact title first, then with '(video game)' suffix.
-    Results are cached in memory for the lifetime of the process.
+    Results are stored in Upstash Redis (cloud) with local in-memory fallback.
     """
     if not name.strip():
         raise HTTPException(status_code=400, detail="Name cannot be empty")
@@ -63,11 +63,13 @@ async def search_game_image(name: str):
     if re.fullmatch(r"Q\d+", name.strip()):
         return {"imageUrl": None, "source": None}
 
-    cache_key = name.strip().lower()
-    if cache_key in _image_cache:
+    # 1. Check cache (Redis → local)
+    cached = await get_image(name)
+    if cached is not None:
         logger.debug(f"[IMG] Cache hit for '{name}'")
-        return _image_cache[cache_key]
+        return cached
 
+    # 2. Fetch from Wikipedia
     headers = {
         "User-Agent": "VideogameSemanticSearch/1.0 (https://github.com/GiuseppeBellamacina/Videogame-Semantic-Search; educational project)"
     }
@@ -84,12 +86,12 @@ async def search_game_image(name: str):
                     if thumb:
                         logger.info(f"[IMG] Found for '{name}': {thumb}")
                         result = {"imageUrl": thumb, "source": "wikipedia"}
-                        _image_cache[cache_key] = result
+                        await set_image(name, result)
                         return result
 
         logger.info(f"[IMG] Not found for '{name}'")
         result = {"imageUrl": None, "source": None}
-        _image_cache[cache_key] = result
+        await set_image(name, result)
         return result
 
     except Exception as e:
