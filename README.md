@@ -11,10 +11,11 @@ Un progetto di Semantic Web che costruisce e interroga un'ontologia OWL sui vide
 | Periodo coperto        | 2010 – 2026     |
 | Triple totali (grezzo) | ~1.019.589      |
 | Triple dopo reasoning  | **~1.427.081**  |
+| Triple dopo pruning    | **~1.173.959**  |
 | Entità deduplicate     | 4.420 rimosse   |
 | Fonte                  | Wikidata SPARQL |
 
-L'ontologia viene generata in circa **5 ore** di computazione (query per anno × mese per evitare i timeout di Wikidata), poi viene applicata la chiusura deduttiva OWL-RL tramite `owlrl` per materializzare le proprietà inverse e le catene `subPropertyOf`.
+L'ontologia viene generata in circa **5 ore** di computazione (query per anno × mese per evitare i timeout di Wikidata), poi viene applicata la chiusura deduttiva OWL-RL tramite `owlrl` per materializzare le proprietà inverse e le catene `subPropertyOf`. Infine viene eseguito un pruning che rimuove triple non utilizzate (owl:sameAs riflessivi, gameDescription, officialWebsite) per ridurre il consumo di memoria a runtime.
 
 ## Architettura
 
@@ -35,13 +36,17 @@ L'ontologia viene generata in circa **5 ore** di computazione (query per anno ×
 │  └────────────────────────────────────────────────────────────┘ │
 │  ┌─────────────────────┐  ┌───────────────────────────────────┐ │
 │  │   OntologyService   │  │          GraphBuilder             │ │
-│  │   (rdflib Graph)    │  │    (nodi + archi per frontend)    │ │
+│  │    (pyoxigraph)     │  │    (nodi + archi per frontend)    │ │
+│  └─────────────────────┘  └───────────────────────────────────┘ │
+│  ┌─────────────────────┐  ┌───────────────────────────────────┐ │
+│  │  Upstash Redis      │  │     Wikipedia Image API           │ │
+│  │  (cache asincrona)  │  │     (fallback cover art)          │ │
 │  └─────────────────────┘  └───────────────────────────────────┘ │
 └──────────────────────────────┬──────────────────────────────────┘
                                │
 ┌──────────────────────────────▼──────────────────────────────────┐
-│  Ontologia (videogames_wikidata.owl)                            │
-│  Dati da: Wikidata · ~1.4M triple dopo OWL-RL reasoning         │
+│  Ontologia (videogames_pruned.owl)                              │
+│  Store: pyoxigraph (Rust) · ~1.17M triple · ~389 MB RAM         │
 │  Classi: VideoGame, Developer, Publisher, Genre, Platform,      │
 │          Character, Franchise, Award, GameEngine                │
 └─────────────────────────────────────────────────────────────────┘
@@ -51,8 +56,9 @@ L'ontologia viene generata in circa **5 ore** di computazione (query per anno ×
 
 - Python 3.12+ (gestito da uv)
 - [uv](https://docs.astral.sh/uv/) (package manager Python)
-- Node.js 18+
+- Node.js 18+ / [Bun](https://bun.sh)
 - Chiave API OpenAI (per GPT-4.1 mini)
+- Upstash Redis (opzionale, per cache immagini)
 
 ## Setup
 
@@ -77,27 +83,37 @@ uv run python populate_wikidata.py
 
 > **Attenzione**: la popolazione richiede circa **5 ore** (query per anno × mese verso Wikidata + OWL-RL reasoning finale). Richiede connessione internet. Il file risultante `videogames_wikidata.owl` non è incluso nel repository per via delle dimensioni.
 
-### 4. Configura variabili d'ambiente
+### 4. Pruna l'ontologia (opzionale, consigliato)
 
-Crea un file `.env` nella root del progetto (vedi `.env.example`):
+```bash
+uv run python ontology/prune_owl.py
+```
+
+Genera `videogames_pruned.owl` rimuovendo ~253k triple inutili a runtime (sameAs riflessivi, descrizioni, siti web). Riduce la RAM da ~1.5 GB a ~389 MB.
+
+### 5. Configura variabili d'ambiente
+
+Crea un file `.env` nella root del progetto:
 
 ```env
 OPENAI_API_KEY=sk-your-api-key-here
 OPENAI_MODEL=gpt-4.1-mini
+UPSTASH_REDIS_REST_URL=https://...   # opzionale
+UPSTASH_REDIS_REST_TOKEN=...         # opzionale
 ```
 
-### 5. Avvia il backend
+### 6. Avvia il backend
 
 ```bash
 uv run uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 6. Frontend
+### 7. Frontend
 
 ```bash
 cd frontend
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 L'app sarà disponibile su [http://localhost:5173](http://localhost:5173)
@@ -116,11 +132,15 @@ Scrivi domande come:
 ### Grafo di conoscenza interattivo
 
 - **Nodi colorati** per tipo (gioco, developer, genere, etc.)
+- **VideoGame come rettangoli portrait** con immagine di copertina o emoji placeholder
 - **Animazione physics-based** con forze e repulsione
 - **Click su nodo** → pannello dettaglio con tutte le proprietà e relazioni
-- **Hover** → evidenzia connessioni dirette
+- **Click destro** → menu contestuale per espandere il grafo o rimuovere nodi
+- **Filtro per tipo** nella legenda — click per nascondere/mostrare categorie
+- **Hover** → evidenzia connessioni dirette (nodo in primo piano con z-order)
 - **Zoom/pan** per esplorare il grafo
-- **Legenda** con colori per tipo di entità
+- **Recentra** button per zoom-to-fit
+- **Sidebar** → click su relazione espande il nodo nel grafo
 
 ### Agente SPARQL intelligente
 
@@ -128,6 +148,12 @@ Scrivi domande come:
 - **Validazione sintattica** prima dell'esecuzione
 - **Retry automatico** (max 3 tentativi) su errore o risultati vuoti
 - Mostra la query SPARQL generata (espandibile)
+
+### Cache a due livelli
+
+- **Upstash Redis** (cloud, persistente, TTL 7 giorni) per immagini e risultati query
+- **In-memory** (Python dict) per label e tipi derivati dal grafo RDF
+- Risultati null non vengono cachati (permettono retry su Wikipedia)
 
 ## Ontologia
 
@@ -160,14 +186,13 @@ Scrivi domande come:
 | `releaseDate`     | VideoGame | xsd:date    |
 | `metacriticScore` | VideoGame | xsd:integer |
 | `countryOfOrigin` | VideoGame | xsd:string  |
-| `officialWebsite` | VideoGame | xsd:anyURI  |
-| `gameDescription` | VideoGame | xsd:string  |
 
 ### Processo di popolamento
 
 1. **Query per anno × mese** (2010–2026) verso Wikidata per 12 tipologie di dati (core, generi, piattaforme, personaggi, franchise, game mode, Metacritic, engine, paese, sito web, premi, descrizioni)
 2. **Deduplicazione** degli URI con stesso nome (normalizzato): 4.420 entità duplicate rimosse
 3. **OWL-RL reasoning** con `owlrl`: materializzazione di proprietà inverse e catene subPropertyOf → da ~1M a ~1.4M triple
+4. **Pruning** (opzionale): rimozione di `owl:sameAs` (tutti riflessivi), `gameDescription`, `officialWebsite` → da ~1.4M a ~1.17M triple
 
 ### Fonti dati
 
@@ -179,17 +204,28 @@ Scrivi domande come:
 | --------- | ---------------------------------------- |
 | Frontend  | React 18, TypeScript, Vite, Tailwind CSS |
 | Grafo     | react-force-graph-2d                     |
-| Backend   | FastAPI, Python 3.12+                    |
-| Ontologia | rdflib, OWL 2, owlrl                     |
+| Backend   | FastAPI, Python 3.12+, async             |
+| Ontologia | pyoxigraph (Rust), OWL 2, owlrl          |
 | LLM       | OpenAI GPT-4.1 mini                      |
+| Cache     | Upstash Redis (async) + in-memory        |
 | Dati      | Wikidata SPARQL                          |
 | Deploy    | Render (backend) + Vercel (frontend)     |
 
 ## API Endpoints
 
-| Metodo | Endpoint          | Descrizione                    |
-| ------ | ----------------- | ------------------------------ |
-| POST   | `/api/query`      | Ricerca NL → risultati + grafo |
-| GET    | `/api/node/{uri}` | Dettaglio nodo + sottografo    |
-| GET    | `/api/stats`      | Statistiche ontologia          |
-| GET    | `/api/health`     | Health check                   |
+| Metodo | Endpoint            | Descrizione                    |
+| ------ | ------------------- | ------------------------------ |
+| POST   | `/api/query`        | Ricerca NL → risultati + grafo |
+| GET    | `/api/node/{uri}`   | Dettaglio nodo + sottografo    |
+| GET    | `/api/image-search` | Cerca cover art da Wikipedia   |
+| GET    | `/api/stats`        | Statistiche ontologia          |
+| GET    | `/api/health`       | Health check                   |
+
+## Performance
+
+| Metrica              | rdflib (prima) | pyoxigraph (dopo) |
+| -------------------- | -------------- | ----------------- |
+| RAM a runtime        | ~1.550 MB      | ~389 MB           |
+| Tempo di caricamento | ~41s           | ~2.2s             |
+| Query SPARQL tipica  | 1–23s          | 0.08–0.37s        |
+| Speedup query        | —              | 5–62×             |

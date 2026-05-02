@@ -1,44 +1,47 @@
 """
-Service for loading and querying the RDF ontology using rdflib.
+Service for loading and querying the RDF ontology using pyoxigraph (Rust-based, memory-efficient).
 """
 
 import logging
 from typing import Optional
 
-from rdflib import Graph, Namespace
+import pyoxigraph as ox
 
 from backend.config import ONTOLOGY_FILE, ONTOLOGY_NS
 from backend.services.image_cache import get_label, get_type, set_label, set_type
 
 logger = logging.getLogger(__name__)
 
-VG = Namespace(ONTOLOGY_NS)
+VG_NS = ONTOLOGY_NS
+RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 
 
 class OntologyService:
-    """Singleton service that holds the loaded RDF graph."""
+    """Singleton service that holds the loaded RDF graph using pyoxigraph."""
 
-    _graph: Optional[Graph] = None
+    _store: Optional[ox.Store] = None
     _triple_count: int = 0
 
     @classmethod
     def load(cls):
-        """Load the ontology file into an rdflib Graph."""
-        cls._graph = Graph()
-        cls._graph.bind("vg", VG)
+        """Load the ontology file into a pyoxigraph Store."""
+        cls._store = ox.Store()
 
         logger.info(f"Loading ontology from {ONTOLOGY_FILE}")
-        cls._graph.parse(str(ONTOLOGY_FILE))
-        cls._triple_count = len(cls._graph)
+        cls._store.load(
+            ONTOLOGY_FILE.read_bytes(),
+            ox.RdfFormat.RDF_XML,
+        )
+        cls._triple_count = len(cls._store)
         logger.info(f"Ontology loaded: {cls._triple_count} triples")
 
     @classmethod
-    def get_graph(cls) -> Graph:
-        """Return the loaded graph."""
-        if cls._graph is None:
+    def get_store(cls) -> ox.Store:
+        """Return the loaded store."""
+        if cls._store is None:
             cls.load()
-        assert cls._graph is not None
-        return cls._graph
+        assert cls._store is not None
+        return cls._store
 
     @classmethod
     def execute_sparql(cls, query: str) -> list[dict]:
@@ -46,17 +49,22 @@ class OntologyService:
         Execute a SPARQL query on the local ontology and return results
         as a list of dicts. Deduplicates rows with identical values.
         """
-        g = cls.get_graph()
-        results = g.query(query)
+        store = cls.get_store()
+        results = store.query(query)
 
+        variables = [v.value for v in results.variables]
         rows = []
         seen = set()
-        for row in results:
+        for solution in results:
             row_dict = {}
-            for var in results.vars or []:
-                val = getattr(row, str(var), None)
-                row_dict[str(var)] = str(val) if val is not None else None
-            # Deduplicate based on frozen dict contents
+            for var_name in variables:
+                val = solution[var_name]
+                if val is not None:
+                    row_dict[var_name] = (
+                        val.value if hasattr(val, "value") else str(val)
+                    )
+                else:
+                    row_dict[var_name] = None
             row_key = tuple(sorted(row_dict.items()))
             if row_key not in seen:
                 seen.add(row_key)
@@ -70,16 +78,13 @@ class OntologyService:
         Get all triples related to a specific URI (as subject or object).
         Returns properties and relations for a node detail panel.
         """
-        from rdflib import URIRef
-
-        g = cls.get_graph()
-        node = URIRef(uri)
+        store = cls.get_store()
+        node = ox.NamedNode(uri)
 
         properties = {}
         outgoing_relations = []
         incoming_relations = []
 
-        # Triples where this node is the subject
         _SKIP_PREDICATES = {
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
             "http://www.w3.org/2000/01/rdf-schema#label",
@@ -97,52 +102,55 @@ class OntologyService:
         seen_out: set[tuple] = set()
         seen_in: set[tuple] = set()
 
-        for s, p, o in g.triples((node, None, None)):
-            pred_label = cls._get_local_name(str(p))
-            if str(p) in _SKIP_PREDICATES or any(
-                str(p).startswith(ns) for ns in _SKIP_NS
+        for quad in store.quads_for_pattern(node, None, None):
+            p_str = quad.predicate.value
+            pred_label = cls._get_local_name(p_str)
+            if p_str in _SKIP_PREDICATES or any(
+                p_str.startswith(ns) for ns in _SKIP_NS
             ):
                 continue
-            from rdflib import Literal
 
-            if isinstance(o, Literal):
-                # Datatype property
-                properties[pred_label] = str(o)
-            elif str(o).startswith("http"):
-                target_type = cls._get_node_type(str(o))
-                target_label = cls._get_node_label(str(o))
-                key = (pred_label, str(o))
+            obj = quad.object
+            if isinstance(obj, ox.Literal):
+                properties[pred_label] = obj.value
+            elif isinstance(obj, ox.NamedNode) and obj.value.startswith("http"):
+                target_type = cls._get_node_type(obj.value)
+                target_label = cls._get_node_label(obj.value)
+                key = (pred_label, obj.value)
                 if key not in seen_out:
                     seen_out.add(key)
                     outgoing_relations.append(
                         {
                             "predicate": pred_label,
-                            "target_uri": str(o),
+                            "target_uri": obj.value,
                             "target_label": target_label,
                             "target_type": target_type,
                         }
                     )
 
         # Triples where this node is the object
-        for s, p, o in g.triples((None, None, node)):
-            pred_label = cls._get_local_name(str(p))
-            if str(p) in _SKIP_PREDICATES or any(
-                str(p).startswith(ns) for ns in _SKIP_NS
+        for quad in store.quads_for_pattern(None, None, node):
+            p_str = quad.predicate.value
+            pred_label = cls._get_local_name(p_str)
+            if p_str in _SKIP_PREDICATES or any(
+                p_str.startswith(ns) for ns in _SKIP_NS
             ):
                 continue
-            source_type = cls._get_node_type(str(s))
-            source_label = cls._get_node_label(str(s))
-            key = (pred_label, str(s))
-            if key not in seen_in:
-                seen_in.add(key)
-                incoming_relations.append(
-                    {
-                        "predicate": pred_label,
-                        "source_uri": str(s),
-                        "source_label": source_label,
-                        "source_type": source_type,
-                    }
-                )
+            subj = quad.subject
+            if isinstance(subj, ox.NamedNode):
+                source_type = cls._get_node_type(subj.value)
+                source_label = cls._get_node_label(subj.value)
+                key = (pred_label, subj.value)
+                if key not in seen_in:
+                    seen_in.add(key)
+                    incoming_relations.append(
+                        {
+                            "predicate": pred_label,
+                            "source_uri": subj.value,
+                            "source_label": source_label,
+                            "source_type": source_type,
+                        }
+                    )
 
         return {
             "uri": uri,
@@ -156,24 +164,24 @@ class OntologyService:
     @classmethod
     def get_stats(cls) -> dict:
         """Return statistics about the ontology."""
-        g = cls.get_graph()
-        from rdflib import RDF
+        store = cls.get_store()
 
-        stats = {"total_triples": len(g)}
+        stats = {"total_triples": len(store)}
 
+        rdf_type = ox.NamedNode(RDF_TYPE)
         class_counts = {
-            "games": VG.VideoGame,
-            "developers": VG.Developer,
-            "publishers": VG.Publisher,
-            "genres": VG.Genre,
-            "platforms": VG.Platform,
-            "characters": VG.Character,
-            "franchises": VG.Franchise,
-            "awards": VG.Award,
+            "games": ox.NamedNode(VG_NS + "VideoGame"),
+            "developers": ox.NamedNode(VG_NS + "Developer"),
+            "publishers": ox.NamedNode(VG_NS + "Publisher"),
+            "genres": ox.NamedNode(VG_NS + "Genre"),
+            "platforms": ox.NamedNode(VG_NS + "Platform"),
+            "characters": ox.NamedNode(VG_NS + "Character"),
+            "franchises": ox.NamedNode(VG_NS + "Franchise"),
+            "awards": ox.NamedNode(VG_NS + "Award"),
         }
 
         for name, cls_uri in class_counts.items():
-            count = len(list(g.triples((None, RDF.type, cls_uri))))
+            count = sum(1 for _ in store.quads_for_pattern(None, rdf_type, cls_uri))
             stats[name] = count
 
         return stats
@@ -185,26 +193,31 @@ class OntologyService:
         if cached is not None:
             return cached
 
-        from rdflib import URIRef
-
-        g = cls.get_graph()
-        node = URIRef(uri)
+        store = cls.get_store()
+        node = ox.NamedNode(uri)
 
         # Try name properties
-        for name_prop in [
-            VG.gameName,
-            VG.developerName,
-            VG.publisherName,
-            VG.genreName,
-            VG.platformName,
-            VG.characterName,
-            VG.franchiseName,
-            VG.awardName,
-            VG.engineName,
-        ]:
-            for _, _, o in g.triples((node, name_prop, None)):
-                set_label(uri, str(o))
-                return str(o)
+        name_props = [
+            "gameName",
+            "developerName",
+            "publisherName",
+            "genreName",
+            "platformName",
+            "characterName",
+            "franchiseName",
+            "awardName",
+            "engineName",
+        ]
+        for prop_name in name_props:
+            prop = ox.NamedNode(VG_NS + prop_name)
+            for quad in store.quads_for_pattern(node, prop, None):
+                label = (
+                    quad.object.value
+                    if hasattr(quad.object, "value")
+                    else str(quad.object)
+                )
+                set_label(uri, label)
+                return label
 
         # Fallback: extract from URI
         label = cls._get_local_name(uri)
@@ -218,14 +231,15 @@ class OntologyService:
         if cached is not None:
             return cached
 
-        from rdflib import RDF, URIRef
+        store = cls.get_store()
+        node = ox.NamedNode(uri)
+        rdf_type = ox.NamedNode(RDF_TYPE)
 
-        g = cls.get_graph()
-        node = URIRef(uri)
-
-        for _, _, o in g.triples((node, RDF.type, None)):
-            local = cls._get_local_name(str(o))
-            # Skip OWL/RDF meta-types that are not meaningful for display
+        for quad in store.quads_for_pattern(node, rdf_type, None):
+            obj = quad.object
+            if not isinstance(obj, ox.NamedNode):
+                continue
+            local = cls._get_local_name(obj.value)
             if local in (
                 "Thing",
                 "Class",
@@ -235,7 +249,7 @@ class OntologyService:
                 "DatatypeProperty",
             ):
                 continue
-            if "owl" in str(o) or "rdf-schema" in str(o):
+            if "owl" in obj.value or "rdf-schema" in obj.value:
                 continue
             set_type(uri, local)
             return local
@@ -281,10 +295,8 @@ OBJECT PROPERTIES (domain → range):
 
 DATA PROPERTIES:
 - vg:gameName (VideoGame → xsd:string) — the name of the game
-- vg:gameDescription (VideoGame → xsd:string) — short description/abstract
 - vg:releaseDate (VideoGame → xsd:date) — format "YYYY-MM-DD"
 - vg:metacriticScore (VideoGame → xsd:integer) — 0-100
-- vg:officialWebsite (VideoGame → xsd:anyURI) — official game website
 - vg:countryOfOrigin (VideoGame → xsd:string) — country where the game was made
 - vg:developerName (Developer → xsd:string)
 - vg:publisherName (Publisher → xsd:string)

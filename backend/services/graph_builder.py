@@ -169,21 +169,29 @@ def build_graph_from_node(uri: str, ontology_service: Any) -> dict:
 
 def _find_relationship(uri_a: str, uri_b: str, ontology_service: Any) -> str | None:
     """Check if there's a direct relationship between two URIs in the graph."""
-    from rdflib import URIRef
+    import pyoxigraph as ox
 
-    g = ontology_service.get_graph()
-    node_a = URIRef(uri_a)
-    node_b = URIRef(uri_b)
+    store = ontology_service.get_store()
+    node_a = ox.NamedNode(uri_a)
+    node_b = ox.NamedNode(uri_b)
 
     # Check A -> B
-    for s, p, o in g.triples((node_a, None, node_b)):
-        local = str(p).split("#")[-1] if "#" in str(p) else str(p).split("/")[-1]
+    for quad in store.quads_for_pattern(node_a, None, node_b):
+        local = (
+            quad.predicate.value.split("#")[-1]
+            if "#" in quad.predicate.value
+            else quad.predicate.value.split("/")[-1]
+        )
         if local != "type":
             return local
 
     # Check B -> A
-    for s, p, o in g.triples((node_b, None, node_a)):
-        local = str(p).split("#")[-1] if "#" in str(p) else str(p).split("/")[-1]
+    for quad in store.quads_for_pattern(node_b, None, node_a):
+        local = (
+            quad.predicate.value.split("#")[-1]
+            if "#" in quad.predicate.value
+            else quad.predicate.value.split("/")[-1]
+        )
         if local != "type":
             return local
 
