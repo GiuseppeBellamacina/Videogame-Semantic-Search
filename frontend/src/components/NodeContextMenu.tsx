@@ -21,6 +21,7 @@ interface NodeContextMenuProps {
   x: number;
   y: number;
   maxResults: number;
+  graphNodeIds: Set<string>;
   onNavigate: (uri: string) => void;
   onGraphExpand: (graph: GraphData) => void;
   onClose: () => void;
@@ -41,6 +42,7 @@ export function NodeContextMenu({
   x,
   y,
   maxResults,
+  graphNodeIds,
   onNavigate,
   onGraphExpand,
   onClose,
@@ -95,23 +97,23 @@ export function NodeContextMenu({
   const shownOut = filter === "incoming" ? [] : outgoing;
   const shownIn = filter === "outgoing" ? [] : incoming;
 
-  // Count unique nodes that "expand all" would add
-  const expandAllCount = useMemo(() => {
+  // Count unique NEW nodes (not yet in graph) that "expand all" would add
+  const newAllCount = useMemo(() => {
     const uris = new Set<string>();
     for (const r of allOutgoing) uris.add(r.target_uri);
     for (const r of allIncoming) uris.add(r.source_uri);
     uris.delete(node.id);
-    return uris.size;
-  }, [allOutgoing, allIncoming, node.id]);
+    return [...uris].filter((u) => !graphNodeIds.has(u)).length;
+  }, [allOutgoing, allIncoming, node.id, graphNodeIds]);
 
-  // Count unique nodes visible in current filter view
-  const expandFilteredCount = useMemo(() => {
+  // Count unique NEW nodes visible in current filter view
+  const newFilteredCount = useMemo(() => {
     const uris = new Set<string>();
     if (filter !== "incoming") for (const r of outgoing) uris.add(r.target_uri);
     if (filter !== "outgoing") for (const r of incoming) uris.add(r.source_uri);
     uris.delete(node.id);
-    return uris.size;
-  }, [filter, outgoing, incoming, node.id]);
+    return [...uris].filter((u) => !graphNodeIds.has(u)).length;
+  }, [filter, outgoing, incoming, node.id, graphNodeIds]);
 
   function expandSingle(
     targetUri: string,
@@ -354,9 +356,9 @@ export function NodeContextMenu({
       </div>
 
       {/* Footer expand actions */}
-      {details && (expandFilteredCount > 0 || expandAllCount > 0) && (
+      {details && (newFilteredCount > 0 || newAllCount > 0) && (
         <div className="border-t border-gray-800 p-3 space-y-2">
-          {expandFilteredCount > 0 && (
+          {newFilteredCount > 0 && (
             <button
               onClick={expandFiltered}
               className="w-full flex items-center gap-2 px-3 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 text-xs rounded-lg transition-colors"
@@ -372,11 +374,11 @@ export function NodeContextMenu({
                 nel grafo
               </span>
               <span className="ml-auto font-semibold">
-                +{expandFilteredCount} nodi
+                +{newFilteredCount} nuovi
               </span>
             </button>
           )}
-          {expandAllCount > expandFilteredCount && (
+          {newAllCount > newFilteredCount && (
             <button
               onClick={expandAll}
               className="w-full flex items-center gap-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs rounded-lg transition-colors"
@@ -384,7 +386,7 @@ export function NodeContextMenu({
               <GitFork className="w-3.5 h-3.5 flex-shrink-0" />
               <span>Espandi tutti nel grafo</span>
               <span className="ml-auto font-semibold">
-                +{expandAllCount} nodi
+                +{newAllCount} nuovi
               </span>
             </button>
           )}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { X, Loader2, ExternalLink, ArrowRight, ArrowLeft } from "lucide-react";
-import type { NodeDetails, GraphData } from "@/types";
+import type { NodeDetails, GraphData, GraphNode } from "@/types";
 import { getNodeDetails } from "@/lib/api";
 
 interface NodeDetailProps {
@@ -8,6 +8,43 @@ interface NodeDetailProps {
   onClose: () => void;
   onNavigate: (uri: string) => void;
   onGraphExpand?: (graph: GraphData) => void;
+}
+
+const NODE_COLORS: Record<string, string> = {
+  VideoGame: "#6366f1",
+  Developer: "#f59e0b",
+  Publisher: "#10b981",
+  Genre: "#ef4444",
+  Platform: "#3b82f6",
+  Character: "#ec4899",
+  Franchise: "#8b5cf6",
+  Award: "#f97316",
+  GameEngine: "#14b8a6",
+  Unknown: "#6b7280",
+};
+
+const NODE_SIZES: Record<string, number> = {
+  VideoGame: 9,
+  Developer: 8,
+  Publisher: 8,
+  Genre: 6,
+  Platform: 6,
+  Character: 5,
+  Franchise: 10,
+  Award: 7,
+  GameEngine: 7,
+  Unknown: 5,
+};
+
+function makeNode(uri: string, label: string, type: string): GraphNode {
+  return {
+    id: uri,
+    label,
+    type,
+    color: NODE_COLORS[type] ?? NODE_COLORS.Unknown,
+    size: NODE_SIZES[type] ?? NODE_SIZES.Unknown,
+    autoFetchImage: type === "VideoGame",
+  };
 }
 
 const TYPE_BADGES: Record<string, string> = {
@@ -127,7 +164,31 @@ export function NodeDetail({
                   {details.outgoing_relations.map((rel, i) => (
                     <button
                       key={i}
-                      onClick={() => onNavigate(rel.target_uri)}
+                      onClick={() => {
+                        onNavigate(rel.target_uri);
+                        if (onGraphExpand && uri) {
+                          const currentNode = makeNode(
+                            uri,
+                            details.label,
+                            details.type,
+                          );
+                          const targetNode = makeNode(
+                            rel.target_uri,
+                            rel.target_label,
+                            rel.target_type,
+                          );
+                          onGraphExpand({
+                            nodes: [currentNode, targetNode],
+                            links: [
+                              {
+                                source: uri,
+                                target: rel.target_uri,
+                                label: rel.predicate,
+                              },
+                            ],
+                          });
+                        }
+                      }}
                       className="w-full flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 rounded-lg p-2.5 transition-colors text-left group"
                     >
                       <span className="text-xs text-gray-500 min-w-[80px]">
@@ -166,7 +227,31 @@ export function NodeDetail({
                   {details.incoming_relations.map((rel, i) => (
                     <button
                       key={i}
-                      onClick={() => onNavigate(rel.source_uri)}
+                      onClick={() => {
+                        onNavigate(rel.source_uri);
+                        if (onGraphExpand && uri) {
+                          const currentNode = makeNode(
+                            uri,
+                            details.label,
+                            details.type,
+                          );
+                          const sourceNode = makeNode(
+                            rel.source_uri,
+                            rel.source_label,
+                            rel.source_type,
+                          );
+                          onGraphExpand({
+                            nodes: [currentNode, sourceNode],
+                            links: [
+                              {
+                                source: rel.source_uri,
+                                target: uri,
+                                label: rel.predicate,
+                              },
+                            ],
+                          });
+                        }
+                      }}
                       className="w-full flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 rounded-lg p-2.5 transition-colors text-left group"
                     >
                       {rel.source_type &&

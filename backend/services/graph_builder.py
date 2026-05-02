@@ -20,7 +20,7 @@ NODE_COLORS = {
 }
 
 NODE_SIZES = {
-    "VideoGame": 12,
+    "VideoGame": 9,
     "Developer": 8,
     "Publisher": 8,
     "Genre": 6,

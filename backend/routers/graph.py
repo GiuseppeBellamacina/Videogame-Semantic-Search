@@ -90,9 +90,7 @@ async def search_game_image(name: str):
                         return result
 
         logger.info(f"[IMG] Not found for '{name}'")
-        result = {"imageUrl": None, "source": None}
-        await set_image(name, result)
-        return result
+        return {"imageUrl": None, "source": None}
 
     except Exception as e:
         logger.warning(f"[IMG] Error for '{name}': {e}")

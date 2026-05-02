@@ -100,6 +100,11 @@ export default function App() {
     };
   }, [graphData, extraGraph]);
 
+  const graphNodeIds = useMemo(
+    () => new Set(mergedGraph.nodes.map((n) => n.id)),
+    [mergedGraph],
+  );
+
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       {/* Header */}
@@ -273,6 +278,7 @@ export default function App() {
           x={contextMenu.x}
           y={contextMenu.y}
           maxResults={maxResults}
+          graphNodeIds={graphNodeIds}
           onNavigate={handleNodeClick}
           onGraphExpand={handleGraphExpand}
           onClose={() => setContextMenu(null)}

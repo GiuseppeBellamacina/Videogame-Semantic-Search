@@ -1,5 +1,6 @@
 import { useRef, useCallback, useEffect, useState } from "react";
 import ForceGraph2D from "react-force-graph-2d";
+import { Crosshair } from "lucide-react";
 import type { GraphData, GraphNode } from "@/types";
 import { searchGameImage } from "@/lib/api";
 
@@ -26,11 +27,8 @@ const NODE_COLORS: Record<string, string> = {
 // Image cache to avoid reloading (imageUrl → HTMLImageElement)
 const imageCache = new Map<string, HTMLImageElement | null>();
 
-// label → imageUrl (or null if not found) — persists across renders/searches
+// label → imageUrl (or null if tried+failed) — persists across renders/searches
 const labelImageUrlCache = new Map<string, string | null>();
-
-// Track failed URLs to avoid infinite retries
-const failedUrls = new Set<string>();
 
 // Track in-flight fetch requests to avoid duplicates
 const fetchingLabels = new Set<string>();
@@ -39,9 +37,7 @@ function loadImage(
   url: string,
   onLoaded?: () => void,
 ): HTMLImageElement | null {
-  if (imageCache.has(url)) return imageCache.get(url)!;
-  if (failedUrls.has(url)) return null;
-  // Mark as loading (null means loading/failed)
+  if (imageCache.has(url)) return imageCache.get(url) ?? null;
   imageCache.set(url, null);
   const img = new Image();
   img.onload = () => {
@@ -49,7 +45,6 @@ function loadImage(
     onLoaded?.();
   };
   img.onerror = () => {
-    failedUrls.add(url);
     imageCache.set(url, null);
   };
   img.src = url;
@@ -66,6 +61,8 @@ export function KnowledgeGraph({
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  // Throttle zoom-triggered fetches: don't re-fetch more than once per 800ms
+  const lastZoomFetchRef = useRef<number>(0);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -86,9 +83,9 @@ export function KnowledgeGraph({
   useEffect(() => {
     if (!graphRef.current) return;
     // Strong many-body repulsion for wide spreading
-    graphRef.current.d3Force("charge")?.strength(-400);
+    graphRef.current.d3Force("charge")?.strength(-600);
     // Longer link distance to spread connected nodes
-    graphRef.current.d3Force("link")?.distance(120);
+    graphRef.current.d3Force("link")?.distance(160);
     graphRef.current.d3Force("collision", {
       initialize(nodes: any[]) {
         this._nodes = nodes;
@@ -103,9 +100,18 @@ export function KnowledgeGraph({
             const dx = (b.x ?? 0) - (a.x ?? 0);
             const dy = (b.y ?? 0) - (a.y ?? 0);
             const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            const minDist = (a.size || 8) + (b.size || 8) + 30;
+            // Use half-diagonal of the bounding rect for VideoGame nodes
+            const halfA =
+              a.type === "VideoGame"
+                ? Math.sqrt((a.size * 2.8) ** 2 + (a.size * 4.0) ** 2) / 2
+                : a.size || 8;
+            const halfB =
+              b.type === "VideoGame"
+                ? Math.sqrt((b.size * 2.8) ** 2 + (b.size * 4.0) ** 2) / 2
+                : b.size || 8;
+            const minDist = halfA + halfB + 20;
             if (dist < minDist) {
-              const push = ((minDist - dist) / dist) * alpha * 0.8;
+              const push = ((minDist - dist) / dist) * alpha * 0.9;
               const fx = dx * push,
                 fy = dy * push;
               if (a.x !== undefined) {
@@ -133,47 +139,48 @@ export function KnowledgeGraph({
   }, [data]);
 
   // Fetch fallback images only for clicked/zoomed VideoGame nodes
-  const fetchImageForNode = useCallback(async (node: GraphNode) => {
-    if (node.type !== "VideoGame" || node.imageUrl) return;
+  // forceApi=true → hit the API if not cached; false → only apply what is already cached
+  const fetchImageForNode = useCallback(
+    async (node: GraphNode, forceApi = false) => {
+      if (node.type !== "VideoGame" || node.imageUrl) return;
 
-    // If we already know the URL (or that it failed), reuse it immediately
-    if (labelImageUrlCache.has(node.label)) {
-      const cached = labelImageUrlCache.get(node.label);
-      if (cached) {
-        node.imageUrl = cached;
-        loadImage(cached, () => graphRef.current?.refresh());
+      // Always check local cache first — no API call needed
+      if (labelImageUrlCache.has(node.label)) {
+        const cached = labelImageUrlCache.get(node.label);
+        if (cached) {
+          node.imageUrl = cached;
+          loadImage(cached, () => graphRef.current?.refresh());
+        }
+        return;
       }
-      return;
-    }
 
-    if (fetchingLabels.has(node.label)) return;
+      // Cache miss — only call the API when explicitly allowed
+      if (!forceApi) return;
+      if (fetchingLabels.has(node.label)) return;
 
-    fetchingLabels.add(node.label);
-    try {
-      const result = await searchGameImage(node.label);
-      if (result.imageUrl) {
-        labelImageUrlCache.set(node.label, result.imageUrl);
-        node.imageUrl = result.imageUrl;
-        loadImage(result.imageUrl, () => graphRef.current?.refresh());
-      } else {
-        labelImageUrlCache.set(node.label, null);
-        failedUrls.add(node.label);
+      fetchingLabels.add(node.label);
+      try {
+        const result = await searchGameImage(node.label);
+        if (result.imageUrl) {
+          labelImageUrlCache.set(node.label, result.imageUrl);
+          node.imageUrl = result.imageUrl;
+          loadImage(result.imageUrl, () => graphRef.current?.refresh());
+        }
+        // no imageUrl → don't cache, allow retry later
+      } catch {
+        // do not cache errors — allow retry next time
+      } finally {
+        fetchingLabels.delete(node.label);
       }
-    } catch {
-      labelImageUrlCache.set(node.label, null);
-      failedUrls.add(node.label);
-    } finally {
-      fetchingLabels.delete(node.label);
-    }
-  }, []);
+    },
+    [],
+  );
 
-  // Auto-fetch images only for nodes flagged with autoFetchImage
+  // For every VideoGame node: check cache immediately; call API only if autoFetchImage
   useEffect(() => {
-    const gameNodes = data.nodes.filter(
-      (n) => n.type === "VideoGame" && n.autoFetchImage,
-    );
+    const gameNodes = data.nodes.filter((n) => n.type === "VideoGame");
     for (const node of gameNodes) {
-      fetchImageForNode(node);
+      fetchImageForNode(node, node.autoFetchImage === true);
     }
   }, [data, fetchImageForNode]);
 
@@ -190,8 +197,8 @@ export function KnowledgeGraph({
   const handleNodeClick = useCallback(
     (node: any) => {
       onNodeClick(node.id);
-      // Fetch image on click
-      fetchImageForNode(node as GraphNode);
+      // Always force API on click
+      fetchImageForNode(node as GraphNode, true);
       // Center on clicked node
       if (graphRef.current) {
         graphRef.current.centerAt(node.x, node.y, 300);
@@ -204,18 +211,21 @@ export function KnowledgeGraph({
   // On zoom, fetch images for visible game nodes when zoomed in enough
   const handleZoom = useCallback(
     ({ k }: { k: number }) => {
-      if (k > 1.8) {
-        const gameNodes = data.nodes.filter(
-          (n) =>
-            n.type === "VideoGame" &&
-            !n.imageUrl &&
-            !fetchingLabels.has(n.label) &&
-            !failedUrls.has(n.label),
-        );
-        // Fetch up to 5 at a time on zoom
-        for (const node of gameNodes.slice(0, 5)) {
-          fetchImageForNode(node);
-        }
+      if (k <= 1.8) return;
+      const now = Date.now();
+      if (now - lastZoomFetchRef.current < 800) return;
+      lastZoomFetchRef.current = now;
+
+      const pending = data.nodes.filter(
+        (n) =>
+          n.type === "VideoGame" &&
+          !n.imageUrl &&
+          !labelImageUrlCache.has(n.label) &&
+          !fetchingLabels.has(n.label),
+      );
+      // Force API for up to 5 nodes per zoom burst
+      for (const node of pending.slice(0, 5)) {
+        fetchImageForNode(node, true);
       }
     },
     [data.nodes, fetchImageForNode],
@@ -229,6 +239,79 @@ export function KnowledgeGraph({
       const isHighlighted =
         node.id === highlightNode || node.id === hoveredNode;
       const fontSize = Math.max(10 / globalScale, 2);
+      const isGame = node.type === "VideoGame";
+
+      if (isGame) {
+        const w = size * 2.8;
+        const h = size * 4.0;
+        const r = size * 0.5;
+        const rx = node.x - w / 2;
+        const ry = node.y - h / 2;
+
+        // Glow
+        if (isHighlighted) {
+          ctx.beginPath();
+          ctx.roundRect(rx - 4, ry - 4, w + 8, h + 8, r + 2);
+          ctx.fillStyle = `${color}40`;
+          ctx.fill();
+        }
+
+        // Try to draw image
+        let imageDrawn = false;
+        if (node.imageUrl) {
+          const img = loadImage(node.imageUrl);
+          if (img && img.complete && img.naturalWidth > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.roundRect(rx, ry, w, h, r);
+            ctx.clip();
+            ctx.drawImage(img, rx, ry, w, h);
+            ctx.restore();
+            ctx.beginPath();
+            ctx.roundRect(rx, ry, w, h, r);
+            ctx.strokeStyle = isHighlighted ? "#ffffff" : color;
+            ctx.lineWidth = isHighlighted ? 2.5 : 1.5;
+            ctx.stroke();
+            imageDrawn = true;
+          }
+        }
+
+        if (!imageDrawn) {
+          // Solid rect with label centered inside
+          ctx.beginPath();
+          ctx.roundRect(rx, ry, w, h, r);
+          ctx.fillStyle = isHighlighted ? color : `${color}cc`;
+          ctx.fill();
+          ctx.strokeStyle = isHighlighted ? "#ffffff" : color;
+          ctx.lineWidth = isHighlighted ? 2 : 0.5;
+          ctx.stroke();
+
+          ctx.font = `${isHighlighted ? "bold " : ""}${fontSize}px Inter, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = isHighlighted ? "#ffffff" : "#e5e7eb";
+          const maxLen = 18;
+          const displayLabel =
+            label.length > maxLen ? label.slice(0, maxLen) + "…" : label;
+          ctx.fillText(displayLabel, node.x, node.y);
+          return;
+        }
+
+        // Label below image rect
+        if (globalScale > 0.7 || isHighlighted) {
+          ctx.font = `${isHighlighted ? "bold " : ""}${fontSize}px Inter, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillStyle = isHighlighted ? "#ffffff" : "#e5e7eb";
+          const maxLen = 20;
+          const displayLabel =
+            label.length > maxLen ? label.slice(0, maxLen) + "…" : label;
+          ctx.fillText(displayLabel, node.x, ry + h + 2);
+        }
+        return;
+      }
+
+      // ── Circular nodes for all other types ───────────────────────────────
 
       // Draw glow for highlighted nodes
       if (isHighlighted) {
@@ -238,47 +321,14 @@ export function KnowledgeGraph({
         ctx.fill();
       }
 
-      // Try to draw image for VideoGame nodes
-      let imageDrawn = false;
-      if (node.type === "VideoGame" && node.imageUrl) {
-        const img = loadImage(node.imageUrl);
-        if (img && img.complete && img.naturalWidth > 0) {
-          const imgSize = size * 2;
-          ctx.save();
-          // Clip to circle
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, size, 0, 2 * Math.PI);
-          ctx.clip();
-          ctx.drawImage(
-            img,
-            node.x - imgSize / 2,
-            node.y - imgSize / 2,
-            imgSize,
-            imgSize,
-          );
-          ctx.restore();
-          // Draw border around image
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, size, 0, 2 * Math.PI);
-          ctx.strokeStyle = isHighlighted ? "#ffffff" : color;
-          ctx.lineWidth = isHighlighted ? 2.5 : 1.5;
-          ctx.stroke();
-          imageDrawn = true;
-        }
-      }
-
-      if (!imageDrawn) {
-        // Draw node circle
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, size, 0, 2 * Math.PI);
-        ctx.fillStyle = isHighlighted ? color : `${color}cc`;
-        ctx.fill();
-
-        // Draw border
-        ctx.strokeStyle = isHighlighted ? "#ffffff" : `${color}`;
-        ctx.lineWidth = isHighlighted ? 2 : 0.5;
-        ctx.stroke();
-      }
+      // Draw node circle
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, size, 0, 2 * Math.PI);
+      ctx.fillStyle = isHighlighted ? color : `${color}cc`;
+      ctx.fill();
+      ctx.strokeStyle = isHighlighted ? "#ffffff" : `${color}`;
+      ctx.lineWidth = isHighlighted ? 2 : 0.5;
+      ctx.stroke();
 
       // Draw label
       if (globalScale > 0.7 || isHighlighted) {
@@ -286,8 +336,6 @@ export function KnowledgeGraph({
         ctx.textAlign = "center";
         ctx.textBaseline = "top";
         ctx.fillStyle = isHighlighted ? "#ffffff" : "#e5e7eb";
-
-        // Truncate label if too long
         const maxLen = 20;
         const displayLabel =
           label.length > maxLen ? label.slice(0, maxLen) + "…" : label;
@@ -374,10 +422,17 @@ export function KnowledgeGraph({
             .filter(([k]) => k !== "Unknown")
             .map(([type, color]) => (
               <div key={type} className="flex items-center gap-1.5">
-                <div
-                  className="w-2.5 h-2.5 rounded-full"
-                  style={{ backgroundColor: color }}
-                />
+                {type === "VideoGame" ? (
+                  <div
+                    className="w-2 h-3.5 rounded-sm flex-shrink-0"
+                    style={{ backgroundColor: color }}
+                  />
+                ) : (
+                  <div
+                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: color }}
+                  />
+                )}
                 <span className="text-[10px] text-gray-400">{type}</span>
               </div>
             ))}
@@ -401,24 +456,50 @@ export function KnowledgeGraph({
           color: string,
           ctx: CanvasRenderingContext2D,
         ) => {
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, (node.size || 8) + 4, 0, 2 * Math.PI);
-          ctx.fillStyle = color;
-          ctx.fill();
+          const size = node.size || 8;
+          if (node.type === "VideoGame") {
+            const w = size * 2.8 + 8;
+            const h = size * 4.0 + 8;
+            ctx.beginPath();
+            ctx.roundRect(node.x - w / 2, node.y - h / 2, w, h, size * 0.5);
+            ctx.fillStyle = color;
+            ctx.fill();
+          } else {
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, size + 4, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+          }
         }}
         linkDirectionalArrowLength={4}
         linkDirectionalArrowRelPos={0.85}
+        nodeVal={(node: any) =>
+          // Highlighted node gets a much higher val so ForceGraph renders it last (on top)
+          node.id === highlightNode || node.id === hoveredNode
+            ? (node.size || 8) * 100
+            : node.size || 8
+        }
         d3VelocityDecay={0.2}
         d3AlphaDecay={0.01}
         warmupTicks={100}
         cooldownTicks={200}
       />
 
-      {/* Node count badge */}
-      <div className="absolute bottom-3 right-3 bg-gray-900/90 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-1.5">
-        <span className="text-xs text-gray-400">
-          {data.nodes.length} nodi · {data.links.length} relazioni
-        </span>
+      {/* Bottom-right controls */}
+      <div className="absolute bottom-3 right-3 flex items-center gap-2">
+        <button
+          onClick={() => graphRef.current?.zoomToFit(400, 60)}
+          title="Recentra grafo"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-900/90 backdrop-blur-sm border border-gray-700 rounded-lg text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+        >
+          <Crosshair className="w-3.5 h-3.5" />
+          <span className="text-xs">Recentra</span>
+        </button>
+        <div className="bg-gray-900/90 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-1.5">
+          <span className="text-xs text-gray-400">
+            {data.nodes.length} nodi · {data.links.length} relazioni
+          </span>
+        </div>
       </div>
     </div>
   );
