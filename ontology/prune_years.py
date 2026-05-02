@@ -1,17 +1,17 @@
 """
-Remove games from 2010-2014 and their associated triples from the pruned OWL.
+Remove games from 2010-2019 and their associated triples from the pruned OWL.
 Also removes orphaned entities (developers, publishers, etc.) that are no longer
 connected to any remaining game.
 """
 
 from pathlib import Path
 
-from rdflib import RDF, XSD, Graph, Literal, Namespace, URIRef
+from rdflib import RDF, Graph, Namespace
 
 VG = Namespace("http://www.videogame-ontology.org/ontology#")
 
 INPUT = Path(__file__).parent / "videogames_pruned.owl"
-OUTPUT = Path(__file__).parent / "videogames_pruned_2015.owl"
+OUTPUT = Path(__file__).parent / "videogames_pruned_2020.owl"
 
 # Classes whose instances should be removed if orphaned
 ENTITY_CLASSES = {
@@ -33,19 +33,19 @@ def main():
     initial = len(g)
     print(f"Loaded: {initial:,} triples")
 
-    # Step 1: Find all VideoGame instances with releaseDate in 2010-2014
-    print("\nFinding games from 2010-2014...")
+    # Step 1: Find all VideoGame instances with releaseDate in 2010-2019
+    print("\nFinding games from 2010-2019...")
     games_to_remove = set()
 
     for game, _, date_literal in g.triples((None, VG.releaseDate, None)):
         try:
             year = int(str(date_literal)[:4])
-            if 2010 <= year <= 2014:
+            if 2010 <= year <= 2019:
                 games_to_remove.add(game)
         except (ValueError, IndexError):
             continue
 
-    print(f"  Found {len(games_to_remove):,} games to remove (2010-2014)")
+    print(f"  Found {len(games_to_remove):,} games to remove (2010-2019)")
 
     # Step 2: Remove all triples where game is subject or object
     print("Removing game triples...")

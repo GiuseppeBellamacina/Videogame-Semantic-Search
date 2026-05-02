@@ -21,5 +21,3 @@ frontend/tsconfig.tsbuildinfo
 
 # Linting and formatting
 .ruff_cache/
-
-debug_images/
