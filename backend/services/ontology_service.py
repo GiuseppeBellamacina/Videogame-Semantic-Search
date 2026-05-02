@@ -114,7 +114,9 @@ class OntologyService:
             if isinstance(obj, ox.Literal):
                 properties[pred_label] = obj.value
             elif isinstance(obj, ox.NamedNode) and obj.value.startswith("http"):
-                target_type = cls._get_node_type(obj.value)
+                target_type = cls._type_from_predicate(
+                    pred_label
+                ) or cls._get_node_type(obj.value)
                 target_label = cls._get_node_label(obj.value)
                 key = (pred_label, obj.value)
                 if key not in seen_out:
@@ -138,7 +140,9 @@ class OntologyService:
                 continue
             subj = quad.subject
             if isinstance(subj, ox.NamedNode):
-                source_type = cls._get_node_type(subj.value)
+                source_type = cls._type_from_predicate(
+                    pred_label, inverse=True
+                ) or cls._get_node_type(subj.value)
                 source_label = cls._get_node_label(subj.value)
                 key = (pred_label, subj.value)
                 if key not in seen_in:
@@ -226,7 +230,7 @@ class OntologyService:
 
     @classmethod
     def _get_node_type(cls, uri: str) -> str:
-        """Get the type of a node."""
+        """Get the type of a node. When multiple types exist, uses priority order."""
         cached = get_type(uri)
         if cached is not None:
             return cached
@@ -235,6 +239,20 @@ class OntologyService:
         node = ox.NamedNode(uri)
         rdf_type = ox.NamedNode(RDF_TYPE)
 
+        # Priority order: more specific/common types first
+        _TYPE_PRIORITY = [
+            "VideoGame",
+            "Developer",
+            "Publisher",
+            "Genre",
+            "Platform",
+            "Character",
+            "Franchise",
+            "Award",
+            "GameEngine",
+        ]
+
+        found_types: list[str] = []
         for quad in store.quads_for_pattern(node, rdf_type, None):
             obj = quad.object
             if not isinstance(obj, ox.NamedNode):
@@ -251,11 +269,47 @@ class OntologyService:
                 continue
             if "owl" in obj.value or "rdf-schema" in obj.value:
                 continue
-            set_type(uri, local)
-            return local
+            found_types.append(local)
 
-        set_type(uri, "Unknown")
-        return "Unknown"
+        if not found_types:
+            set_type(uri, "Unknown")
+            return "Unknown"
+
+        # Pick by priority; if not in priority list, use first found
+        for t in _TYPE_PRIORITY:
+            if t in found_types:
+                set_type(uri, t)
+                return t
+
+        result = found_types[0]
+        set_type(uri, result)
+        return result
+
+    # Map predicate → expected type of target (outgoing) or source (incoming)
+    _PRED_TO_TYPE = {
+        "developedBy": "Developer",
+        "publishedBy": "Publisher",
+        "hasGenre": "Genre",
+        "availableOn": "Platform",
+        "hasCharacter": "Character",
+        "belongsTo": "Franchise",
+        "wonAward": "Award",
+        "madeWith": "GameEngine",
+        "sequelOf": "VideoGame",
+    }
+    _PRED_TO_SOURCE_TYPE = {
+        "developerOf": "Developer",
+        "publisherOf": "Publisher",
+        "appearsIn": "Character",
+        "includes": "Franchise",
+    }
+
+    @classmethod
+    def _type_from_predicate(cls, pred_label: str, inverse: bool = False) -> str | None:
+        """Infer entity type from the predicate name. Returns None if unknown."""
+        if inverse:
+            return cls._PRED_TO_SOURCE_TYPE.get(pred_label)
+        return cls._PRED_TO_TYPE.get(pred_label)
 
     @classmethod
     def _get_local_name(cls, uri: str) -> str:

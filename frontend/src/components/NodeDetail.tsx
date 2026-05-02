@@ -1,5 +1,12 @@
-import { useEffect, useState } from "react";
-import { X, Loader2, ExternalLink, ArrowRight, ArrowLeft } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import {
+  X,
+  Loader2,
+  ExternalLink,
+  ArrowRight,
+  ArrowLeft,
+  ChevronDown,
+} from "lucide-react";
 import type { NodeDetails, GraphData, GraphNode } from "@/types";
 import { getNodeDetails } from "@/lib/api";
 
@@ -67,6 +74,7 @@ export function NodeDetail({
   const [details, setDetails] = useState<NodeDetails | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!uri) {
@@ -76,6 +84,7 @@ export function NodeDetail({
 
     setLoading(true);
     setError(null);
+    setExpandedGroups(new Set());
 
     getNodeDetails(uri)
       .then((res) => {
@@ -84,6 +93,43 @@ export function NodeDetail({
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [uri]);
+
+  // Group outgoing relations by predicate
+  const outGroups = useMemo(() => {
+    if (!details) return [];
+    const map = new Map<string, typeof details.outgoing_relations>();
+    for (const rel of details.outgoing_relations) {
+      if (!map.has(rel.predicate)) map.set(rel.predicate, []);
+      map.get(rel.predicate)!.push(rel);
+    }
+    return [...map.entries()].map(([pred, items]) => ({
+      predicate: pred,
+      items,
+    }));
+  }, [details]);
+
+  // Group incoming relations by predicate
+  const inGroups = useMemo(() => {
+    if (!details) return [];
+    const map = new Map<string, typeof details.incoming_relations>();
+    for (const rel of details.incoming_relations) {
+      if (!map.has(rel.predicate)) map.set(rel.predicate, []);
+      map.get(rel.predicate)!.push(rel);
+    }
+    return [...map.entries()].map(([pred, items]) => ({
+      predicate: pred,
+      items,
+    }));
+  }, [details]);
+
+  function toggleGroup(key: string) {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
 
   if (!uri) return null;
 
@@ -153,135 +199,196 @@ export function NodeDetail({
               </div>
             )}
 
-            {/* Outgoing relations */}
-            {details.outgoing_relations.length > 0 && (
+            {/* Outgoing relations — grouped by predicate */}
+            {outGroups.length > 0 && (
               <div className="space-y-3">
                 <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide flex items-center gap-1">
                   <ArrowRight className="w-3.5 h-3.5" />
                   Relazioni in uscita ({details.outgoing_relations.length})
                 </h3>
-                <div className="space-y-1.5">
-                  {details.outgoing_relations.map((rel, i) => (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        onNavigate(rel.target_uri);
-                        if (onGraphExpand && uri) {
-                          const currentNode = makeNode(
-                            uri,
-                            details.label,
-                            details.type,
-                          );
-                          const targetNode = makeNode(
-                            rel.target_uri,
-                            rel.target_label,
-                            rel.target_type,
-                          );
-                          onGraphExpand({
-                            nodes: [currentNode, targetNode],
-                            links: [
-                              {
-                                source: uri,
-                                target: rel.target_uri,
-                                label: rel.predicate,
-                              },
-                            ],
-                          });
-                        }
-                      }}
-                      className="w-full flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 rounded-lg p-2.5 transition-colors text-left group"
-                    >
-                      <span className="text-xs text-gray-500 min-w-[80px]">
-                        {rel.predicate}
-                      </span>
-                      <span className="text-sm text-indigo-400 group-hover:text-indigo-300 truncate flex-1">
-                        {rel.target_label}
-                      </span>
-                      {rel.target_type &&
-                        rel.target_type !== "Unknown" &&
-                        rel.target_type !== "Thing" && (
-                          <span
-                            className={`text-[10px] px-1.5 py-0.5 rounded ${
-                              TYPE_BADGES[rel.target_type] ||
-                              "bg-gray-700 text-gray-400"
-                            }`}
-                          >
-                            {rel.target_type}
+                <div className="space-y-1">
+                  {outGroups.map((group) => {
+                    const key = `out:${group.predicate}`;
+                    const isExpanded = expandedGroups.has(key);
+                    const PREVIEW = 3;
+                    const showItems = isExpanded
+                      ? group.items
+                      : group.items.slice(0, PREVIEW);
+
+                    return (
+                      <div
+                        key={key}
+                        className="bg-gray-800/30 rounded-lg overflow-hidden"
+                      >
+                        <button
+                          onClick={() => toggleGroup(key)}
+                          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-800/60 transition-colors text-left"
+                        >
+                          <span className="text-xs font-medium text-gray-400 flex-1">
+                            {group.predicate}
                           </span>
-                        )}
-                      <ExternalLink className="w-3 h-3 text-gray-600 group-hover:text-gray-400 flex-shrink-0" />
-                    </button>
-                  ))}
+                          <span className="text-[10px] text-gray-500">
+                            {group.items.length}
+                          </span>
+                          <ChevronDown
+                            className={`w-3 h-3 text-gray-500 transition-transform ${isExpanded ? "" : "-rotate-90"}`}
+                          />
+                        </button>
+                        <div className="px-1 pb-1 space-y-0.5">
+                          {showItems.map((rel, i) => (
+                            <button
+                              key={i}
+                              onClick={() => {
+                                onNavigate(rel.target_uri);
+                                if (onGraphExpand && uri) {
+                                  const currentNode = makeNode(
+                                    uri,
+                                    details.label,
+                                    details.type,
+                                  );
+                                  const targetNode = makeNode(
+                                    rel.target_uri,
+                                    rel.target_label,
+                                    rel.target_type,
+                                  );
+                                  onGraphExpand({
+                                    nodes: [currentNode, targetNode],
+                                    links: [
+                                      {
+                                        source: uri,
+                                        target: rel.target_uri,
+                                        label: rel.predicate,
+                                      },
+                                    ],
+                                  });
+                                }
+                              }}
+                              className="w-full flex items-center gap-2 hover:bg-gray-800 rounded-md px-2 py-1.5 transition-colors text-left group"
+                            >
+                              <span className="text-sm text-indigo-400 group-hover:text-indigo-300 truncate flex-1">
+                                {rel.target_label}
+                              </span>
+                              {rel.target_type &&
+                                rel.target_type !== "Unknown" &&
+                                rel.target_type !== "Thing" && (
+                                  <span
+                                    className={`text-[10px] px-1.5 py-0.5 rounded ${TYPE_BADGES[rel.target_type] || "bg-gray-700 text-gray-400"}`}
+                                  >
+                                    {rel.target_type}
+                                  </span>
+                                )}
+                              <ExternalLink className="w-3 h-3 text-gray-600 group-hover:text-gray-400 flex-shrink-0" />
+                            </button>
+                          ))}
+                          {!isExpanded && group.items.length > PREVIEW && (
+                            <button
+                              onClick={() => toggleGroup(key)}
+                              className="w-full text-center text-[10px] text-gray-500 hover:text-gray-300 py-1"
+                            >
+                              +{group.items.length - PREVIEW} altri...
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
-            {/* Incoming relations */}
-            {details.incoming_relations.length > 0 && (
+            {/* Incoming relations — grouped by predicate */}
+            {inGroups.length > 0 && (
               <div className="space-y-3">
                 <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide flex items-center gap-1">
                   <ArrowLeft className="w-3.5 h-3.5" />
                   Relazioni in entrata ({details.incoming_relations.length})
                 </h3>
-                <div className="space-y-1.5">
-                  {details.incoming_relations.map((rel, i) => (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        onNavigate(rel.source_uri);
-                        if (onGraphExpand && uri) {
-                          const currentNode = makeNode(
-                            uri,
-                            details.label,
-                            details.type,
-                          );
-                          const sourceNode = makeNode(
-                            rel.source_uri,
-                            rel.source_label,
-                            rel.source_type,
-                          );
-                          onGraphExpand({
-                            nodes: [currentNode, sourceNode],
-                            links: [
-                              {
-                                source: rel.source_uri,
-                                target: uri,
-                                label: rel.predicate,
-                              },
-                            ],
-                          });
-                        }
-                      }}
-                      className="w-full flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 rounded-lg p-2.5 transition-colors text-left group"
-                    >
-                      {rel.source_type &&
-                        rel.source_type !== "Unknown" &&
-                        rel.source_type !== "Thing" && (
-                          <span
-                            className={`text-[10px] px-1.5 py-0.5 rounded ${
-                              TYPE_BADGES[rel.source_type] ||
-                              "bg-gray-700 text-gray-400"
-                            }`}
-                          >
-                            {rel.source_type}
+                <div className="space-y-1">
+                  {inGroups.map((group) => {
+                    const key = `in:${group.predicate}`;
+                    const isExpanded = expandedGroups.has(key);
+                    const PREVIEW = 3;
+                    const showItems = isExpanded
+                      ? group.items
+                      : group.items.slice(0, PREVIEW);
+
+                    return (
+                      <div
+                        key={key}
+                        className="bg-gray-800/30 rounded-lg overflow-hidden"
+                      >
+                        <button
+                          onClick={() => toggleGroup(key)}
+                          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-800/60 transition-colors text-left"
+                        >
+                          <span className="text-xs font-medium text-gray-400 flex-1">
+                            {group.predicate}
                           </span>
-                        )}
-                      <span className="text-sm text-indigo-400 group-hover:text-indigo-300 truncate flex-1">
-                        {rel.source_label}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {rel.predicate}
-                      </span>
-                      <ExternalLink className="w-3 h-3 text-gray-600 group-hover:text-gray-400 flex-shrink-0" />
-                    </button>
-                  ))}
-                  {details.incoming_relations.length > 50 && (
-                    <p className="text-xs text-gray-500 text-center py-1">
-                      Mostrando{" "}
-                      {Math.min(details.incoming_relations.length, 50)} di{" "}
-                      {details.incoming_relations.length} relazioni
-                    </p>
-                  )}
+                          <span className="text-[10px] text-gray-500">
+                            {group.items.length}
+                          </span>
+                          <ChevronDown
+                            className={`w-3 h-3 text-gray-500 transition-transform ${isExpanded ? "" : "-rotate-90"}`}
+                          />
+                        </button>
+                        <div className="px-1 pb-1 space-y-0.5">
+                          {showItems.map((rel, i) => (
+                            <button
+                              key={i}
+                              onClick={() => {
+                                onNavigate(rel.source_uri);
+                                if (onGraphExpand && uri) {
+                                  const currentNode = makeNode(
+                                    uri,
+                                    details.label,
+                                    details.type,
+                                  );
+                                  const sourceNode = makeNode(
+                                    rel.source_uri,
+                                    rel.source_label,
+                                    rel.source_type,
+                                  );
+                                  onGraphExpand({
+                                    nodes: [currentNode, sourceNode],
+                                    links: [
+                                      {
+                                        source: rel.source_uri,
+                                        target: uri,
+                                        label: rel.predicate,
+                                      },
+                                    ],
+                                  });
+                                }
+                              }}
+                              className="w-full flex items-center gap-2 hover:bg-gray-800 rounded-md px-2 py-1.5 transition-colors text-left group"
+                            >
+                              {rel.source_type &&
+                                rel.source_type !== "Unknown" &&
+                                rel.source_type !== "Thing" && (
+                                  <span
+                                    className={`text-[10px] px-1.5 py-0.5 rounded ${TYPE_BADGES[rel.source_type] || "bg-gray-700 text-gray-400"}`}
+                                  >
+                                    {rel.source_type}
+                                  </span>
+                                )}
+                              <span className="text-sm text-indigo-400 group-hover:text-indigo-300 truncate flex-1">
+                                {rel.source_label}
+                              </span>
+                              <ExternalLink className="w-3 h-3 text-gray-600 group-hover:text-gray-400 flex-shrink-0" />
+                            </button>
+                          ))}
+                          {!isExpanded && group.items.length > PREVIEW && (
+                            <button
+                              onClick={() => toggleGroup(key)}
+                              className="w-full text-center text-[10px] text-gray-500 hover:text-gray-300 py-1"
+                            >
+                              +{group.items.length - PREVIEW} altri...
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

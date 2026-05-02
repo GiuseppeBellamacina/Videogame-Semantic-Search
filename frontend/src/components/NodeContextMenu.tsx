@@ -6,6 +6,8 @@ import {
   ArrowRight,
   ArrowLeft,
   GitFork,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { getNodeDetails } from "@/lib/api";
 import type { GraphNode, GraphData, NodeDetails } from "@/types";
@@ -27,7 +29,6 @@ interface NodeContextMenuProps {
   node: GraphNode;
   x: number;
   y: number;
-  maxResults: number;
   graphNodeIds: Set<string>;
   onNavigate: (uri: string) => void;
   onGraphExpand: (graph: GraphData) => void;
@@ -45,11 +46,17 @@ function makeNode(uri: string, label: string, type: string): GraphNode {
   };
 }
 
+interface RelGroup {
+  predicate: string;
+  type: string;
+  items: { uri: string; label: string; type: string }[];
+  direction: "out" | "in";
+}
+
 export function NodeContextMenu({
   node,
   x,
   y,
-  maxResults,
   graphNodeIds,
   onNavigate,
   onGraphExpand,
@@ -59,7 +66,7 @@ export function NodeContextMenu({
   const [details, setDetails] = useState<NodeDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"all" | "outgoing" | "incoming">("all");
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -94,35 +101,94 @@ export function NodeContextMenu({
     zIndex: 1000,
   };
 
-  const allOutgoing = details?.outgoing_relations ?? [];
-  const allIncoming = details?.incoming_relations ?? [];
-  const outgoingTotal = allOutgoing.length;
-  const incomingTotal = allIncoming.length;
+  // Group relations by predicate
+  const groups = useMemo<RelGroup[]>(() => {
+    if (!details) return [];
+    const gMap = new Map<string, RelGroup>();
 
-  // Sliced lists respecting maxResults
-  const outgoing = allOutgoing.slice(0, maxResults);
-  const incoming = allIncoming.slice(0, maxResults);
+    for (const r of details.outgoing_relations) {
+      const key = `out:${r.predicate}`;
+      if (!gMap.has(key)) {
+        gMap.set(key, {
+          predicate: r.predicate,
+          type: r.target_type,
+          items: [],
+          direction: "out",
+        });
+      }
+      gMap.get(key)!.items.push({
+        uri: r.target_uri,
+        label: r.target_label,
+        type: r.target_type,
+      });
+    }
 
-  const shownOut = filter === "incoming" ? [] : outgoing;
-  const shownIn = filter === "outgoing" ? [] : incoming;
+    for (const r of details.incoming_relations) {
+      const key = `in:${r.predicate}`;
+      if (!gMap.has(key)) {
+        gMap.set(key, {
+          predicate: r.predicate,
+          type: r.source_type,
+          items: [],
+          direction: "in",
+        });
+      }
+      gMap.get(key)!.items.push({
+        uri: r.source_uri,
+        label: r.source_label,
+        type: r.source_type,
+      });
+    }
 
-  // Count unique NEW nodes (not yet in graph) that "expand all" would add
+    return [...gMap.values()];
+  }, [details]);
+
+  // Count total new nodes
   const newAllCount = useMemo(() => {
     const uris = new Set<string>();
-    for (const r of allOutgoing) uris.add(r.target_uri);
-    for (const r of allIncoming) uris.add(r.source_uri);
+    for (const g of groups) {
+      for (const item of g.items) uris.add(item.uri);
+    }
     uris.delete(node.id);
     return [...uris].filter((u) => !graphNodeIds.has(u)).length;
-  }, [allOutgoing, allIncoming, node.id, graphNodeIds]);
+  }, [groups, node.id, graphNodeIds]);
 
-  // Count unique NEW nodes visible in current filter view
-  const newFilteredCount = useMemo(() => {
-    const uris = new Set<string>();
-    if (filter !== "incoming") for (const r of outgoing) uris.add(r.target_uri);
-    if (filter !== "outgoing") for (const r of incoming) uris.add(r.source_uri);
-    uris.delete(node.id);
-    return [...uris].filter((u) => !graphNodeIds.has(u)).length;
-  }, [filter, outgoing, incoming, node.id, graphNodeIds]);
+  function toggleGroup(key: string) {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  function expandGroup(group: RelGroup) {
+    const nodes: GraphNode[] = [];
+    const links: { source: string; target: string; label: string }[] = [];
+    const seenUris = new Set<string>();
+
+    for (const item of group.items) {
+      if (!seenUris.has(item.uri)) {
+        nodes.push(makeNode(item.uri, item.label, item.type));
+        seenUris.add(item.uri);
+      }
+      if (group.direction === "out") {
+        links.push({
+          source: node.id,
+          target: item.uri,
+          label: group.predicate,
+        });
+      } else {
+        links.push({
+          source: item.uri,
+          target: node.id,
+          label: group.predicate,
+        });
+      }
+    }
+    onGraphExpand({ nodes, links });
+    onClose();
+  }
 
   function expandSingle(
     targetUri: string,
@@ -137,60 +203,24 @@ export function NodeContextMenu({
         ? { source: node.id, target: targetUri, label: predicate }
         : { source: targetUri, target: node.id, label: predicate };
     onGraphExpand({ nodes: [newNode], links: [newLink] });
-    onClose();
-  }
-
-  function expandFiltered() {
-    const nodes: GraphNode[] = [];
-    const links: { source: string; target: string; label: string }[] = [];
-    const seenUris = new Set<string>();
-    if (filter !== "incoming") {
-      for (const r of outgoing) {
-        if (!seenUris.has(r.target_uri)) {
-          nodes.push(makeNode(r.target_uri, r.target_label, r.target_type));
-          seenUris.add(r.target_uri);
-        }
-        links.push({
-          source: node.id,
-          target: r.target_uri,
-          label: r.predicate,
-        });
-      }
-    }
-    if (filter !== "outgoing") {
-      for (const r of incoming) {
-        if (!seenUris.has(r.source_uri)) {
-          nodes.push(makeNode(r.source_uri, r.source_label, r.source_type));
-          seenUris.add(r.source_uri);
-        }
-        links.push({
-          source: r.source_uri,
-          target: node.id,
-          label: r.predicate,
-        });
-      }
-    }
-    onGraphExpand({ nodes, links });
-    onClose();
   }
 
   function expandAll() {
     const nodes: GraphNode[] = [];
     const links: { source: string; target: string; label: string }[] = [];
     const seenUris = new Set<string>();
-    for (const r of allOutgoing) {
-      if (!seenUris.has(r.target_uri)) {
-        nodes.push(makeNode(r.target_uri, r.target_label, r.target_type));
-        seenUris.add(r.target_uri);
+    for (const g of groups) {
+      for (const item of g.items) {
+        if (!seenUris.has(item.uri)) {
+          nodes.push(makeNode(item.uri, item.label, item.type));
+          seenUris.add(item.uri);
+        }
+        if (g.direction === "out") {
+          links.push({ source: node.id, target: item.uri, label: g.predicate });
+        } else {
+          links.push({ source: item.uri, target: node.id, label: g.predicate });
+        }
       }
-      links.push({ source: node.id, target: r.target_uri, label: r.predicate });
-    }
-    for (const r of allIncoming) {
-      if (!seenUris.has(r.source_uri)) {
-        nodes.push(makeNode(r.source_uri, r.source_label, r.source_type));
-        seenUris.add(r.source_uri);
-      }
-      links.push({ source: r.source_uri, target: node.id, label: r.predicate });
     }
     onGraphExpand({ nodes, links });
     onClose();
@@ -239,29 +269,8 @@ export function NodeContextMenu({
         </button>
       </div>
 
-      {/* Filter tabs */}
-      <div className="flex border-b border-gray-800">
-        {(["all", "outgoing", "incoming"] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setFilter(t)}
-            className={`flex-1 py-2 text-xs font-medium transition-colors ${
-              filter === t
-                ? "text-indigo-400 border-b-2 border-indigo-400"
-                : "text-gray-500 hover:text-gray-300"
-            }`}
-          >
-            {t === "all"
-              ? "Tutte"
-              : t === "outgoing"
-                ? `→ Uscenti (${outgoingTotal})`
-                : `← Entranti (${incomingTotal})`}
-          </button>
-        ))}
-      </div>
-
-      {/* Content */}
-      <div className="max-h-56 overflow-y-auto">
+      {/* Content — grouped by predicate */}
+      <div className="max-h-64 overflow-y-auto">
         {loading && (
           <div className="flex items-center justify-center py-8 text-gray-500">
             <Loader2 className="w-5 h-5 animate-spin mr-2" />
@@ -271,142 +280,105 @@ export function NodeContextMenu({
 
         {error && <div className="px-4 py-3 text-sm text-red-400">{error}</div>}
 
-        {details && (
+        {details && groups.length > 0 && (
           <div className="divide-y divide-gray-800/60">
-            {/* Outgoing */}
-            {shownOut.length > 0 && (
-              <div>
-                {filter === "all" && (
-                  <p className="px-4 py-1.5 text-[10px] text-gray-500 uppercase tracking-wide bg-gray-800/30">
-                    Uscenti
-                  </p>
-                )}
-                {shownOut.map((rel, i) => (
-                  <button
-                    key={i}
-                    onClick={() =>
-                      expandSingle(
-                        rel.target_uri,
-                        rel.target_label,
-                        rel.target_type,
-                        rel.predicate,
-                        "out",
-                      )
-                    }
-                    className="w-full px-4 py-2.5 flex items-start gap-2 hover:bg-gray-800 transition-colors text-left"
-                  >
-                    <ArrowRight className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0 mt-0.5" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs text-gray-300 truncate">
-                        {rel.target_label}
-                      </p>
-                      <p className="text-[10px] text-gray-500">
-                        {rel.predicate} · {rel.target_type}
-                      </p>
-                    </div>
-                    <span className="text-[10px] text-indigo-500 flex-shrink-0 mt-0.5 font-mono">
-                      +1
-                    </span>
-                  </button>
-                ))}
-                {outgoingTotal > maxResults && filter !== "incoming" && (
-                  <p className="px-4 py-1.5 text-[10px] text-gray-600 italic">
-                    +{outgoingTotal - maxResults} relazioni non mostrate
-                    (aumenta il limite)
-                  </p>
-                )}
-              </div>
-            )}
+            {groups.map((group) => {
+              const key = `${group.direction}:${group.predicate}`;
+              const isExpanded = expandedGroups.has(key);
+              const newInGroup = group.items.filter(
+                (item) => !graphNodeIds.has(item.uri),
+              ).length;
 
-            {/* Incoming */}
-            {shownIn.length > 0 && (
-              <div>
-                {filter === "all" && (
-                  <p className="px-4 py-1.5 text-[10px] text-gray-500 uppercase tracking-wide bg-gray-800/30">
-                    Entranti
-                  </p>
-                )}
-                {shownIn.map((rel, i) => (
-                  <button
-                    key={i}
-                    onClick={() =>
-                      expandSingle(
-                        rel.source_uri,
-                        rel.source_label,
-                        rel.source_type,
-                        rel.predicate,
-                        "in",
-                      )
-                    }
-                    className="w-full px-4 py-2.5 flex items-start gap-2 hover:bg-gray-800 transition-colors text-left"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs text-gray-300 truncate">
-                        {rel.source_label}
-                      </p>
-                      <p className="text-[10px] text-gray-500">
-                        {rel.predicate} · {rel.source_type}
-                      </p>
-                    </div>
-                    <span className="text-[10px] text-emerald-600 flex-shrink-0 mt-0.5 font-mono">
-                      +1
-                    </span>
-                  </button>
-                ))}
-                {incomingTotal > maxResults && filter !== "outgoing" && (
-                  <p className="px-4 py-1.5 text-[10px] text-gray-600 italic">
-                    +{incomingTotal - maxResults} relazioni non mostrate
-                    (aumenta il limite)
-                  </p>
-                )}
-              </div>
-            )}
+              return (
+                <div key={key}>
+                  {/* Group header — clickable to expand items list */}
+                  <div className="flex items-center">
+                    <button
+                      onClick={() => toggleGroup(key)}
+                      className="flex-1 flex items-center gap-2 px-4 py-2.5 hover:bg-gray-800/50 transition-colors text-left"
+                    >
+                      {group.direction === "out" ? (
+                        <ArrowRight className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
+                      ) : (
+                        <ArrowLeft className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                      )}
+                      <span className="text-xs text-gray-300 flex-1">
+                        {group.predicate}
+                      </span>
+                      <span className="text-[10px] text-gray-500 mr-1">
+                        {group.items.length}
+                      </span>
+                      {isExpanded ? (
+                        <ChevronDown className="w-3 h-3 text-gray-500" />
+                      ) : (
+                        <ChevronRight className="w-3 h-3 text-gray-500" />
+                      )}
+                    </button>
+                    {/* Expand all in this group */}
+                    {newInGroup > 0 && (
+                      <button
+                        onClick={() => expandGroup(group)}
+                        title={`Espandi tutti (${group.items.length})`}
+                        className="px-2 py-2.5 text-[10px] font-mono text-indigo-500 hover:text-indigo-300 hover:bg-gray-800/50 transition-colors"
+                      >
+                        +{newInGroup}
+                      </button>
+                    )}
+                  </div>
 
-            {!loading && shownOut.length === 0 && shownIn.length === 0 && (
-              <p className="px-4 py-6 text-sm text-gray-600 text-center">
-                Nessuna relazione trovata
-              </p>
-            )}
+                  {/* Expanded items */}
+                  {isExpanded && (
+                    <div className="bg-gray-800/20">
+                      {group.items.map((item, i) => (
+                        <button
+                          key={i}
+                          onClick={() =>
+                            expandSingle(
+                              item.uri,
+                              item.label,
+                              item.type,
+                              group.predicate,
+                              group.direction,
+                            )
+                          }
+                          className="w-full px-6 py-1.5 flex items-center gap-2 hover:bg-gray-800 transition-colors text-left"
+                        >
+                          <span className="text-xs text-gray-300 truncate flex-1">
+                            {item.label}
+                          </span>
+                          {!graphNodeIds.has(item.uri) && (
+                            <span className="text-[10px] text-indigo-500 font-mono flex-shrink-0">
+                              +1
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
+        )}
+
+        {details && groups.length === 0 && !loading && (
+          <p className="px-4 py-6 text-sm text-gray-600 text-center">
+            Nessuna relazione trovata
+          </p>
         )}
       </div>
 
-      {/* Footer expand actions */}
-      {details && (newFilteredCount > 0 || newAllCount > 0) && (
-        <div className="border-t border-gray-800 p-3 space-y-2">
-          {newFilteredCount > 0 && (
-            <button
-              onClick={expandFiltered}
-              className="w-full flex items-center gap-2 px-3 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 text-xs rounded-lg transition-colors"
-            >
-              <GitFork className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>
-                Espandi{" "}
-                {filter === "all"
-                  ? "visibili"
-                  : filter === "outgoing"
-                    ? "uscenti"
-                    : "entranti"}{" "}
-                nel grafo
-              </span>
-              <span className="ml-auto font-semibold">
-                +{newFilteredCount} nuovi
-              </span>
-            </button>
-          )}
-          {newAllCount > newFilteredCount && (
-            <button
-              onClick={expandAll}
-              className="w-full flex items-center gap-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs rounded-lg transition-colors"
-            >
-              <GitFork className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>Espandi tutti nel grafo</span>
-              <span className="ml-auto font-semibold">
-                +{newAllCount} nuovi
-              </span>
-            </button>
-          )}
+      {/* Footer — expand all */}
+      {details && newAllCount > 0 && (
+        <div className="border-t border-gray-800 p-3">
+          <button
+            onClick={expandAll}
+            className="w-full flex items-center gap-2 px-3 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 text-xs rounded-lg transition-colors"
+          >
+            <GitFork className="w-3.5 h-3.5 flex-shrink-0" />
+            <span>Espandi tutti nel grafo</span>
+            <span className="ml-auto font-semibold">+{newAllCount} nuovi</span>
+          </button>
         </div>
       )}
     </div>

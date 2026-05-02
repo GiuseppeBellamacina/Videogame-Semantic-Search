@@ -20,7 +20,6 @@ export default function App() {
     x: number;
     y: number;
   } | null>(null);
-  const [maxResults, setMaxResults] = useState(10);
   const [extraGraph, setExtraGraph] = useState<GraphData>({
     nodes: [],
     links: [],
@@ -163,24 +162,6 @@ export default function App() {
               <Github className="w-5 h-5" />
               <span className="hidden sm:inline">GiuseppeBellamacina</span>
             </a>
-            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500">
-              <label htmlFor="max-results" className="whitespace-nowrap">
-                Max relazioni
-              </label>
-              <input
-                id="max-results"
-                type="number"
-                min={1}
-                max={200}
-                value={maxResults}
-                onChange={(e) =>
-                  setMaxResults(
-                    Math.max(1, Math.min(200, Number(e.target.value))),
-                  )
-                }
-                className="w-16 px-2 py-1 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              />
-            </div>
           </div>
           <SearchBar
             onSearch={handleSearch}
@@ -311,7 +292,6 @@ export default function App() {
           node={contextMenu.node}
           x={contextMenu.x}
           y={contextMenu.y}
-          maxResults={maxResults}
           graphNodeIds={graphNodeIds}
           onNavigate={handleNodeClick}
           onGraphExpand={handleGraphExpand}
