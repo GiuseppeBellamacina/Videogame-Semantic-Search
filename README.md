@@ -233,4 +233,4 @@ Scrivi domande come:
 | RAM a runtime        | ~1.550 MB      | ~389 MB               | ~250 MB                 |
 | Tempo di caricamento | ~41s           | ~2.2s                 | ~1.5s                   |
 | Query SPARQL tipica  | 1–23s          | 0.08–0.37s            | 0.05–0.25s              |
-| Speedup query        | —              | 5–62×                 |
+| Speedup query        | —              | 5–62×                 | —                       |
