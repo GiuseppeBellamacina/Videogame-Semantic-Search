@@ -2,6 +2,8 @@
 
 **[🎮 Demo live](https://videogame-semantic-search.vercel.app)**
 
+![Videogame Semantic Search](assets/videogame-semantic.webp)
+
 Un progetto di Semantic Web che costruisce e interroga un'ontologia OWL sui videogiochi (dal 2010 ad oggi) tramite un'interfaccia web moderna con grafo di conoscenza interattivo.
 
 ## Ontologia — Statistiche
