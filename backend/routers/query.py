@@ -25,10 +25,57 @@ _redis = None
 # In-memory fallback cache used when Redis is not configured
 _memory_cache: dict[str, dict] = {}
 
+# Track all cached keys for fuzzy matching
+_cached_keys: set[str] = set()
+
+# Max Levenshtein distance for fuzzy matching (relative to query length)
+_FUZZY_THRESHOLD_RATIO = 0.2  # 20% of query length
+
 
 def _normalise(question: str) -> str:
     """Lowercase, collapse whitespace — used as cache key."""
     return re.sub(r"\s+", " ", question.strip().lower())
+
+
+def _levenshtein(s1: str, s2: str) -> int:
+    """Compute Levenshtein distance between two strings."""
+    if len(s1) < len(s2):
+        return _levenshtein(s2, s1)
+    if len(s2) == 0:
+        return len(s1)
+
+    prev_row = list(range(len(s2) + 1))
+    for i, c1 in enumerate(s1):
+        curr_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            cost = 0 if c1 == c2 else 1
+            curr_row.append(
+                min(curr_row[j] + 1, prev_row[j + 1] + 1, prev_row[j] + cost)
+            )
+        prev_row = curr_row
+
+    return prev_row[-1]
+
+
+def _find_fuzzy_match(key: str) -> str | None:
+    """Find the closest cached key within the threshold distance."""
+    if not _cached_keys:
+        return None
+
+    max_dist = max(2, int(len(key) * _FUZZY_THRESHOLD_RATIO))
+    best_key: str | None = None
+    best_dist = max_dist + 1
+
+    for cached_key in _cached_keys:
+        # Quick length check to skip obvious mismatches
+        if abs(len(cached_key) - len(key)) > max_dist:
+            continue
+        dist = _levenshtein(key, cached_key)
+        if dist < best_dist:
+            best_dist = dist
+            best_key = cached_key
+
+    return best_key if best_dist <= max_dist else None
 
 
 async def init_cache() -> None:
@@ -45,6 +92,23 @@ async def init_cache() -> None:
         _redis = AsyncRedis(url=UPSTASH_REDIS_REST_URL, token=UPSTASH_REDIS_REST_TOKEN)
         await _redis.ping()
         logger.info("[CACHE] Connected to Upstash AsyncRedis")
+
+        # Load existing cache keys for fuzzy matching
+        try:
+            cursor: int = 0
+            while True:
+                cursor, keys = await _redis.scan(cursor, match="vg:query:*", count=500)
+                for k in keys:
+                    # Strip prefix to get the normalised query
+                    _cached_keys.add(k.removeprefix("vg:query:"))
+                if cursor == 0:
+                    break
+            logger.info(
+                f"[CACHE] Loaded {len(_cached_keys)} cached keys for fuzzy matching"
+            )
+        except Exception as e:
+            logger.warning(f"[CACHE] Failed to load cached keys: {e}")
+
     except Exception as e:
         logger.warning(
             f"[CACHE] Upstash Redis connection failed, falling back to in-memory: {e}"
@@ -59,16 +123,36 @@ def close_cache() -> None:
 
 
 async def _cache_get(key: str) -> dict | None:
+    # Exact match first
     if _redis:
         try:
             value = await _redis.get(f"vg:query:{key}")
-            return json.loads(value) if value else None
+            if value:
+                return json.loads(value)
         except Exception as e:
             logger.warning(f"[CACHE] Redis get error: {e}")
-    return _memory_cache.get(key)
+
+    if key in _memory_cache:
+        return _memory_cache[key]
+
+    # Fuzzy match — find similar cached key
+    fuzzy_key = _find_fuzzy_match(key)
+    if fuzzy_key:
+        logger.info(f"[CACHE] Fuzzy hit: '{key}' → '{fuzzy_key}'")
+        if _redis:
+            try:
+                value = await _redis.get(f"vg:query:{fuzzy_key}")
+                if value:
+                    return json.loads(value)
+            except Exception as e:
+                logger.warning(f"[CACHE] Redis fuzzy get error: {e}")
+        return _memory_cache.get(fuzzy_key)
+
+    return None
 
 
 async def _cache_set(key: str, value: dict) -> None:
+    _cached_keys.add(key)
     if _redis:
         try:
             await _redis.set(

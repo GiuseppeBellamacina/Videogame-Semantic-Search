@@ -43,7 +43,7 @@ export function SearchBar({ onSearch, onCancel, loading }: SearchBarProps) {
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-            placeholder="Cerca in linguaggio naturale..."
+            placeholder="Cerca..."
             className="w-full pl-12 pr-28 sm:pr-32 py-3 sm:py-4 bg-gray-900 border border-gray-700 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-base sm:text-lg"
             disabled={loading}
           />

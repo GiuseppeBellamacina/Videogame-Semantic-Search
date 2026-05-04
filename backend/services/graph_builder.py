@@ -101,12 +101,14 @@ def build_graph_from_results(
     }
 
 
-def build_graph_from_node(uri: str, ontology_service: Any) -> dict:
+def build_graph_from_node(
+    uri: str, ontology_service: Any, max_relations: int = 50
+) -> dict:
     """
     Build a focused graph centered on a single node.
-    Includes all directly connected nodes.
+    Includes directly connected nodes (limited to prevent memory issues).
     """
-    details = ontology_service.get_node_details(uri)
+    details = ontology_service.get_node_details(uri, max_relations=max_relations)
     nodes_map: dict[str, dict] = {}
     links: list[dict] = []
 

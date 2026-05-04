@@ -50,6 +50,8 @@ export interface NodeDetails {
     source_label: string;
     source_type: string;
   }[];
+  total_incoming?: number;
+  truncated?: boolean;
 }
 
 export interface NodeDetailResponse {

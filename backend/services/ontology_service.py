@@ -73,10 +73,12 @@ class OntologyService:
         return rows
 
     @classmethod
-    def get_node_details(cls, uri: str) -> dict:
+    def get_node_details(cls, uri: str, max_relations: int = 200) -> dict:
         """
-        Get all triples related to a specific URI (as subject or object).
+        Get triples related to a specific URI (as subject or object).
         Returns properties and relations for a node detail panel.
+        Limits outgoing and incoming relations to max_relations each to prevent
+        memory issues on highly-connected nodes.
         """
         store = cls.get_store()
         node = ox.NamedNode(uri)
@@ -114,6 +116,8 @@ class OntologyService:
             if isinstance(obj, ox.Literal):
                 properties[pred_label] = obj.value
             elif isinstance(obj, ox.NamedNode) and obj.value.startswith("http"):
+                if len(outgoing_relations) >= max_relations:
+                    continue
                 target_type = cls._type_from_predicate(
                     pred_label
                 ) or cls._get_node_type(obj.value)
@@ -131,6 +135,7 @@ class OntologyService:
                     )
 
         # Triples where this node is the object
+        total_incoming = 0
         for quad in store.quads_for_pattern(None, None, node):
             p_str = quad.predicate.value
             pred_label = cls._get_local_name(p_str)
@@ -140,6 +145,9 @@ class OntologyService:
                 continue
             subj = quad.subject
             if isinstance(subj, ox.NamedNode):
+                total_incoming += 1
+                if len(incoming_relations) >= max_relations:
+                    continue
                 source_type = cls._type_from_predicate(
                     pred_label, inverse=True
                 ) or cls._get_node_type(subj.value)
@@ -163,6 +171,8 @@ class OntologyService:
             "properties": properties,
             "outgoing_relations": outgoing_relations,
             "incoming_relations": incoming_relations,
+            "total_incoming": total_incoming,
+            "truncated": total_incoming > max_relations,
         }
 
     @classmethod

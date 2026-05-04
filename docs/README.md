@@ -128,7 +128,7 @@ Tutte le proprietà `*Name` sono sotto-proprietà di `vg:name` (xsd:string).
 
 Le URI delle istanze seguono questo pattern:
 
-```
+```text
 http://www.videogame-ontology.org/ontology#<NomeGioco>          → VideoGame
 http://www.videogame-ontology.org/ontology#dev/<NomeStudio>     → Developer
 http://www.videogame-ontology.org/ontology#pub/<NomeEditore>    → Publisher
@@ -260,7 +260,7 @@ Questa architettura evita chiamate HTTP ripetitive mantenendo bassa la RAM.
 
 ## Diagramma delle relazioni
 
-```
+```text
                         ┌──────────────┐
                         │  GameEngine  │
                         └──────┬───────┘

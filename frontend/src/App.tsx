@@ -75,9 +75,18 @@ export default function App() {
   }, []);
 
   const handleNodeClick = useCallback((uri: string) => {
+    setHighlightNode(uri);
+    // On mobile, don't auto-open sidebar (it covers the graph)
+    // User can open it via context menu "Apri nella sidebar"
+    if (window.innerWidth >= 640) {
+      setSelectedNode(uri);
+    }
+    setMobileTab("graph");
+  }, []);
+
+  const handleOpenSidebar = useCallback((uri: string) => {
     setSelectedNode(uri);
     setHighlightNode(uri);
-    setMobileTab("graph");
   }, []);
 
   const handleCloseDetail = useCallback(() => {
@@ -293,7 +302,7 @@ export default function App() {
           x={contextMenu.x}
           y={contextMenu.y}
           graphNodeIds={graphNodeIds}
-          onNavigate={handleNodeClick}
+          onNavigate={handleOpenSidebar}
           onGraphExpand={handleGraphExpand}
           onRemoveNode={handleRemoveNode}
           onClose={() => setContextMenu(null)}

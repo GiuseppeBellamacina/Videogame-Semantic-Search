@@ -301,8 +301,18 @@ export function NodeDetail({
               <div className="space-y-3">
                 <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide flex items-center gap-1">
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  Relazioni in entrata ({details.incoming_relations.length})
+                  Relazioni in entrata ({details.incoming_relations.length}
+                  {details.truncated && details.total_incoming
+                    ? ` di ${details.total_incoming}`
+                    : ""}
+                  )
                 </h3>
+                {details.truncated && (
+                  <p className="text-xs text-amber-400/80">
+                    Mostrate solo le prime {details.incoming_relations.length}{" "}
+                    relazioni
+                  </p>
+                )}
                 <div className="space-y-1">
                   {inGroups.map((group) => {
                     const key = `in:${group.predicate}`;

@@ -63,6 +63,26 @@ export function KnowledgeGraph({
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const lastZoomFetchRef = useRef<number>(0);
 
+  // Long-press detection for mobile (simulates right-click)
+  const longPressFired = useRef(false);
+
+  // Center and zoom on highlighted node when it changes (e.g. clicked from result list)
+  const prevHighlightRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (
+      highlightNode &&
+      highlightNode !== prevHighlightRef.current &&
+      graphRef.current
+    ) {
+      const node = data.nodes.find((n) => n.id === highlightNode);
+      if (node && node.x !== undefined && node.y !== undefined) {
+        graphRef.current.centerAt(node.x, node.y, 300);
+        graphRef.current.zoom(2.5, 300);
+      }
+    }
+    prevHighlightRef.current = highlightNode ?? null;
+  }, [highlightNode, data.nodes]);
+
   // Types present in the current data
   const availableTypes = useMemo(
     () =>
@@ -85,20 +105,36 @@ export function KnowledgeGraph({
   }, []);
 
   // Filtered graph: exclude nodes of hidden types and links touching them
+  // Sort so that the clicked/highlighted node is painted last (on top)
   const filteredData = useMemo<GraphData>(() => {
-    if (hiddenTypes.size === 0) return data;
-    const visibleIds = new Set(
-      data.nodes.filter((n) => !hiddenTypes.has(n.type)).map((n) => n.id),
-    );
-    return {
-      nodes: data.nodes.filter((n) => visibleIds.has(n.id)),
-      links: data.links.filter((l) => {
+    let nodes = data.nodes;
+    let links = data.links;
+
+    if (hiddenTypes.size > 0) {
+      const visibleIds = new Set(
+        nodes.filter((n) => !hiddenTypes.has(n.type)).map((n) => n.id),
+      );
+      nodes = nodes.filter((n) => visibleIds.has(n.id));
+      links = links.filter((l) => {
         const src = typeof l.source === "string" ? l.source : l.source.id;
         const tgt = typeof l.target === "string" ? l.target : l.target.id;
         return visibleIds.has(src) && visibleIds.has(tgt);
-      }),
-    };
-  }, [data, hiddenTypes]);
+      });
+    }
+
+    // Sort: only clicked (highlighted) node goes on top — not hover
+    if (highlightNode) {
+      nodes = [...nodes].sort((a, b) => {
+        if (a.id === highlightNode) return 1;
+        if (b.id === highlightNode) return -1;
+        return 0;
+      });
+    }
+
+    return { nodes, links };
+  }, [data, hiddenTypes, highlightNode]);
+
+  const prevWidthRef = useRef(0);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -108,20 +144,27 @@ export function KnowledgeGraph({
       if (entry) {
         const { width, height } = entry.contentRect;
         setDimensions({ width, height });
+        // When container becomes visible (0 → non-zero width), re-fit the graph
+        if (prevWidthRef.current === 0 && width > 0 && data.nodes.length > 0) {
+          setTimeout(() => {
+            graphRef.current?.zoomToFit(300, 50);
+          }, 100);
+        }
+        prevWidthRef.current = width;
       }
     });
 
     observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [data.nodes.length]);
 
   // Apply collision force to prevent node overlap
   useEffect(() => {
     if (!graphRef.current) return;
-    // Strong many-body repulsion for wide spreading
-    graphRef.current.d3Force("charge")?.strength(-600);
-    // Longer link distance to spread connected nodes
-    graphRef.current.d3Force("link")?.distance(160);
+    // Moderate repulsion — strong enough to spread, not enough to explode
+    graphRef.current.d3Force("charge")?.strength(-300);
+    // Moderate link distance
+    graphRef.current.d3Force("link")?.distance(100);
     graphRef.current.d3Force("collision", {
       initialize(nodes: any[]) {
         this._nodes = nodes;
@@ -165,16 +208,67 @@ export function KnowledgeGraph({
     });
   }, []);
 
-  // Zoom to fit only when a new query result arrives (nodes go from 0 to >0)
-  const prevNodeCountRef = useRef(0);
+  // When new nodes appear (expansion), place them near connected existing nodes
+  // to prevent them from spawning at (0,0) and flying off-screen.
+  const prevNodeIdsRef = useRef<Set<string>>(new Set());
   useEffect(() => {
-    const prev = prevNodeCountRef.current;
-    const curr = data.nodes.length;
-    prevNodeCountRef.current = curr;
-    if (graphRef.current && prev === 0 && curr > 0) {
+    const prevIds = prevNodeIdsRef.current;
+    const currIds = new Set(data.nodes.map((n) => n.id));
+    const newNodes = data.nodes.filter(
+      (n) => !prevIds.has(n.id) && n.x === undefined,
+    );
+
+    if (newNodes.length > 0 && prevIds.size > 0) {
+      // Find position of connected existing nodes from links
+      const nodeMap = new Map(data.nodes.map((n) => [n.id, n]));
+      for (const nn of newNodes) {
+        // Find a link connecting this new node to an existing one
+        const link = data.links.find((l) => {
+          const src = typeof l.source === "string" ? l.source : l.source.id;
+          const tgt = typeof l.target === "string" ? l.target : l.target.id;
+          return (
+            (src === nn.id && prevIds.has(tgt)) ||
+            (tgt === nn.id && prevIds.has(src))
+          );
+        });
+        if (link) {
+          const neighborId =
+            (typeof link.source === "string" ? link.source : link.source.id) ===
+            nn.id
+              ? typeof link.target === "string"
+                ? link.target
+                : link.target.id
+              : typeof link.source === "string"
+                ? link.source
+                : link.source.id;
+          const neighbor = nodeMap.get(neighborId);
+          if (
+            neighbor &&
+            neighbor.x !== undefined &&
+            neighbor.y !== undefined
+          ) {
+            // Place near the neighbor with a small random offset
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 30 + Math.random() * 40;
+            (nn as any).x = neighbor.x + Math.cos(angle) * dist;
+            (nn as any).y = neighbor.y + Math.sin(angle) * dist;
+          }
+        }
+      }
+    }
+
+    prevNodeIdsRef.current = currIds;
+  }, [data]);
+
+  // Zoom to fit whenever graph data changes (new search or expansion)
+  const prevDataRef = useRef(data);
+  useEffect(() => {
+    if (data !== prevDataRef.current && data.nodes.length > 0) {
+      prevDataRef.current = data;
+      // Short delay for the simulation to stabilize a little
       setTimeout(() => {
-        graphRef.current?.zoomToFit(400, 60);
-      }, 500);
+        graphRef.current?.zoomToFit(300, 50);
+      }, 400);
     }
   }, [data]);
 
@@ -238,7 +332,12 @@ export function KnowledgeGraph({
   );
 
   const handleNodeClick = useCallback(
-    (node: any) => {
+    (node: any, event: MouseEvent) => {
+      // Ignore if long-press just fired (mobile)
+      if (longPressFired.current) {
+        longPressFired.current = false;
+        return;
+      }
       onNodeClick(node.id);
       // Always force API on click
       fetchImageForNode(node as GraphNode, true);
@@ -250,6 +349,103 @@ export function KnowledgeGraph({
     },
     [onNodeClick, fetchImageForNode],
   );
+
+  // Touch/pointer long-press detection for context menu on mobile.
+  // Uses pointer events in CAPTURE phase to fire before d3-drag/zoom handlers.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let startX = 0;
+    let startY = 0;
+    let active = false;
+
+    const onPointerDown = (e: PointerEvent) => {
+      // Only detect touch (not mouse — mouse has right-click)
+      if (e.pointerType !== "touch") return;
+      if (!graphRef.current) return;
+
+      startX = e.clientX;
+      startY = e.clientY;
+
+      // Check if pointer is over a node
+      const rect = container.getBoundingClientRect();
+      const screenX = e.clientX - rect.left;
+      const screenY = e.clientY - rect.top;
+      const graphCoords = graphRef.current.screen2GraphCoords(screenX, screenY);
+
+      const nodes = filteredData.nodes;
+      let closest: any = null;
+      let closestDist = Infinity;
+      for (const n of nodes) {
+        const dx = (n.x ?? 0) - graphCoords.x;
+        const dy = (n.y ?? 0) - graphCoords.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const hitRadius =
+          n.type === "VideoGame" ? (n.size || 8) * 4 : (n.size || 8) * 2;
+        if (dist < hitRadius && dist < closestDist) {
+          closest = n;
+          closestDist = dist;
+        }
+      }
+
+      if (!closest) return;
+
+      active = true;
+      longPressFired.current = false;
+      const targetNode = closest;
+
+      timer = setTimeout(() => {
+        longPressFired.current = true;
+        active = false;
+        if (onNodeRightClick) {
+          onNodeRightClick(targetNode as GraphNode, startX, startY);
+        }
+      }, 500);
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (!active || !timer) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (dx * dx + dy * dy > 20 * 20) {
+        clearTimeout(timer);
+        timer = null;
+        active = false;
+      }
+    };
+
+    const onPointerUp = () => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      active = false;
+    };
+
+    // CAPTURE phase ensures we see events before d3-drag
+    container.addEventListener("pointerdown", onPointerDown, { capture: true });
+    container.addEventListener("pointermove", onPointerMove, { capture: true });
+    container.addEventListener("pointerup", onPointerUp, { capture: true });
+    container.addEventListener("pointercancel", onPointerUp, { capture: true });
+
+    return () => {
+      container.removeEventListener("pointerdown", onPointerDown, {
+        capture: true,
+      });
+      container.removeEventListener("pointermove", onPointerMove, {
+        capture: true,
+      });
+      container.removeEventListener("pointerup", onPointerUp, {
+        capture: true,
+      });
+      container.removeEventListener("pointercancel", onPointerUp, {
+        capture: true,
+      });
+      if (timer) clearTimeout(timer);
+    };
+  }, [filteredData.nodes, onNodeRightClick]);
 
   // On zoom, fetch images for visible game nodes when zoomed in enough
   const handleZoom = useCallback(
@@ -569,10 +765,10 @@ export function KnowledgeGraph({
             ? (node.size || 8) * 100
             : node.size || 8
         }
-        d3VelocityDecay={0.2}
-        d3AlphaDecay={0.01}
-        warmupTicks={100}
-        cooldownTicks={200}
+        d3VelocityDecay={0.4}
+        d3AlphaDecay={0.03}
+        warmupTicks={80}
+        cooldownTicks={150}
       />
 
       {/* Bottom-right controls */}
