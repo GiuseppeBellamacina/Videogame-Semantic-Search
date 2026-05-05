@@ -18,7 +18,11 @@ import json
 import logging
 from typing import Any
 
-from backend.config import CACHE_TTL, UPSTASH_REDIS_REST_TOKEN, UPSTASH_REDIS_REST_URL
+from backend.config import (
+    CACHE_TTL_IMAGE,
+    UPSTASH_REDIS_REST_TOKEN,
+    UPSTASH_REDIS_REST_URL,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +108,7 @@ async def get_image(name: str) -> dict | None:
 async def set_image(name: str, result: dict) -> None:
     k = f"img:{name.strip().lower()}"
     _local_img[k] = result
-    await _aredis_set(k, json.dumps(result), ttl=CACHE_TTL)
+    await _aredis_set(k, json.dumps(result), ttl=CACHE_TTL_IMAGE)
 
 
 # ── Label cache (sync, in-memory only) ───────────────────────────────────────

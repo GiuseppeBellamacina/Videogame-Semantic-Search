@@ -38,8 +38,9 @@ MAX_SPARQL_RETRIES = 3
 UPSTASH_REDIS_REST_URL = os.getenv("UPSTASH_REDIS_REST_URL", "")
 UPSTASH_REDIS_REST_TOKEN = os.getenv("UPSTASH_REDIS_REST_TOKEN", "")
 
-# Cache TTL in seconds (7 days)
-CACHE_TTL = 60 * 60 * 24 * 7
+# Cache TTL in seconds
+CACHE_TTL_QUERY = 60 * 60 * 24 * 14  # 14 days
+CACHE_TTL_IMAGE = 60 * 60 * 24 * 30 * 6  # 6 months
 
 # CORS
 CORS_ORIGINS = [

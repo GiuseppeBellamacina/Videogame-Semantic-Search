@@ -11,7 +11,11 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from backend.agents.sparql_agent import SPARQLAgent
-from backend.config import CACHE_TTL, UPSTASH_REDIS_REST_TOKEN, UPSTASH_REDIS_REST_URL
+from backend.config import (
+    CACHE_TTL_QUERY,
+    UPSTASH_REDIS_REST_TOKEN,
+    UPSTASH_REDIS_REST_URL,
+)
 from backend.services.graph_builder import build_graph_from_results
 from backend.services.ontology_service import OntologyService
 
@@ -156,7 +160,9 @@ async def _cache_set(key: str, value: dict) -> None:
     if _redis:
         try:
             await _redis.set(
-                f"vg:query:{key}", json.dumps(value, ensure_ascii=False), ex=CACHE_TTL
+                f"vg:query:{key}",
+                json.dumps(value, ensure_ascii=False),
+                ex=CACHE_TTL_QUERY,
             )
             return
         except Exception as e:
