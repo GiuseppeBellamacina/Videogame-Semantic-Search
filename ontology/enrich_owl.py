@@ -17,15 +17,19 @@ Usage
     python enrich_owl.py                           # enriches all .owl files in this directory
     python enrich_owl.py videogames_pruned.owl     # enriches a single file
     python enrich_owl.py --reason videogames_pruned.owl
-        # enriches AND materialises inferred triples via OWL-RL reasoning
+        # enriches AND materialises inferred triples via targeted reasoning
         # (needed to make AwardWinningGame / sharedFranchiseWith etc. queryable)
+        # Much faster than full OWL-RL: only applies the 5 rules our axioms define.
+        # Use --max-group N to cap pairwise links per franchise/dev/pub (default 50).
 """
 
 import logging
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 from rdflib import OWL, RDF, RDFS, Graph, Namespace, URIRef
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 logger = logging.getLogger(__name__)
@@ -173,6 +177,135 @@ def _add_axioms(g: Graph) -> int:
 
 
 # ---------------------------------------------------------------------------
+# Targeted materialiser (replaces full OWL-RL)
+# ---------------------------------------------------------------------------
+
+
+def _materialise(g: Graph, max_group: int = 50) -> int:
+    """
+    Apply only the 5 inference rules our axioms define, with tqdm progress bars.
+
+    Rules:
+      1. AwardWinningGame  ← game wonAward _:x
+      2. FranchiseGame     ← game belongsTo _:f
+      3. sharedFranchiseWith (chain belongsTo ∘ includes)   — symmetric
+      4. sharesDeveloperWith (chain developedBy ∘ developerOf) — symmetric
+      5. sharesPublisherWith (chain publishedBy ∘ publisherOf) — symmetric
+
+    Groups larger than *max_group* games (same franchise/dev/pub) are skipped
+    for the pairwise rules to avoid combinatorial explosion; a warning is logged.
+    """
+    added = 0
+
+    # ── 1 & 2: class membership ──────────────────────────────────────────────
+    award_games: set[URIRef] = set()
+    franchise_games: set[URIRef] = set()
+
+    for s, _, _o in g.triples((None, VG.wonAward, None)):
+        if isinstance(s, URIRef):
+            award_games.add(s)
+    for s, _, _o in g.triples((None, VG.belongsTo, None)):
+        if isinstance(s, URIRef):
+            franchise_games.add(s)
+
+    total_class = len(award_games) + len(franchise_games)
+    with tqdm(
+        total=total_class,
+        desc="  [1/3] Class membership",
+        unit="game",
+        ncols=80,
+        leave=True,
+    ) as pbar:
+        for game in award_games:
+            t = (game, RDF.type, VG.AwardWinningGame)
+            if t not in g:
+                g.add(t)
+                added += 1
+            pbar.update(1)
+        for game in franchise_games:
+            t = (game, RDF.type, VG.FranchiseGame)
+            if t not in g:
+                g.add(t)
+                added += 1
+            pbar.update(1)
+
+    # ── helper: build group map and generate symmetric pairs ─────────────────
+    def _pairwise(
+        prop_fwd: URIRef,
+        prop_chain_end: URIRef,
+        result_prop: URIRef,
+        label: str,
+        step: str,
+    ) -> int:
+        """
+        Build groups: entity → set[game] via prop_fwd.
+        Then emit (g1, result_prop, g2) for every distinct pair in each group.
+        """
+        groups: dict[URIRef, set[URIRef]] = defaultdict(set)
+        for game, _, entity in g.triples((None, prop_fwd, None)):
+            if isinstance(game, URIRef) and isinstance(entity, URIRef):
+                groups[entity].add(game)
+
+        # Count pairs up-front for progress bar
+        skipped_groups = 0
+        pairs: list[tuple[URIRef, URIRef]] = []
+        for entity, games in groups.items():
+            if len(games) > max_group:
+                skipped_groups += 1
+                continue
+            glist = list(games)
+            for i, g1 in enumerate(glist):
+                for g2 in glist[i + 1 :]:
+                    pairs.append((g1, g2))
+
+        if skipped_groups:
+            logger.warning(
+                f"  {label}: skipped {skipped_groups} groups with >{max_group} games "
+                f"(use --max-group N to raise the limit)"
+            )
+
+        new = 0
+        with tqdm(
+            pairs, desc=f"  [{step}] {label}", unit="pair", ncols=80, leave=True
+        ) as pbar:
+            for g1, g2 in pbar:
+                for a, b in ((g1, g2), (g2, g1)):  # materialise both directions
+                    t = (a, result_prop, b)
+                    if t not in g:
+                        g.add(t)
+                        new += 1
+                pbar.set_postfix(new=new)
+        return new
+
+    # ── 3: sharedFranchiseWith ───────────────────────────────────────────────
+    added += _pairwise(
+        VG.belongsTo,
+        VG.includes,
+        VG.sharedFranchiseWith,
+        "sharedFranchiseWith",
+        "2/3",
+    )
+
+    # ── 4 & 5: sharesDeveloperWith / sharesPublisherWith ─────────────────────
+    added += _pairwise(
+        VG.developedBy,
+        VG.developerOf,
+        VG.sharesDeveloperWith,
+        "sharesDeveloperWith",
+        "3a/3",
+    )
+    added += _pairwise(
+        VG.publishedBy,
+        VG.publisherOf,
+        VG.sharesPublisherWith,
+        "sharesPublisherWith",
+        "3b/3",
+    )
+
+    return added
+
+
+# ---------------------------------------------------------------------------
 # RDF helpers
 # ---------------------------------------------------------------------------
 
@@ -222,7 +355,7 @@ def _intersection(g: Graph, items: list) -> BNode:
 # ---------------------------------------------------------------------------
 
 
-def enrich_file(path: Path, run_reasoning: bool = False) -> None:
+def enrich_file(path: Path, run_reasoning: bool = False, max_group: int = 50) -> None:
     logger.info(f"Processing: {path.name}")
     g = Graph()
     g.bind("vg", VG)
@@ -239,22 +372,14 @@ def enrich_file(path: Path, run_reasoning: bool = False) -> None:
         logger.info(f"  Added {added} new axiom triples")
 
     if run_reasoning:
-        try:
-            import owlrl  # type: ignore[import]
-
-            logger.info("  Running OWL-RL reasoning (may take several minutes)...")
-            before_reason = len(g)
-            owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
-            inferred = len(g) - before_reason
+        if path.name == "videogames.owl":
+            logger.info("  Skipping reasoning on schema-only file (videogames.owl)")
+        else:
+            logger.info("  Running targeted materialisation...")
+            inferred = _materialise(g, max_group=max_group)
             logger.info(
-                f"  Reasoning done: +{inferred} inferred triples → {len(g)} total"
+                f"  Materialisation done: +{inferred} new triples → {len(g)} total"
             )
-        except ImportError:
-            logger.error("  owlrl not installed — run: pip install owlrl")
-            return
-        except Exception as e:
-            logger.error(f"  Reasoning failed: {e}")
-            return
 
     if added == 0 and not run_reasoning:
         logger.info("  Nothing changed — skipping save")
@@ -265,14 +390,34 @@ def enrich_file(path: Path, run_reasoning: bool = False) -> None:
 
 
 def main() -> None:
+    import argparse
+
     ontology_dir = Path(__file__).parent
 
-    args = sys.argv[1:]
-    run_reasoning = "--reason" in args
-    file_args = [a for a in args if not a.startswith("--")]
+    parser = argparse.ArgumentParser(
+        description="Enrich OWL files with advanced ontology constructs."
+    )
+    parser.add_argument(
+        "files",
+        nargs="*",
+        help="OWL files to process (default: all *.owl in this directory)",
+    )
+    parser.add_argument(
+        "--reason",
+        action="store_true",
+        help="Materialise inferred triples after enriching",
+    )
+    parser.add_argument(
+        "--max-group",
+        type=int,
+        default=50,
+        metavar="N",
+        help="Max group size for pairwise chain materialisation (default: 50)",
+    )
+    ns = parser.parse_args()
 
-    if file_args:
-        targets = [ontology_dir / arg for arg in file_args]
+    if ns.files:
+        targets = [ontology_dir / f for f in ns.files]
     else:
         targets = sorted(ontology_dir.glob("*.owl"))
 
@@ -285,7 +430,7 @@ def main() -> None:
             logger.warning(f"File not found: {target}")
             continue
         try:
-            enrich_file(target, run_reasoning=run_reasoning)
+            enrich_file(target, run_reasoning=ns.reason, max_group=ns.max_group)
         except Exception as e:
             logger.error(f"Failed to enrich {target.name}: {e}")
 
