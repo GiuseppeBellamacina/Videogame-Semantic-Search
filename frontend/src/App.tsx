@@ -53,6 +53,13 @@ export default function App() {
   );
 
   const handleGraphExpand = useCallback(async (newGraph: GraphData) => {
+    // Un-hide any node being re-added (e.g. previously removed, now re-expanded)
+    const incomingIds = new Set(newGraph.nodes.map((n) => n.id));
+    setHiddenNodeIds((prev) => {
+      const next = new Set([...prev].filter((id) => !incomingIds.has(id)));
+      return next.size === prev.size ? prev : next;
+    });
+
     const taggedNodes = newGraph.nodes.map((n) =>
       GAME_TYPES.has(n.type) ? { ...n, autoFetchImage: true } : n,
     );
