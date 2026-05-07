@@ -1,4 +1,9 @@
-import type { NodeDetailResponse, OntologyStats, QueryResponse } from "@/types";
+import type {
+  GraphLink,
+  NodeDetailResponse,
+  OntologyStats,
+  QueryResponse,
+} from "@/types";
 
 const API_BASE = `${import.meta.env.VITE_API_URL ?? ""}/api`;
 
@@ -54,4 +59,19 @@ export async function searchGameImage(
   }
 
   return res.json();
+}
+
+export async function getCrossLinks(
+  existingUris: string[],
+  newUris: string[],
+): Promise<GraphLink[]> {
+  if (newUris.length === 0) return [];
+  const res = await fetch(`${API_BASE}/cross-links`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ existing_uris: existingUris, new_uris: newUris }),
+  });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.links ?? [];
 }

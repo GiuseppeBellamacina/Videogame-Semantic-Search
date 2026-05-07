@@ -19,6 +19,8 @@ interface NodeDetailProps {
 
 const NODE_COLORS: Record<string, string> = {
   VideoGame: "#6366f1",
+  AwardWinningGame: "#6366f1",
+  FranchiseGame: "#6366f1",
   Developer: "#f59e0b",
   Publisher: "#10b981",
   Genre: "#ef4444",
@@ -32,6 +34,8 @@ const NODE_COLORS: Record<string, string> = {
 
 const NODE_SIZES: Record<string, number> = {
   VideoGame: 9,
+  AwardWinningGame: 9,
+  FranchiseGame: 9,
   Developer: 8,
   Publisher: 8,
   Genre: 6,
@@ -43,6 +47,12 @@ const NODE_SIZES: Record<string, number> = {
   Unknown: 5,
 };
 
+const GAME_TYPES = new Set(["VideoGame", "AwardWinningGame", "FranchiseGame"]);
+
+function isGameType(type: string): boolean {
+  return GAME_TYPES.has(type);
+}
+
 function makeNode(uri: string, label: string, type: string): GraphNode {
   return {
     id: uri,
@@ -50,12 +60,14 @@ function makeNode(uri: string, label: string, type: string): GraphNode {
     type,
     color: NODE_COLORS[type] ?? NODE_COLORS.Unknown,
     size: NODE_SIZES[type] ?? NODE_SIZES.Unknown,
-    autoFetchImage: type === "VideoGame",
+    autoFetchImage: isGameType(type),
   };
 }
 
 const TYPE_BADGES: Record<string, string> = {
   VideoGame: "bg-indigo-500/20 text-indigo-300",
+  AwardWinningGame: "bg-indigo-500/20 text-indigo-300",
+  FranchiseGame: "bg-indigo-500/20 text-indigo-300",
   Developer: "bg-amber-500/20 text-amber-300",
   Publisher: "bg-emerald-500/20 text-emerald-300",
   Genre: "bg-red-500/20 text-red-300",

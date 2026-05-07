@@ -17,6 +17,9 @@ NODE_COLORS = {
     "Award": "#f97316",  # Orange
     "GameEngine": "#14b8a6",  # Teal
     "Unknown": "#6b7280",  # Gray
+    # Defined subclasses — same colour as VideoGame
+    "AwardWinningGame": "#6366f1",
+    "FranchiseGame": "#6366f1",
 }
 
 NODE_SIZES = {
@@ -30,6 +33,9 @@ NODE_SIZES = {
     "Award": 7,
     "GameEngine": 7,
     "Unknown": 5,
+    # Defined subclasses — same size as VideoGame
+    "AwardWinningGame": 9,
+    "FranchiseGame": 9,
 }
 
 
@@ -94,6 +100,26 @@ def build_graph_from_results(
                                 "label": rel,
                             }
                         )
+
+    # Cross-link pass: find relationships between nodes that appeared in
+    # different rows (e.g. two games sharing a franchise node each returned
+    # in separate rows — they still have sharedFranchiseWith between them).
+    existing_link_keys: set[tuple] = {
+        (lnk["source"], lnk["target"], lnk["label"]) for lnk in links
+    }
+    all_uris = list(nodes_map.keys())
+    if len(all_uris) > 1:
+        cross = find_cross_links(
+            existing_uris=[],
+            new_uris=all_uris,
+            ontology_service=ontology_service,
+        )
+        for lnk in cross:
+            key = (lnk["source"], lnk["target"], lnk["label"])
+            rev = (lnk["target"], lnk["source"], lnk["label"])
+            if key not in existing_link_keys and rev not in existing_link_keys:
+                existing_link_keys.add(key)
+                links.append(lnk)
 
     return {
         "nodes": list(nodes_map.values()),
@@ -163,6 +189,28 @@ def build_graph_from_node(
             }
         )
 
+    # Discover cross-links between neighbor nodes (e.g. sharedFranchiseWith,
+    # sharesDeveloperWith between two games already in the graph).
+    neighbor_uris = [u for u in nodes_map if u != uri]
+    if neighbor_uris:
+        cross = find_cross_links(
+            existing_uris=[uri],
+            new_uris=neighbor_uris,
+            ontology_service=ontology_service,
+        )
+        for lnk in cross:
+            # Skip center→neighbor / neighbor→center links already added above
+            is_center_link = lnk["source"] == uri or lnk["target"] == uri
+            if not is_center_link:
+                dup = any(
+                    ll["source"] == lnk["source"]
+                    and ll["target"] == lnk["target"]
+                    and ll["label"] == lnk["label"]
+                    for ll in links
+                )
+                if not dup:
+                    links.append(lnk)
+
     return {
         "nodes": list(nodes_map.values()),
         "links": links,
@@ -198,3 +246,71 @@ def _find_relationship(uri_a: str, uri_b: str, ontology_service: Any) -> str | N
             return local
 
     return None
+
+
+def find_cross_links(
+    existing_uris: list[str],
+    new_uris: list[str],
+    ontology_service: Any,
+) -> list[dict]:
+    """
+    Find all direct relationships between new_uris and (existing_uris ∪ new_uris).
+
+    Efficient: for each new URI, iterates only its actual triples in the store and
+    checks if the connected node belongs to the known URI sets. O(new × avg_degree).
+    """
+    import pyoxigraph as ox
+
+    store = ontology_service.get_store()
+    existing_set = set(existing_uris)
+    new_set = set(new_uris)
+    all_set = existing_set | new_set
+
+    _SKIP_PREDS = {"type", "label", "subClassOf", "sameAs", "equivalentClass"}
+
+    links: list[dict] = []
+    seen: set[tuple] = set()
+
+    def _local(pred_value: str) -> str:
+        return (
+            pred_value.split("#")[-1]
+            if "#" in pred_value
+            else pred_value.split("/")[-1]
+        )
+
+    for uri in new_uris:
+        node = ox.NamedNode(uri)
+
+        # Outgoing: uri → target
+        for quad in store.quads_for_pattern(node, None, None):
+            if not isinstance(quad.object, ox.NamedNode):
+                continue
+            target = quad.object.value
+            if target not in all_set or target == uri:
+                continue
+            pred = _local(quad.predicate.value)
+            if pred in _SKIP_PREDS:
+                continue
+            key = (uri, target, pred)
+            rev = (target, uri, pred)
+            if key not in seen and rev not in seen:
+                seen.add(key)
+                links.append({"source": uri, "target": target, "label": pred})
+
+        # Incoming: source → uri
+        for quad in store.quads_for_pattern(None, None, node):
+            if not isinstance(quad.subject, ox.NamedNode):
+                continue
+            source = quad.subject.value
+            if source not in all_set or source == uri:
+                continue
+            pred = _local(quad.predicate.value)
+            if pred in _SKIP_PREDS:
+                continue
+            key = (source, uri, pred)
+            rev = (uri, source, pred)
+            if key not in seen and rev not in seen:
+                seen.add(key)
+                links.append({"source": source, "target": uri, "label": pred})
+
+    return links

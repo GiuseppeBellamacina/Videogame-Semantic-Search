@@ -15,9 +15,10 @@ export function useQuery() {
     // Return cached result immediately without loading state
     if (hasCached(key)) {
       abortControllerRef.current?.abort();
-      setData(getCached(key)!);
+      setData(null);
       setError(null);
       setLoading(false);
+      setData(getCached(key)!);
       return;
     }
 
@@ -26,6 +27,7 @@ export function useQuery() {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
+    setData(null);
     setLoading(true);
     setError(null);
 

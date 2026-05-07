@@ -34,6 +34,11 @@ uv run python prune_owl.py
 
 # 3. Pruning temporale (per la demo, rimuove giochi 2010-2019)
 uv run python prune_years.py
+
+# 4. Arricchimento ontologia con classi/proprietà inferite (opzionale)
+#    Aggiunge assiomi OWL avanzati. Con --reason materializza le triple inferite.
+uv run python enrich_owl.py videogames_pruned_2020.owl
+uv run python enrich_owl.py --reason videogames_pruned_2020.owl
 ```
 
 Lo script di popolazione:
@@ -58,44 +63,64 @@ Lo script di pruning temporale (`prune_years.py`):
 3. Rimuove le entità orfane (developer, publisher, ecc. non più collegati a nessun gioco)
 4. Produce `videogames_pruned_2020.owl` (~745k triple, -429k)
 
+Lo script di arricchimento (`enrich_owl.py`):
+
+1. Aggiunge classi definite e proprietà con catene inferenziali a qualsiasi file OWL
+2. È idempotente (non duplica assiomi già presenti)
+3. Con `--reason` materializza le triple inferite tramite un materializzatore mirato
+   (molto più veloce dell'OWL-RL completo: applica solo le 5 regole necessarie)
+4. Salta automaticamente `videogames.owl` (TBox pura, nessun dato)
+5. `--max-group N` limita i gruppi per evitare esplosione combinatoria
+
 Il backend (demo) carica a runtime `videogames_pruned_2020.owl` (con fallback a `videogames_wikidata.owl` → `videogames.owl`).
 
 ---
 
-## Classi (9)
+## Classi (11)
 
-| Classe         | Descrizione                                      | URI             |
-| -------------- | ------------------------------------------------ | --------------- |
-| **VideoGame**  | Un videogioco                                    | `vg:VideoGame`  |
-| **Developer**  | Uno studio di sviluppo                           | `vg:Developer`  |
-| **Publisher**  | Un editore/distributore                          | `vg:Publisher`  |
-| **Genre**      | Un genere videoludico (RPG, FPS, ecc.)           | `vg:Genre`      |
-| **Platform**   | Una piattaforma di gioco (PS5, PC, Switch, ecc.) | `vg:Platform`   |
-| **Character**  | Un personaggio di un videogioco                  | `vg:Character`  |
-| **Franchise**  | Una serie/franchise (Zelda, Dark Souls, ecc.)    | `vg:Franchise`  |
-| **Award**      | Un premio assegnato a un gioco                   | `vg:Award`      |
-| **GameEngine** | Un motore di gioco (Unreal Engine, Unity, ecc.)  | `vg:GameEngine` |
+| Classe               | Tipo       | Descrizione                                                             | URI                   |
+| -------------------- | ---------- | ----------------------------------------------------------------------- | --------------------- |
+| **VideoGame**        | Primitiva  | Un videogioco                                                           | `vg:VideoGame`        |
+| **Developer**        | Primitiva  | Uno studio di sviluppo                                                  | `vg:Developer`        |
+| **Publisher**        | Primitiva  | Un editore/distributore                                                 | `vg:Publisher`        |
+| **Genre**            | Primitiva  | Un genere videoludico (RPG, FPS, ecc.)                                  | `vg:Genre`            |
+| **Platform**         | Primitiva  | Una piattaforma di gioco (PS5, PC, Switch, ecc.)                        | `vg:Platform`         |
+| **Character**        | Primitiva  | Un personaggio di un videogioco                                         | `vg:Character`        |
+| **Franchise**        | Primitiva  | Una serie/franchise (Zelda, Dark Souls, ecc.)                           | `vg:Franchise`        |
+| **Award**            | Primitiva  | Un premio assegnato a un gioco                                          | `vg:Award`            |
+| **GameEngine**       | Primitiva  | Un motore di gioco (Unreal Engine, Unity, ecc.)                         | `vg:GameEngine`       |
+| **AwardWinningGame** | Definita ¹ | Sottoclasse di VideoGame: giochi che hanno vinto almeno un premio       | `vg:AwardWinningGame` |
+| **FranchiseGame**    | Definita ¹ | Sottoclasse di VideoGame: giochi che appartengono a una serie/franchise | `vg:FranchiseGame`    |
+
+> ¹ **Classi definite** — istanze materializzate tramite OWL-RL reasoning (`enrich_owl.py --reason`).
+> Nel grafo di visualizzazione appaiono come normali `VideoGame` (stessa icona e colore).
 
 ---
 
 ## Object Properties (relazioni tra entità)
 
-| Proprietà         | Dominio → Range           | Inversa           | Caratteristiche                                       |
-| ----------------- | ------------------------- | ----------------- | ----------------------------------------------------- |
-| `vg:developedBy`  | VideoGame → Developer     | `vg:developerOf`  | Asimmetrica, Irriflessiva                             |
-| `vg:developerOf`  | Developer → VideoGame     | `vg:developedBy`  | Asimmetrica, Irriflessiva                             |
-| `vg:publishedBy`  | VideoGame → Publisher     | `vg:publisherOf`  | Asimmetrica, Irriflessiva                             |
-| `vg:publisherOf`  | Publisher → VideoGame     | `vg:publishedBy`  | Asimmetrica, Irriflessiva                             |
-| `vg:hasGenre`     | VideoGame → Genre         | —                 | Irriflessiva                                          |
-| `vg:availableOn`  | VideoGame → Platform      | —                 | Irriflessiva                                          |
-| `vg:hasCharacter` | VideoGame → Character     | `vg:appearsIn`    | Asimmetrica, Irriflessiva                             |
-| `vg:appearsIn`    | Character → VideoGame     | `vg:hasCharacter` | Asimmetrica, Irriflessiva                             |
-| `vg:belongsTo`    | VideoGame → Franchise     | `vg:includes`     | Asimmetrica, Irriflessiva                             |
-| `vg:includes`     | Franchise → VideoGame     | `vg:belongsTo`    | Asimmetrica, Irriflessiva                             |
-| `vg:wonAward`     | VideoGame → Award         | —                 | Irriflessiva                                          |
-| `vg:sequelOf`     | VideoGame → VideoGame     | —                 | Asimmetrica, Irriflessiva                             |
-| `vg:madeWith`     | VideoGame → GameEngine    | —                 | Irriflessiva                                          |
-| `vg:hasGameMode`  | VideoGame → rdfs:Resource | —                 | Irriflessiva (valore letterale, e.g. "single-player") |
+| Proprietà                  | Dominio → Range           | Inversa / Chain             | Caratteristiche                                       |
+| -------------------------- | ------------------------- | --------------------------- | ----------------------------------------------------- |
+| `vg:developedBy`           | VideoGame → Developer     | `vg:developerOf`            | Asimmetrica, Irriflessiva                             |
+| `vg:developerOf`           | Developer → VideoGame     | `vg:developedBy`            | Asimmetrica, Irriflessiva                             |
+| `vg:publishedBy`           | VideoGame → Publisher     | `vg:publisherOf`            | Asimmetrica, Irriflessiva                             |
+| `vg:publisherOf`           | Publisher → VideoGame     | `vg:publishedBy`            | Asimmetrica, Irriflessiva                             |
+| `vg:hasGenre`              | VideoGame → Genre         | —                           | Irriflessiva                                          |
+| `vg:availableOn`           | VideoGame → Platform      | —                           | Irriflessiva                                          |
+| `vg:hasCharacter`          | VideoGame → Character     | `vg:appearsIn`              | Asimmetrica, Irriflessiva                             |
+| `vg:appearsIn`             | Character → VideoGame     | `vg:hasCharacter`           | Asimmetrica, Irriflessiva                             |
+| `vg:belongsTo`             | VideoGame → Franchise     | `vg:includes`               | Asimmetrica, Irriflessiva                             |
+| `vg:includes`              | Franchise → VideoGame     | `vg:belongsTo`              | Asimmetrica, Irriflessiva                             |
+| `vg:wonAward`              | VideoGame → Award         | —                           | Irriflessiva                                          |
+| `vg:sequelOf`              | VideoGame → VideoGame     | —                           | Asimmetrica, Irriflessiva                             |
+| `vg:madeWith`              | VideoGame → GameEngine    | —                           | Irriflessiva                                          |
+| `vg:hasGameMode`           | VideoGame → rdfs:Resource | —                           | Irriflessiva (valore letterale, e.g. "single-player") |
+| `vg:sharedFranchiseWith` ² | VideoGame ↔ VideoGame     | `belongsTo ∘ includes`      | Simmetrica, property chain inferita                   |
+| `vg:sharesDeveloperWith` ² | VideoGame ↔ VideoGame     | `developedBy ∘ developerOf` | Simmetrica, property chain inferita                   |
+| `vg:sharesPublisherWith` ² | VideoGame ↔ VideoGame     | `publishedBy ∘ publisherOf` | Simmetrica, property chain inferita                   |
+
+> ² **Proprietà inferite** — triple materializzate tramite `enrich_owl.py --reason`.
+> Permettono query dirette senza join espliciti (es. "tutti i giochi della stessa serie").
 
 ---
 
@@ -249,10 +274,29 @@ Le URI sono generate deterministicamente dal nome dell'entità (via `make_uri()`
 
 `hasGameMode` usa un valore letterale (stringa) e non una classe dedicata, perché le modalità di gioco sono poche e non necessitano di proprietà aggiuntive.
 
-### 11. Cache a due livelli
+### 11. Classi definite e proprietà inferite
 
-- **Upstash Redis** (cloud, TTL 7 giorni): per immagini cercate via Wikipedia API
-- **In-memory** (Python dict): per label e tipi RDF derivati dallo store
+L'ontologia include due **classi definite** (OWL 2 `equivalentClass` + `someValuesFrom`):
+
+- `vg:AwardWinningGame` ≡ `VideoGame ⊓ (wonAward some Award)` — ogni gioco che ha vinto almeno un premio
+- `vg:FranchiseGame` ≡ `VideoGame ⊓ (belongsTo some Franchise)` — ogni gioco che appartiene a una serie
+
+E tre **proprietà con catene di composizione** (`owl:propertyChainAxiom`):
+
+- `vg:sharedFranchiseWith` ← `belongsTo ∘ includes` (simmetrica)
+- `vg:sharesDeveloperWith` ← `developedBy ∘ developerOf` (simmetrica)
+- `vg:sharesPublisherWith` ← `publishedBy ∘ publisherOf` (simmetrica)
+
+Queste strutture sono aggiunte agli ABox tramite `enrich_owl.py`. Il materializzatore mirato integrato nello script (`--reason`) applica solo le 5 regole necessarie anziché l'intera chiusura OWL-RL, riducendo drasticamente i tempi di esecuzione.
+
+Nel frontend, `AwardWinningGame` e `FranchiseGame` vengono normalizzati a `VideoGame` per la visualizzazione (stessa icona, stesso colore), mantenendo tutta la semantica per le query SPARQL.
+
+### 12. Cache a due livelli
+
+- **Upstash Redis** (cloud, persistente):
+  - TTL **14 giorni** per i risultati delle query SPARQL (`vg:query:*`)
+  - TTL **6 mesi** per le immagini cercate via Wikipedia API (`img:*`)
+- **In-memory** (Python dict): per label e tipi RDF derivati dallo store (derivati dal grafo caricato, non persistono al riavvio)
 
 Questa architettura evita chiamate HTTP ripetitive mantenendo bassa la RAM.
 
@@ -287,21 +331,24 @@ Questa architettura evita chiamate HTTP ripetitive mantenendo bassa la RAM.
 
 ---
 
-## Statistiche (dopo popolazione + reasoning + pruning)
+## Statistiche (dopo popolazione + reasoning + pruning + enrichment)
 
-| Metrica                    | Completo (2010–2026) | Demo (2020–2026) |
-| -------------------------- | -------------------- | ---------------- |
-| Giochi totali              | ~104.000             | ~68.700          |
-| Triple totali              | ~1.173.959           | ~745.400         |
-| Developer                  | ~13.000              | ~12.000          |
-| Publisher                  | ~7.000               | ~5.500           |
-| Generi                     | ~350                 | ~200             |
-| Piattaforme                | ~180                 | ~180             |
-| Personaggi                 | ~7.000               | ~4.600           |
-| Franchise                  | ~4.500               | ~4.000           |
-| Awards                     | ~1.800               | ~1.670           |
-| Game Engine                | ~500                 | ~350             |
-| RAM a runtime (pyoxigraph) | ~389 MB              | ~250 MB          |
-| Tempo di caricamento       | ~2.2s                | ~1.5s            |
+| Metrica                         | Completo (2010–2026) | Demo (2020–2026) |
+| ------------------------------- | -------------------- | ---------------- |
+| Giochi totali                   | ~104.000             | ~68.700          |
+| Triple totali (dopo enrich_owl) | ~1.542.496           | ~885.218         |
+| Triple inferite da enrich_owl   | +368.478             | +139.759         |
+| Developer                       | ~13.000              | ~12.000          |
+| Publisher                       | ~7.000               | ~5.500           |
+| Generi                          | ~350                 | ~200             |
+| Piattaforme                     | ~180                 | ~180             |
+| Personaggi                      | ~7.000               | ~4.600           |
+| Franchise                       | ~4.500               | ~4.000           |
+| Awards                          | ~1.800               | ~1.670           |
+| Game Engine                     | ~500                 | ~350             |
+| RAM a runtime (pyoxigraph)      | ~389 MB              | ~250 MB          |
+| Tempo di caricamento            | ~2.2s                | ~1.5s            |
 
 > **Nota:** La demo live su Render usa il dataset 2020–2026 per rientrare nel limite RAM di 512 MB del piano gratuito. Il dataset completo è generabile localmente.
+>
+> Le triple inferite da `enrich_owl --reason` (classi `AwardWinningGame`/`FranchiseGame` e proprietà `shared*With`) non sono incluse nel conteggio sopra: vengono materializzate separatamente e aumentano significativamente la dimensione del file.

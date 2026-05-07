@@ -13,6 +13,8 @@ interface KnowledgeGraphProps {
 
 const NODE_COLORS: Record<string, string> = {
   VideoGame: "#6366f1",
+  AwardWinningGame: "#6366f1",
+  FranchiseGame: "#6366f1",
   Developer: "#f59e0b",
   Publisher: "#10b981",
   Genre: "#ef4444",
@@ -23,6 +25,9 @@ const NODE_COLORS: Record<string, string> = {
   GameEngine: "#14b8a6",
   Unknown: "#6b7280",
 };
+
+const GAME_TYPES = new Set(["VideoGame", "AwardWinningGame", "FranchiseGame"]);
+const isGameType = (type: string) => GAME_TYPES.has(type);
 
 // Image cache to avoid reloading (imageUrl → HTMLImageElement)
 const imageCache = new Map<string, HTMLImageElement | null>();
@@ -180,14 +185,12 @@ export function KnowledgeGraph({
             const dy = (b.y ?? 0) - (a.y ?? 0);
             const dist = Math.sqrt(dx * dx + dy * dy) || 1;
             // Use half-diagonal of the bounding rect for VideoGame nodes
-            const halfA =
-              a.type === "VideoGame"
-                ? Math.sqrt((a.size * 2.8) ** 2 + (a.size * 4.0) ** 2) / 2
-                : a.size || 8;
-            const halfB =
-              b.type === "VideoGame"
-                ? Math.sqrt((b.size * 2.8) ** 2 + (b.size * 4.0) ** 2) / 2
-                : b.size || 8;
+            const halfA = isGameType(a.type)
+              ? Math.sqrt((a.size * 2.8) ** 2 + (a.size * 4.0) ** 2) / 2
+              : a.size || 8;
+            const halfB = isGameType(b.type)
+              ? Math.sqrt((b.size * 2.8) ** 2 + (b.size * 4.0) ** 2) / 2
+              : b.size || 8;
             const minDist = halfA + halfB + 20;
             if (dist < minDist) {
               const push = ((minDist - dist) / dist) * alpha * 0.9;
@@ -276,7 +279,7 @@ export function KnowledgeGraph({
   // forceApi=true → hit the API if not cached; false → only apply what is already cached
   const fetchImageForNode = useCallback(
     async (node: GraphNode, forceApi = false) => {
-      if (node.type !== "VideoGame" || node.imageUrl) return;
+      if (!isGameType(node.type) || node.imageUrl) return;
 
       // Always check local cache first — no API call needed
       if (labelImageUrlCache.has(node.label)) {
@@ -315,7 +318,7 @@ export function KnowledgeGraph({
 
   // For every VideoGame node: check cache immediately; call API only if autoFetchImage
   useEffect(() => {
-    const gameNodes = data.nodes.filter((n) => n.type === "VideoGame");
+    const gameNodes = data.nodes.filter((n) => isGameType(n.type));
     for (const node of gameNodes) {
       fetchImageForNode(node, node.autoFetchImage === true);
     }
@@ -382,8 +385,9 @@ export function KnowledgeGraph({
         const dx = (n.x ?? 0) - graphCoords.x;
         const dy = (n.y ?? 0) - graphCoords.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const hitRadius =
-          n.type === "VideoGame" ? (n.size || 8) * 4 : (n.size || 8) * 2;
+        const hitRadius = isGameType(n.type)
+          ? (n.size || 8) * 4
+          : (n.size || 8) * 2;
         if (dist < hitRadius && dist < closestDist) {
           closest = n;
           closestDist = dist;
@@ -457,7 +461,7 @@ export function KnowledgeGraph({
 
       const pending = data.nodes.filter(
         (n) =>
-          n.type === "VideoGame" &&
+          isGameType(n.type) &&
           !n.imageUrl &&
           !labelImageUrlCache.has(n.label) &&
           !fetchingLabels.has(n.label),
@@ -478,7 +482,7 @@ export function KnowledgeGraph({
       const isHighlighted =
         node.id === highlightNode || node.id === hoveredNode;
       const fontSize = Math.max(10 / globalScale, 2);
-      const isGame = node.type === "VideoGame";
+      const isGame = isGameType(node.type);
 
       if (isGame) {
         const w = size * 2.8;
@@ -703,7 +707,7 @@ export function KnowledgeGraph({
                   }`}
                   title={hidden ? `Mostra ${type}` : `Nascondi ${type}`}
                 >
-                  {type === "VideoGame" ? (
+                  {isGameType(type) ? (
                     <div
                       className="w-2 h-3.5 rounded-sm flex-shrink-0"
                       style={{ backgroundColor: hidden ? "#4b5563" : color }}
@@ -743,7 +747,7 @@ export function KnowledgeGraph({
           ctx: CanvasRenderingContext2D,
         ) => {
           const size = node.size || 8;
-          if (node.type === "VideoGame") {
+          if (isGameType(node.type)) {
             const w = size * 2.8 + 8;
             const h = size * 4.0 + 8;
             ctx.beginPath();

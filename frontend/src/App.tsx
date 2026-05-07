@@ -8,7 +8,10 @@ import { NodeContextMenu } from "@/components/NodeContextMenu";
 import { SparqlViewer } from "@/components/SparqlViewer";
 import { Analytics } from "@vercel/analytics/react";
 import { useQuery } from "@/hooks/useQuery";
-import type { GraphData, GraphNode } from "@/types";
+import { getCrossLinks } from "@/lib/api";
+import type { GraphData, GraphLink, GraphNode } from "@/types";
+
+const GAME_TYPES = new Set(["VideoGame", "AwardWinningGame", "FranchiseGame"]);
 
 export default function App() {
   const { data, loading, error, search, cancel } = useQuery();
@@ -49,20 +52,26 @@ export default function App() {
     [selectedNode],
   );
 
-  const handleGraphExpand = useCallback((newGraph: GraphData) => {
+  const handleGraphExpand = useCallback(async (newGraph: GraphData) => {
     const taggedNodes = newGraph.nodes.map((n) =>
-      n.type === "VideoGame" ? { ...n, autoFetchImage: true } : n,
+      GAME_TYPES.has(n.type) ? { ...n, autoFetchImage: true } : n,
     );
 
+    // Determine which nodes are truly new before updating state
+    let existingNodeIds: string[] = [];
+    let addedNodeIds: string[] = [];
+
     setExtraGraph((prev) => {
-      const existingNodeIds = new Set(prev.nodes.map((n) => n.id));
+      const existingIds = new Set(prev.nodes.map((n) => n.id));
+      existingNodeIds = [...existingIds];
       const existingLinkKeys = new Set(
         prev.links.map(
           (l) =>
             `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`,
         ),
       );
-      const addedNodes = taggedNodes.filter((n) => !existingNodeIds.has(n.id));
+      const addedNodes = taggedNodes.filter((n) => !existingIds.has(n.id));
+      addedNodeIds = addedNodes.map((n) => n.id);
       const addedLinks = newGraph.links.filter((l) => {
         const key = `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`;
         return !existingLinkKeys.has(key);
@@ -72,6 +81,35 @@ export default function App() {
         links: [...prev.links, ...addedLinks],
       };
     });
+
+    // After merging, discover cross-links between new nodes and existing canvas
+    if (addedNodeIds.length === 0) return;
+    try {
+      const crossLinks: GraphLink[] = await getCrossLinks(
+        existingNodeIds,
+        addedNodeIds,
+      );
+      if (crossLinks.length === 0) return;
+      setExtraGraph((prev) => {
+        const existingLinkKeys = new Set(
+          prev.links.map(
+            (l) =>
+              `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`,
+          ),
+        );
+        const genuinelyNew = crossLinks.filter((l) => {
+          const src = typeof l.source === "string" ? l.source : l.source.id;
+          const tgt = typeof l.target === "string" ? l.target : l.target.id;
+          const key = `${src}__${tgt}__${l.label}`;
+          const revKey = `${tgt}__${src}__${l.label}`;
+          return !existingLinkKeys.has(key) && !existingLinkKeys.has(revKey);
+        });
+        if (genuinelyNew.length === 0) return prev;
+        return { ...prev, links: [...prev.links, ...genuinelyNew] };
+      });
+    } catch {
+      // Non-critical: cross-link discovery is best-effort
+    }
   }, []);
 
   const handleNodeClick = useCallback((uri: string) => {
@@ -106,7 +144,7 @@ export default function App() {
     return {
       ...raw,
       nodes: raw.nodes.map((n) =>
-        n.type === "VideoGame" ? { ...n, autoFetchImage: true } : n,
+        GAME_TYPES.has(n.type) ? { ...n, autoFetchImage: true } : n,
       ),
     };
   }, [data]);

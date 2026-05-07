@@ -37,6 +37,8 @@ INSTRUCTIONS:
     - vg:sharesPublisherWith — directly links two games from the same publisher
     - rdf:type vg:AwardWinningGame — class containing all games that have won at least one award
     - rdf:type vg:FranchiseGame — class containing all games that belong to a series
+    IMPORTANT: prefer these inferred classes/properties over manual joins when available.
+    When asked about "serie", "franchise", "stesso sviluppatore", "stesso publisher", "premi" → use them.
 14. For multiplatform queries, use GROUP BY / HAVING COUNT(DISTINCT ?platform) >= 2.
 
 EXAMPLES:
@@ -162,4 +164,77 @@ SELECT DISTINCT ?game ?gameName ?related ?relatedName ?dev ?devName WHERE {{
 }}
 ORDER BY ?relatedName
 LIMIT 50
+
+Q: "Giochi che hanno vinto premi" / "Giochi premiati"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?award ?awardName ?score WHERE {{
+  ?game rdf:type vg:AwardWinningGame .
+  ?game vg:gameName ?gameName .
+  ?game vg:wonAward ?award .
+  ?award vg:awardName ?awardName .
+  OPTIONAL {{ ?game vg:metacriticScore ?score }}
+}}
+ORDER BY DESC(?score) ?gameName
+LIMIT 50
+
+Q: "Giochi che appartengono a una serie / franchise"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?franchise ?franchiseName ?releaseDate WHERE {{
+  ?game rdf:type vg:FranchiseGame .
+  ?game vg:gameName ?gameName .
+  ?game vg:belongsTo ?franchise .
+  ?franchise vg:franchiseName ?franchiseName .
+  OPTIONAL {{ ?game vg:releaseDate ?releaseDate }}
+}}
+ORDER BY ?franchiseName ?releaseDate
+LIMIT 50
+
+Q: "Altri giochi della stessa serie di Mario" / "Serie di Mario"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?related ?relatedName WHERE {{
+  ?game rdf:type vg:VideoGame .
+  ?game vg:gameName ?gameName .
+  FILTER(CONTAINS(LCASE(str(?gameName)), "mario"))
+  ?game vg:sharedFranchiseWith ?related .
+  ?related vg:gameName ?relatedName .
+  FILTER(?game != ?related)
+}}
+ORDER BY ?relatedName
+LIMIT 50
+
+Q: "Giochi premiati dello stesso publisher di Nintendo" / "Publisher con più giochi premiati"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?pub ?pubName ?award ?awardName WHERE {{
+  ?game rdf:type vg:AwardWinningGame .
+  ?game vg:gameName ?gameName .
+  ?game vg:publishedBy ?pub .
+  ?pub vg:publisherName ?pubName .
+  FILTER(CONTAINS(LCASE(str(?pubName)), "nintendo"))
+  ?game vg:wonAward ?award .
+  ?award vg:awardName ?awardName .
+}}
+ORDER BY ?gameName
+LIMIT 50
+
+Q: "Franchise con più giochi premiati"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?franchise ?franchiseName (COUNT(DISTINCT ?game) AS ?awardedGames) WHERE {{
+  ?game rdf:type vg:AwardWinningGame .
+  ?game rdf:type vg:FranchiseGame .
+  ?game vg:belongsTo ?franchise .
+  ?franchise vg:franchiseName ?franchiseName .
+}}
+GROUP BY ?franchise ?franchiseName
+ORDER BY DESC(?awardedGames)
+LIMIT 20
 """

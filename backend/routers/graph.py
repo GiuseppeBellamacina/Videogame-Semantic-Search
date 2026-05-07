@@ -8,14 +8,42 @@ from urllib.parse import quote, unquote
 
 import httpx
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
-from backend.services.graph_builder import build_graph_from_node
+from backend.services.graph_builder import build_graph_from_node, find_cross_links
 from backend.services.image_cache import get_image, set_image
 from backend.services.ontology_service import OntologyService
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+class CrossLinksRequest(BaseModel):
+    existing_uris: list[str]
+    new_uris: list[str]
+
+
+@router.post("/cross-links")
+async def get_cross_links(body: CrossLinksRequest):
+    """
+    Given a set of URIs already on the canvas (existing_uris) and newly added
+    URIs (new_uris), return all direct relationships between them so the
+    frontend can draw the missing edges automatically.
+    """
+    if not body.new_uris:
+        return {"links": []}
+
+    try:
+        links = find_cross_links(
+            existing_uris=body.existing_uris,
+            new_uris=body.new_uris,
+            ontology_service=OntologyService,
+        )
+        return {"links": links}
+    except Exception as e:
+        logger.exception("Failed to compute cross-links")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/node/{uri:path}")

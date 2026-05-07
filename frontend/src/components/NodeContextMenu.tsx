@@ -14,6 +14,8 @@ import type { GraphNode, GraphData, NodeDetails } from "@/types";
 
 const NODE_COLORS: Record<string, string> = {
   VideoGame: "#6366f1",
+  AwardWinningGame: "#6366f1",
+  FranchiseGame: "#6366f1",
   Developer: "#f59e0b",
   Publisher: "#10b981",
   Genre: "#ef4444",

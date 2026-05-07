@@ -259,10 +259,12 @@ class OntologyService:
         node = ox.NamedNode(uri)
         rdf_type = ox.NamedNode(RDF_TYPE)
 
-        # Priority order: more specific/common types first
+        # Defined subclasses that should display as VideoGame in the graph.
+        # They are semantic shortcuts for querying, not distinct visual types.
+        _GAME_SUBCLASSES = {"AwardWinningGame", "FranchiseGame"}
+
+        # Priority order for non-game types
         _TYPE_PRIORITY = [
-            "AwardWinningGame",
-            "FranchiseGame",
             "VideoGame",
             "Developer",
             "Publisher",
@@ -297,13 +299,16 @@ class OntologyService:
             set_type(uri, "Unknown")
             return "Unknown"
 
+        # Collapse defined game subclasses to VideoGame for display purposes
+        normalised = ["VideoGame" if t in _GAME_SUBCLASSES else t for t in found_types]
+
         # Pick by priority; if not in priority list, use first found
         for t in _TYPE_PRIORITY:
-            if t in found_types:
+            if t in normalised:
                 set_type(uri, t)
                 return t
 
-        result = found_types[0]
+        result = normalised[0]
         set_type(uri, result)
         return result
 
