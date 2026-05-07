@@ -31,6 +31,13 @@ INSTRUCTIONS:
 10. Return ONLY the SPARQL query, no explanations or markdown.
 11. The query runs on a LOCAL rdflib graph, NOT on a remote endpoint — do NOT use SERVICE clauses.
 12. IMPORTANT: Always include ?game URI variable. For related entities (developer, publisher, genre, platform, etc.), include their URI variable too so the graph can show connections.
+13. INFERRED PROPERTIES (available after OWL-RL reasoning — use these when relevant):
+    - vg:sharedFranchiseWith — directly links two games in the same series (no franchise join needed)
+    - vg:sharesDeveloperWith — directly links two games made by the same studio
+    - vg:sharesPublisherWith — directly links two games from the same publisher
+    - rdf:type vg:AwardWinningGame — class containing all games that have won at least one award
+    - rdf:type vg:FranchiseGame — class containing all games that belong to a series
+14. For multiplatform queries, use GROUP BY / HAVING COUNT(DISTINCT ?platform) >= 2.
 
 EXAMPLES:
 
@@ -93,5 +100,66 @@ SELECT DISTINCT ?game ?gameName ?platform ?platformName ?dev ?devName WHERE {{
   OPTIONAL {{ ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }}
 }}
 ORDER BY ?gameName
+LIMIT 50
+
+Q: "Giochi premiati con il punteggio Metacritic più alto"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?score ?award ?awardName WHERE {{
+  ?game rdf:type vg:AwardWinningGame .
+  ?game vg:gameName ?gameName .
+  ?game vg:metacriticScore ?score .
+  ?game vg:wonAward ?award .
+  ?award vg:awardName ?awardName .
+}}
+ORDER BY DESC(?score)
+LIMIT 50
+
+Q: "Quali altri giochi appartengono alla stessa serie di Zelda?"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?related ?relatedName WHERE {{
+  ?game rdf:type vg:VideoGame .
+  ?game vg:gameName ?gameName .
+  FILTER(CONTAINS(LCASE(str(?gameName)), "zelda"))
+  ?game vg:sharedFranchiseWith ?related .
+  ?related vg:gameName ?relatedName .
+  FILTER(?game != ?related)
+}}
+ORDER BY ?relatedName
+LIMIT 50
+
+Q: "Giochi multipiattaforma con score alto"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?score (COUNT(DISTINCT ?platform) AS ?numPlatforms) WHERE {{
+  ?game rdf:type vg:VideoGame .
+  ?game vg:gameName ?gameName .
+  ?game vg:metacriticScore ?score .
+  ?game vg:availableOn ?platform .
+}}
+GROUP BY ?game ?gameName ?score
+HAVING (COUNT(DISTINCT ?platform) >= 2)
+ORDER BY DESC(?score)
+LIMIT 50
+
+Q: "Altri giochi dello stesso sviluppatore di Dark Souls"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?related ?relatedName ?dev ?devName WHERE {{
+  ?game rdf:type vg:VideoGame .
+  ?game vg:gameName ?gameName .
+  FILTER(CONTAINS(LCASE(str(?gameName)), "dark souls"))
+  ?game vg:sharesDeveloperWith ?related .
+  ?related vg:gameName ?relatedName .
+  FILTER(?game != ?related)
+  ?game vg:developedBy ?dev .
+  ?dev vg:developerName ?devName .
+}}
+ORDER BY ?relatedName
 LIMIT 50
 """

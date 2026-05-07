@@ -198,6 +198,16 @@ class OntologyService:
             count = sum(1 for _ in store.quads_for_pattern(None, rdf_type, cls_uri))
             stats[name] = count
 
+        # Derived/inferred class counts
+        inferred_counts = {
+            "award_winning_games": ox.NamedNode(VG_NS + "AwardWinningGame"),
+            "franchise_games": ox.NamedNode(VG_NS + "FranchiseGame"),
+        }
+        for name, cls_uri in inferred_counts.items():
+            count = sum(1 for _ in store.quads_for_pattern(None, rdf_type, cls_uri))
+            if count > 0:
+                stats[name] = count
+
         return stats
 
     @classmethod
@@ -251,6 +261,8 @@ class OntologyService:
 
         # Priority order: more specific/common types first
         _TYPE_PRIORITY = [
+            "AwardWinningGame",
+            "FranchiseGame",
             "VideoGame",
             "Developer",
             "Publisher",
@@ -306,12 +318,18 @@ class OntologyService:
         "wonAward": "Award",
         "madeWith": "GameEngine",
         "sequelOf": "VideoGame",
+        "sharedFranchiseWith": "VideoGame",
+        "sharesDeveloperWith": "VideoGame",
+        "sharesPublisherWith": "VideoGame",
     }
     _PRED_TO_SOURCE_TYPE = {
         "developerOf": "Developer",
         "publisherOf": "Publisher",
         "appearsIn": "Character",
         "includes": "Franchise",
+        "sharedFranchiseWith": "VideoGame",
+        "sharesDeveloperWith": "VideoGame",
+        "sharesPublisherWith": "VideoGame",
     }
 
     @classmethod
@@ -345,6 +363,10 @@ CLASSES:
 - vg:Award — An award given to a game
 - vg:GameEngine — A game engine (e.g., Unreal Engine, Unity, GameMaker)
 
+DEFINED / INFERRED CLASSES (materialised by OWL-RL reasoning):
+- vg:AwardWinningGame — subclass of VideoGame; every game that has won at least one award
+- vg:FranchiseGame    — subclass of VideoGame; every game that belongs to a franchise/series
+
 OBJECT PROPERTIES (domain → range):
 - vg:developedBy (VideoGame → Developer) — inverse: vg:developerOf
 - vg:publishedBy (VideoGame → Publisher) — inverse: vg:publisherOf
@@ -356,6 +378,14 @@ OBJECT PROPERTIES (domain → range):
 - vg:sequelOf (VideoGame → VideoGame)
 - vg:madeWith (VideoGame → GameEngine)
 - vg:hasGameMode (VideoGame → literal string, e.g., "single-player", "multiplayer")
+
+INFERRED OBJECT PROPERTIES (materialised by OWL-RL via property chains):
+- vg:sharedFranchiseWith (VideoGame ↔ VideoGame) — symmetric; two games in the same franchise
+  chain: vg:belongsTo ∘ vg:includes
+- vg:sharesDeveloperWith (VideoGame ↔ VideoGame) — symmetric; two games by the same studio
+  chain: vg:developedBy ∘ vg:developerOf
+- vg:sharesPublisherWith (VideoGame ↔ VideoGame) — symmetric; two games from the same publisher
+  chain: vg:publishedBy ∘ vg:publisherOf
 
 DATA PROPERTIES:
 - vg:gameName (VideoGame → xsd:string) — the name of the game
@@ -381,4 +411,5 @@ IMPORTANT SPARQL NOTES:
 - Use OPTIONAL for properties that may not exist for all games
 - Use DISTINCT to avoid duplicates
 - Add ORDER BY and LIMIT for manageable results
+- Inferred classes/properties are only available if OWL-RL reasoning was applied to the loaded graph
 """
