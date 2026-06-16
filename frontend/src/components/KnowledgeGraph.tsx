@@ -166,49 +166,63 @@ export function KnowledgeGraph({
   // Apply collision force to prevent node overlap
   useEffect(() => {
     if (!graphRef.current) return;
-    // Moderate repulsion — strong enough to spread, not enough to explode
-    graphRef.current.d3Force("charge")?.strength(-300);
-    // Moderate link distance
-    graphRef.current.d3Force("link")?.distance(100);
-    graphRef.current.d3Force("collision", {
-      initialize(nodes: any[]) {
-        this._nodes = nodes;
-      },
-      _nodes: [] as any[],
-      force(alpha: number) {
-        const nodes = this._nodes;
-        for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1; j < nodes.length; j++) {
-            const a = nodes[i],
-              b = nodes[j];
-            const dx = (b.x ?? 0) - (a.x ?? 0);
-            const dy = (b.y ?? 0) - (a.y ?? 0);
-            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            // Use half-diagonal of the bounding rect for VideoGame nodes
-            const halfA = isGameType(a.type)
-              ? Math.sqrt((a.size * 2.8) ** 2 + (a.size * 4.0) ** 2) / 2
-              : a.size || 8;
-            const halfB = isGameType(b.type)
-              ? Math.sqrt((b.size * 2.8) ** 2 + (b.size * 4.0) ** 2) / 2
-              : b.size || 8;
-            const minDist = halfA + halfB + 20;
-            if (dist < minDist) {
-              const push = ((minDist - dist) / dist) * alpha * 0.9;
-              const fx = dx * push,
-                fy = dy * push;
-              if (a.x !== undefined) {
-                a.x -= fx;
-                a.y -= fy;
-              }
-              if (b.x !== undefined) {
-                b.x += fx;
-                b.y += fy;
-              }
+
+    const fg = graphRef.current;
+
+    // 1. Global repulsion
+    fg.d3Force("charge")?.strength(-800);
+
+    // 2. Link force
+    const linkForce = fg.d3Force("link");
+    if (linkForce) {
+      linkForce.distance(150);
+      linkForce.strength(0.05);
+    }
+
+    // 3. Custom collision — D3 requires a function, not an object.
+    //    The original object format { initialize, force } was silently ignored.
+    let simulationNodes: any[] = [];
+
+    const customCollisionForce = function (alpha: number) {
+      for (let i = 0; i < simulationNodes.length; i++) {
+        for (let j = i + 1; j < simulationNodes.length; j++) {
+          const a = simulationNodes[i];
+          const b = simulationNodes[j];
+          const dx = (b.x ?? 0) - (a.x ?? 0);
+          const dy = (b.y ?? 0) - (a.y ?? 0);
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+          const halfA = isGameType(a.type)
+            ? Math.sqrt((a.size * 2.8) ** 2 + (a.size * 4.0) ** 2) / 2
+            : a.size || 8;
+          const halfB = isGameType(b.type)
+            ? Math.sqrt((b.size * 2.8) ** 2 + (b.size * 4.0) ** 2) / 2
+            : b.size || 8;
+
+          const minDist = halfA + halfB + 20;
+          if (dist < minDist) {
+            const push = ((minDist - dist) / dist) * alpha * 0.9;
+            const fx = dx * push;
+            const fy = dy * push;
+            if (a.x !== undefined) {
+              a.x -= fx;
+              a.y -= fy;
+            }
+            if (b.x !== undefined) {
+              b.x += fx;
+              b.y += fy;
             }
           }
         }
-      },
-    });
+      }
+    };
+
+    // D3 uses this to inject the node array into the force
+    customCollisionForce.initialize = function (nodes: any[]) {
+      simulationNodes = nodes;
+    };
+
+    fg.d3Force("collision", customCollisionForce);
   }, []);
 
   // When new nodes appear (expansion), place them near connected existing nodes
