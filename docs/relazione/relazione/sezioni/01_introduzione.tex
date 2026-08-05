@@ -1,0 +1,55 @@
+\section{Introduzione}
+\label{sec:introduzione}
+
+\subsection{Contesto: Semantic Web e Ontologie}
+
+Il Semantic Web, introdotto da Tim Berners-Lee nel 2001, rappresenta un'estensione
+del Web tradizionale in cui l'informazione \`e strutturata e dotata di semantica
+formale, consentendo alle macchine di interpretare e ragionare sui dati in modo
+automatico. Il fondamento teorico di questa visione risiede nel concetto di
+\textbf{ontologia}, definita da \citet{gruber1993} come \textless{}una specifica
+esplicita e formale di una concettualizzazione condivisa\textgreater{}.
+
+Le ontologie, espresse in linguaggi formali come OWL 2 \citep{w3c-owl2-primer},
+permettono di modellare un dominio di conoscenza attraverso:
+\begin{itemize}[nosep]
+  \item \textbf{Classi} --- categorie di entit\`a (es. \texttt{VideoGame}, \texttt{Developer});
+  \item \textbf{Propriet\`a} --- relazioni tra entit\`a (es. \texttt{developedBy}) e attributi (es. \texttt{metacriticScore});
+  \item \textbf{Assiomi} --- vincoli logici che arricchiscono la semantica (es. classi definite, disjointness, catene di propriet\`a).
+\end{itemize}
+
+Un knowledge graph \`e la concretizzazione pratica di un'ontologia popolata con
+dati reali: nodi (istanze) e archi (asserzioni RDF) formano un grafo interrogabile
+tramite query SPARQL.
+
+\subsection{Obiettivo del Progetto}
+
+Il progetto \textbf{Videogame Semantic Search} si propone di:
+\begin{enumerate}[nosep]
+  \item \textbf{Costruire un'ontologia OWL 2 di alta qualit\`a} sul dominio dei videogiochi, coprendo il periodo 2010--2026, con uno schema ricco di assiomi (classi primitive e definite, disjointness, property chain, allineamenti esterni);
+  \item \textbf{Popolare l'ontologia da Wikidata} tramite query SPARQL federate, producendo un insieme di istanze di oltre 1.1 milioni di triple;
+  \item \textbf{Abilitare l'interrogazione in linguaggio naturale} attraverso un agente SPARQL basato su Large Language Model (GPT-4.1-mini) che traduce domande in italiano in query SPARQL eseguibili;
+  \item \textbf{Visualizzare i risultati come grafo di conoscenza interattivo}, navigabile con zoom, pan, filtri e dettaglio nodi.
+\end{enumerate}
+
+\subsection{Casi d'Uso}
+
+I principali casi d'uso del sistema sono:
+\begin{itemize}[nosep]
+  \item \textbf{Ricerca semantica} --- interrogare il knowledge graph con domande come \textless{}Quali giochi ha sviluppato FromSoftware?\textgreater{} o \textless{}Top 10 giochi RPG con Metacritic pi\`u alto\textgreater{};
+  \item \textbf{Grafo di conoscenza interattivo} --- esplorare visualmente le relazioni tra giochi, sviluppatori, generi, piattaforme e franchise;
+  \item \textbf{Reasoning automatico} --- classificare automaticamente i giochi in categorie derivate (MultiplayerGame, HighlyRatedGame, SequelGame, ecc.) sfruttando gli assiomi OWL 2.
+\end{itemize}
+
+\subsection{Panoramica della Relazione}
+
+Il presente documento \`e organizzato come segue. La Sezione~\ref{sec:architettura}
+descrive l'architettura software complessiva. Le Sezioni~\ref{sec:ontologia_overview}--\ref{sec:allineamento}
+costituiscono il cuore della relazione e analizzano in dettaglio l'ontologia:
+lo schema dell'ontologia (classi, propriet\`a, classi definite, disjointness) e allineamento esterno.
+La Sezione~\ref{sec:reasoning} approfondisce il sistema di reasoning a due livelli,
+incluso il bug critico degli \texttt{owl:sameAs} falsi e la sua risoluzione.
+La Sezione~\ref{sec:popolamento} descrive la pipeline di popolamento da Wikidata.
+La Sezione~\ref{sec:validazione} illustra i controlli di validazione dello schema.
+La Sezione~\ref{sec:frontend_backend} presenta l'applicazione web.
+La Sezione~\ref{sec:conclusione} riassume i risultati e delinea possibili sviluppi futuri.

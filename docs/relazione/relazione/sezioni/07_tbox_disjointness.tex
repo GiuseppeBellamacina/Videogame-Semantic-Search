@@ -1,0 +1,63 @@
+\section{Disjointness}
+\label{sec:disjointness}
+
+\subsection{Blocchi AllDisjointClasses}
+
+L'ontologia dichiara \textbf{12 blocchi \texttt{owl:AllDisjointClasses}}, elencati
+nella Tabella~\ref{tab:disjoint}. Ciascun blocco specifica un insieme di classi
+mutuamente disgiunte: nessuna istanza pu\`o appartenere a pi\`u di una classe
+nello stesso blocco.
+
+\begin{table}[h]
+\centering
+\caption{Blocchi AllDisjointClasses}
+\label{tab:disjoint}
+\begin{tabular}{ll}
+\toprule
+\textbf{\#} & \textbf{Classi} \\
+\midrule
+1 & VideoGame, Developer, Publisher, Genre, Platform, Character, Franchise, Award, \\
+  & GameEngine, GameMode, Review, GameEvent \\
+2 & ConsolePlatform, PCPlatform, MobilePlatform \\
+3 & PlayStationPlatform, XboxPlatform, NintendoPlatform \\
+4 & WindowsPlatform, MacOSPlatform, LinuxPlatform \\
+5 & IOSPlatform, AndroidPlatform \\
+6 & IndustryAward, EditorialAward, UserAward \\
+7 & PlayerCharacter, NonPlayerCharacter \\
+8 & ProprietaryEngine, OpenSourceEngine \\
+9 & ReleasedGame, EarlyAccessGame, CancelledGame, DelistedGame \\
+10& IndieGame, AAAGame \\
+11& SinglePlayerMode, MultiplayerMode, CoopMode, MMOMode \\
+12& AnnouncementEvent, ReleaseEvent, UpdateEvent, DelistingEvent \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Importanza delle Disjointness}
+
+Le dichiarazioni di disjointness svolgono due ruoli fondamentali:
+
+\begin{enumerate}[nosep]
+  \item \textbf{Rilevazione di inconsistenze nei dati Wikidata}. Se un'entit\`a
+    Wikidata venisse erroneamente classificata come, ad esempio, sia
+    \texttt{ConsolePlatform} che \texttt{PCPlatform}, un reasoner DL completo
+    (HermiT, Pellet) rileverebbe l'inconsistenza. Questo meccanismo funge da
+    \textit{sanity check} automatico sulla qualit\`a dei dati;
+  \item \textbf{Ragionamento DL}. Le disjointness abilitano inferenze per
+    contraddizione. Ad esempio, sapendo che \texttt{PlayerCharacter} e
+    \texttt{NonPlayerCharacter} sono disgiunte, se un personaggio viene
+    classificato come \texttt{PlayerCharacter}, si pu\`o inferire che
+    \textbf{non} \`e \texttt{NonPlayerCharacter}.
+\end{enumerate}
+
+\subsection{Nota su SinglePlayerGame e MultiplayerGame}
+
+Si noti che \texttt{SinglePlayerGame} e \texttt{MultiplayerGame} \textbf{non}
+compaiono in alcun blocco di disjointness. La scelta \`e deliberata: nel dominio
+dei videogiochi, \`e comune che un gioco supporti sia la modalit\`a single-player
+che multiplayer (es. Grand Theft Auto V, Elden Ring, Call of Duty). Dichiararle
+disgiunte produrrebbe inconsistenze su una porzione significativa delle istanze.
+
+Al contrario, le modalit\`a \texttt{SinglePlayerMode}, \texttt{MultiplayerMode},
+\texttt{CoopMode} e \texttt{MMOMode} (blocco \#11) \textbf{sono} disgiunte:
+una specifica modalit\`a di gioco \`e esattamente una di queste quattro.

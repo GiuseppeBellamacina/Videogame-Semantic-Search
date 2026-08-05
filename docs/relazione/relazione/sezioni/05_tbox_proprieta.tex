@@ -1,0 +1,174 @@
+\section{Propriet\`a dello Schema dell'Ontologia}
+\label{sec:tbox_proprieta}
+
+\subsection{Object Property}
+
+La Tabella~\ref{tab:objprop} elenca tutte le 31 object property definite nell'ontologia.
+Per semplicit\`a, si omettono le propriet\`a inverse quando speculari; la colonna
+\textbf{Assiomi} indica le caratteristiche OWL 2 aggiuntive.
+
+\begin{longtable}{lllll}
+\caption{Object Property}\label{tab:objprop}\\
+\toprule
+\textbf{Propriet\`a}      & \textbf{Domain} & \textbf{Range}   & \textbf{Assiomi}                 & \textbf{Label} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{\tablename\ \thetable{} -- continua} \\
+\toprule
+\textbf{Propriet\`a}      & \textbf{Domain} & \textbf{Range}   & \textbf{Assiomi}                 & \textbf{Label} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+
+developedBy        & VideoGame & Developer   & Asym, Irr, inv developerOf            & developed by \\
+developerOf        & Developer & VideoGame   & Asym, Irr                             & developer of \\
+publishedBy        & VideoGame & Publisher   & Asym, Irr, inv publisherOf            & published by \\
+publisherOf        & Publisher & VideoGame   & Asym, Irr                             & publisher of \\
+hasGenre           & VideoGame & Genre       & Asym, Irr, inv genreOf                & has genre \\
+genreOf            & Genre     & VideoGame   & Asym, Irr                             & genre of \\
+availableOn        & VideoGame & Platform    & Irr, inv platformFor                  & available on \\
+platformFor        & Platform  & VideoGame   & Asym, Irr                             & platform for \\
+hasCharacter       & VideoGame & Character   & Asym, Irr, inv appearsIn              & has character \\
+appearsIn          & Character & VideoGame   & Asym, Irr                             & appears in \\
+belongsTo          & VideoGame & Franchise   & Asym, Irr, inv includes               & belongs to \\
+includes           & Franchise & VideoGame   & Asym, Irr                             & includes \\
+wonAward           & VideoGame & Award       & Irr, inv awardWonBy                   & won award \\
+awardWonBy         & Award     & VideoGame   & Irr                                   & award won by \\
+sequelOf           & VideoGame & VideoGame   & Asym, Irr, Trans, inv hasSequel       & sequel of \\
+hasSequel          & VideoGame & VideoGame   & Asym, Irr                             & has sequel \\
+hasGameMode        & VideoGame & GameMode    & Irr, inv modeInGame                   & has game mode \\
+modeInGame         & GameMode  & VideoGame   & Irr                                   & mode in game \\
+madeWith           & VideoGame & GameEngine  & Asym, Irr, inv engineUsedIn           & made with \\
+engineUsedIn       & GameEngine& VideoGame   & Asym, Irr                             & engine used in \\
+partOfFranchise    & Franchise & Franchise   & Asym, Irr, Trans                     & part of franchise \\
+subsidiaryOf       & ---       & ---         & Asym, Irr, Trans                     & subsidiary of \\
+sharedFranchiseWith& VideoGame & VideoGame   & Sym, chain: belongsTo $\circ$ includes & shared franchise with \\
+sharesDeveloperWith& VideoGame & VideoGame   & Sym, chain: developedBy $\circ$ developerOf & shares developer with \\
+sharesPublisherWith& VideoGame & VideoGame   & Sym, chain: publishedBy $\circ$ publisherOf & shares publisher with \\
+reviewer           & Review    & ---         & ---                                   & reviewer \\
+reviewedGame       & Review    & VideoGame   & Funct, inv hasReview                  & reviewed game \\
+hasReview          & VideoGame & Review      & ---                                   & has review \\
+reviewOf           & Review    & VideoGame   & ---                                   & review of \\
+eventFor           & GameEvent & VideoGame   & inv hasEvent                          & event for \\
+hasEvent           & VideoGame & GameEvent   & ---                                   & has event \\
+\bottomrule
+\end{longtable}
+
+\textit{Legenda}: Asym = AsymmetricProperty, Irr = IrreflexiveProperty,
+Sym = SymmetricProperty, Trans = TransitiveProperty, Funct = FunctionalProperty,
+inv = inverseOf, chain = propertyChainAxiom.
+
+\subsection{Datatype Property}
+
+La Tabella~\ref{tab:dataprop} elenca tutte le 26 datatype property.
+
+\begin{longtable}{lllll}
+\caption{Datatype Property}\label{tab:dataprop}\\
+\toprule
+\textbf{Propriet\`a}      & \textbf{Domain} & \textbf{Range}   & \textbf{subPropertyOf} & \textbf{Label} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{\tablename\ \thetable{} -- continua} \\
+\toprule
+\textbf{Propriet\`a}      & \textbf{Domain} & \textbf{Range}   & \textbf{subPropertyOf} & \textbf{Label} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+
+name              & ---         & xsd:string  & ---     & name \\
+gameName          & VideoGame   & xsd:string  & name    & game name \\
+gameDescription   & VideoGame   & xsd:string  & ---     & game description \\
+releaseDate       & VideoGame   & xsd:date    & ---     & release date \\
+metacriticScore   & VideoGame   & xsd:integer & ---     & Metacritic score \\
+developerName     & Developer   & xsd:string  & name    & developer name \\
+publisherName     & Publisher   & xsd:string  & name    & publisher name \\
+genreName         & Genre       & xsd:string  & name    & genre name \\
+platformName      & Platform    & xsd:string  & name    & platform name \\
+characterName     & Character   & xsd:string  & name    & character name \\
+franchiseName     & Franchise   & xsd:string  & name    & franchise name \\
+awardName         & Award       & xsd:string  & name    & award name \\
+awardYear         & Award       & xsd:integer & ---     & award year \\
+description       & ---         & xsd:string  & ---     & description \\
+officialWebsite   & VideoGame   & xsd:anyURI  & ---     & official website \\
+countryOfOrigin   & VideoGame   & xsd:string  & ---     & country of origin \\
+engineName        & GameEngine  & xsd:string  & name    & engine name \\
+hasSteamAppId     & VideoGame   & xsd:string  & ---     & Steam App ID \\
+hasWikidataId     & ---         & xsd:string  & ---     & Wikidata ID \\
+hasIGDBId         & VideoGame   & xsd:string  & ---     & IGDB ID \\
+reviewScore       & Review      & xsd:integer & ---     & review score \\
+reviewDate        & Review      & xsd:date    & ---     & review date \\
+reviewerName      & Review      & xsd:string  & ---     & reviewer name \\
+eventDate         & GameEvent   & xsd:date    & ---     & event date \\
+budgetTier        & VideoGame   & xsd:string  & ---     & budget tier \\
+playerCount       & VideoGame   & xsd:integer & ---     & player count \\
+\bottomrule
+\end{longtable}
+
+\subsection{Property Chain Axiom}
+
+L'ontologia definisce tre \texttt{owl:propertyChainAxiom}, che permettono di
+inferire relazioni transitive composte. In notazione DL (Description Logic):
+
+\begin{enumerate}[nosep]
+  \item \texttt{sharedFranchiseWith} $\equiv$ \texttt{belongsTo} $\circ$ \texttt{includes}
+
+    Due giochi condividono un franchise se il primo appartiene a un franchise
+    e il franchise include il secondo.
+  \item \texttt{sharesDeveloperWith} $\equiv$ \texttt{developedBy} $\circ$ \texttt{developerOf}
+
+    Due giochi condividono lo sviluppatore se il primo \`e sviluppato da uno
+    studio che ha sviluppato anche il secondo.
+  \item \texttt{sharesPublisherWith} $\equiv$ \texttt{publishedBy} $\circ$ \texttt{publisherOf}
+
+    Analogo per l'editore.
+\end{enumerate}
+
+Queste catene sono materializzate dal reasoner OWL 2 RL (\texttt{owlrl})
+e producono relazioni simmetriche tra giochi dello stesso franchise, studio o editore.
+Per evitare esplosioni combinatorie su franchise/studio/editore con migliaia di
+giochi, il materialiser mirato in \texttt{enrich\_owl.py} limita il numero di
+coppie per gruppo tramite il flag \texttt{--max-group} (default 50).
+
+\subsection{Propriet\`a Transitive}
+
+Due propriet\`a sono dichiarate transitive:
+
+\begin{itemize}[nosep]
+  \item \texttt{sequelOf} --- se $A$ \`e sequel di $B$ e $B$ \`e sequel di $C$,
+    allora $A$ \`e sequel di $C$. Permette di tracciare catene di sequel
+    (es. Dark Souls III $\rightarrow$ Dark Souls II $\rightarrow$ Dark Souls);
+  \item \texttt{partOfFranchise} --- per gerarchie di franchise con sotto-franchise.
+    Es. \textless{}Mario Kart\textgreater{} $\rightarrow$ \textless{}Mario\textgreater{}.
+\end{itemize}
+
+La transitivit\`a di \texttt{sequelOf} \`e particolarmente utile per query del
+tipo \textless{}tutti i sequel di Dark Souls\textgreater{} senza dover navigare
+manualmente la catena.
+
+\subsection{Coppie Inverse Sistematiche}
+
+L'ontologia definisce 13 coppie inverse, consentendo la navigazione bidirezionale
+del grafo. Per ogni propriet\`a ``forward'' esiste la corrispondente inversa:
+\begin{itemize}[nosep]
+  \item \texttt{developedBy} $\leftrightarrow$ \texttt{developerOf}
+  \item \texttt{publishedBy} $\leftrightarrow$ \texttt{publisherOf}
+  \item \texttt{hasGenre} $\leftrightarrow$ \texttt{genreOf}
+  \item \texttt{availableOn} $\leftrightarrow$ \texttt{platformFor}
+  \item \texttt{hasCharacter} $\leftrightarrow$ \texttt{appearsIn}
+  \item \texttt{belongsTo} $\leftrightarrow$ \texttt{includes}
+  \item \texttt{wonAward} $\leftrightarrow$ \texttt{awardWonBy}
+  \item \texttt{sequelOf} $\leftrightarrow$ \texttt{hasSequel}
+  \item \texttt{hasGameMode} $\leftrightarrow$ \texttt{modeInGame}
+  \item \texttt{madeWith} $\leftrightarrow$ \texttt{engineUsedIn}
+  \item \texttt{reviewedGame} $\leftrightarrow$ \texttt{hasReview}
+  \item \texttt{eventFor} $\leftrightarrow$ \texttt{hasEvent}
+\end{itemize}
+
+La tredicesima coppia (\texttt{hasGenre} $\leftrightarrow$ \texttt{genreOf}) era
+gi\`a implicita nello schema originale. La dichiarazione esplicita di \texttt{owl:inverseOf}
+in una sola direzione \`e sufficiente: \texttt{owlrl} inferisce automaticamente
+la direzione opposta durante la materializzazione. Il validatore dello schema segnala
+12 warning \texttt{INVERSE\_NOT\_BIDIRECTIONAL} proprio per questa asimmetria
+dichiarativa (cfr.~Sezione~\ref{sec:validazione}).

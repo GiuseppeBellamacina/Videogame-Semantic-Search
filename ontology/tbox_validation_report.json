@@ -1,0 +1,166 @@
+{
+  "file": "..\\videogames.owl",
+  "findings": [
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:developedBy owl:inverseOf vg:developerOf but vg:developerOf owl:inverseOf vg:developedBy is not declared",
+      "subjects": [
+        "vg:developedBy",
+        "vg:developerOf"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:publishedBy owl:inverseOf vg:publisherOf but vg:publisherOf owl:inverseOf vg:publishedBy is not declared",
+      "subjects": [
+        "vg:publishedBy",
+        "vg:publisherOf"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:hasGenre owl:inverseOf vg:genreOf but vg:genreOf owl:inverseOf vg:hasGenre is not declared",
+      "subjects": [
+        "vg:hasGenre",
+        "vg:genreOf"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:availableOn owl:inverseOf vg:platformFor but vg:platformFor owl:inverseOf vg:availableOn is not declared",
+      "subjects": [
+        "vg:availableOn",
+        "vg:platformFor"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:hasCharacter owl:inverseOf vg:appearsIn but vg:appearsIn owl:inverseOf vg:hasCharacter is not declared",
+      "subjects": [
+        "vg:hasCharacter",
+        "vg:appearsIn"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:belongsTo owl:inverseOf vg:includes but vg:includes owl:inverseOf vg:belongsTo is not declared",
+      "subjects": [
+        "vg:belongsTo",
+        "vg:includes"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:wonAward owl:inverseOf vg:awardWonBy but vg:awardWonBy owl:inverseOf vg:wonAward is not declared",
+      "subjects": [
+        "vg:wonAward",
+        "vg:awardWonBy"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:sequelOf owl:inverseOf vg:hasSequel but vg:hasSequel owl:inverseOf vg:sequelOf is not declared",
+      "subjects": [
+        "vg:sequelOf",
+        "vg:hasSequel"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:hasGameMode owl:inverseOf vg:modeInGame but vg:modeInGame owl:inverseOf vg:hasGameMode is not declared",
+      "subjects": [
+        "vg:hasGameMode",
+        "vg:modeInGame"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:madeWith owl:inverseOf vg:engineUsedIn but vg:engineUsedIn owl:inverseOf vg:madeWith is not declared",
+      "subjects": [
+        "vg:madeWith",
+        "vg:engineUsedIn"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:reviewedGame owl:inverseOf vg:hasReview but vg:hasReview owl:inverseOf vg:reviewedGame is not declared",
+      "subjects": [
+        "vg:reviewedGame",
+        "vg:hasReview"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "INVERSE_NOT_BIDIRECTIONAL",
+      "message": "vg:eventFor owl:inverseOf vg:hasEvent but vg:hasEvent owl:inverseOf vg:eventFor is not declared",
+      "subjects": [
+        "vg:eventFor",
+        "vg:hasEvent"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "MISSING_DOMAIN",
+      "message": "vg:description has no rdfs:domain",
+      "subjects": [
+        "vg:description"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "MISSING_DOMAIN",
+      "message": "vg:hasWikidataId has no rdfs:domain",
+      "subjects": [
+        "vg:hasWikidataId"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "MISSING_DOMAIN",
+      "message": "vg:name has no rdfs:domain",
+      "subjects": [
+        "vg:name"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "MISSING_RANGE",
+      "message": "vg:reviewer has no rdfs:range",
+      "subjects": [
+        "vg:reviewer"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "MISSING_DOMAIN",
+      "message": "vg:subsidiaryOf has no rdfs:domain",
+      "subjects": [
+        "vg:subsidiaryOf"
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "code": "MISSING_RANGE",
+      "message": "vg:subsidiaryOf has no rdfs:range",
+      "subjects": [
+        "vg:subsidiaryOf"
+      ]
+    }
+  ],
+  "summary": {
+    "errors": 0,
+    "warnings": 18,
+    "info": 0
+  }
+}

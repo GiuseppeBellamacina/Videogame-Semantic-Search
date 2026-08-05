@@ -1,0 +1,105 @@
+\section{Popolamento dell'Ontologia}
+\label{sec:popolamento}
+
+\subsection{Pipeline \texttt{populate\_wikidata.py}}
+
+La popolazione delle istanze avviene tramite lo script \texttt{populate\_wikidata.py},
+che interroga l'endpoint SPARQL pubblico di Wikidata. La pipeline \`e strutturata
+in quattro fasi principali.
+
+\subsubsection{Query SPARQL verso Wikidata}
+
+Vengono eseguite 13 tipologie di query SPARQL, ciascuna mirata a estrarre una
+specifica categoria di dati:
+
+\begin{enumerate}[nosep]
+  \item \textbf{Core} --- identificativi, nomi, date di rilascio (P31, P577);
+  \item \textbf{Generi} --- mapping genere via P136;
+  \item \textbf{Piattaforme} --- piattaforme via P400;
+  \item \textbf{Personaggi} --- personaggi presenti nel gioco;
+  \item \textbf{Franchise} --- serie di appartenenza via P179;
+  \item \textbf{Game Mode} --- modalit\`a di gioco via P404;
+  \item \textbf{Metacritic} --- punteggio Metacritic via P1712;
+  \item \textbf{Engine} --- motore grafico via P408;
+  \item \textbf{Paese} --- paese d'origine via P495;
+  \item \textbf{Sito web} --- sito ufficiale via P856;
+  \item \textbf{Premi} --- premi ricevuti via P166;
+  \item \textbf{Descrizioni} --- descrizioni testuali;
+  \item \textbf{Immagini} --- URL copertina.
+\end{enumerate}
+
+Per evitare i timeout dell'endpoint pubblico Wikidata (limite $\sim$60 secondi),
+le query sono partizionate per \textbf{anno $\times$ mese}: 17 anni (2010--2026)
+$\times$ 12 mesi = \textbf{204 iterazioni}. Tra ogni richiesta viene inserito un
+\texttt{polite delay} di 1 secondo. Il tempo totale di esecuzione \`e di circa
+\textbf{5 ore}.
+
+\subsubsection{Deduplicazione}
+
+Wikidata pu\`o restituire entit\`a duplicate con URI diversi ma stesso nome
+normalizzato (es. varianti con suffissi come anno o piattaforma). La pipeline
+applica una normalizzazione del nome (lowercase, rimozione punteggiatura,
+trim whitespace) e rimuove \textbf{4.420 entit\`a duplicate}, preservando la
+prima occorrenza.
+
+\subsubsection{OWL-RL Reasoning}
+
+Dopo la popolazione iniziale ($\sim$1.019.589 triple grezze), viene applicata
+la chiusura deduttiva OWL 2 RL tramite \texttt{owlrl}:
+\begin{itemize}[nosep]
+  \item Materializzazione propriet\`a inverse: per ogni \texttt{developedBy},
+    viene aggiunto \texttt{developerOf};
+  \item Catene subPropertyOf: \texttt{gameName} $\rightarrow$ \texttt{name};
+  \item Inferenze da classi definite (\texttt{AwardWinningGame}, \texttt{FranchiseGame}).
+\end{itemize}
+
+Il grafo cresce da $\sim$1M a $\sim$1.4M triple.
+
+\subsubsection{Pruning}
+
+Lo step finale di pruning (\texttt{prune\_owl.py}) rimuove triple non necessarie
+a runtime:
+\begin{itemize}[nosep]
+  \item \texttt{owl:sameAs} riflessivi (ogni entit\`a Wikidata genera un sameAs
+    con s\'e stessa): $\sim$253k triple rimosse;
+  \item \texttt{gameDescription}: testi lunghi non usati nelle query;
+  \item \texttt{officialWebsite}: URI non necessari per la ricerca semantica.
+\end{itemize}
+
+Risultato finale: $\sim$1.173.959 triple (dataset completo 2010--2026).
+
+\subsection{Demo Subset 2020--2026}
+
+Per rispettare i limiti di RAM del deploy su Render (512 MB), la demo live utilizza
+un sottoinsieme dell'ontologia limitato ai giochi dal 2020 in poi (\texttt{prune\_years.py}):
+\begin{itemize}[nosep]
+  \item $\sim$745.400 triple;
+  \item $\sim$68.700 giochi;
+  \item RAM a runtime: $\sim$250 MB (pyoxigraph).
+\end{itemize}
+
+\subsection{Performance: rdflib vs pyoxigraph}
+
+La Tabella~\ref{tab:perf} confronta le performance dei due store RDF utilizzati
+nel progetto. Il passaggio da \texttt{rdflib} (Python puro) a \texttt{pyoxigraph}
+(binding Rust) ha prodotto un miglioramento drastico.
+
+\begin{table}[h]
+\centering
+\caption{Confronto performance rdflib vs pyoxigraph}
+\label{tab:perf}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metrica}              & \textbf{rdflib} & \textbf{pyoxigraph (completo)} & \textbf{pyoxigraph (demo)} \\
+\midrule
+RAM a runtime                 & $\sim$1.550 MB  & $\sim$389 MB                   & $\sim$250 MB               \\
+Tempo di caricamento          & $\sim$41s       & $\sim$2.2s                     & $\sim$1.5s                 \\
+Query SPARQL tipica           & 1--23s          & 0.08--0.37s                    & 0.05--0.25s                \\
+Speedup query                 & ---             & 5--62$\times$                  & ---                        \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\texttt{pyoxigraph} \citep{pyoxigraph} garantisce un caricamento quasi istantaneo
+($<$3 secondi contro 41 secondi) e query 5--62 volte pi\`u veloci, rendendo
+l'esperienza utente fluida anche su hardware limitato.

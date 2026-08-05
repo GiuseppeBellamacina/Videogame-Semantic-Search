@@ -1,0 +1,58 @@
+\section{Conclusione}
+\label{sec:conclusione}
+
+\subsection{Riepilogo dei Risultati}
+
+Il progetto \textbf{Videogame Semantic Search} ha prodotto un sistema completo
+di ricerca semantica che integra:
+
+\begin{itemize}[nosep]
+  \item \textbf{Un'ontologia OWL 2} espressiva e ben strutturata, evoluta da 11 a
+    78 classi (61 primitive + 17 definite), con 31 object property, 26 datatype
+    property, 13 coppie inverse, 3 property chain, 2 propriet\`a transitive,
+    12 blocchi di disjointness e allineamento esterno a Wikidata e Dublin Core;
+  \item \textbf{Un sistema di reasoning a due livelli} (OWL 2 RL + 21 regole
+    CONSTRUCT) funzionante end-to-end, con 0 falsi \texttt{owl:sameAs} dopo
+    il fix del bug critico degli assiomi DL-only;
+  \item \textbf{Un knowledge graph popolato} da Wikidata con oltre 1.1 milioni
+    di triple (dataset completo 2010--2026) e $\sim$745k triple nel sottoinsieme
+    demo (2020--2026, $\sim$68.700 giochi);
+  \item \textbf{Un'interfaccia web interattiva} con ricerca in linguaggio naturale,
+    agente SPARQL intelligente, grafo 2D navigabile e filtri per tipo;
+  \item \textbf{Performance ottimizzate} grazie al passaggio da rdflib a pyoxigraph
+    (5--62$\times$ speedup sulle query, caricamento in $<$3s, RAM $\sim$250 MB).
+\end{itemize}
+
+\subsection{Possibili Estensioni Future}
+
+Il sistema offre numerose direzioni di sviluppo futuro:
+
+\begin{enumerate}[nosep]
+  \item \textbf{Reasoner DL completo} --- integrare HermiT o Pellet tramite
+    \texttt{owlready2} per ragionare sui costrutti DL-only (datatype restriction,
+    complementOf, maxCardinality) senza bisogno delle regole CONSTRUCT
+    compensate. Questo abiliterebbe anche la rilevazione automatica di
+    inconsistenze tra le istanze;
+  \item \textbf{Validazione delle istanze con SHACL} --- definire SHACL shapes per
+    validare la conformit\`a delle istanze (es. ogni VideoGame deve avere
+    almeno un \texttt{gameName}, le date devono essere nel formato corretto);
+  \item \textbf{SWRL rules reali} --- sostituire le 21 regole CONSTRUCT con
+    autentiche SWRL rules, sfruttando un reasoner che le supporti nativamente;
+  \item \textbf{Estensione della pipeline Wikidata} --- aggiungere query per
+    recuperare \texttt{hasSteamAppId}, \texttt{budgetTier}, \texttt{playerCount}
+    e la relazione \texttt{sequelOf}, attualmente non popolate dai dati Wikidata;
+  \item \textbf{Internazionalizzazione del frontend} --- supporto multilingua
+    per l'interfaccia e le query in linguaggio naturale (inglese, francese, \dots{});
+  \item \textbf{Visualizzazione avanzata delle classi definite} --- nel grafo
+    interattivo, evidenziare con badge o colori speciali i nodi che sono stati
+    classificati automaticamente dal reasoner (es. bordino dorato per
+    \texttt{HighlyRatedGame}, icona controller per \texttt{MultiplayerGame});
+  \item \textbf{SPARQL endpoint pubblico} --- esporre un endpoint SPARQL
+    standard (RESTful o tramite Triplestore) per consentire query federate
+    da applicazioni esterne.
+\end{enumerate}
+
+Il progetto dimostra come le tecnologie del Semantic Web --- ontologie formali,
+reasoning automatico, knowledge graph e query SPARQL --- possano essere integrate
+in un'applicazione web moderna e performante, offrendo un'esperienza di ricerca
+semantica che va ben oltre la semplice ricerca per parole chiave.

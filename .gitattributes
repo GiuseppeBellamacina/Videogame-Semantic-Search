@@ -1,3 +1,4 @@
 *.owl filter=lfs diff=lfs merge=lfs -text
 *.owl linguist-detectable
 *.owl linguist-language=Web-Ontology-Language
+ontology/videogames_full.ttl filter=lfs diff=lfs merge=lfs -text

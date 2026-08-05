@@ -1,0 +1,68 @@
+\section{Allineamento Esterno}
+\label{sec:allineamento}
+
+\subsection{equivalentClass verso Wikidata}
+
+L'ontologia dichiara 4 allineamenti \texttt{owl:equivalentClass} verso entit\`a
+Wikidata, riportati nella Tabella~\ref{tab:align_class}.
+
+\begin{table}[h]
+\centering
+\caption{Allineamenti equivalentClass verso Wikidata}
+\label{tab:align_class}
+\begin{tabular}{lll}
+\toprule
+\textbf{Classe VG} & \textbf{Entit\`a Wikidata} & \textbf{Descrizione Wikidata} \\
+\midrule
+VideoGame & wd:Q7889      & Video game \\
+Developer & wd:Q210167    & Video game developer \\
+GameEngine& wd:Q193564    & Game engine \\
+Genre     & wd:Q65956376  & Video game genre \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{equivalentProperty verso Dublin Core}
+
+Tre datatype property sono allineate con il vocabolario Dublin Core \citep{dublincore}
+tramite \texttt{owl:equivalentProperty} (Tabella~\ref{tab:align_prop}).
+
+\begin{table}[h]
+\centering
+\caption{Allineamenti equivalentProperty verso Dublin Core}
+\label{tab:align_prop}
+\begin{tabular}{lll}
+\toprule
+\textbf{Propriet\`a VG} & \textbf{Propriet\`a DC} & \textbf{Label DC} \\
+\midrule
+releaseDate    & dcterms:issued       & Date Issued \\
+gameName       & dcterms:title        & Title \\
+gameDescription& dcterms:description   & Description \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Vantaggi dell'Allineamento}
+
+L'allineamento esterno, noto in letteratura come \textbf{ontology alignment}
+(cfr.~Lez.~13), offre tre vantaggi principali:
+
+\begin{enumerate}[nosep]
+  \item \textbf{Interoperabilit\`a}. Un'applicazione che consuma dati Dublin Core
+    pu\`o automaticamente interpretare \texttt{vg:releaseDate} come sinonimo di
+    \texttt{dcterms:issued}, senza bisogno di mapping manuali;
+  \item \textbf{Linkage automatico}. Le entit\`a Wikidata esterne referenziate
+    tra le istanze (es. \texttt{wd:Q12345}) sono automaticamente riconosciute come
+    istanze di \texttt{vg:VideoGame} se Wikidata le classifica come Q7889;
+  \item \textbf{Riuso di standard consolidati}. Anzich\'e reinventare vocabolari,
+    l'ontologia si appoggia a standard ampiamente adottati (Dublin Core per
+    metadati bibliografici, Wikidata per identificazione entit\`a), seguendo
+    il principio \textit{Linked Data} di riusare URI esistenti.
+\end{enumerate}
+
+\subsection{Limitazione Attuale}
+
+L'allineamento \`e dichiarato a livello dello schema ma non viene sfruttato dal
+reasoner OWL 2 RL, poich\'e \texttt{owlrl} opera solo sul namespace locale.
+Per sfruttare appieno questi assiomi, sarebbe necessario un reasoner DL completo
+(HermiT, Pellet) che possa importare anche le definizioni di classe da Wikidata.

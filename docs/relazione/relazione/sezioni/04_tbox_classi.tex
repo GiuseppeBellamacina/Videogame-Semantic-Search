@@ -1,0 +1,230 @@
+\section{Classi dello Schema dell'Ontologia}
+\label{sec:tbox_classi}
+
+\subsection{Gerarchia delle Classi}
+
+L'ontologia definisce \textbf{12 classi top-level}, ciascuna corrispondente a
+un'entit\`a fondamentale del dominio, pi\`u un ricco albero di sottoclassi che
+raggiunge un totale di \textbf{78 classi} (di cui 61 primitive e 17 definite).
+
+Le 12 classi top-level sono:
+\begin{enumerate}[nosep]
+  \item \texttt{vg:VideoGame} --- il videogioco, classe centrale dell'ontologia;
+  \item \texttt{vg:Developer} --- lo studio di sviluppo;
+  \item \texttt{vg:Publisher} --- l'editore;
+  \item \texttt{vg:Genre} --- il genere videoludico;
+  \item \texttt{vg:Platform} --- la piattaforma hardware/software;
+  \item \texttt{vg:Character} --- il personaggio (giocante o non);
+  \item \texttt{vg:Franchise} --- la serie/franchise;
+  \item \texttt{vg:Award} --- il premio;
+  \item \texttt{vg:GameEngine} --- il motore grafico;
+  \item \texttt{vg:GameMode} --- la modalit\`a di gioco;
+  \item \texttt{vg:Review} --- la recensione;
+  \item \texttt{vg:GameEvent} --- l'evento del ciclo di vita.
+\end{enumerate}
+
+\subsection{Tabella Completa delle Classi Primitive}
+
+La Tabella~\ref{tab:classi} elenca tutte le 61 classi primitive (escluse le 17
+definite, trattate nella Sezione~\ref{sec:classi_definite}), raggruppate per
+classe top-level di appartenenza.
+
+\begin{longtable}{llp{5cm}}
+\caption{Classi primitive dell'ontologia}\label{tab:classi}\\
+\toprule
+\textbf{Classe} & \textbf{Parent} & \textbf{Descrizione} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{\tablename\ \thetable{} -- continua dalla pagina precedente} \\
+\toprule
+\textbf{Classe} & \textbf{Parent} & \textbf{Descrizione} \\
+\midrule
+\endhead
+\bottomrule
+\multicolumn{3}{r}{\textit{Continua nella pagina successiva}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+
+% ── VideoGame ──
+\multicolumn{3}{c}{\textbf{VideoGame (classe top-level)}} \\
+\midrule
+VideoGame           & owl:Thing       & Prodotto videoludico \\
+ReleasedGame        & VideoGame       & Gioco ufficialmente rilasciato \\
+EarlyAccessGame     & VideoGame       & Gioco in accesso anticipato \\
+CancelledGame       & VideoGame       & Gioco cancellato prima del rilascio \\
+DelistedGame        & VideoGame       & Gioco rimosso dagli store digitali \\
+IndieGame           & VideoGame       & Gioco a budget ridotto, sviluppatore indipendente \\
+AAAGame             & VideoGame       & Gioco ad alto budget, grande publisher \\
+GOTYWinner          & AwardWinningGame& Vincitore del premio Game of the Year \\
+\midrule
+
+% ── Developer ──
+\multicolumn{3}{c}{\textbf{Developer (classe top-level)}} \\
+\midrule
+Developer           & owl:Thing       & Studio di sviluppo \\
+FirstPartyDeveloper & Developer       & Studio proprietario di un platform holder \\
+ThirdPartyDeveloper & Developer       & Studio indipendente \\
+IndieDeveloper      & Developer       & Piccolo sviluppatore senza publisher \\
+\midrule
+
+% ── Publisher ──
+\multicolumn{3}{c}{\textbf{Publisher (classe top-level)}} \\
+\midrule
+Publisher           & owl:Thing       & Casa editrice \\
+FirstPartyPublisher & Publisher       & Divisione editoriale di un platform holder \\
+ThirdPartyPublisher & Publisher       & Casa editrice indipendente \\
+\midrule
+
+% ── Genre ──
+\multicolumn{3}{c}{\textbf{Genre (classe top-level)}} \\
+\midrule
+Genre               & owl:Thing       & Genere videoludico \\
+ActionGenre         & Genre           & Azione, sfide fisiche \\
+RPGGenre            & Genre           & Gioco di ruolo, progressione \\
+StrategyGenre       & Genre           & Strategia, pensiero tattico \\
+PuzzleGenre         & Genre           & Rompicapo, problem-solving \\
+SimulationGenre     & Genre           & Simulazione di sistemi reali/fittizi \\
+SportsGenre         & Genre           & Sport, competizioni atletiche \\
+RacingGenre         & Genre           & Corse, competizione su veicoli \\
+AdventureGenre      & Genre           & Esplorazione, narrativa \\
+HorrorGenre         & Genre           & Horror, paura, suspense \\
+PlatformerGenre     & Genre           & Piattaforme, ostacoli \\
+\midrule
+
+% ── Platform ──
+\multicolumn{3}{c}{\textbf{Platform (classe top-level)}} \\
+\midrule
+Platform            & owl:Thing       & Piattaforma di esecuzione \\
+ConsolePlatform     & Platform        & Console dedicata \\
+PlayStationPlatform & ConsolePlatform & Famiglia Sony PlayStation \\
+XboxPlatform        & ConsolePlatform & Famiglia Microsoft Xbox \\
+NintendoPlatform    & ConsolePlatform & Famiglia Nintendo \\
+PCPlatform          & Platform        & Personal computer \\
+WindowsPlatform     & PCPlatform      & Microsoft Windows \\
+MacOSPlatform       & PCPlatform      & Apple macOS \\
+LinuxPlatform       & PCPlatform      & Linux \\
+MobilePlatform      & Platform        & Dispositivo mobile \\
+IOSPlatform         & MobilePlatform  & Apple iOS \\
+AndroidPlatform     & MobilePlatform  & Android \\
+\midrule
+
+% ── Character ──
+\multicolumn{3}{c}{\textbf{Character (classe top-level)}} \\
+\midrule
+Character           & owl:Thing       & Personaggio \\
+PlayerCharacter     & Character       & Controllato dal giocatore \\
+NonPlayerCharacter  & Character       & Controllato dall'IA \\
+\midrule
+
+% ── Franchise ──
+\multicolumn{3}{c}{\textbf{Franchise (classe top-level)}} \\
+\midrule
+Franchise           & owl:Thing       & Serie/franchise \\
+SubFranchise        & Franchise       & Spin-off o sotto-serie \\
+\midrule
+
+% ── Award ──
+\multicolumn{3}{c}{\textbf{Award (classe top-level)}} \\
+\midrule
+Award               & owl:Thing       & Premio \\
+IndustryAward       & Award           & Conferito da ente industriale \\
+EditorialAward      & Award           & Conferito da testata editoriale \\
+UserAward           & Award           & Determinato da voto popolare \\
+\midrule
+
+% ── GameEngine ──
+\multicolumn{3}{c}{\textbf{GameEngine (classe top-level)}} \\
+\midrule
+GameEngine          & owl:Thing       & Motore grafico \\
+ProprietaryEngine   & GameEngine      & Proprietario, non pubblico \\
+OpenSourceEngine    & GameEngine      & Open-source \\
+\midrule
+
+% ── GameMode ──
+\multicolumn{3}{c}{\textbf{GameMode (classe top-level)}} \\
+\midrule
+GameMode            & owl:Thing       & Modalit\`a di gioco \\
+SinglePlayerMode    & GameMode        & Giocatore singolo \\
+MultiplayerMode     & GameMode        & Multigiocatore \\
+CoopMode            & GameMode        & Cooperativa \\
+MMOMode             & GameMode        & Massively Multiplayer Online \\
+\midrule
+
+% ── GameEvent ──
+\multicolumn{3}{c}{\textbf{GameEvent (classe top-level)}} \\
+\midrule
+GameEvent           & owl:Thing       & Evento del ciclo di vita \\
+AnnouncementEvent   & GameEvent       & Annuncio pubblico \\
+ReleaseEvent        & GameEvent       & Rilascio ufficiale \\
+UpdateEvent         & GameEvent       & Aggiornamento/patch \\
+DelistingEvent      & GameEvent       & Rimozione dagli store \\
+\bottomrule
+\end{longtable}
+
+\subsection{Scelte di Modellazione}
+
+\subsubsection{Partizione di Platform}
+
+La classe \texttt{Platform} \`e stata partizionata in tre rami principali
+(\texttt{ConsolePlatform}, \texttt{PCPlatform}, \texttt{MobilePlatform}),
+ciascuno ulteriormente specializzato:
+
+\begin{verbatim}
+Platform
+  +-- ConsolePlatform
+  |     +-- PlayStationPlatform
+  |     +-- XboxPlatform
+  |     +-- NintendoPlatform
+  +-- PCPlatform
+  |     +-- WindowsPlatform
+  |     +-- MacOSPlatform
+  |     +-- LinuxPlatform
+  +-- MobilePlatform
+        +-- IOSPlatform
+        +-- AndroidPlatform
+\end{verbatim}
+
+Questa struttura consente interrogazioni a diversi livelli di granularit\`a:
+\textless{}giochi disponibili su console\textgreater{} (\texttt{ConsolePlatform}),
+\textless{}giochi per PlayStation\textgreater{} (\texttt{PlayStationPlatform}),
+oppure \textless{}giochi per PC Windows\textgreater{} (\texttt{WindowsPlatform}).
+La partizione \`e resa semanticamente rigorosa da 5 blocchi \texttt{AllDisjointClasses}
+(cfr.~Sezione~\ref{sec:disjointness}). Ogni piattaforma Wikidata viene classificata
+al livello pi\`u specifico tramite le regole di reasoning (cfr.~Sezione~\ref{sec:reasoning}).
+
+\subsubsection{Generi come Classi Aperte}
+
+\texttt{Genre} ha 10 sottoclassi (\texttt{ActionGenre}, \texttt{RPGGenre}, \dots{})
+ma \textbf{non} viene dichiarata come esaustiva (\texttt{owl:oneOf}) n\'e come
+coperta da un'unione. Questa scelta \`e deliberata: Wikidata pu\`o contenere generi
+non previsti dalla tassonomia attuale (es. \textless{}Battle Royale\textgreater{},
+\textless{}Roguelike\textgreater{}). Un'ontologia chiusa impedirebbe l'aggiunta
+di nuovi generi senza modificare lo schema. Con la modellazione aperta, eventuali
+generi Wikidata non mappati restano istanze di \texttt{Genre} senza violare
+la semantica.
+
+\subsubsection{GameMode come Classe Top-Level Separata}
+
+\texttt{GameMode} \`e modellata come classe top-level separata (anzich\'e come
+attributo di \texttt{VideoGame}) per consentire il pattern \textbf{Value Partition}:
+le sue 4 sottoclassi (\texttt{SinglePlayerMode}, \texttt{MultiplayerMode},
+\texttt{CoopMode}, \texttt{MMOMode}) sono dichiarate mutuamente disgiunte,
+garantendo che un gioco con pi\`u modalit\`a abbia asserzioni \texttt{hasGameMode}
+distinte e semanticamente non ambigue. Questa scelta permette inoltre di definire
+classi derivate (\texttt{SinglePlayerGame}, \texttt{MultiplayerGame}, \texttt{CoopGame})
+tramite \texttt{owl:someValuesFrom} sulle modalit\`a.
+
+\subsubsection{Review e GameEvent: Pattern N-ary Relation e Lifecycle Event}
+
+\texttt{Review} e \texttt{GameEvent} sono state introdotte come nuove classi
+top-level per modellare relazioni che richiedono reificazione:
+\begin{itemize}[nosep]
+  \item \textbf{Review} --- reifica la relazione tra un gioco, un revisore e un punteggio.
+    Senza la classe \texttt{Review}, sarebbe impossibile associare un punteggio
+    (datatype property) a una specifica combinazione gioco-recensore.
+    Segue il pattern \textbf{N-ary Relation} (cfr.~Lez.~14);
+  \item \textbf{GameEvent} --- reifica eventi temporali come annunci, rilasci e
+    aggiornamenti. Consente di associare date e metadati a eventi specifici del
+    ciclo di vita di un gioco, seguendo il pattern \textbf{Lifecycle Event}.
+\end{itemize}
