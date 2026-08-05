@@ -1,0 +1,103 @@
+\section{Frontend e Backend}
+\label{sec:frontend_backend}
+
+\subsection{Frontend: React + TypeScript + Vite}
+
+L'interfaccia utente \`e un'applicazione single-page costruita con \textbf{React 18},
+\textbf{TypeScript}, \textbf{Vite} e \textbf{Tailwind CSS} \citep{react}. Il
+componente centrale \`e il \textbf{Knowledge Graph 2D}, realizzato con la libreria
+\texttt{react-force-graph-2d}, che visualizza i risultati delle query come un
+grafo interattivo physics-based.
+
+\subsubsection{Componenti Principali}
+
+I sei componenti React che compongono l'interfaccia sono:
+
+\begin{itemize}[nosep]
+  \item \textbf{SearchBar} --- input di ricerca con autocomplete. L'utente digita
+    domande in linguaggio naturale e riceve suggerimenti;
+  \item \textbf{ResultList} --- elenca i risultati testuali della query con
+    metadati (nome, anno, punteggio). Ogni risultato \`e cliccabile per
+    espandere il dettaglio;
+  \item \textbf{KnowledgeGraph} --- il grafo interattivo 2D con force-directed
+    layout. Supporta zoom, pan, hover (evidenzia le connessioni dirette),
+    e un pulsante ``recentra'' per zoom-to-fit;
+  \item \textbf{NodeDetail} --- pannello laterale che mostra tutte le propriet\`a
+    e relazioni del nodo selezionato. Include link cliccabili per espandere
+    altri nodi nel grafo;
+  \item \textbf{NodeContextMenu} --- menu contestuale al click destro su un nodo:
+    opzioni per espandere il nodo (aggiungere i vicini al grafo) o rimuoverlo;
+  \item \textbf{SparqlViewer} --- pannello espandibile che mostra la query SPARQL
+    generata dall'agente, utile per debugging e trasparenza.
+\end{itemize}
+
+\subsubsection{Caratteristiche del Grafo Interattivo}
+
+Il Knowledge Graph offre un'esperienza di navigazione ricca:
+
+\begin{itemize}[nosep]
+  \item \textbf{Nodi colorati per tipo}: VideoGame (blu), Developer (verde),
+    Publisher (arancione), Genre (viola), Platform (rosso), ecc.;
+  \item \textbf{VideoGame come rettangoli portrait}: i nodi gioco sono visualizzati
+    come riquadri verticali con immagine di copertina (da Wikipedia) o emoji
+    placeholder, differenziandosi dagli altri nodi circolari;
+  \item \textbf{Animazione physics-based}: forza di attrazione/repulsione tra i
+    nodi con smorzamento progressivo;
+  \item \textbf{Long-press su mobile}: supporto touch per dispositivi mobili;
+  \item \textbf{Filtro per tipo}: legenda interattiva che permette di
+    nascondere/mostrare intere categorie di nodi con un click;
+  \item \textbf{Hover}: evidenzia le connessioni dirette del nodo, portandolo
+    in primo piano (z-order).
+\end{itemize}
+
+\subsection{Backend: FastAPI Async}
+
+Il backend \`e sviluppato con \textbf{FastAPI} \citep{fastapi} in modalit\`a
+asincrona, esponendo 6 endpoint REST (cfr.~Tabella~\ref{tab:endpoint},
+Sezione~\ref{sec:architettura}). I componenti chiave sono:
+
+\subsubsection{SPARQL Agent}
+
+Il cuore intelligente del sistema \`e lo \texttt{sparql\_agent.py}, che utilizza
+\textbf{GPT-4.1-mini} di OpenAI \citep{openai} per tradurre domande in linguaggio
+naturale in query SPARQL. Il prompt di sistema include:
+\begin{itemize}[nosep]
+  \item Il contesto completo dell'ontologia (classi, propriet\`a, esempi);
+  \item I prefissi SPARQL (\texttt{vg:}, \texttt{rdf:}, \texttt{rdfs:}, \texttt{xsd:});
+  \item Esempi di domande e query corrispondenti (\textit{few-shot prompting});
+  \item Istruzioni per generare solo la query SPARQL, senza testo aggiuntivo.
+\end{itemize}
+
+Il flusso include un meccanismo di \textbf{retry automatico} (max 3 tentativi):
+\begin{enumerate}[nosep]
+  \item L'agente genera una query SPARQL;
+  \item Il \texttt{sparql\_validator} ne verifica la correttezza sintattica;
+  \item Se la query \`e sintatticamente invalida o produce zero risultati,
+    l'agente riceve il messaggio di errore e ritenta con un prompt correttivo.
+\end{enumerate}
+
+\subsubsection{GraphBuilder}
+
+Il \texttt{graph\_builder.py} trasforma i risultati SPARQL (binding di variabili)
+in una struttura JSON adatta al frontend:
+\begin{itemize}[nosep]
+  \item \textbf{Nodi}: URI, label, tipo (classe OWL), colore, forma, immagine;
+  \item \textbf{Archi}: soggetto, predicato, oggetto, label della relazione.
+\end{itemize}
+
+Il builder arricchisce i nodi con metadati derivati dal grafo RDF (tipo tramite
+\texttt{rdf:type}, label tramite le propriet\`a \texttt{*Name}).
+
+\subsubsection{Cache a Due Livelli}
+
+\begin{itemize}[nosep]
+  \item \textbf{Upstash Redis} \citep{upstash}: cache cloud persistente con TTL
+    di 7 giorni per risultati query e URL immagini;
+  \item \textbf{Cache in-memory}: dizionario Python per label e tipi, popolato
+    al caricamento dell'ontologia e consultabile in O(1).
+\end{itemize}
+
+\subsection{Endpoint API}
+
+Si rimanda alla Tabella~\ref{tab:endpoint} nella Sezione~\ref{sec:architettura}
+per l'elenco completo degli endpoint REST.

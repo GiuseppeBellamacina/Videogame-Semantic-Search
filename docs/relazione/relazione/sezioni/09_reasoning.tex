@@ -1,0 +1,157 @@
+\section{Reasoning}
+\label{sec:reasoning}
+
+\subsection{Architettura a Due Livelli}
+
+Il sistema di reasoning adotta un'architettura a due livelli che combina un
+reasoner OWL 2 RL standard con un reasoner CONSTRUCT personalizzato per i
+costrutti non coperti dal profilo RL.
+
+\subsubsection{Livello 1: owlrl (OWL 2 RL)}
+
+\texttt{owlrl} \citep{owlrl} implementa la chiusura deduttiva per il profilo
+OWL 2 RL \citep{w3c-owl2-rl}, materializzando le triple inferite direttamente
+nel grafo RDF. I costrutti supportati includono:
+\begin{itemize}[nosep]
+  \item \texttt{rdfs:subClassOf} --- propagazione del tipo verso l'alto;
+  \item \texttt{owl:someValuesFrom} --- inferenza da restrizioni esistenziali
+    (es. se G \texttt{wonAward} A, allora G \texttt{rdf:type AwardWinningGame});
+  \item \texttt{owl:hasValue} --- inferenza da valore specifico;
+  \item \texttt{owl:intersectionOf} --- scomposizione di intersezioni;
+  \item \texttt{owl:inverseOf} --- materializzazione di propriet\`a inverse;
+  \item \texttt{owl:SymmetricProperty} e \texttt{owl:TransitiveProperty};
+  \item \texttt{owl:propertyChainAxiom} --- catene di propriet\`a.
+\end{itemize}
+
+Sull'insieme di istanze di test (3 giochi + 2 developer + piattaforme), \texttt{owlrl} produce
+un incremento da $\sim$997 a $\sim$2680 triple.
+
+\subsubsection{Livello 2: construct\_reasoner.py (SPARQL CONSTRUCT)}
+
+21 regole CONSTRUCT colmano le lacune di OWL 2 RL, operando su costrutti che
+richiedono ragionamento al di fuori del profilo RL. La Tabella~\ref{tab:construct_rules}
+elenca le regole.
+
+\begin{longtable}{lp{6cm}l}
+\caption{Regole CONSTRUCT del reasoner personalizzato}\label{tab:construct_rules}\\
+\toprule
+\textbf{\#} & \textbf{Descrizione} & \textbf{Cosa inferisce} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{\tablename\ \thetable{} -- continua} \\
+\toprule
+\textbf{\#} & \textbf{Descrizione} & \textbf{Cosa inferisce} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+
+R1 & HighlyRatedGame da metacriticScore $\geq$ 85     & \texttt{?g a vg:HighlyRatedGame} \\
+R2 & RecentGame da releaseDate $\geq$ 2020-01-01      & \texttt{?g a vg:RecentGame} \\
+R3 & StandaloneGame: VideoGame senza sequelOf          & \texttt{?g a vg:StandaloneGame} (negation-as-failure) \\
+R4 & SequelGame: VideoGame con sequelOf                & \texttt{?g a vg:SequelGame} \\
+R5a--f& Classificazione per piattaforma (PC, Console, Mobile, Nintendo, PS, Xbox) & \texttt{?g a vg:PCGame}, ecc. \\
+R6a--c& Classificazione per modalit\`a (Multiplayer, SinglePlayer, Coop) & \texttt{?g a vg:MultiplayerGame}, ecc. \\
+R7 & Inverse hasSequel: se A sequelOf B $\rightarrow$ B hasSequel A & \texttt{?b vg:hasSequel ?a} \\
+R8 & Inverse awardWonBy & \texttt{?a vg:awardWonBy ?g} \\
+R9a--d& Inverse: genreOf, platformFor, engineUsedIn, modeInGame & completamento bidirezionale \\
+R10 & sharedGenreWith (pairwise) & \texttt{?g1 vg:sharedGenreWith ?g2} \\
+R11 & sharedEngineWith (pairwise) & \texttt{?g1 vg:sharedEngineWith ?g2} \\
+\bottomrule
+\end{longtable}
+
+\subsection{Perch\'e Alcuni Costrutti Non Sono in OWL 2 RL}
+
+Il profilo OWL 2 RL \`e deliberatamente limitato per garantire la trattabilit\`a
+computazionale (polinomiale). Tre famiglie di costrutti esulano da questo profilo:
+
+\begin{enumerate}[nosep]
+  \item \textbf{Datatype restriction} (\texttt{HighlyRatedGame}, \texttt{RecentGame}).
+    Le restrizioni su tipi di dato con \texttt{xsd:minInclusive} richiedono il
+    confronto di valori literal, operazione non prevista dalle regole RL standard.
+    Le regole R1 e R2 risolvono con un semplice filtro SPARQL (\texttt{FILTER(?s >= 85)});
+  \item \textbf{complementOf puro} (\texttt{StandaloneGame}). OWL 2 RL supporta
+    solo forme limitate di negazione. La regola R3 implementa la
+    \textit{negation-as-failure} con \texttt{FILTER NOT EXISTS}, assumendo la
+    completezza dei dati (closed-world assumption sulla propriet\`a \texttt{sequelOf});
+  \item \textbf{maxCardinality} (\texttt{GameWithSingleDeveloper}, \texttt{ExclusiveRelease}).
+    Queste classi sono dichiarate con sole condizioni necessarie
+    (\texttt{rdfs:subClassOf}) e non vengono materializzate in nuove triple
+    \texttt{rdf:type}: fungono da vincoli di integrit\`a verificabili da un
+    reasoner DL completo.
+\end{enumerate}
+
+\subsection{Bug Critico: owl:sameAs Falsi e Soluzione}
+
+\subsubsection{Il Problema}
+
+Durante lo sviluppo \`e emerso un bug critico: \texttt{owlrl} inferiva
+\texttt{owl:sameAs} falsi tra giochi distinti quando determinati assiomi
+\texttt{FunctionalProperty} / \texttt{InverseFunctionalProperty} / \texttt{hasKey}
+erano dichiarati su \textbf{DatatypeProperty}.
+
+\textbf{Meccanismo del bug}: \texttt{owlrl} tratta i literal (es. stringhe, interi)
+come individui OWL a tutti gli effetti. Quando una DatatypeProperty \`e dichiarata
+\texttt{FunctionalProperty} (es. \texttt{gameName}), \texttt{owlrl} applica la
+regola RL standard: se due soggetti condividono lo stesso valore per una
+\texttt{FunctionalProperty}, allora sono \texttt{owl:sameAs}. Poich\'e molti
+giochi condividono lo stesso nome o lo stesso punteggio Metacritic, il reasoner
+li unificava erroneamente.
+
+\textbf{Esempio}: tre giochi distinti (\texttt{GameA}, \texttt{GameB}, \texttt{GameC})
+tutti con \texttt{wonAward} $\rightarrow$ tutti classificati come \texttt{AwardWinningGame}
+prima del fix; dopo il fix, solo quelli con effettivo \texttt{wonAward} vengono
+classificati (1 gioco su 3 nel test delle istanze).
+
+\subsubsection{La Soluzione}
+
+La soluzione adottata opera in tre fasi (implementata in \texttt{enrich\_owl.py}):
+
+\begin{enumerate}[nosep]
+  \item \textbf{Sezione ``DL-only axioms'' separata}. Gli assiomi \texttt{FunctionalProperty}
+    e \texttt{InverseFunctionalProperty} su DatatypeProperty, insieme agli
+    \texttt{owl:hasKey}, sono dichiarati in una sezione dedicata del file OWL
+    con un commento esplicativo (righe 1401--1484 di \texttt{videogames.owl});
+  \item \textbf{Strip automatico prima del reasoning}. La funzione
+    \texttt{strip\_dl\_only\_axioms()} rimuove questi assiomi dal grafo in-memory
+    prima di eseguire \texttt{owlrl}, prevenendo le inferenze errate;
+  \item \textbf{Restore dopo il reasoning}. La funzione
+    \texttt{restore\_dl\_only\_axioms()} ripristina gli assiomi nel file OWL
+    serializzato finale, preservandone il valore dichiarativo per future
+    applicazioni con reasoner DL completi.
+\end{enumerate}
+
+Il flag \texttt{--keep-dl-axioms} permette di saltare lo strip per testing
+con reasoner DL.
+
+\subsubsection{Impatto}
+
+Dopo il fix: 0 \texttt{owl:sameAs} falsi su tutto l'insieme di istanze di test (2715 triple finali,
+nessun gioco unificato erroneamente). Le 12 famiglie di regole Python dirette in
+\texttt{enrich\_owl.py} (\texttt{\_materialise}) classificano correttamente tutti
+i giochi senza produrre falsi positivi.
+
+\subsection{Materialiser Mirato in enrich\_owl.py}
+
+Oltre al reasoning owlrl + CONSTRUCT, \texttt{enrich\_owl.py} implementa un
+materialiser Python diretto con 12 famiglie di regole che operano senza passare
+per SPARQL, risultando pi\`u veloce di \texttt{owlrl} full su insiemi di istanze di grandi
+dimensioni:
+
+\begin{enumerate}[nosep]
+  \item AwardWinningGame $\leftarrow$ game \texttt{wonAward} \_;
+  \item FranchiseGame $\leftarrow$ game \texttt{belongsTo} \_;
+  \item sharedFranchiseWith $\leftarrow$ belongsTo $\circ$ includes
+  \item sharesDeveloperWith $\leftarrow$ developedBy $\circ$ developerOf
+  \item sharesPublisherWith $\leftarrow$ publishedBy $\circ$ publisherOf
+  \item MultiplayerGame / SinglePlayerGame / CoopGame $\leftarrow$ \texttt{hasGameMode}
+  \item PCGame / ConsoleGame / MobileGame $\leftarrow$ \texttt{availableOn}
+  \item NintendoGame / PlayStationGame / XboxGame $\leftarrow$ \texttt{availableOn}
+  \item HighlyRatedGame $\leftarrow$ \texttt{metacriticScore} $\geq$ 85
+  \item RecentGame $\leftarrow$ \texttt{releaseDate} $\geq$ 2020-01-01
+  \item SequelGame $\leftarrow$ game \texttt{sequelOf} \_
+  \item StandaloneGame $\leftarrow$ VideoGame senza \texttt{sequelOf}
+\end{enumerate}
+
+Le regole pairwise (3--5) sono protette dal cap \texttt{--max-group} (default 50)
+per evitare esplosioni combinatorie su franchise con migliaia di giochi.

@@ -1,0 +1,167 @@
+\documentclass[11pt,a4paper]{article}
+
+% ── Encoding e lingua ──
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+
+% ── Layout ──
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+
+% ── Matematica ──
+\usepackage{amsmath, amssymb}
+
+% ── Tabelle ──
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+
+% ── Grafica ──
+\usepackage{graphicx}
+
+% ── Codice ──
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+\definecolor{codecomment}{rgb}{0.4,0.4,0.4}
+\definecolor{codekeyword}{rgb}{0.0,0.0,0.6}
+\definecolor{codestring}{rgb}{0.6,0.1,0.1}
+\definecolor{codevar}{rgb}{0.1,0.5,0.1}
+
+\lstdefinestyle{sparql}{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codekeyword}\bfseries,
+  commentstyle=\color{codecomment}\itshape,
+  stringstyle=\color{codestring},
+  identifierstyle=\color{codevar},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{codecomment},
+  numbers=none,
+  showstringspaces=false,
+  tabsize=2,
+  captionpos=b,
+  morekeywords={PREFIX,SELECT,DISTINCT,WHERE,FILTER,CONSTRUCT,OPTIONAL,
+    UNION,GROUP,ORDER,BY,LIMIT,OFFSET,AS,COUNT,SUM,AVG,MIN,MAX,
+    BIND,STR,IN,NOT,EXISTS,a,vg,owl,rdf,rdfs,xsd}
+}
+
+\lstdefinestyle{turtle}{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codekeyword}\bfseries,
+  commentstyle=\color{codecomment}\itshape,
+  stringstyle=\color{codestring},
+  identifierstyle=\color{codevar},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{codecomment},
+  numbers=none,
+  showstringspaces=false,
+  tabsize=2,
+  captionpos=b,
+  morekeywords={@prefix,@base,a,rdf,type,rdfs,subClassOf,owl,Ontology,
+    Class,ObjectProperty,DatatypeProperty,inverseOf,domain,range}
+}
+
+\lstdefinestyle{python}{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codekeyword}\bfseries,
+  commentstyle=\color{codecomment}\itshape,
+  stringstyle=\color{codestring},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{codecomment},
+  numbers=none,
+  showstringspaces=false,
+  tabsize=2,
+  captionpos=b
+}
+
+% ── Riferimenti e bibliografia ──
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{natbib}
+\usepackage{tocbibind}
+
+% ── Header/footer ──
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small Videogame Semantic Search}
+\fancyhead[R]{\small Relazione Tecnica}
+
+% ── Informazioni documento ──
+\title{{\Huge Videogame Semantic Search}\\[6pt]
+       {\large Relazione Tecnica di Progetto}\\[6pt]
+       {\normalsize Ontologia OWL 2 per videogiochi: modellazione, reasoning e ricerca semantica}}
+\author{{\large Videogame Semantic Search Project}}
+\date{\today\\[4pt]{\small Versione 1.0}}
+
+\begin{document}
+
+% ── Frontespizio ──
+\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+  \rule{0.8\textwidth}{0.5pt}\\[8pt]
+  \textit{Documento tecnico-accademico prodotto nell'ambito del progetto \\
+  di Semantic Web --- Ontologia e Knowledge Graph per Videogiochi}\\[8pt]
+  \rule{0.8\textwidth}{0.5pt}
+\end{center}
+
+\vspace{1cm}
+
+\begin{abstract}
+\noindent
+Il presente documento descrive il progetto \textbf{Videogame Semantic Search}, un sistema
+di ricerca semantica che integra un'ontologia OWL 2 modellata sul dominio dei videogiochi,
+un knowledge graph popolato da Wikidata e un'interfaccia web con grafo interattivo.
+L'ontologia, costruita secondo i principi del Semantic Web, definisce 78 classi,
+31 object property, 26 datatype property e 17 classi definite con reasoning automatico.
+La popolazione da Wikidata (2010--2026) produce oltre 1.1 milioni di triple, interrogabili
+in linguaggio naturale tramite un agente SPARQL basato su GPT-4.1-mini.
+Vengono approfonditi in particolare gli aspetti di modellazione dello schema dell'ontologia, le scelte
+di design ontologico, il sistema di reasoning a due livelli (OWL 2 RL + CONSTRUCT)
+e le tecniche di validazione adottate.
+\end{abstract}
+
+\newpage
+
+% ── Indice ──
+\tableofcontents
+\newpage
+
+% ── Sezioni ──
+\input{sezioni/01_introduzione.tex}
+\input{sezioni/02_architettura.tex}
+\input{sezioni/03_ontologia_overview.tex}
+\input{sezioni/04_tbox_classi.tex}
+\input{sezioni/05_tbox_proprieta.tex}
+\input{sezioni/06_tbox_classi_definite.tex}
+\input{sezioni/07_tbox_disjointness.tex}
+\input{sezioni/08_allineamento_esterno.tex}
+\input{sezioni/09_reasoning.tex}
+\input{sezioni/10_popolamento.tex}
+\input{sezioni/11_validazione.tex}
+\input{sezioni/12_frontend_backend.tex}
+\input{sezioni/13_conclusione.tex}
+
+% ── Appendici ──
+\appendix
+\input{sezioni/app_a_abox.tex}
+\input{sezioni/app_b_dl.tex}
+
+% ── Bibliografia ──
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

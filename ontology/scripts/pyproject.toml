@@ -1,0 +1,15 @@
+[project]
+name = "videogame-ontology-tools"
+version = "0.1.0"
+description = "Tooling scripts for videogame ontology TBox enrichment, reasoning, and validation"
+requires-python = ">=3.12"
+
+dependencies = [
+    "rdflib>=7.0.0",
+    "owlrl>=6.0.2",
+    "pyoxigraph>=0.5.8",
+    "tqdm>=4.66.0",
+]
+
+[tool.uv]
+# Pin Python for reproducibility

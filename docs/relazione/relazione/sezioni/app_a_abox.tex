@@ -1,0 +1,53 @@
+\section{Esempio di Istanze di Test}
+\label{sec:app_abox}
+
+Per la verifica end-to-end del sistema di reasoning, \`e stato utilizzato un
+insieme di istanze di test minimale (\texttt{test\_abox.ttl}) contenente 3 giochi, 2 developer
+e alcune piattaforme. Il seguente estratto in Turtle illustra la struttura:
+
+\begin{lstlisting}[style=turtle, caption={Estratto del test delle istanze (Turtle)}, label={lst:testabox}]
+@prefix vg: <http://www.videogame-ontology.org/ontology#> .
+
+vg:GameA  a vg:VideoGame ;
+    vg:gameName "Elden Ring" ;
+    vg:releaseDate "2022-02-25"^^xsd:date ;
+    vg:metacriticScore 96 ;
+    vg:developedBy vg:Dev1 ;
+    vg:hasGenre vg:RPGGenreInstance ;
+    vg:hasGameMode vg:SinglePlayerMode, vg:MultiplayerMode ;
+    vg:availableOn vg:PS5, vg:PC_Windows ;
+    vg:wonAward vg:TGAAward2022 .
+
+vg:GameB  a vg:VideoGame ;
+    vg:gameName "Hollow Knight" ;
+    vg:releaseDate "2017-02-24"^^xsd:date ;
+    vg:metacriticScore 87 ;
+    vg:developedBy vg:Dev2 ;
+    vg:availableOn vg:NintendoSwitch ;
+    vg:hasGameMode vg:SinglePlayerMode .
+
+vg:GameC  a vg:VideoGame ;
+    vg:gameName "Dark Souls III" ;
+    vg:sequelOf vg:GameX ;
+    vg:developedBy vg:Dev1 .
+\end{lstlisting}
+
+\subsection{Risultati della Verifica}
+
+Dopo il reasoning completo (owlrl + CONSTRUCT), il grafo di test produce:
+
+\begin{itemize}[nosep]
+  \item \textbf{2.715 triple finali} (dalle $\sim$997 iniziali);
+  \item \textbf{0 \texttt{owl:sameAs} falsi} --- il fix degli assiomi DL-only
+    previene l'unificazione errata dei giochi;
+  \item \textbf{Classificazioni corrette}:
+    \begin{itemize}[nosep]
+      \item \texttt{GameA} $\rightarrow$ MultiplayerGame, SinglePlayerGame,
+        ConsoleGame, PlayStationGame, PCGame, HighlyRatedGame, RecentGame,
+        AwardWinningGame, StandaloneGame;
+      \item \texttt{GameB} $\rightarrow$ SinglePlayerGame, ConsoleGame,
+        NintendoGame, HighlyRatedGame, StandaloneGame (non RecentGame: 2017);
+      \item \texttt{GameC} $\rightarrow$ SequelGame, ConsoleGame (non
+        SinglePlayerGame/MultiplayerGame: nessun game mode asserito).
+    \end{itemize}
+\end{itemize}

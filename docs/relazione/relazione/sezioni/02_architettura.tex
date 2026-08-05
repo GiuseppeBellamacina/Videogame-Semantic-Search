@@ -1,0 +1,135 @@
+\section{Architettura del Sistema}
+\label{sec:architettura}
+
+\subsection{Diagramma Architetturale}
+
+L'architettura del sistema segue un classico pattern a tre livelli (three-tier):
+frontend di presentazione, backend API REST e store ontologico. Il diagramma
+seguente illustra il flusso dati:
+
+\begin{center}
+\begin{minipage}{0.9\textwidth}
+\small
+\begin{verbatim}
++----------------------------------------------------+
+|  Frontend (React + Tailwind + react-force-graph)   |
+|  [SearchBar]  [ResultList]   [Knowledge Graph 2D]  |
++--------------------------+-------------------------+
+                           | HTTP REST
++--------------------------v-------------------------+
+|               Backend (FastAPI)                    |
+|  +---------------------------------------------+  |
+|  |  SPARQL Agent (GPT-4.1-mini)                |  |
+|  |  NL -> SPARQL -> Validate -> Execute        |  |
+|  |  (retry automatico, max 3 tentativi)        |  |
+|  +---------------------------------------------+  |
+|  +------------------+  +-----------------------+  |
+|  | OntologyService  |  |    GraphBuilder       |  |
+|  |  (pyoxigraph)    |  | (nodi + archi grafo)  |  |
+|  +------------------+  +-----------------------+  |
+|  +------------------+  +-----------------------+  |
+|  | Upstash Redis    |  | Wikipedia Image API   |  |
+|  | (cache asincr.)  |  | (fallback cover art)  |  |
+|  +------------------+  +-----------------------+  |
++--------------------------+-------------------------+
+                           |
++--------------------------v-------------------------+
+|  Ontologia (videogames_pruned_2020.owl)            |
+|  Store: pyoxigraph (Rust)  ~745k triple            |
++----------------------------------------------------+
+\end{verbatim}
+\end{minipage}
+\end{center}
+
+\subsection{Stack Tecnologico}
+
+La Tabella~\ref{tab:stack} riassume le tecnologie impiegate per ciascun livello.
+
+\begin{table}[h]
+\centering
+\caption{Stack tecnologico del sistema}
+\label{tab:stack}
+\begin{tabular}{ll}
+\toprule
+\textbf{Layer}      & \textbf{Tecnologia}                         \\
+\midrule
+Frontend            & React 18, TypeScript, Vite, Tailwind CSS    \\
+Grafo interattivo   & react-force-graph-2d                        \\
+Backend             & FastAPI (Python 3.12+, async)               \\
+Ontologia           & pyoxigraph (Rust), OWL 2, owlrl (rdflib)    \\
+LLM / Agente        & OpenAI GPT-4.1-mini                         \\
+Cache               & Upstash Redis (async) + cache in-memory      \\
+Fonte dati          & Wikidata SPARQL                             \\
+Deploy              & Render (backend) + Vercel (frontend)         \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Flusso Dati}
+
+Il flusso di una tipica interrogazione \`e il seguente:
+\begin{enumerate}[nosep]
+  \item L'utente digita una domanda in linguaggio naturale (NL) nella SearchBar del frontend;
+  \item Il frontend invia la domanda al backend via HTTP POST su \texttt{/api/query};
+  \item Lo \textbf{SPARQL Agent} (GPT-4.1-mini) genera una query SPARQL a partire dalla domanda NL, utilizzando il contesto dell'ontologia (classi, propriet\`a, esempi);
+  \item Il \textbf{SPARQL Validator} controlla la correttezza sintattica della query generata; se invalida, l'agente ritenta (max 3 tentativi);
+  \item La query viene eseguita su \textbf{pyoxigraph} contro il file OWL;
+  \item Il \textbf{GraphBuilder} trasforma i risultati SPARQL in nodi e archi per il frontend (con metadati di tipo, label, colore);
+  \item Il frontend riceve i risultati e li visualizza nella ResultList e nel Knowledge Graph 2D interattivo.
+\end{enumerate}
+
+\subsection{Cache a Due Livelli}
+
+Per ottimizzare le performance, il sistema adotta una cache a due livelli:
+\begin{itemize}[nosep]
+  \item \textbf{Upstash Redis} (cloud, persistente, TTL 7 giorni): memorizza i risultati delle query SPARQL e le immagini (cover art) recuperate da Wikipedia. I risultati nulli non vengono cachati per consentire retry successivi;
+  \item \textbf{Cache in-memory} (Python dict): mantiene in RAM label e tipi derivati dal grafo RDF per accessi rapidissimi durante la costruzione del grafo.
+\end{itemize}
+
+\subsection{Tabella dei Componenti}
+
+La Tabella~\ref{tab:componenti} elenca i principali componenti software con le rispettive responsabilit\`a.
+
+\begin{table}[h]
+\centering
+\caption{Componenti principali e responsabilit\`a}
+\label{tab:componenti}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Componente}          & \textbf{Responsabilit\`a}                                        \\
+\midrule
+\texttt{sparql\_agent.py}    & Traduzione NL $\rightarrow$ SPARQL via GPT-4.1-mini, retry       \\
+\texttt{sparql\_validator.py}& Validazione sintattica SPARQL pre-esecuzione                     \\
+\texttt{ontology\_service.py}& Caricamento OWL, esecuzione query via pyoxigraph                 \\
+\texttt{graph\_builder.py}   & Costruzione nodi/archi da risultati RDF per il frontend          \\
+\texttt{image\_cache.py}     & Recupero e cache immagini da Wikipedia API                       \\
+\texttt{SearchBar.tsx}       & Input NL, ricerca con autocomplete                               \\
+\texttt{ResultList.tsx}      & Visualizzazione risultati testuali con espansione dettaglio      \\
+\texttt{KnowledgeGraph.tsx}  & Grafo 2D interattivo con force layout, zoom, filtri              \\
+\texttt{NodeDetail.tsx}      & Pannello laterale con dettaglio nodo (propriet\`a, relazioni)    \\
+\texttt{NodeContextMenu.tsx} & Menu contestuale (click destro): espandi, rimuovi nodo           \\
+\texttt{SparqlViewer.tsx}    & Visualizzazione query SPARQL generata (espandibile)              \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{API Endpoint}
+
+La Tabella~\ref{tab:endpoint} riassume gli endpoint REST esposti dal backend.
+
+\begin{table}[h]
+\centering
+\caption{Endpoint API}
+\label{tab:endpoint}
+\begin{tabular}{lll}
+\toprule
+\textbf{Metodo} & \textbf{Endpoint}             & \textbf{Descrizione}                     \\
+\midrule
+POST   & \texttt{/api/query}         & Ricerca NL $\rightarrow$ risultati + grafo \\
+GET    & \texttt{/api/node/\{uri\}}  & Dettaglio nodo + sottografo               \\
+GET    & \texttt{/api/image-search}  & Cerca cover art da Wikipedia              \\
+GET    & \texttt{/api/stats}         & Statistiche ontologia                     \\
+GET    & \texttt{/api/health}        & Health check                              \\
+\bottomrule
+\end{tabular}
+\end{table}

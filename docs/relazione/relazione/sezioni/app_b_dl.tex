@@ -1,0 +1,39 @@
+\section{Sintassi DL delle Classi Definite}
+\label{sec:app_dl}
+
+Di seguito si riporta la sintassi DL compatta di tutte le 17 classi definite
+dell'ontologia. La notazione $\sqcap$ indica intersezione ($\mathtt{owl:intersectionOf}$),
+$\exists$ indica restrizione esistenziale ($\mathtt{owl:someValuesFrom}$),
+$\neg$ indica complemento ($\mathtt{owl:complementOf}$), $\leq$ indica
+cardinalit\`a massima ($\mathtt{owl:maxCardinality}$).
+
+\vspace{4pt}
+\noindent
+\begin{minipage}{\textwidth}
+\small
+\begin{align*}
+\text{MultiplayerGame}      &\equiv \text{VideoGame} \sqcap \exists\text{hasGameMode.MultiplayerMode} \\
+\text{SinglePlayerGame}     &\equiv \text{VideoGame} \sqcap \exists\text{hasGameMode.SinglePlayerMode} \\
+\text{CoopGame}             &\equiv \text{VideoGame} \sqcap \exists\text{hasGameMode.CoopMode} \\
+\text{PCGame}               &\equiv \text{VideoGame} \sqcap \exists\text{availableOn.PCPlatform} \\
+\text{ConsoleGame}          &\equiv \text{VideoGame} \sqcap \exists\text{availableOn.ConsolePlatform} \\
+\text{MobileGame}           &\equiv \text{VideoGame} \sqcap \exists\text{availableOn.MobilePlatform} \\
+\text{NintendoGame}         &\equiv \text{VideoGame} \sqcap \exists\text{availableOn.NintendoPlatform} \\
+\text{PlayStationGame}      &\equiv \text{VideoGame} \sqcap \exists\text{availableOn.PlayStationPlatform} \\
+\text{XboxGame}             &\equiv \text{VideoGame} \sqcap \exists\text{availableOn.XboxPlatform} \\
+\text{SequelGame}           &\equiv \text{VideoGame} \sqcap \exists\text{sequelOf.VideoGame} \\
+\text{StandaloneGame}       &\equiv \text{VideoGame} \sqcap \neg\exists\text{sequelOf.VideoGame} \\
+\text{HighlyRatedGame}      &\equiv \text{VideoGame} \sqcap \exists\text{metacriticScore.}\geq_{85} \\
+\text{RecentGame}           &\equiv \text{VideoGame} \sqcap \exists\text{releaseDate.}\geq_{2020-01-01} \\
+\text{AwardWinningGame}     &\equiv \text{VideoGame} \sqcap \exists\text{wonAward.Award} \\
+\text{FranchiseGame}        &\equiv \text{VideoGame} \sqcap \exists\text{belongsTo.Franchise} \\[4pt]
+\text{GameWithSingleDeveloper} &\sqsubseteq \text{VideoGame} \sqcap \mathopen{\leq}1\,\text{developedBy} \\
+\text{ExclusiveRelease}     &\sqsubseteq \text{VideoGame} \sqcap \mathopen{\leq}1\,\text{availableOn}
+\end{align*}
+\end{minipage}
+
+\vspace{8pt}
+\noindent
+Le prime 15 classi utilizzano $\equiv$ (condizioni necessarie e sufficienti,
+\texttt{owl:equivalentClass}); le ultime due usano $\sqsubseteq$ (sole condizioni
+necessarie, \texttt{rdfs:subClassOf}).

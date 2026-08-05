@@ -1,0 +1,96 @@
+\section{Panoramica dell'Ontologia}
+\label{sec:ontologia_overview}
+
+\subsection{Dominio}
+
+L'ontologia modella il dominio dei \textbf{videogiochi} nel periodo 2010--2026,
+coprendo le seguenti entit\`a principali:
+\begin{itemize}[nosep]
+  \item \textbf{VideoGame} --- il prodotto videoludico con i suoi attributi (nome, data rilascio, punteggio Metacritic, paese d'origine);
+  \item \textbf{Developer / Publisher} --- gli studi di sviluppo e le case editrici;
+  \item \textbf{Genre} --- il genere (Action, RPG, Strategy, \dots{});
+  \item \textbf{Platform} --- la piattaforma di esecuzione (PS5, PC, Switch, \dots{});
+  \item \textbf{Character} --- i personaggi (giocanti e non);
+  \item \textbf{Franchise} --- le serie e i sotto-franchise;
+  \item \textbf{Award} --- i premi ricevuti;
+  \item \textbf{GameEngine} --- il motore grafico utilizzato;
+  \item \textbf{GameMode} --- la modalit\`a di gioco (single-player, multiplayer, co-op, MMO);
+  \item \textbf{Review / GameEvent} --- recensioni ed eventi del ciclo di vita.
+\end{itemize}
+
+\subsection{Namespace e Separazione Schema/Istanze}
+
+Il namespace dell'ontologia \`e:
+\begin{center}
+\texttt{http://www.videogame-ontology.org/ontology\#}
+\end{center}
+abbreviato in \texttt{vg:} in tutte le query SPARQL e nei riferimenti interni.
+
+L'ontologia \`e strutturata in due file distinti che realizzano la classica
+separazione schema/istanze:
+\begin{itemize}[nosep]
+  \item \texttt{videogames.owl} --- \textbf{schema}: contiene tutte le dichiarazioni
+    di classi, propriet\`a, assiomi, disjointness e allineamenti esterni. Circa 945 triple;
+  \item \texttt{videogames\_pruned\_2020.owl} --- \textbf{insieme di istanze di demo}: contiene le istanze
+    (giochi, developer, publisher, generi, piattaforme, \dots{}) per il periodo
+    2020--2026. Circa 745.000 triple, 68.700 giochi.
+\end{itemize}
+
+\subsection{Fonte Dati: Wikidata}
+
+Tutti i dati provengono da \textbf{Wikidata} \citep{wikidata}, il knowledge graph
+libero della Wikimedia Foundation. La popolazione avviene tramite query SPARQL
+al \texttt{https://query.wikidata.org/sparql}, mappando 13 propriet\`a Wikidata
+(identificatori P31, P136, P400, P577, P1712, \dots{}) nelle corrispondenti
+propriet\`a dell'ontologia.
+
+\subsection{Pipeline di Popolamento}
+
+La pipeline completa si articola in quattro fasi:
+
+\begin{enumerate}[nosep]
+  \item \texttt{populate\_wikidata.py} --- esegue 204 iterazioni (17 anni $\times$ 12 mesi)
+    di query SPARQL verso Wikidata, raccogliendo giochi, metadati e relazioni.
+    Tempo stimato: $\sim$5 ore con polite delay di 1 secondo tra le richieste.
+  \item \textbf{OWL-RL closure via \texttt{owlrl}} --- applica la chiusura deduttiva
+    OWL 2 RL per materializzare propriet\`a inverse, catene \texttt{subPropertyOf},
+    e inferenze da \texttt{someValuesFrom/hasValue/intersectionOf}. Da $\sim$1M a $\sim$1.4M triple.
+  \item \textbf{Pruning} --- rimuove triple ridondanti o inutilizzate a runtime:
+    \texttt{owl:sameAs} riflessivi, \texttt{gameDescription}, \texttt{officialWebsite}.
+    Da $\sim$1.4M a $\sim$1.17M triple (completo) o $\sim$745k (demo 2020+).
+  \item \texttt{enrich\_owl.py} --- ripristina gli assiomi DL-only (FunctionalProperty,
+    InverseFunctionalProperty, hasKey) dopo il reasoning owlrl.
+\end{enumerate}
+
+\subsection{Statistiche Riassuntive}
+
+La Tabella~\ref{tab:ontostats} riassume le principali metriche dello schema dell'ontologia.
+
+\begin{table}[h]
+\centering
+\caption{Statistiche dello schema dell'ontologia}
+\label{tab:ontostats}
+\begin{tabular}{lr}
+\toprule
+\textbf{Metrica}                & \textbf{Valore} \\
+\midrule
+Classi totali                   & 78              \\
+Classi primitive                & 61              \\
+Classi definite                 & 17              \\
+Object Property                 & 31              \\
+Datatype Property               & 26              \\
+Property chain axioms           & 3               \\
+Propriet\`a transitive          & 2               \\
+Coppie inverse                  & 13              \\
+Blocchi AllDisjointClasses      & 12              \\
+Vincoli hasKey                  & 3               \\
+Allineamenti equivalentClass    & 4 (Wikidata)    \\
+Allineamenti equivalentProperty & 3 (Dublin Core) \\
+Triple dello schema totali              & $\sim$ 945      \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Lo schema \`e espresso in formato RDF/XML e pu\`o essere validato, arricchito e
+ragionata tramite gli script nella directory \texttt{ontology/} (cfr.\ Sezione~\ref{sec:validazione}
+per la validazione e Sezione~\ref{sec:reasoning} per il reasoning).

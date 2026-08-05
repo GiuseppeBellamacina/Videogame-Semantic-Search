@@ -1,0 +1,165 @@
+\section{Classi Definite}
+\label{sec:classi_definite}
+
+\subsection{Panoramica}
+
+Le classi definite (\textit{defined classes}) costituiscono uno degli aspetti
+pi\`u avanzati dell'ontologia. A differenza delle classi primitive, che richiedono
+l'asserzione esplicita \texttt{rdf:type}, le classi definite specificano
+condizioni necessarie e sufficienti (\texttt{owl:equivalentClass}) che permettono
+a un reasoner di \textbf{inferire automaticamente} l'appartenenza di un'istanza.
+
+L'ontologia definisce \textbf{17 classi definite}, raggruppabili in sei categorie
+logiche. La Tabella~\ref{tab:definite} le elenca con la sintassi DL e il tipo
+di condizione.
+
+\begin{longtable}{lllp{4cm}}
+\caption{Classi definite}\label{tab:definite}\\
+\toprule
+\textbf{Classe} & \textbf{Tipo} & \textbf{Sintassi DL} & \textbf{Costrutti OWL 2} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{\tablename\ \thetable{} -- continua} \\
+\toprule
+\textbf{Classe} & \textbf{Tipo} & \textbf{Sintassi DL} & \textbf{Costrutti OWL 2} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+
+% Mode-derived
+MultiplayerGame     & S/N & VideoGame $\sqcap$ $\exists$hasGameMode.MultiplayerMode   & intersectionOf, someValuesFrom \\
+SinglePlayerGame    & S/N & VideoGame $\sqcap$ $\exists$hasGameMode.SinglePlayerMode  & intersectionOf, someValuesFrom \\
+CoopGame            & S/N & VideoGame $\sqcap$ $\exists$hasGameMode.CoopMode           & intersectionOf, someValuesFrom \\
+% Platform-derived
+PCGame              & S/N & VideoGame $\sqcap$ $\exists$availableOn.PCPlatform         & intersectionOf, someValuesFrom \\
+ConsoleGame         & S/N & VideoGame $\sqcap$ $\exists$availableOn.ConsolePlatform    & intersectionOf, someValuesFrom \\
+MobileGame          & S/N & VideoGame $\sqcap$ $\exists$availableOn.MobilePlatform     & intersectionOf, someValuesFrom \\
+NintendoGame        & S/N & VideoGame $\sqcap$ $\exists$availableOn.NintendoPlatform   & intersectionOf, someValuesFrom \\
+PlayStationGame     & S/N & VideoGame $\sqcap$ $\exists$availableOn.PlayStationPlatform& intersectionOf, someValuesFrom \\
+XboxGame            & S/N & VideoGame $\sqcap$ $\exists$availableOn.XboxPlatform       & intersectionOf, someValuesFrom \\
+% Sequel-derived
+SequelGame          & S/N & VideoGame $\sqcap$ $\exists$sequelOf.VideoGame             & intersectionOf, someValuesFrom \\
+StandaloneGame      & S/N & VideoGame $\sqcap$ $\neg\exists$sequelOf.VideoGame          & intersectionOf, complementOf \\
+% Quality-derived
+HighlyRatedGame     & S/N & VideoGame $\sqcap$ $\exists$metacriticScore.$\geq_{85}$    & intersectionOf, someValuesFrom, datatype restriction \\
+RecentGame          & S/N & VideoGame $\sqcap$ $\exists$releaseDate.$\geq_{2020}$      & intersectionOf, someValuesFrom, datatype restriction \\
+% Preesistenti
+AwardWinningGame    & S/N & VideoGame $\sqcap$ $\exists$wonAward.Award                 & intersectionOf, someValuesFrom \\
+FranchiseGame       & S/N & VideoGame $\sqcap$ $\exists$belongsTo.Franchise            & intersectionOf, someValuesFrom \\
+% Cardinality (solo necessarie)
+GameWithSingleDeveloper & N & VideoGame $\sqcap$ $\leq1$developedBy                   & subClassOf, maxCardinality \\
+ExclusiveRelease    & N & VideoGame $\sqcap$ $\leq1$availableOn                      & subClassOf, maxCardinality \\
+\bottomrule
+\end{longtable}
+
+\textit{Legenda}: S/N = condizioni sufficienti e necessarie (equivalentClass);
+N = solo necessarie (subClassOf).
+
+\subsection{Analisi per Categoria}
+
+\subsubsection{Mode-derived}
+
+Le classi \texttt{MultiplayerGame}, \texttt{SinglePlayerGame} e \texttt{CoopGame}
+classificano i giochi in base alla modalit\`a di gioco. Un gioco viene inferito
+come \texttt{MultiplayerGame} se esiste almeno un'asserzione \texttt{hasGameMode}
+verso un'entit\`a di tipo \texttt{MultiplayerMode}. Si noti che \texttt{SinglePlayerGame}
+e \texttt{MultiplayerGame} \textbf{non} sono dichiarate disgiunte: un gioco pu\`o
+supportare entrambe le modalit\`a (es. Call of Duty ha sia campagna single-player
+che multiplayer).
+
+\textbf{Esempio}: Elden Ring ha \texttt{hasGameMode SinglePlayerMode} e
+\texttt{hasGameMode MultiplayerMode} $\rightarrow$ inferito sia come
+\texttt{SinglePlayerGame} che come \texttt{MultiplayerGame}.
+
+\subsubsection{Platform-derived}
+
+Sei classi classificano i giochi per piattaforma a tre livelli di granularit\`a:
+macrocategoria (\texttt{PCGame}, \texttt{ConsoleGame}, \texttt{MobileGame}) e
+famiglia specifica (\texttt{NintendoGame}, \texttt{PlayStationGame}, \texttt{XboxGame}).
+L'inferenza sfrutta la gerarchia \texttt{rdfs:subClassOf} delle piattaforme: se
+una piattaforma \`e di tipo \texttt{PlayStationPlatform}, il reasoner inferisce
+anche \texttt{ConsolePlatform} e \texttt{Platform}.
+
+\textbf{Esempio}: God of War Ragnar\"ok ha \texttt{availableOn} PS5 (tipo
+\texttt{PlayStationPlatform}) $\rightarrow$ inferito \texttt{PlayStationGame} e \texttt{ConsoleGame}.
+
+\subsubsection{Sequel-derived}
+
+\texttt{SequelGame} e \texttt{StandaloneGame} formano una partizione completa
+dei giochi basata sulla propriet\`a transitiva \texttt{sequelOf}:
+\begin{itemize}[nosep]
+  \item \texttt{SequelGame} --- $\exists$\texttt{sequelOf.VideoGame}: il gioco ha
+    almeno un predecessore diretto;
+  \item \texttt{StandaloneGame} --- $\neg\exists$\texttt{sequelOf.VideoGame}: il
+    gioco non ha predecessori. Utilizza \texttt{owl:complementOf}, costrutto
+    non supportato da OWL 2 RL, e richiede pertanto il reasoner CONSTRUCT
+    (cfr.~Sezione~\ref{sec:reasoning}).
+\end{itemize}
+
+\textbf{Esempio}: Elden Ring non ha \texttt{sequelOf} $\rightarrow$ \texttt{StandaloneGame};
+Dark Souls III ha \texttt{sequelOf} Dark Souls II $\rightarrow$ \texttt{SequelGame}.
+
+\subsubsection{Quality-derived}
+
+\texttt{HighlyRatedGame} e \texttt{RecentGame} utilizzano \textbf{datatype restriction}
+con \texttt{xsd:minInclusive}, un costrutto OWL 2 DL non coperto da OWL 2 RL
+(cfr.~Lez.~17--18):
+
+\begin{itemize}[nosep]
+  \item \texttt{HighlyRatedGame} $\equiv$ VideoGame $\sqcap$ $\exists$\texttt{metacriticScore.}$\geq_{85}$
+    --- giochi con Metacritic $\geq$ 85;
+  \item \texttt{RecentGame} $\equiv$ VideoGame $\sqcap$ $\exists$\texttt{releaseDate.}$\geq_{2020-01-01}$
+    --- giochi rilasciati dal 2020.
+\end{itemize}
+
+\textbf{Esempio}: Elden Ring (metacritic 96) $\rightarrow$ \texttt{HighlyRatedGame}.
+
+\subsubsection{Award e Franchise (preesistenti)}
+
+\texttt{AwardWinningGame} e \texttt{FranchiseGame} sono le due classi definite
+originali (V1), preservate nell'estensione V2:
+\begin{itemize}[nosep]
+  \item \texttt{AwardWinningGame}: giochi con almeno un premio (\texttt{wonAward});
+  \item \texttt{FranchiseGame}: giochi appartenenti a una serie (\texttt{belongsTo}).
+\end{itemize}
+
+\subsubsection{Cardinality (solo necessarie)}
+
+\texttt{GameWithSingleDeveloper} e \texttt{ExclusiveRelease} sono le uniche due
+classi definite con \textbf{sole condizioni necessarie} (\texttt{rdfs:subClassOf}
+anzich\'e \texttt{owl:equivalentClass}). Questa scelta \`e deliberata:
+\begin{itemize}[nosep]
+  \item \texttt{GameWithSingleDeveloper}: $\leq 1$ \texttt{developedBy}.
+    Condizione sufficiente sarebbe troppo forte (un gioco con esattamente 1
+    developer dovrebbe essere \textit{solo} quello);
+  \item \texttt{ExclusiveRelease}: $\leq 1$ \texttt{availableOn}.
+    Analogo ragionamento: un gioco esclusiva \textit{ha al massimo} 1 piattaforma,
+    ma non tutti i giochi con $\leq$ 1 piattaforma sono necessariamente esclusive.
+\end{itemize}
+
+Queste classi forniscono vincoli di integrit\`a piuttosto che meccanismi di
+classificazione automatica.
+
+\subsection{Costrutti OWL 2 Utilizzati}
+
+La Tabella~\ref{tab:costrutti} riassume i costrutti OWL 2 impiegati nelle classi
+definite, con riferimento alle lezioni del corso.
+
+\begin{table}[h]
+\centering
+\caption{Costrutti OWL 2 nelle classi definite}
+\label{tab:costrutti}
+\begin{tabular}{lll}
+\toprule
+\textbf{Costrutto}          & \textbf{Classi}                                   & \textbf{Rif. Lezione} \\
+\midrule
+\texttt{owl:someValuesFrom}& MultiplayerGame, PCGame, SequelGame, \dots{} (12) & Lez.~15 (esistenziale) \\
+\texttt{owl:intersectionOf}& Tutte le 17 definite                             & Lez.~16 (intersezione) \\
+\texttt{owl:complementOf}  & StandaloneGame                                   & Lez.~16 (complemento) \\
+\texttt{owl:maxCardinality}& GameWithSingleDeveloper, ExclusiveRelease        & Lez.~17--18 \\
+\texttt{owl:withRestrictions} & HighlyRatedGame, RecentGame                   & Lez.~17--18 (datatype) \\
+\texttt{xsd:minInclusive}  & HighlyRatedGame, RecentGame                      & Lez.~17--18 \\
+\bottomrule
+\end{tabular}
+\end{table}
