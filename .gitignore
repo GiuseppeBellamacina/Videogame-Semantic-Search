@@ -21,3 +21,6 @@ frontend/tsconfig.tsbuildinfo
 
 # Linting and formatting
 .ruff_cache/
+
+# Reference
+reference/
