@@ -60,10 +60,18 @@ R11 & sharedEngineWith (pairwise) & \texttt{?g1 vg:sharedEngineWith ?g2} \\
 \bottomrule
 \end{longtable}
 
+Solo R1--R3 coprono costrutti realmente esterni a OWL 2 RL. Le regole R4--R9
+(classificazione per sequel, piattaforma e modalit\`a, completamento delle inverse)
+ripetono inferenze che il livello 1 gi\`a produce: sono mantenute perch\'e il livello 2
+possa essere eseguito anche da solo, senza dipendere dalla chiusura \texttt{owlrl}.
+R10 e R11 aggiungono relazioni di comodo tra giochi con lo stesso genere o motore.
+
 \subsection{Perch\'e Alcuni Costrutti Non Sono in OWL 2 RL}
 
 Il profilo OWL 2 RL \`e deliberatamente limitato per garantire la trattabilit\`a
-computazionale (polinomiale). Tre famiglie di costrutti esulano da questo profilo:
+computazionale (polinomiale); la Sezione~\ref{sec:profilo_dl} ne discute i limiti in
+dettaglio. Per le classi dell'ontologia la situazione \`e la seguente: due famiglie di
+costrutti esulano dal profilo, mentre la terza vi rientra ma non produce classificazioni.
 
 \begin{enumerate}[nosep]
   \item \textbf{Datatype restriction} (\texttt{HighlyRatedGame}, \texttt{RecentGame}).
@@ -75,54 +83,112 @@ computazionale (polinomiale). Tre famiglie di costrutti esulano da questo profil
     \textit{negation-as-failure} con \texttt{FILTER NOT EXISTS}, assumendo la
     completezza dei dati (closed-world assumption sulla propriet\`a \texttt{sequelOf});
   \item \textbf{maxCardinality} (\texttt{GameWithSingleDeveloper}, \texttt{ExclusiveRelease}).
-    Queste classi sono dichiarate con sole condizioni necessarie
-    (\texttt{rdfs:subClassOf}) e non vengono materializzate in nuove triple
-    \texttt{rdf:type}: fungono da vincoli di integrit\`a verificabili da un
-    reasoner DL completo.
+    Una restrizione ${\le}1$ in posizione di superclasse \`e ammessa in OWL 2 RL
+    (regola \texttt{cls-maxc2}: se un'istanza ha due valori, questi vengono identificati
+    con \texttt{owl:sameAs}). Poich\'e le due classi hanno sole condizioni necessarie
+    (\texttt{rdfs:subClassOf}), per\`o, nessun gioco viene classificato in esse: fungono
+    da vincoli di integrit\`a, e nessuna regola CONSTRUCT \`e necessaria.
 \end{enumerate}
+
+\subsection{Esempio di Inferenza a Due Livelli}
+
+L'insieme di istanze di test (Appendice~\ref{sec:app_abox}) permette di seguire il
+ragionamento su un caso concreto. Il gioco \texttt{GameA} (Elden Ring) \`e asserito
+come \texttt{VideoGame} con data di rilascio 2022-02-25, punteggio Metacritic 96,
+sviluppatore \texttt{Dev1}, due modalit\`a (individui di tipo \texttt{SinglePlayerMode}
+e \texttt{MultiplayerMode}), due piattaforme (\texttt{PS5}, di tipo
+\texttt{PlayStationPlatform}, e \texttt{PC\_Windows}, di tipo \texttt{WindowsPlatform})
+e un premio. Anche \texttt{GameC} \`e sviluppato da \texttt{Dev1}.
+La Tabella~\ref{tab:inferenza} riporta le conclusioni, il motivo e il livello che le produce.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Inferenze su \texttt{GameA}}
+\label{tab:inferenza}
+\begin{tabularx}{\textwidth}{l X c}
+\toprule
+\textbf{Conclusione} & \textbf{Motivo} & \textbf{Livello} \\
+\midrule
+\texttt{PlayStationGame}, \texttt{ConsoleGame} &
+  \texttt{availableOn PS5}; \texttt{PS5} \`e \texttt{PlayStationPlatform} $\sqsubseteq$
+  \texttt{ConsolePlatform}; definizioni con $\exists$\texttt{availableOn} & 1 \\
+\texttt{PCGame} & \texttt{WindowsPlatform} $\sqsubseteq$ \texttt{PCPlatform} & 1 \\
+\texttt{SinglePlayerGame}, \texttt{MultiplayerGame} & $\exists$\texttt{hasGameMode} verso le due modalit\`a & 1 \\
+\texttt{AwardWinningGame} & $\exists$\texttt{wonAward.Award}; il premio \`e \texttt{IndustryAward} $\sqsubseteq$ \texttt{Award} & 1 \\
+\texttt{HighlyRatedGame} & $96 \ge 85$ (datatype restriction) & 2 \\
+\texttt{RecentGame} & $2022\text{-}02\text{-}25 \ge 2020\text{-}01\text{-}01$ (datatype restriction) & 2 \\
+\texttt{StandaloneGame} & nessun \texttt{sequelOf} noto (negation-as-failure) & 2 \\
+\midrule
+\texttt{Dev1 developerOf GameA} & inversa di \texttt{developedBy} & 1 \\
+\texttt{GameA sharesDeveloperWith GameC} & catena \texttt{developedBy} $\circ$ \texttt{developerOf} e simmetria & 1 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+L'esempio mostra la divisione dei compiti: il livello 1 (\texttt{owlrl}) copre
+gerarchie, restrizioni esistenziali, inverse e catene; il livello 2 (CONSTRUCT)
+interviene solo dove servono confronti tra literal o negazione.
 
 \subsection{Bug Critico: owl:sameAs Falsi e Soluzione}
 
 \subsubsection{Il Problema}
 
 Durante lo sviluppo \`e emerso un bug critico: \texttt{owlrl} inferiva
-\texttt{owl:sameAs} falsi tra giochi distinti quando determinati assiomi
-\texttt{FunctionalProperty} / \texttt{InverseFunctionalProperty} / \texttt{hasKey}
-erano dichiarati su \textbf{DatatypeProperty}.
+\texttt{owl:sameAs} falsi tra giochi distinti a causa degli assiomi di
+identit\`a (\texttt{FunctionalProperty}, \texttt{InverseFunctionalProperty},
+\texttt{hasKey}) dichiarati su \textbf{DatatypeProperty}.
 
-\textbf{Meccanismo del bug}: \texttt{owlrl} tratta i literal (es. stringhe, interi)
-come individui OWL a tutti gli effetti. Quando una DatatypeProperty \`e dichiarata
-\texttt{FunctionalProperty} (es. \texttt{gameName}), \texttt{owlrl} applica la
-regola RL standard: se due soggetti condividono lo stesso valore per una
-\texttt{FunctionalProperty}, allora sono \texttt{owl:sameAs}. Poich\'e molti
-giochi condividono lo stesso nome o lo stesso punteggio Metacritic, il reasoner
-li unificava erroneamente.
+\textbf{Meccanismo del bug}: nel profilo OWL 2 RL le uguaglianze tra individui
+sono prodotte da tre regole:
+\begin{itemize}[nosep]
+  \item \texttt{prp-fp} (FunctionalProperty) --- se lo \emph{stesso soggetto} ha due
+    valori per la propriet\`a, i due \emph{valori} vengono identificati;
+  \item \texttt{prp-ifp} (InverseFunctionalProperty) --- se \emph{due soggetti}
+    condividono un valore, i due \emph{soggetti} vengono identificati;
+  \item \texttt{prp-key} (\texttt{hasKey}) --- due individui della classe con gli
+    stessi valori di chiave vengono identificati.
+\end{itemize}
+\texttt{owlrl} tratta i literal come nodi del grafo alla stregua di individui.
+Applicate a datatype property, \texttt{prp-ifp} e \texttt{prp-key} identificano
+giochi distinti che condividono il valore di un identificativo, mentre \texttt{prp-fp}
+produce uguaglianze tra literal diversi dello stesso gioco (es.\ due date di rilascio
+regionali). Ogni \texttt{owl:sameAs} spurio propaga poi tipi e propriet\`a tra gli
+individui unificati (regole \texttt{eq-rep-*}), falsando la classificazione.
 
-\textbf{Esempio}: tre giochi distinti (\texttt{GameA}, \texttt{GameB}, \texttt{GameC})
-tutti con \texttt{wonAward} $\rightarrow$ tutti classificati come \texttt{AwardWinningGame}
-prima del fix; dopo il fix, solo quelli con effettivo \texttt{wonAward} vengono
-classificati (1 gioco su 3 nel test delle istanze).
+\textbf{Esempio}: nel test delle istanze (Appendice~\ref{sec:app_abox}) due
+\texttt{owl:sameAs} spuri collegavano \texttt{GameA} agli altri due giochi,
+propagando loro l'asserzione \texttt{wonAward}: prima del fix tutti e tre i giochi
+risultavano \texttt{AwardWinningGame}; dopo il fix solo \texttt{GameA}, l'unico con
+\texttt{wonAward} asserito, viene classificato come tale.
 
 \subsubsection{La Soluzione}
 
-La soluzione adottata opera in tre fasi (implementata in \texttt{enrich\_owl.py}):
+La soluzione adottata (implementata in \texttt{enrich\_owl.py}) si articola in
+quattro passi:
 
+\begingroup\sloppy
 \begin{enumerate}[nosep]
-  \item \textbf{Sezione ``DL-only axioms'' separata}. Gli assiomi \texttt{FunctionalProperty}
-    e \texttt{InverseFunctionalProperty} su DatatypeProperty, insieme agli
-    \texttt{owl:hasKey}, sono dichiarati in una sezione dedicata del file OWL
-    con un commento esplicativo (righe 1401--1484 di \texttt{videogames.owl});
+  \item \textbf{Nessuna InverseFunctionalProperty su datatype property}. Oltre a
+    innescare \texttt{prp-ifp}, questo costrutto non \`e ammesso in OWL 2 DL;
+    l'identit\`a dei giochi \`e espressa esclusivamente tramite
+    \texttt{owl:hasKey} (su \texttt{hasWikidataId} e \texttt{hasSteamAppId});
+  \item \textbf{Sezione ``DL-only axioms'' separata}. I 16 assiomi rimanenti
+    (13 \texttt{FunctionalProperty} su datatype property e 3 \texttt{owl:hasKey})
+    sono dichiarati in una sezione dedicata in coda a \texttt{videogames.owl},
+    con un commento esplicativo;
   \item \textbf{Strip automatico prima del reasoning}. La funzione
-    \texttt{strip\_dl\_only\_axioms()} rimuove questi assiomi dal grafo in-memory
-    prima di eseguire \texttt{owlrl}, prevenendo le inferenze errate;
-  \item \textbf{Restore dopo il reasoning}. La funzione
-    \texttt{restore\_dl\_only\_axioms()} ripristina gli assiomi nel file OWL
-    serializzato finale, preservandone il valore dichiarativo per future
-    applicazioni con reasoner DL completi.
+    \texttt{strip\_dl\_only\_axioms()} rimuove questi assiomi dalla copia di
+    lavoro in memoria prima del reasoning, prevenendo le inferenze errate;
+  \item \textbf{Restore opzionale}. Con il flag \texttt{-{}-keep-dl-axioms}, la
+    funzione \texttt{restore\_dl\_only\_axioms()} ripristina gli assiomi nel file
+    serializzato; per default l'output resta privo di assiomi DL-only e quindi
+    sicuro per \texttt{owlrl}.
 \end{enumerate}
+\endgroup
 
-Il flag \texttt{--keep-dl-axioms} permette di saltare lo strip per testing
-con reasoner DL.
+Lo schema \texttt{videogames.owl} conserva sempre la sezione DL-only, preservandone
+il valore dichiarativo per l'uso con reasoner DL completi (HermiT, Pellet).
 
 \subsubsection{Impatto}
 
@@ -153,5 +219,5 @@ dimensioni:
   \item StandaloneGame $\leftarrow$ VideoGame senza \texttt{sequelOf}
 \end{enumerate}
 
-Le regole pairwise (3--5) sono protette dal cap \texttt{--max-group} (default 50)
+Le regole pairwise (3--5) sono protette dal cap \texttt{-{}-max-group} (default 50)
 per evitare esplosioni combinatorie su franchise con migliaia di giochi.

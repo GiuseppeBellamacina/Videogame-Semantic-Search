@@ -1,0 +1,107 @@
+\section{Assiomi dello Schema in Turtle}
+\label{sec:app_turtle}
+
+Lo schema \`e memorizzato in RDF/XML (\texttt{videogames.owl}). Gli estratti seguenti
+lo riportano in Turtle, pi\`u leggibile, per mostrare come la sintassi DL delle sezioni
+precedenti diventa un insieme di triple RDF. Restrizioni, intersezioni e liste sono
+rappresentate da nodi blank (\texttt{[ ... ]} e \texttt{( ... )}). Si omettono
+\texttt{rdfs:label} e \texttt{rdfs:comment}.
+
+\subsection*{Classe definita con restrizione esistenziale}
+
+\begin{lstlisting}[style=turtle]
+vg:PlayStationGame a owl:Class ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+        owl:intersectionOf ( vg:VideoGame
+            [ a owl:Restriction ;
+              owl:onProperty vg:availableOn ;
+              owl:someValuesFrom vg:PlayStationPlatform ] ) ] .
+\end{lstlisting}
+
+$\texttt{PlayStationGame} \equiv \texttt{VideoGame} \sqcap \exists\,\texttt{availableOn.PlayStationPlatform}$.
+L'intersezione \`e una lista RDF di due elementi: la classe \texttt{VideoGame} e
+una restrizione anonima.
+
+\subsection*{Classe definita con datatype restriction}
+
+\begin{lstlisting}[style=turtle]
+vg:HighlyRatedGame a owl:Class ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+        owl:intersectionOf ( vg:VideoGame
+            [ a owl:Restriction ;
+              owl:onProperty vg:metacriticScore ;
+              owl:someValuesFrom [ a rdfs:Datatype ;
+                  owl:onDatatype xsd:integer ;
+                  owl:withRestrictions ( [ xsd:minInclusive 85 ] ) ] ] ) ] .
+\end{lstlisting}
+
+Il filler di \texttt{someValuesFrom} non \`e una classe ma un \emph{data range}:
+il sottoinsieme di \texttt{xsd:integer} vincolato dal facet \texttt{xsd:minInclusive 85}.
+
+\subsection*{Classe definita con complemento}
+
+\begin{lstlisting}[style=turtle]
+vg:StandaloneGame a owl:Class ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+        owl:intersectionOf ( vg:VideoGame
+            [ a owl:Class ;
+              owl:complementOf [ a owl:Restriction ;
+                  owl:onProperty vg:sequelOf ;
+                  owl:someValuesFrom vg:VideoGame ] ] ) ] .
+\end{lstlisting}
+
+$\texttt{StandaloneGame} \equiv \texttt{VideoGame} \sqcap \lnot\exists\,\texttt{sequelOf.VideoGame}$.
+
+\subsection*{Condizione solo necessaria con cardinalit\`a}
+
+\begin{lstlisting}[style=turtle]
+vg:GameWithSingleDeveloper a owl:Class ;
+    rdfs:subClassOf vg:VideoGame ,
+        [ a owl:Restriction ;
+          owl:onProperty vg:developedBy ;
+          owl:maxCardinality "1"^^xsd:nonNegativeInteger ] .
+\end{lstlisting}
+
+Due assiomi \texttt{rdfs:subClassOf} distinti, nessun \texttt{owl:equivalentClass}:
+\[ \texttt{GameWithSingleDeveloper} \sqsubseteq \texttt{VideoGame} \sqcap {\le}1\,\texttt{developedBy} \]
+L'assenza di \texttt{owl:onClass} rende la cardinalit\`a non qualificata.
+
+\subsection*{Propriet\`a transitiva e inversa}
+
+\begin{lstlisting}[style=turtle]
+vg:sequelOf a owl:ObjectProperty , owl:TransitiveProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:hasSequel .
+
+vg:hasSequel a owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:VideoGame .
+\end{lstlisting}
+
+\subsection*{Property chain}
+
+\begin{lstlisting}[style=turtle]
+vg:sharesDeveloperWith a owl:ObjectProperty , owl:SymmetricProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:VideoGame ;
+    owl:propertyChainAxiom ( vg:developedBy vg:developerOf ) .
+\end{lstlisting}
+
+La catena \`e una lista ordinata: l'ordine delle propriet\`a conta
+($\texttt{developedBy} \circ \texttt{developerOf}$).
+
+\subsection*{Disjointness e chiavi}
+
+\begin{lstlisting}[style=turtle]
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform ) .
+
+vg:Review owl:hasKey ( vg:reviewedGame vg:reviewerName ) .
+\end{lstlisting}
+
+\texttt{owl:AllDisjointClasses} dichiara disgiunte a coppie tutte le classi della lista
+con un solo assioma, invece di $n(n-1)/2$ assiomi \texttt{owl:disjointWith}.

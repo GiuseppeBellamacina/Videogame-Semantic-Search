@@ -9,38 +9,37 @@ in quattro fasi principali.
 
 \subsubsection{Query SPARQL verso Wikidata}
 
-Vengono eseguite 13 tipologie di query SPARQL, ciascuna mirata a estrarre una
+Vengono eseguite 12 tipologie di query SPARQL, ciascuna mirata a estrarre una
 specifica categoria di dati:
 
 \begin{enumerate}[nosep]
-  \item \textbf{Core} --- identificativi, nomi, date di rilascio (P31, P577);
+  \item \textbf{Core} --- nomi, date di rilascio, sviluppatore e publisher (P31, P577, P178, P123);
   \item \textbf{Generi} --- mapping genere via P136;
   \item \textbf{Piattaforme} --- piattaforme via P400;
-  \item \textbf{Personaggi} --- personaggi presenti nel gioco;
+  \item \textbf{Personaggi} --- personaggi presenti nel gioco via P674;
   \item \textbf{Franchise} --- serie di appartenenza via P179;
   \item \textbf{Game Mode} --- modalit\`a di gioco via P404;
-  \item \textbf{Metacritic} --- punteggio Metacritic via P1712;
+  \item \textbf{Metacritic} --- punteggio via P444 con qualificatore P447 (Metacritic);
   \item \textbf{Engine} --- motore grafico via P408;
   \item \textbf{Paese} --- paese d'origine via P495;
   \item \textbf{Sito web} --- sito ufficiale via P856;
   \item \textbf{Premi} --- premi ricevuti via P166;
-  \item \textbf{Descrizioni} --- descrizioni testuali;
-  \item \textbf{Immagini} --- URL copertina.
+  \item \textbf{Descrizioni} --- descrizioni testuali via \texttt{schema:description}.
 \end{enumerate}
 
 Per evitare i timeout dell'endpoint pubblico Wikidata (limite $\sim$60 secondi),
 le query sono partizionate per \textbf{anno $\times$ mese}: 17 anni (2010--2026)
-$\times$ 12 mesi = \textbf{204 iterazioni}. Tra ogni richiesta viene inserito un
+$\times$ 12 mesi = \textbf{204 iterazioni} per ciascuna tipologia di query. Tra ogni richiesta viene inserito un
 \texttt{polite delay} di 1 secondo. Il tempo totale di esecuzione \`e di circa
 \textbf{5 ore}.
 
 \subsubsection{Deduplicazione}
 
-Wikidata pu\`o restituire entit\`a duplicate con URI diversi ma stesso nome
-normalizzato (es. varianti con suffissi come anno o piattaforma). La pipeline
-applica una normalizzazione del nome (lowercase, rimozione punteggiatura,
-trim whitespace) e rimuove \textbf{4.420 entit\`a duplicate}, preservando la
-prima occorrenza.
+Wikidata pu\`o restituire la stessa entit\`a con URI diversi ma stesso nome
+normalizzato (es. entit\`a omonime restituite da query diverse). La pipeline
+applica una normalizzazione del nome (trim degli spazi e lowercase) e rimuove
+\textbf{4.420 entit\`a duplicate}, preservando per ciascun nome l'URI con il
+maggior numero di triple associate.
 
 \subsubsection{OWL-RL Reasoning}
 
@@ -60,12 +59,13 @@ Il grafo cresce da $\sim$1M a $\sim$1.4M triple.
 Lo step finale di pruning (\texttt{prune\_owl.py}) rimuove triple non necessarie
 a runtime:
 \begin{itemize}[nosep]
-  \item \texttt{owl:sameAs} riflessivi (ogni entit\`a Wikidata genera un sameAs
-    con s\'e stessa): $\sim$253k triple rimosse;
+  \item \texttt{owl:sameAs} riflessivi (la chiusura OWL 2 RL genera un sameAs
+    di ogni entit\`a con s\'e stessa);
   \item \texttt{gameDescription}: testi lunghi non usati nelle query;
   \item \texttt{officialWebsite}: URI non necessari per la ricerca semantica.
 \end{itemize}
 
+Complessivamente vengono rimosse $\sim$253k triple.
 Risultato finale: $\sim$1.173.959 triple (dataset completo 2010--2026).
 
 \subsection{Demo Subset 2020--2026}

@@ -1,8 +1,8 @@
 \section{Sintassi DL delle Classi Definite}
 \label{sec:app_dl}
 
-Di seguito si riporta la sintassi DL compatta di tutte le 17 classi definite
-dell'ontologia. La notazione $\sqcap$ indica intersezione ($\mathtt{owl:intersectionOf}$),
+Di seguito si riporta la sintassi DL compatta delle 15 classi definite
+dell'ontologia e delle 2 classi con vincolo di cardinalit\`a. La notazione $\sqcap$ indica intersezione ($\mathtt{owl:intersectionOf}$),
 $\exists$ indica restrizione esistenziale ($\mathtt{owl:someValuesFrom}$),
 $\neg$ indica complemento ($\mathtt{owl:complementOf}$), $\leq$ indica
 cardinalit\`a massima ($\mathtt{owl:maxCardinality}$).
@@ -23,8 +23,8 @@ cardinalit\`a massima ($\mathtt{owl:maxCardinality}$).
 \text{XboxGame}             &\equiv \text{VideoGame} \sqcap \exists\text{availableOn.XboxPlatform} \\
 \text{SequelGame}           &\equiv \text{VideoGame} \sqcap \exists\text{sequelOf.VideoGame} \\
 \text{StandaloneGame}       &\equiv \text{VideoGame} \sqcap \neg\exists\text{sequelOf.VideoGame} \\
-\text{HighlyRatedGame}      &\equiv \text{VideoGame} \sqcap \exists\text{metacriticScore.}\geq_{85} \\
-\text{RecentGame}           &\equiv \text{VideoGame} \sqcap \exists\text{releaseDate.}\geq_{2020-01-01} \\
+\text{HighlyRatedGame}      &\equiv \text{VideoGame} \sqcap \exists\text{metacriticScore.integer}[\geq 85] \\
+\text{RecentGame}           &\equiv \text{VideoGame} \sqcap \exists\text{releaseDate.date}[\geq \text{2020-01-01}] \\
 \text{AwardWinningGame}     &\equiv \text{VideoGame} \sqcap \exists\text{wonAward.Award} \\
 \text{FranchiseGame}        &\equiv \text{VideoGame} \sqcap \exists\text{belongsTo.Franchise} \\[4pt]
 \text{GameWithSingleDeveloper} &\sqsubseteq \text{VideoGame} \sqcap \mathopen{\leq}1\,\text{developedBy} \\

@@ -30,7 +30,7 @@ L'ontologia \`e strutturata in due file distinti che realizzano la classica
 separazione schema/istanze:
 \begin{itemize}[nosep]
   \item \texttt{videogames.owl} --- \textbf{schema}: contiene tutte le dichiarazioni
-    di classi, propriet\`a, assiomi, disjointness e allineamenti esterni. Circa 945 triple;
+    di classi, propriet\`a, assiomi, disjointness e allineamenti esterni. Circa 934 triple;
   \item \texttt{videogames\_pruned\_2020.owl} --- \textbf{insieme di istanze di demo}: contiene le istanze
     (giochi, developer, publisher, generi, piattaforme, \dots{}) per il periodo
     2020--2026. Circa 745.000 triple, 68.700 giochi.
@@ -40,8 +40,8 @@ separazione schema/istanze:
 
 Tutti i dati provengono da \textbf{Wikidata} \citep{wikidata}, il knowledge graph
 libero della Wikimedia Foundation. La popolazione avviene tramite query SPARQL
-al \texttt{https://query.wikidata.org/sparql}, mappando 13 propriet\`a Wikidata
-(identificatori P31, P136, P400, P577, P1712, \dots{}) nelle corrispondenti
+all'endpoint \url{https://query.wikidata.org/sparql}, mappando le propriet\`a Wikidata
+rilevanti (identificatori P31, P136, P400, P577, P444, \dots{}) nelle corrispondenti
 propriet\`a dell'ontologia.
 
 \subsection{Pipeline di Popolamento}
@@ -54,12 +54,14 @@ La pipeline completa si articola in quattro fasi:
     Tempo stimato: $\sim$5 ore con polite delay di 1 secondo tra le richieste.
   \item \textbf{OWL-RL closure via \texttt{owlrl}} --- applica la chiusura deduttiva
     OWL 2 RL per materializzare propriet\`a inverse, catene \texttt{subPropertyOf},
-    e inferenze da \texttt{someValuesFrom/hasValue/intersectionOf}. Da $\sim$1M a $\sim$1.4M triple.
+    e inferenze da \texttt{someValuesFrom} e \texttt{intersectionOf}. Da $\sim$1M a $\sim$1.4M triple.
   \item \textbf{Pruning} --- rimuove triple ridondanti o inutilizzate a runtime:
     \texttt{owl:sameAs} riflessivi, \texttt{gameDescription}, \texttt{officialWebsite}.
     Da $\sim$1.4M a $\sim$1.17M triple (completo) o $\sim$745k (demo 2020+).
-  \item \texttt{enrich\_owl.py} --- ripristina gli assiomi DL-only (FunctionalProperty,
-    InverseFunctionalProperty, hasKey) dopo il reasoning owlrl.
+  \item \texttt{enrich\_owl.py} --- gestisce gli assiomi DL-only (FunctionalProperty sulle
+    datatype property e \texttt{hasKey}, cfr.\ Sezione~\ref{sec:reasoning}): li rimuove dalla
+    copia di lavoro prima del reasoning e, con l'opzione \texttt{-{}-keep-dl-axioms}, li
+    ripristina nel file serializzato.
 \end{enumerate}
 
 \subsection{Statistiche Riassuntive}
@@ -76,21 +78,23 @@ La Tabella~\ref{tab:ontostats} riassume le principali metriche dello schema dell
 \midrule
 Classi totali                   & 78              \\
 Classi primitive                & 61              \\
-Classi definite                 & 17              \\
+Classi definite (equivalentClass) & 15            \\
+Classi con vincolo di cardinalit\`a & 2           \\
 Object Property                 & 31              \\
 Datatype Property               & 26              \\
 Property chain axioms           & 3               \\
-Propriet\`a transitive          & 2               \\
-Coppie inverse                  & 13              \\
+Propriet\`a transitive          & 3               \\
+Propriet\`a simmetriche         & 3               \\
+Coppie inverse                  & 12              \\
 Blocchi AllDisjointClasses      & 12              \\
 Vincoli hasKey                  & 3               \\
 Allineamenti equivalentClass    & 4 (Wikidata)    \\
 Allineamenti equivalentProperty & 3 (Dublin Core) \\
-Triple dello schema totali              & $\sim$ 945      \\
+Triple dello schema totali      & $\sim$ 934      \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Lo schema \`e espresso in formato RDF/XML e pu\`o essere validato, arricchito e
-ragionata tramite gli script nella directory \texttt{ontology/} (cfr.\ Sezione~\ref{sec:validazione}
-per la validazione e Sezione~\ref{sec:reasoning} per il reasoning).
+Lo schema \`e espresso in formato RDF/XML; l'Appendice~\ref{sec:app_turtle} ne riporta
+gli assiomi principali in Turtle. L'espressivit\`a DL e il profilo OWL 2 sono discussi
+nella Sezione~\ref{sec:profilo_dl}, il reasoning nella Sezione~\ref{sec:reasoning}.

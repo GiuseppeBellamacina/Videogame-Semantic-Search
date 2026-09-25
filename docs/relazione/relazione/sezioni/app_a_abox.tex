@@ -14,7 +14,7 @@ vg:GameA  a vg:VideoGame ;
     vg:metacriticScore 96 ;
     vg:developedBy vg:Dev1 ;
     vg:hasGenre vg:RPGGenreInstance ;
-    vg:hasGameMode vg:SinglePlayerMode, vg:MultiplayerMode ;
+    vg:hasGameMode vg:SinglePlayer, vg:OnlineMultiplayer ;
     vg:availableOn vg:PS5, vg:PC_Windows ;
     vg:wonAward vg:TGAAward2022 .
 
@@ -24,12 +24,20 @@ vg:GameB  a vg:VideoGame ;
     vg:metacriticScore 87 ;
     vg:developedBy vg:Dev2 ;
     vg:availableOn vg:NintendoSwitch ;
-    vg:hasGameMode vg:SinglePlayerMode .
+    vg:hasGameMode vg:SinglePlayer .
 
 vg:GameC  a vg:VideoGame ;
     vg:gameName "Dark Souls III" ;
     vg:sequelOf vg:GameX ;
     vg:developedBy vg:Dev1 .
+
+# individui tipizzati (necessari per le restrizioni esistenziali)
+vg:PS5               a vg:PlayStationPlatform .
+vg:PC_Windows        a vg:WindowsPlatform .
+vg:NintendoSwitch    a vg:NintendoPlatform .
+vg:SinglePlayer      a vg:SinglePlayerMode .
+vg:OnlineMultiplayer a vg:MultiplayerMode .
+vg:TGAAward2022      a vg:IndustryAward .
 \end{lstlisting}
 
 \subsection{Risultati della Verifica}
@@ -47,7 +55,18 @@ Dopo il reasoning completo (owlrl + CONSTRUCT), il grafo di test produce:
         AwardWinningGame, StandaloneGame;
       \item \texttt{GameB} $\rightarrow$ SinglePlayerGame, ConsoleGame,
         NintendoGame, HighlyRatedGame, StandaloneGame (non RecentGame: 2017);
-      \item \texttt{GameC} $\rightarrow$ SequelGame, ConsoleGame (non
-        SinglePlayerGame/MultiplayerGame: nessun game mode asserito).
+      \item \texttt{GameC} $\rightarrow$ SequelGame (nessuna classificazione per
+        piattaforma o modalit\`a: non sono asseriti \texttt{availableOn} n\'e
+        \texttt{hasGameMode}).
+    \end{itemize}
+  \item \textbf{Propriet\`a derivate}:
+    \begin{itemize}[nosep]
+      \item \texttt{Dev1} \texttt{developerOf} \texttt{GameA}, \texttt{GameC}
+        (per l'inversa di \texttt{developedBy});
+      \item \texttt{GameA} \texttt{sharesDeveloperWith} \texttt{GameC} e viceversa
+        (catena \texttt{developedBy} $\circ$ \texttt{developerOf} e simmetria);
+      \item \texttt{GameX} \texttt{hasSequel} \texttt{GameC} (inversa); \texttt{GameX}
+        \`e inoltre classificato \texttt{VideoGame} per effetto del range di
+        \texttt{sequelOf}.
     \end{itemize}
 \end{itemize}

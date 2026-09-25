@@ -27,8 +27,8 @@ tramite query SPARQL.
 Il progetto \textbf{Videogame Semantic Search} si propone di:
 \begin{enumerate}[nosep]
   \item \textbf{Costruire un'ontologia OWL 2 di alta qualit\`a} sul dominio dei videogiochi, coprendo il periodo 2010--2026, con uno schema ricco di assiomi (classi primitive e definite, disjointness, property chain, allineamenti esterni);
-  \item \textbf{Popolare l'ontologia da Wikidata} tramite query SPARQL federate, producendo un insieme di istanze di oltre 1.1 milioni di triple;
-  \item \textbf{Abilitare l'interrogazione in linguaggio naturale} attraverso un agente SPARQL basato su Large Language Model (GPT-4.1-mini) che traduce domande in italiano in query SPARQL eseguibili;
+  \item \textbf{Popolare l'ontologia da Wikidata} tramite query SPARQL all'endpoint pubblico di Wikidata, producendo un insieme di istanze di oltre 1.1 milioni di triple;
+  \item \textbf{Abilitare l'interrogazione in linguaggio naturale} attraverso un agente SPARQL basato su Large Language Model (GPT-4.1-mini) che traduce domande in italiano (o inglese) in query SPARQL eseguibili;
   \item \textbf{Visualizzare i risultati come grafo di conoscenza interattivo}, navigabile con zoom, pan, filtri e dettaglio nodi.
 \end{enumerate}
 
@@ -43,13 +43,18 @@ I principali casi d'uso del sistema sono:
 
 \subsection{Panoramica della Relazione}
 
-Il presente documento \`e organizzato come segue. La Sezione~\ref{sec:architettura}
-descrive l'architettura software complessiva. Le Sezioni~\ref{sec:ontologia_overview}--\ref{sec:allineamento}
-costituiscono il cuore della relazione e analizzano in dettaglio l'ontologia:
-lo schema dell'ontologia (classi, propriet\`a, classi definite, disjointness) e allineamento esterno.
-La Sezione~\ref{sec:reasoning} approfondisce il sistema di reasoning a due livelli,
-incluso il bug critico degli \texttt{owl:sameAs} falsi e la sua risoluzione.
-La Sezione~\ref{sec:popolamento} descrive la pipeline di popolamento da Wikidata.
-La Sezione~\ref{sec:validazione} illustra i controlli di validazione dello schema.
-La Sezione~\ref{sec:frontend_backend} presenta l'applicazione web.
+Il presente documento \`e organizzato come segue.
+Le Sezioni~\ref{sec:ontologia_overview}--\ref{sec:profilo_dl} costituiscono il cuore
+della relazione e analizzano in dettaglio l'ontologia: panoramica, classi, propriet\`a
+e chiavi, classi definite, disjointness, allineamento esterno, e infine espressivit\`a
+DL e profilo OWL 2.
+La Sezione~\ref{sec:reasoning} approfondisce il sistema di reasoning a due livelli con
+un esempio completo di inferenza, incluso il problema degli \texttt{owl:sameAs} falsi e
+la sua risoluzione; la Sezione~\ref{sec:interrogazione} mostra come interrogare con
+SPARQL la conoscenza inferita.
+Le Sezioni~\ref{sec:popolamento}, \ref{sec:architettura} e \ref{sec:frontend_backend}
+descrivono il contesto: la pipeline di popolamento da Wikidata, l'architettura software
+e l'applicazione web.
 La Sezione~\ref{sec:conclusione} riassume i risultati e delinea possibili sviluppi futuri.
+Le appendici riportano le istanze di test, la sintassi DL delle classi definite e gli
+assiomi principali dello schema in Turtle.

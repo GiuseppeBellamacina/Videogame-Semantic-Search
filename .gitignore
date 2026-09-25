@@ -22,5 +22,22 @@ frontend/tsconfig.tsbuildinfo
 # Linting and formatting
 .ruff_cache/
 
+# LaTeX
+*.aux
+*.bbl
+*.blg
+*.out
+*.fls
+*.fdb_latexmk
+*.gz
+*.toc
+*.log
+*.nav
+*.vrb
+*.snm
+*.synctex
+*.synctex(busy)
+latexmkrc
+
 # Other
 reference/

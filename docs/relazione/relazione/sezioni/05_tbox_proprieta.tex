@@ -3,10 +3,10 @@
 
 \subsection{Object Property}
 
-La Tabella~\ref{tab:objprop} elenca tutte le 31 object property definite nell'ontologia.
-Per semplicit\`a, si omettono le propriet\`a inverse quando speculari; la colonna
-\textbf{Assiomi} indica le caratteristiche OWL 2 aggiuntive.
+La Tabella~\ref{tab:objprop} elenca tutte le 31 object property definite nell'ontologia,
+incluse le inverse; la colonna \textbf{Assiomi} indica le caratteristiche OWL 2 aggiuntive.
 
+\begingroup\footnotesize\setlength{\tabcolsep}{3pt}
 \begin{longtable}{lllll}
 \caption{Object Property}\label{tab:objprop}\\
 \toprule
@@ -35,17 +35,17 @@ belongsTo          & VideoGame & Franchise   & Asym, Irr, inv includes          
 includes           & Franchise & VideoGame   & Asym, Irr                             & includes \\
 wonAward           & VideoGame & Award       & Irr, inv awardWonBy                   & won award \\
 awardWonBy         & Award     & VideoGame   & Irr                                   & award won by \\
-sequelOf           & VideoGame & VideoGame   & Asym, Irr, Trans, inv hasSequel       & sequel of \\
-hasSequel          & VideoGame & VideoGame   & Asym, Irr                             & has sequel \\
+sequelOf           & VideoGame & VideoGame   & Trans, inv hasSequel                  & sequel of \\
+hasSequel          & VideoGame & VideoGame   & ---                                   & has sequel \\
 hasGameMode        & VideoGame & GameMode    & Irr, inv modeInGame                   & has game mode \\
 modeInGame         & GameMode  & VideoGame   & Irr                                   & mode in game \\
 madeWith           & VideoGame & GameEngine  & Asym, Irr, inv engineUsedIn           & made with \\
 engineUsedIn       & GameEngine& VideoGame   & Asym, Irr                             & engine used in \\
-partOfFranchise    & Franchise & Franchise   & Asym, Irr, Trans                     & part of franchise \\
-subsidiaryOf       & ---       & ---         & Asym, Irr, Trans                     & subsidiary of \\
-sharedFranchiseWith& VideoGame & VideoGame   & Sym, chain: belongsTo $\circ$ includes & shared franchise with \\
-sharesDeveloperWith& VideoGame & VideoGame   & Sym, chain: developedBy $\circ$ developerOf & shares developer with \\
-sharesPublisherWith& VideoGame & VideoGame   & Sym, chain: publishedBy $\circ$ publisherOf & shares publisher with \\
+partOfFranchise    & Franchise & Franchise   & Trans                                 & part of franchise \\
+subsidiaryOf       & ---       & ---         & Trans                                 & subsidiary of \\
+sharedFranchiseWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shared franchise with \\
+sharesDeveloperWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shares developer with \\
+sharesPublisherWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shares publisher with \\
 reviewer           & Review    & ---         & ---                                   & reviewer \\
 reviewedGame       & Review    & VideoGame   & Funct, inv hasReview                  & reviewed game \\
 hasReview          & VideoGame & Review      & ---                                   & has review \\
@@ -54,14 +54,28 @@ eventFor           & GameEvent & VideoGame   & inv hasEvent                     
 hasEvent           & VideoGame & GameEvent   & ---                                   & has event \\
 \bottomrule
 \end{longtable}
+\endgroup
 
 \textit{Legenda}: Asym = AsymmetricProperty, Irr = IrreflexiveProperty,
 Sym = SymmetricProperty, Trans = TransitiveProperty, Funct = FunctionalProperty,
 inv = inverseOf, chain = propertyChainAxiom.
 
+In totale lo schema dichiara 13 propriet\`a asimmetriche, 18 irriflessive, 3 simmetriche,
+3 transitive e 1 object property funzionale (\texttt{reviewedGame}).
+Le caratteristiche sono assegnate nel rispetto dei \textbf{vincoli globali di OWL 2 DL}:
+le propriet\`a \emph{non semplici} --- le transitive (\texttt{sequelOf},
+\texttt{partOfFranchise}, \texttt{subsidiaryOf}), la loro inversa \texttt{hasSequel}
+e le super-propriet\`a di catene (\texttt{sharedFranchiseWith}, \texttt{sharesDeveloperWith},
+\texttt{sharesPublisherWith}) --- non compaiono in assiomi di asimmetria, irriflessivit\`a,
+funzionalit\`a, cardinalit\`a o \texttt{hasKey}, che in OWL 2 DL sono ammessi solo su
+propriet\`a semplici per preservare la decidibilit\`a del ragionamento.
+
 \subsection{Datatype Property}
 
-La Tabella~\ref{tab:dataprop} elenca tutte le 26 datatype property.
+La Tabella~\ref{tab:dataprop} elenca tutte le 26 datatype property. Nove di esse
+(\texttt{gameName} e gli altri nomi specializzati) sono sotto-propriet\`a di
+\texttt{name} (\texttt{rdfs:subPropertyOf}): una query su \texttt{name} restituisce cos\`i
+il nome di qualsiasi entit\`a.
 
 \begin{longtable}{lllll}
 \caption{Datatype Property}\label{tab:dataprop}\\
@@ -106,50 +120,88 @@ playerCount       & VideoGame   & xsd:integer & ---     & player count \\
 \bottomrule
 \end{longtable}
 
-\subsection{Property Chain Axiom}
+Tredici datatype property sono inoltre dichiarate \texttt{owl:FunctionalProperty}
+(i nove nomi specializzati, \texttt{releaseDate}, \texttt{metacriticScore},
+\texttt{hasSteamAppId} e \texttt{reviewScore}); insieme ai tre vincoli \texttt{hasKey}
+formano la sezione di assiomi \emph{DL-only} discussa nella Sezione~\ref{sec:reasoning}.
+L'identit\`a dei giochi \`e espressa tramite \texttt{hasKey} su \texttt{hasWikidataId} e
+\texttt{hasSteamAppId}: OWL 2 DL non ammette \texttt{owl:InverseFunctionalProperty} su
+datatype property.
+
+\subsection{Property Chain Axiom}\label{sec:chains}
 
 L'ontologia definisce tre \texttt{owl:propertyChainAxiom}, che permettono di
-inferire relazioni transitive composte. In notazione DL (Description Logic):
+inferire nuove relazioni per \textbf{composizione} di propriet\`a esistenti.
+In notazione DL (Description Logic) una catena \`e un'\emph{inclusione} di ruoli
+($R_1 \circ R_2 \sqsubseteq S$): la composizione implica la super-propriet\`a, non viceversa.
 
 \begin{enumerate}[nosep]
-  \item \texttt{sharedFranchiseWith} $\equiv$ \texttt{belongsTo} $\circ$ \texttt{includes}
+  \item \texttt{belongsTo} $\circ$ \texttt{includes} $\sqsubseteq$ \texttt{sharedFranchiseWith}
 
     Due giochi condividono un franchise se il primo appartiene a un franchise
     e il franchise include il secondo.
-  \item \texttt{sharesDeveloperWith} $\equiv$ \texttt{developedBy} $\circ$ \texttt{developerOf}
+  \item \texttt{developedBy} $\circ$ \texttt{developerOf} $\sqsubseteq$ \texttt{sharesDeveloperWith}
 
     Due giochi condividono lo sviluppatore se il primo \`e sviluppato da uno
     studio che ha sviluppato anche il secondo.
-  \item \texttt{sharesPublisherWith} $\equiv$ \texttt{publishedBy} $\circ$ \texttt{publisherOf}
+  \item \texttt{publishedBy} $\circ$ \texttt{publisherOf} $\sqsubseteq$ \texttt{sharesPublisherWith}
 
     Analogo per l'editore.
 \end{enumerate}
 
-Queste catene sono materializzate dal reasoner OWL 2 RL (\texttt{owlrl})
-e producono relazioni simmetriche tra giochi dello stesso franchise, studio o editore.
+Tre osservazioni aiutano a leggere correttamente questi assiomi:
+\begingroup\sloppy
+\begin{itemize}[nosep]
+  \item \textbf{Tipizzazione}. La composizione \`e ben tipata: \texttt{belongsTo} va da
+    \texttt{VideoGame} a \texttt{Franchise} e \texttt{includes} da \texttt{Franchise} a
+    \texttt{VideoGame}, quindi \texttt{sharedFranchiseWith} collega due giochi (il suo
+    dominio e range sono \texttt{VideoGame}). Lo stesso vale per le altre due catene.
+  \item \textbf{Coppia riflessiva}. Poich\'e \texttt{includes} \`e l'inversa di
+    \texttt{belongsTo}, per ogni gioco $g$ che appartiene a un franchise $f$ vale anche
+    $f$ \texttt{includes} $g$: la catena deriva quindi $g$ \texttt{sharedFranchiseWith} $g$.
+    Non \`e un errore di modellazione (la propriet\`a non \`e dichiarata irriflessiva, e
+    non potrebbe esserlo perch\'e non semplice), ma nelle query va escluso con
+    \texttt{FILTER(?g != ?altro)} (Sezione~\ref{sec:interrogazione}).
+  \item \textbf{Simmetria}. Le tre super-propriet\`a sono dichiarate
+    \texttt{owl:SymmetricProperty}. Grazie alle inverse la simmetria sarebbe gi\`a
+    implicata dalla catena stessa (da $g_1$ \texttt{belongsTo} $f$ \texttt{includes} $g_2$
+    segue anche $g_2$ \texttt{belongsTo} $f$ \texttt{includes} $g_1$); dichiararla
+    esplicitamente documenta l'intento e la rende disponibile anche a strumenti che
+    non materializzano le inverse.
+\end{itemize}
+\endgroup
+
+Queste catene sono materializzate dal reasoner OWL 2 RL (\texttt{owlrl}, regola
+\texttt{prp-spo2}) e producono relazioni simmetriche tra giochi dello stesso franchise,
+studio o editore.
 Per evitare esplosioni combinatorie su franchise/studio/editore con migliaia di
 giochi, il materialiser mirato in \texttt{enrich\_owl.py} limita il numero di
-coppie per gruppo tramite il flag \texttt{--max-group} (default 50).
+coppie per gruppo tramite il flag \texttt{-{}-max-group} (default 50).
 
 \subsection{Propriet\`a Transitive}
 
-Due propriet\`a sono dichiarate transitive:
+Tre propriet\`a sono dichiarate transitive:
 
 \begin{itemize}[nosep]
   \item \texttt{sequelOf} --- se $A$ \`e sequel di $B$ e $B$ \`e sequel di $C$,
     allora $A$ \`e sequel di $C$. Permette di tracciare catene di sequel
     (es. Dark Souls III $\rightarrow$ Dark Souls II $\rightarrow$ Dark Souls);
   \item \texttt{partOfFranchise} --- per gerarchie di franchise con sotto-franchise.
-    Es. \textless{}Mario Kart\textgreater{} $\rightarrow$ \textless{}Mario\textgreater{}.
+    Es. \textless{}Mario Kart\textgreater{} $\rightarrow$ \textless{}Mario\textgreater{};
+  \item \texttt{subsidiaryOf} --- per le gerarchie societarie (studio $\rightarrow$
+    gruppo $\rightarrow$ holding).
 \end{itemize}
 
 La transitivit\`a di \texttt{sequelOf} \`e particolarmente utile per query del
 tipo \textless{}tutti i sequel di Dark Souls\textgreater{} senza dover navigare
-manualmente la catena.
+manualmente la catena. Poich\'e in OWL 2 DL una propriet\`a transitiva non \`e semplice,
+queste tre propriet\`a (e l'inversa \texttt{hasSequel}) non sono dichiarate anche
+asimmetriche o irriflessive: l'aciclicit\`a delle catene di sequel e delle gerarchie
+di franchise resta un vincolo di qualit\`a dei dati, non un assioma dello schema.
 
 \subsection{Coppie Inverse Sistematiche}
 
-L'ontologia definisce 13 coppie inverse, consentendo la navigazione bidirezionale
+L'ontologia definisce 12 coppie inverse, consentendo la navigazione bidirezionale
 del grafo. Per ogni propriet\`a ``forward'' esiste la corrispondente inversa:
 \begin{itemize}[nosep]
   \item \texttt{developedBy} $\leftrightarrow$ \texttt{developerOf}
@@ -166,9 +218,36 @@ del grafo. Per ogni propriet\`a ``forward'' esiste la corrispondente inversa:
   \item \texttt{eventFor} $\leftrightarrow$ \texttt{hasEvent}
 \end{itemize}
 
-La tredicesima coppia (\texttt{hasGenre} $\leftrightarrow$ \texttt{genreOf}) era
-gi\`a implicita nello schema originale. La dichiarazione esplicita di \texttt{owl:inverseOf}
-in una sola direzione \`e sufficiente: \texttt{owlrl} inferisce automaticamente
-la direzione opposta durante la materializzazione. Il validatore dello schema segnala
-12 warning \texttt{INVERSE\_NOT\_BIDIRECTIONAL} proprio per questa asimmetria
-dichiarativa (cfr.~Sezione~\ref{sec:validazione}).
+La dichiarazione esplicita di \texttt{owl:inverseOf}
+in una sola direzione \`e sufficiente: la semantica di \texttt{owl:inverseOf} \`e
+simmetrica e \texttt{owlrl} deriva le triple in entrambe le direzioni (regole
+\texttt{prp-inv1} e \texttt{prp-inv2}). In pratica basta asserire \texttt{developedBy}
+nei dati perch\'e \texttt{developerOf} sia disponibile nelle query.
+
+\subsection{Chiavi (owl:hasKey)}
+\label{sec:haskey}
+
+Lo schema dichiara tre chiavi:
+\begin{itemize}[nosep]
+  \item \texttt{VideoGame} \texttt{owl:hasKey} (\texttt{hasWikidataId});
+  \item \texttt{VideoGame} \texttt{owl:hasKey} (\texttt{hasSteamAppId});
+  \item \texttt{Review} \texttt{owl:hasKey} (\texttt{reviewedGame}, \texttt{reviewerName}).
+\end{itemize}
+
+\textbf{Semantica}. Se due individui \emph{nominati} della classe hanno gli stessi
+valori per tutte le propriet\`a della chiave, sono lo stesso individuo
+(\texttt{owl:sameAs}). La chiave composta di \texttt{Review} esprime che un revisore
+scrive al pi\`u una recensione per gioco: due recensioni dello stesso revisore sullo
+stesso gioco vengono identificate.
+
+\textbf{Perch\'e \texttt{hasKey} e non InverseFunctionalProperty}. Una propriet\`a
+inversamente funzionale avrebbe lo stesso effetto (valore condiviso $\Rightarrow$
+stesso individuo), ma su una datatype property richiederebbe l'inversa di una data
+property, che in OWL 2 DL non esiste. \texttt{hasKey} \`e invece \emph{DL-safe}: vale
+solo per gli individui esplicitamente nominati e non per quelli anonimi introdotti dal
+ragionamento, per cui pu\`o essere aggiunta senza compromettere la decidibilit\`a
+(Sezione~\ref{sec:profilo_dl}).
+
+Le tre chiavi, insieme alle datatype property funzionali, fanno parte della sezione
+di assiomi \emph{DL-only}, che viene rimossa prima del reasoning OWL 2 RL per evitare
+\texttt{owl:sameAs} spuri (Sezione~\ref{sec:reasoning}).

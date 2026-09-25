@@ -9,12 +9,14 @@ l'asserzione esplicita \texttt{rdf:type}, le classi definite specificano
 condizioni necessarie e sufficienti (\texttt{owl:equivalentClass}) che permettono
 a un reasoner di \textbf{inferire automaticamente} l'appartenenza di un'istanza.
 
-L'ontologia definisce \textbf{17 classi definite}, raggruppabili in sei categorie
-logiche. La Tabella~\ref{tab:definite} le elenca con la sintassi DL e il tipo
-di condizione.
+L'ontologia definisce \textbf{15 classi definite}, raggruppabili in cinque categorie
+logiche, a cui si affiancano \textbf{2 classi con vincolo di cardinalit\`a} dotate di
+sole condizioni necessarie. La Tabella~\ref{tab:definite} le elenca tutte e 17 con la
+sintassi DL e il tipo di condizione.
 
-\begin{longtable}{lllp{4cm}}
-\caption{Classi definite}\label{tab:definite}\\
+\begingroup\footnotesize\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{lll>{\raggedright\arraybackslash}p{3.6cm}}
+\caption{Classi definite e classi con vincolo di cardinalit\`a}\label{tab:definite}\\
 \toprule
 \textbf{Classe} & \textbf{Tipo} & \textbf{Sintassi DL} & \textbf{Costrutti OWL 2} \\
 \midrule
@@ -42,16 +44,17 @@ XboxGame            & S/N & VideoGame $\sqcap$ $\exists$availableOn.XboxPlatform
 SequelGame          & S/N & VideoGame $\sqcap$ $\exists$sequelOf.VideoGame             & intersectionOf, someValuesFrom \\
 StandaloneGame      & S/N & VideoGame $\sqcap$ $\neg\exists$sequelOf.VideoGame          & intersectionOf, complementOf \\
 % Quality-derived
-HighlyRatedGame     & S/N & VideoGame $\sqcap$ $\exists$metacriticScore.$\geq_{85}$    & intersectionOf, someValuesFrom, datatype restriction \\
-RecentGame          & S/N & VideoGame $\sqcap$ $\exists$releaseDate.$\geq_{2020}$      & intersectionOf, someValuesFrom, datatype restriction \\
+HighlyRatedGame     & S/N & VideoGame $\sqcap$ $\exists$metacriticScore.integer[$\geq 85$] & intersectionOf, someValuesFrom, datatype restriction \\
+RecentGame          & S/N & VideoGame $\sqcap$ $\exists$releaseDate.date[$\geq$ 2020-01-01] & intersectionOf, someValuesFrom, datatype restriction \\
 % Preesistenti
 AwardWinningGame    & S/N & VideoGame $\sqcap$ $\exists$wonAward.Award                 & intersectionOf, someValuesFrom \\
 FranchiseGame       & S/N & VideoGame $\sqcap$ $\exists$belongsTo.Franchise            & intersectionOf, someValuesFrom \\
 % Cardinality (solo necessarie)
-GameWithSingleDeveloper & N & VideoGame $\sqcap$ $\leq1$developedBy                   & subClassOf, maxCardinality \\
-ExclusiveRelease    & N & VideoGame $\sqcap$ $\leq1$availableOn                      & subClassOf, maxCardinality \\
+GameWithSingleDeveloper & N & $\sqsubseteq$ VideoGame $\sqcap$ $\leq1$developedBy     & subClassOf, maxCardinality \\
+ExclusiveRelease    & N & $\sqsubseteq$ VideoGame $\sqcap$ $\leq1$availableOn        & subClassOf, maxCardinality \\
 \bottomrule
 \end{longtable}
+\endgroup
 
 \textit{Legenda}: S/N = condizioni sufficienti e necessarie (equivalentClass);
 N = solo necessarie (subClassOf).
@@ -68,13 +71,13 @@ e \texttt{MultiplayerGame} \textbf{non} sono dichiarate disgiunte: un gioco pu\`
 supportare entrambe le modalit\`a (es. Call of Duty ha sia campagna single-player
 che multiplayer).
 
-\textbf{Esempio}: Elden Ring ha \texttt{hasGameMode SinglePlayerMode} e
-\texttt{hasGameMode MultiplayerMode} $\rightarrow$ inferito sia come
+\textbf{Esempio}: Elden Ring ha \texttt{hasGameMode} verso un individuo di tipo
+\texttt{SinglePlayerMode} e uno di tipo \texttt{MultiplayerMode} $\rightarrow$ inferito sia come
 \texttt{SinglePlayerGame} che come \texttt{MultiplayerGame}.
 
 \subsubsection{Platform-derived}
 
-Sei classi classificano i giochi per piattaforma a tre livelli di granularit\`a:
+Sei classi classificano i giochi per piattaforma a due livelli di granularit\`a:
 macrocategoria (\texttt{PCGame}, \texttt{ConsoleGame}, \texttt{MobileGame}) e
 famiglia specifica (\texttt{NintendoGame}, \texttt{PlayStationGame}, \texttt{XboxGame}).
 L'inferenza sfrutta la gerarchia \texttt{rdfs:subClassOf} delle piattaforme: se
@@ -92,7 +95,7 @@ dei giochi basata sulla propriet\`a transitiva \texttt{sequelOf}:
   \item \texttt{SequelGame} --- $\exists$\texttt{sequelOf.VideoGame}: il gioco ha
     almeno un predecessore diretto;
   \item \texttt{StandaloneGame} --- $\neg\exists$\texttt{sequelOf.VideoGame}: il
-    gioco non ha predecessori. Utilizza \texttt{owl:complementOf}, costrutto
+    gioco non ha predecessori. Utilizza il costrutto \texttt{owl:complementOf},
     non supportato da OWL 2 RL, e richiede pertanto il reasoner CONSTRUCT
     (cfr.~Sezione~\ref{sec:reasoning}).
 \end{itemize}
@@ -107,9 +110,9 @@ con \texttt{xsd:minInclusive}, un costrutto OWL 2 DL non coperto da OWL 2 RL
 (cfr.~Lez.~17--18):
 
 \begin{itemize}[nosep]
-  \item \texttt{HighlyRatedGame} $\equiv$ VideoGame $\sqcap$ $\exists$\texttt{metacriticScore.}$\geq_{85}$
+  \item \texttt{HighlyRatedGame} $\equiv$ VideoGame $\sqcap$ $\exists$\texttt{metacriticScore.xsd:integer}[$\geq 85$]
     --- giochi con Metacritic $\geq$ 85;
-  \item \texttt{RecentGame} $\equiv$ VideoGame $\sqcap$ $\exists$\texttt{releaseDate.}$\geq_{2020-01-01}$
+  \item \texttt{RecentGame} $\equiv$ VideoGame $\sqcap$ $\exists$\texttt{releaseDate.xsd:date}[$\geq$ 2020-01-01]
     --- giochi rilasciati dal 2020.
 \end{itemize}
 
@@ -126,13 +129,16 @@ originali (V1), preservate nell'estensione V2:
 
 \subsubsection{Cardinality (solo necessarie)}
 
-\texttt{GameWithSingleDeveloper} e \texttt{ExclusiveRelease} sono le uniche due
-classi definite con \textbf{sole condizioni necessarie} (\texttt{rdfs:subClassOf}
-anzich\'e \texttt{owl:equivalentClass}). Questa scelta \`e deliberata:
+\texttt{GameWithSingleDeveloper} e \texttt{ExclusiveRelease} sono caratterizzate da
+\textbf{sole condizioni necessarie} (\texttt{rdfs:subClassOf} verso una restrizione
+\texttt{owl:maxCardinality} non qualificata, anzich\'e \texttt{owl:equivalentClass}):
+non sono quindi classi definite in senso stretto. Questa scelta \`e deliberata:
 \begin{itemize}[nosep]
   \item \texttt{GameWithSingleDeveloper}: $\leq 1$ \texttt{developedBy}.
-    Condizione sufficiente sarebbe troppo forte (un gioco con esattamente 1
-    developer dovrebbe essere \textit{solo} quello);
+    Una condizione sufficiente sarebbe di scarsa utilit\`a: per la
+    \textit{Open World Assumption} un reasoner pu\`o concludere $\leq 1$
+    \texttt{developedBy} solo in presenza di assiomi di chiusura espliciti, per cui
+    la classe non classificherebbe quasi mai alcun gioco;
   \item \texttt{ExclusiveRelease}: $\leq 1$ \texttt{availableOn}.
     Analogo ragionamento: un gioco esclusiva \textit{ha al massimo} 1 piattaforma,
     ma non tutti i giochi con $\leq$ 1 piattaforma sono necessariamente esclusive.
@@ -144,18 +150,21 @@ classificazione automatica.
 \subsection{Costrutti OWL 2 Utilizzati}
 
 La Tabella~\ref{tab:costrutti} riassume i costrutti OWL 2 impiegati nelle classi
-definite, con riferimento alle lezioni del corso.
+definite, con riferimento alle lezioni del corso. La serializzazione RDF di questi
+costrutti (nodi blank per restrizioni, liste per intersezioni) \`e mostrata
+nell'Appendice~\ref{sec:app_turtle}.
 
 \begin{table}[h]
 \centering
 \caption{Costrutti OWL 2 nelle classi definite}
 \label{tab:costrutti}
+\small
 \begin{tabular}{lll}
 \toprule
 \textbf{Costrutto}          & \textbf{Classi}                                   & \textbf{Rif. Lezione} \\
 \midrule
-\texttt{owl:someValuesFrom}& MultiplayerGame, PCGame, SequelGame, \dots{} (12) & Lez.~15 (esistenziale) \\
-\texttt{owl:intersectionOf}& Tutte le 17 definite                             & Lez.~16 (intersezione) \\
+\texttt{owl:someValuesFrom}& 14: 12 su object property, 2 su datatype property & Lez.~15 (esistenziale) \\
+\texttt{owl:intersectionOf}& Tutte le 15 classi definite                      & Lez.~16 (intersezione) \\
 \texttt{owl:complementOf}  & StandaloneGame                                   & Lez.~16 (complemento) \\
 \texttt{owl:maxCardinality}& GameWithSingleDeveloper, ExclusiveRelease        & Lez.~17--18 \\
 \texttt{owl:withRestrictions} & HighlyRatedGame, RecentGame                   & Lez.~17--18 (datatype) \\
