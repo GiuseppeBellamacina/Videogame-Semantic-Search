@@ -126,12 +126,14 @@ Il presente documento descrive il progetto \textbf{Videogame Semantic Search}, u
 di ricerca semantica che integra un'ontologia OWL 2 modellata sul dominio dei videogiochi,
 un knowledge graph popolato da Wikidata e un'interfaccia web con grafo interattivo.
 L'ontologia, costruita secondo i principi del Semantic Web, definisce 78 classi,
-31 object property, 26 datatype property e 17 classi definite con reasoning automatico.
+31 object property, 26 datatype property e 15 classi definite (pi\`u 2 classi vincolate
+da cardinalit\`a massima) classificate tramite reasoning automatico.
 La popolazione da Wikidata (2010--2026) produce oltre 1.1 milioni di triple, interrogabili
 in linguaggio naturale tramite un agente SPARQL basato su GPT-4.1-mini.
-Vengono approfonditi in particolare gli aspetti di modellazione dello schema dell'ontologia, le scelte
-di design ontologico, il sistema di reasoning a due livelli (OWL 2 RL + CONSTRUCT)
-e le tecniche di validazione adottate.
+Il documento \`e centrato sull'ontologia: modellazione dello schema e scelte di design,
+espressivit\`a DL e profilo OWL 2, reasoning a due livelli (OWL 2 RL + CONSTRUCT) e
+interrogazione SPARQL della conoscenza inferita. Popolamento e applicazione web sono
+descritti in coda come contesto.
 \end{abstract}
 
 \newpage
@@ -142,16 +144,20 @@ e le tecniche di validazione adottate.
 
 % ── Sezioni ──
 \input{sezioni/01_introduzione.tex}
-\input{sezioni/02_architettura.tex}
+% Ontologia
 \input{sezioni/03_ontologia_overview.tex}
 \input{sezioni/04_tbox_classi.tex}
 \input{sezioni/05_tbox_proprieta.tex}
 \input{sezioni/06_tbox_classi_definite.tex}
 \input{sezioni/07_tbox_disjointness.tex}
 \input{sezioni/08_allineamento_esterno.tex}
+\input{sezioni/08b_profilo_dl.tex}
+% Reasoning e interrogazione
 \input{sezioni/09_reasoning.tex}
+\input{sezioni/09b_interrogazione.tex}
+% Contesto: popolamento e applicazione
 \input{sezioni/10_popolamento.tex}
-\input{sezioni/11_validazione.tex}
+\input{sezioni/02_architettura.tex}
 \input{sezioni/12_frontend_backend.tex}
 \input{sezioni/13_conclusione.tex}
 
@@ -159,6 +165,7 @@ e le tecniche di validazione adottate.
 \appendix
 \input{sezioni/app_a_abox.tex}
 \input{sezioni/app_b_dl.tex}
+\input{sezioni/app_c_turtle.tex}
 
 % ── Bibliografia ──
 \bibliographystyle{plainnat}

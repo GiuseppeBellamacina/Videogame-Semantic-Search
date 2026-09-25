@@ -1,0 +1,89 @@
+\section{Interrogare l'Ontologia con SPARQL}
+\label{sec:interrogazione}
+\sloppy
+
+Il valore degli assiomi si vede al momento dell'interrogazione: dopo il reasoning,
+le conoscenze implicite sono triple esplicite del grafo e le query SPARQL possono
+usarle direttamente, senza ricostruire la logica dello schema. Gli esempi seguenti
+usano il prefisso \texttt{vg:} e mostrano quattro tipi di conoscenza derivata.
+
+\subsection{Classi Inferite al Posto dei Filtri}
+
+\begin{lstlisting}[style=sparql, caption={Giochi multiplayer per PlayStation con punteggio alto}, label={lst:q_classi}]
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+SELECT ?name ?score WHERE {
+  ?g a vg:HighlyRatedGame , vg:MultiplayerGame , vg:PlayStationGame ;
+     vg:gameName ?name ;
+     vg:metacriticScore ?score .
+}
+ORDER BY DESC(?score) LIMIT 10
+\end{lstlisting}
+
+Senza reasoning la stessa domanda richiederebbe un filtro sul punteggio
+($\ge 85$), un join con le modalit\`a di gioco e un join con le piattaforme per
+verificarne il tipo (ad esempio \texttt{PS5} \texttt{a} \texttt{PlayStationPlatform}). Con le classi definite (Sezione~\ref{sec:classi_definite})
+la query si riduce a tre asserzioni di tipo.
+
+\subsection{Relazioni Derivate da Property Chain}
+
+\begin{lstlisting}[style=sparql, caption={Giochi dello stesso sviluppatore di Elden Ring}, label={lst:q_chain}]
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+SELECT DISTINCT ?other WHERE {
+  ?er vg:gameName "Elden Ring" ;
+      vg:sharesDeveloperWith ?g .
+  ?g  vg:gameName ?other .
+  FILTER(?g != ?er)
+}
+\end{lstlisting}
+
+\texttt{sharesDeveloperWith} non \`e mai asserita nei dati: deriva dalla catena
+\texttt{developedBy} $\circ$ \texttt{developerOf} (Sezione~\ref{sec:chains}).
+Il \texttt{FILTER} esclude la coppia riflessiva che la catena produce per ogni gioco.
+
+\subsection{Transitivit\`a: Materializzazione o Property Path}
+
+\begin{lstlisting}[style=sparql, caption={Tutti i predecessori di un gioco}, label={lst:q_trans}]
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+SELECT ?pred WHERE {
+  ?g vg:gameName "Dark Souls III" ;
+     vg:sequelOf ?pred .      # con reasoning (chiusura materializzata)
+  # senza reasoning:  ?g vg:sequelOf+ ?pred .
+}
+\end{lstlisting}
+
+Poich\'e \texttt{sequelOf} \`e transitiva, dopo il reasoning il grafo contiene gi\`a
+tutte le coppie (gioco, predecessore) a qualsiasi distanza. Lo stesso risultato si
+pu\`o ottenere senza reasoning con il \emph{property path} SPARQL
+\texttt{vg:sequelOf+}, che calcola la chiusura al momento della query. La differenza
+\`e concettuale: nel primo caso la transitivit\`a \`e una propriet\`a del dominio
+dichiarata nell'ontologia e vale per ogni applicazione che la usa; nel secondo \`e
+una scelta di chi scrive la query.
+
+\subsection{Navigazione Tramite Inverse}
+
+\begin{lstlisting}[style=sparql, caption={Studi con pi\`u giochi premiati}, label={lst:q_inv}]
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+SELECT ?studio (COUNT(DISTINCT ?g) AS ?n) WHERE {
+  ?dev vg:developerOf ?g ;
+       vg:developerName ?studio .
+  ?g a vg:AwardWinningGame .
+}
+GROUP BY ?studio ORDER BY DESC(?n) LIMIT 10
+\end{lstlisting}
+
+I dati asseriscono solo \texttt{developedBy} (dal gioco allo studio): la query parte
+dallo studio grazie all'inversa \texttt{developerOf} e usa la classe definita
+\texttt{AwardWinningGame} invece di un join esplicito con i premi.
+
+\subsection{Open World e Negazione}
+
+Una domanda come \textless{}giochi senza sequel\textgreater{} mette in luce la differenza
+tra l'ontologia e le query. In OWL vale la \textit{Open World Assumption}: l'assenza di
+una tripla \texttt{sequelOf} non implica che il gioco non abbia predecessori, quindi un
+reasoner DL non classificherebbe nessun gioco come \texttt{StandaloneGame} senza
+ulteriori assiomi di chiusura. Il secondo livello di reasoning adotta invece
+esplicitamente una \textit{Closed World Assumption} locale (\texttt{FILTER NOT EXISTS},
+Sezione~\ref{sec:reasoning}): \texttt{StandaloneGame} va quindi letta come
+\textless{}gioco per cui non \`e noto alcun predecessore\textgreater{}.
+
+\fussy

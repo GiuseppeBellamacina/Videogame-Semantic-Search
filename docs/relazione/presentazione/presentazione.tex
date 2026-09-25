@@ -1,6 +1,6 @@
 % ============================================================
 %  Videogame Semantic Search — Presentazione Beamer
-%  Max 15 slide di contenuto
+%  Focus: l'ontologia OWL 2 DL (14 slide di contenuto)
 % ============================================================
 \documentclass[aspectratio=169,11pt]{beamer}
 \usetheme[progressbar=frametitle, numbering=fraction]{metropolis}
@@ -46,7 +46,7 @@
 
 \lstdefinestyle{sparql}{
   backgroundcolor=\color{codebg},
-  basicstyle=\ttfamily\footnotesize,
+  basicstyle=\ttfamily\scriptsize,
   keywordstyle=\color{codekeyword}\bfseries,
   commentstyle=\color{codecomment}\itshape,
   stringstyle=\color{codestring},
@@ -56,15 +56,18 @@
   numbers=none,
   showstringspaces=false,
   tabsize=2,
-  aboveskip=4pt,
-  belowskip=4pt,
-  morekeywords={PREFIX,SELECT,DISTINCT,WHERE,FILTER,CONSTRUCT,OPTIONAL,
-                UNION,MINUS,SERVICE,BIND,GRAPH,ORDER,BY,LIMIT,COUNT,AS}
+  aboveskip=2pt,
+  belowskip=2pt,
+  morestring=[b]",
+  morecomment=[l]\#,
+  morekeywords={PREFIX,SELECT,DISTINCT,WHERE,FILTER,ORDER,BY,DESC,LIMIT,a},
+  columns=fullflexible,
+  keepspaces=true
 }
 
 \lstdefinestyle{turtle}{
   backgroundcolor=\color{codebg},
-  basicstyle=\ttfamily\footnotesize,
+  basicstyle=\ttfamily\scriptsize,
   keywordstyle=\color{codekeyword}\bfseries,
   commentstyle=\color{codecomment}\itshape,
   stringstyle=\color{codestring},
@@ -74,25 +77,18 @@
   numbers=none,
   showstringspaces=false,
   tabsize=2,
-  aboveskip=4pt,
-  belowskip=4pt,
-  morekeywords={@prefix,@base,rdf,rdfs,owl,xsd,dc,ns,rdfs:label,
-                rdf:type,owl:Class,owl:ObjectProperty,owl:DatatypeProperty,
-                owl:Restriction,owl:onProperty,owl:someValuesFrom,
-                owl:equivalentClass,rdfs:subClassOf}
+  aboveskip=2pt,
+  belowskip=2pt,
+  morestring=[b]",
+  morecomment=[l]\#,
+  morekeywords={a},
+  columns=fullflexible,
+  keepspaces=true
 }
-
-% --- Comandi helper per DL ---
-\newcommand{\dlSome}{\exists}
-\newcommand{\dlNot}{\lnot}
-\newcommand{\dlSqcap}{\sqcap}
-\newcommand{\dlSqsubseteq}{\sqsubseteq}
-\newcommand{\dlLe}[1]{\le #1}
-\newcommand{\dlGe}[1]{\ge #1}
 
 % --- Metadati -------------------------------------------------
 \title{Videogame Semantic Search}
-\subtitle{Ontologia OWL 2, Reasoning e Interrogazione \\ per il Dominio dei Videogiochi}
+\subtitle{Un'ontologia OWL 2 DL per il dominio dei videogiochi \\ Modellazione, reasoning e interrogazione}
 \author{Videogame Semantic Search Project}
 \date{Agosto 2026}
 
@@ -111,97 +107,40 @@
 % ============================================================
 \begin{frame}{Obiettivo del Progetto}
   \begin{block}{Cosa abbiamo costruito}
-    Un'\textbf{ontologia OWL 2 di alta qualit\`a} sul dominio dei videogiochi (2010--2026), popolata con dati estratti da Wikidata e interrogabile in linguaggio naturale tramite un'interfaccia web.
+    Un'\textbf{ontologia OWL 2 DL} sul dominio dei videogiochi (2010--2026),
+    popolata con dati estratti da Wikidata e interrogabile tramite SPARQL.
   \end{block}
 
-  \vspace{6pt}
+  \vspace{4pt}
 
   \begin{itemize}
-    \item \textbf{Perch\'e}: non esisteva un'ontologia formale e validata per rappresentare la conoscenza strutturata sui videogiochi
-    \item \textbf{Cosa offre}:
+    \item \textbf{Perch\'e}: rappresentare in modo formale e ragionabile la conoscenza su
+      giochi, studi, piattaforme, generi, franchise e premi
+    \item \textbf{Cosa contiene}:
     \begin{itemize}
-      \item 78 classi e 57 propriet\`a con semantica DL
-      \item 17 classi definite con OWL 2 Restriction
-      \item Reasoning a due livelli (OWL 2 RL + SPARQL CONSTRUCT)
-      \item Frontend con grafo interattivo e interrogazione NL
+      \item 78 classi (15 definite) e 57 propriet\`a con caratteristiche OWL 2
+      \item 12 blocchi di disjointness, 3 property chain, 3 chiavi (\texttt{hasKey})
+      \item Allineamento a Wikidata e Dublin Core
     \end{itemize}
-    \item \textbf{Casi d'uso}: raccomandazione, analisi di mercato, esplorazione semantica, studio del dominio
+    \item \textbf{Come si usa}: reasoning a due livelli (OWL 2 RL + SPARQL CONSTRUCT) che
+      classifica automaticamente le istanze; un'applicazione web (NL $\to$ SPARQL, grafo
+      interattivo) la rende esplorabile
   \end{itemize}
 \end{frame}
 
 % ============================================================
-%  SLIDE 2 — Architettura
+%  SLIDE 2 — Panoramica
 % ============================================================
-\begin{frame}{Architettura del Sistema}
-
-  \begin{center}
-  \begin{tikzpicture}[
-    node distance=8mm,
-    box/.style={rectangle, draw, rounded corners, minimum width=85mm, minimum height=13mm, fill=accent!10, font=\small},
-    arrow/.style={-{Stealth[scale=0.8]}, thick, accent}
-  ]
-
-  \node[box] (fe) {\textbf{Frontend} — React 18 + TypeScript + Vite + Tailwind};
-  \node[box, below=of fe] (be) {\textbf{Backend} — FastAPI async + SPARQL Agent + Cache};
-  \node[box, below=of be] (onto) {\textbf{Ontologia} — OWL 2 (pyoxigraph + RDFLib)};
-
-  \draw[arrow] (fe.south) -- node[right, font=\tiny]{REST} (be.north);
-  \draw[arrow] (be.south) -- node[right, font=\tiny]{SPARQL} (onto.north);
-
-  \end{tikzpicture}
-  \end{center}
-
-  \vspace{6pt}
-
-  \begin{columns}[T]
-    \column{0.33\textwidth}
-    \textbf{Frontend}
-    \begin{itemize}
-      \item React 18, TypeScript
-      \item Vite + Tailwind CSS
-      \item react-force-graph-2d
-      \item Deploy: \textbf{Vercel}
-    \end{itemize}
-
-    \column{0.33\textwidth}
-    \textbf{Backend}
-    \begin{itemize}
-      \item FastAPI (async)
-      \item 6 endpoint REST
-      \item SPARQL Agent (GPT-4.1-mini)
-      \item Cache: \textbf{Upstash Redis}
-      \item Deploy: \textbf{Render}
-    \end{itemize}
-
-    \column{0.33\textwidth}
-    \textbf{Ontologia}
-    \begin{itemize}
-      \item OWL 2 DL
-      \item pyoxigraph (Rust)
-      \item RDFLib + owlrl
-      \item construct\_reasoner
-      \item Dati: \textbf{Wikidata}
-    \end{itemize}
-  \end{columns}
-
-\end{frame}
-
-% ============================================================
-%  SLIDE 3 — Ontologia Overview
-% ============================================================
-\begin{frame}{Ontologia — Panoramica}
-  \begin{itemize}
-    \item \textbf{Dominio}: videogiochi pubblicati 2010--2026, con relativi sviluppatori, publisher, generi, piattaforme, personaggi, franchise, premi, motori grafici e modalit\`a di gioco
-    \item \textbf{Namespace}: \texttt{http://www.videogame-ontology.org/ontology\#} \quad {\small\itshape (URI identificativo, non URL pubblicato)}
-    \item \textbf{Separazione schema/istanze}:
-    \begin{itemize}
-      \item \texttt{videogames.owl} — schema (definizioni, 945 triple)
-      \item \texttt{videogames\_pruned\_2020.owl} — istanze demo (2020--2026, $\sim$745k triple)
-    \end{itemize}
-    \item \textbf{Fonti}: Wikidata SPARQL endpoint + allineamento Dublin Core
+\begin{frame}{Ontologia --- Panoramica}
+  \begin{itemize}\small
+    \item \textbf{Dominio}: videogiochi 2010--2026 con sviluppatori, publisher, generi,
+      piattaforme, personaggi, franchise, premi, motori, modalit\`a, recensioni ed eventi
+    \item \textbf{Namespace}: \texttt{http://www.videogame-ontology.org/ontology\#} (prefisso \texttt{vg:})
+    \item \textbf{Schema e istanze separati}: \texttt{videogames.owl} (schema, 934 triple) e
+      \texttt{videogames\_pruned\_2020.owl} (istanze demo, $\sim$745k triple)
   \end{itemize}
 
-  \vspace{6pt}
+  \vspace{2pt}
 
   \begin{table}
   \centering\small
@@ -209,437 +148,499 @@
     \toprule
     \textbf{Componente} & \textbf{Qt\`a} & \textbf{Componente} & \textbf{Qt\`a} \\
     \midrule
-    Classi totali       & 78      & Classi definite      & 17       \\
-    Classi primitive    & 61      & AllDisjointClasses   & 12 blocchi \\
-    Object Property     & 31      & hasKey               & 3        \\
-    Datatype Property   & 26      & propertyChainAxiom   & 3        \\
+    Classi totali            & 78  & Classi definite (\texttt{equivalentClass}) & 15 \\
+    Classi primitive         & 61  & Classi con vincolo di cardinalit\`a         & 2  \\
+    Object property          & 31  & Blocchi \texttt{AllDisjointClasses}         & 12 \\
+    Datatype property        & 26  & \texttt{propertyChainAxiom}                 & 3  \\
+    Coppie inverse           & 12  & \texttt{hasKey}                             & 3  \\
+    Propriet\`a transitive   & 3   & Allineamenti (Wikidata + Dublin Core)       & 4 + 3 \\
     \bottomrule
   \end{tabular}
   \end{table}
 \end{frame}
 
 % ============================================================
-%  SLIDE 4 — Gerarchia classi
+%  SLIDE 3 — Gerarchia classi
 % ============================================================
-\begin{frame}{Ontologia — Gerarchia delle Classi}
+\begin{frame}{Ontologia --- Gerarchia delle Classi}
   \begin{columns}[T]
-    \column{0.40\textwidth}
-    \textbf{12 Classi top-level}
-    \begin{itemize}
-      \item VideoGame
-      \item Developer
-      \item Publisher
-      \item Genre
-      \item Platform
-      \item Character
-      \item Franchise
-      \item Award
-      \item GameEngine
-      \item GameMode
-      \item Review
-      \item GameEvent
-    \end{itemize}
+    \column{0.44\textwidth}
+    \textbf{12 classi top-level} {\scriptsize (disgiunte)}
+    \vspace{2pt}
 
-    \column{0.60\textwidth}
-    \textbf{Platform — partizionamento}
+    \small
+    \begin{columns}[T]
+      \column{0.5\linewidth}
+      \begin{itemize}\setlength{\itemsep}{-1pt}
+        \item VideoGame
+        \item Developer
+        \item Publisher
+        \item Genre
+        \item Platform
+        \item Character
+      \end{itemize}
+      \column{0.5\linewidth}
+      \begin{itemize}\setlength{\itemsep}{-1pt}
+        \item Franchise
+        \item Award
+        \item GameEngine
+        \item GameMode
+        \item Review
+        \item GameEvent
+      \end{itemize}
+    \end{columns}
+
+    \column{0.54\textwidth}
+    \textbf{Platform --- partizionamento a due livelli}
+    \vspace{2pt}
+
+    \small
     \begin{itemize}
-      \item \textbf{ConsolePlatform}
-      \begin{itemize}
-        \item PlayStationPlatform
-        \item XboxPlatform
-        \item NintendoPlatform
-      \end{itemize}
-      \item \textbf{PCPlatform}
-      \begin{itemize}
-        \item Windows, MacOS, Linux
-      \end{itemize}
-      \item \textbf{MobilePlatform}
-      \begin{itemize}
-        \item iOS, Android
-      \end{itemize}
+      \item \textbf{ConsolePlatform}: PlayStation, Xbox, Nintendo
+      \item \textbf{PCPlatform}: Windows, MacOS, Linux
+      \item \textbf{MobilePlatform}: iOS, Android
     \end{itemize}
+    \vspace{2pt}
+    Altre sottoclassi: 10 generi (aperti), stato di rilascio, budget (Indie/AAA),
+    tipologie di premio, personaggio e motore
   \end{columns}
 
   \vspace{6pt}
 
   \begin{block}{Pattern modellistici}
     \small
-    \textbf{Review}: relazione N-aria (Review $\to$ VideoGame + score + source)
-    \hfill
-    \textbf{GameEvent}: ciclo di vita (Announcement, Release, Update, Delisting)
+    \textbf{Review} --- relazione N-aria: gioco (\texttt{reviewedGame}) + revisore + punteggio + data \\
+    \textbf{GameEvent} --- ciclo di vita: Announcement, Release, Update, Delisting \\
+    \textbf{GameMode} --- value partition: 4 modalit\`a disgiunte
   \end{block}
 \end{frame}
 
 % ============================================================
-%  SLIDE 5 — Proprietà
+%  SLIDE 4 — Proprietà: caratteristiche
 % ============================================================
-\begin{frame}{Ontologia — Propriet\`a e Chain Axiom}
-  \begin{itemize}
-    \item \textbf{31 Object Property} con inverse sistematiche:
-    \begin{itemize}
-      \item \texttt{developedBy} $\leftrightarrow$ \texttt{developerOf}
-      \item \texttt{publishedBy} $\leftrightarrow$ \texttt{publisherOf}
-      \item \texttt{availableOn} $\leftrightarrow$ \texttt{platformFor}
-      \item \texttt{hasGameMode} $\leftrightarrow$ \texttt{modeInGame}
-    \end{itemize}
-    \item \textbf{2 propriet\`a transitive}: \texttt{sequelOf}, \texttt{partOfFranchise}
-    \item \textbf{26 Datatype Property}: releaseDate, metacriticScore, steamRating, \dots
-  \end{itemize}
+\begin{frame}{Ontologia --- Caratteristiche delle Propriet\`a}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l r >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Caratteristica} & \textbf{\#} & \textbf{Esempi} \\
+    \midrule
+    \texttt{owl:inverseOf}          & 12 coppie & \texttt{developedBy}/\texttt{developerOf}, \texttt{belongsTo}/\texttt{includes}, \dots \\
+    \texttt{TransitiveProperty}     & 3  & \texttt{sequelOf}, \texttt{partOfFranchise}, \texttt{subsidiaryOf} \\
+    \texttt{SymmetricProperty}      & 3  & le super-propriet\`a delle 3 catene (\texttt{sharesDeveloperWith}, \dots) \\
+    \texttt{Asymmetric} / \texttt{Irreflexive} & 13 / 18 & \texttt{developedBy}, \texttt{hasGenre}, \texttt{belongsTo}, \dots \\
+    \texttt{FunctionalProperty}     & 14 & \texttt{reviewedGame} + 13 datatype (\texttt{releaseDate}, \texttt{metacriticScore}, \dots) \\
+    \texttt{subPropertyOf}          & 9  & \texttt{gameName}, \texttt{developerName}, \dots{} $\sqsubseteq$ \texttt{name} \\
+    \bottomrule
+  \end{tabularx}
 
-  \vspace{6pt}
+  \vspace{4pt}
 
-  \begin{block}{3 Property Chain Axiom (simmetrizzazione derivata)}
+  \begin{alertblock}{Vincolo globale di OWL 2 DL}
     \small
+    Le transitive e le loro inverse non sono \emph{semplici}: non possono essere asimmetriche,
+    irriflessive, funzionali, n\'e comparire in cardinalit\`a o \texttt{hasKey}.
+  \end{alertblock}
+\end{frame}
+
+% ============================================================
+%  SLIDE 5 — Property chain e hasKey
+% ============================================================
+\begin{frame}{Ontologia --- Property Chain e Chiavi}
+  \begin{block}{3 Property Chain Axiom (inclusione di ruoli)}
+    \small
+    \vspace{-4pt}
     \begin{align*}
-      \texttt{sharedFranchiseWith} &\equiv \texttt{belongsTo}^{-} \circ \texttt{includes} \\
-      \texttt{sharesDeveloperWith} &\equiv \texttt{developedBy} \circ \texttt{developerOf} \\
-      \texttt{sharesPublisherWith} &\equiv \texttt{publishedBy} \circ \texttt{publisherOf}
+      \texttt{belongsTo} \circ \texttt{includes} &\sqsubseteq \texttt{sharedFranchiseWith} \\
+      \texttt{developedBy} \circ \texttt{developerOf} &\sqsubseteq \texttt{sharesDeveloperWith} \\
+      \texttt{publishedBy} \circ \texttt{publisherOf} &\sqsubseteq \texttt{sharesPublisherWith}
     \end{align*}
   \end{block}
 
-  \vspace{4pt}
-  {\small owlrl inferisce automaticamente le relazioni di condivisione tra giochi appartenenti alla stessa entit\`a.}
-\end{frame}
-
-% ============================================================
-%  SLIDE 6 — Assiomi delle Proprietà (Approfondimento)
-% ============================================================
-\begin{frame}{Ontologia — Assiomi delle Propriet\`a (Approfondimento)}
   \begin{itemize}\small
-    \item \textbf{Inverse sistematiche} (13 coppie): ogni propriet\`a direzionale ha la sua inversa
-    \begin{itemize}\scriptsize
-      \item \texttt{developedBy} $\leftrightarrow$ \texttt{developerOf}
-      \item \texttt{hasCharacter} $\leftrightarrow$ \texttt{appearsIn}
-      \item \texttt{belongsTo} $\leftrightarrow$ \texttt{includes}
-      \item \texttt{wonAward} $\leftrightarrow$ \texttt{awardWonBy}
-      \item \texttt{sequelOf} $\leftrightarrow$ \texttt{hasSequel}
-    \end{itemize}
-    \item \textbf{Transitive}: \texttt{sequelOf} (catene di sequel), \texttt{partOfFranchise} (sub-franchise $\to$ franchise)
-    \item \textbf{Asymmetric + Irreflexive}: la maggior parte delle object property (es.\ \texttt{developedBy} non pu\`o essere simmetrica n\'e riflessiva)
-    \item \textbf{3 Property Chain Axiom} (inferenza simmetrica):
-    \begin{itemize}\scriptsize
-      \item \texttt{sharedFranchiseWith} = \texttt{belongsTo} $\circ$ \texttt{includes}
-      \item \texttt{sharesDeveloperWith} = \texttt{developedBy} $\circ$ \texttt{developerOf}
-      \item \texttt{sharesPublisherWith} = \texttt{publishedBy} $\circ$ \texttt{publisherOf}
-    \end{itemize}
-    \item \textbf{owlrl materializza} automaticamente: \texttt{developerOf}, \texttt{platformFor}, \texttt{genreOf}, \texttt{awardWonBy}, \texttt{modeInGame}, \texttt{engineUsedIn}, \texttt{hasSequel}, e le 3 catene simmetriche
+    \item Composizione ben tipata: VideoGame $\xrightarrow{\texttt{belongsTo}}$ Franchise
+      $\xrightarrow{\texttt{includes}}$ VideoGame
+    \item Le super-propriet\`a sono \texttt{Symmetric}; la catena include anche la coppia
+      $(g,g)$, per questo nelle query si filtra \texttt{?g != ?altro}
   \end{itemize}
-\end{frame}
 
-% ============================================================
-%  SLIDE 7 — Classi definite (1/2)
-% ============================================================
-\begin{frame}{Ontologia — Classi Definite (Condizioni Sufficienti)}
-
-  \begin{table}
-  \centering\small
-  \begin{tabular}{@{}ll@{}}
-    \toprule
-    \textbf{Classe} & \textbf{Sintassi DL (owl:equivalentClass)} \\
-    \midrule
-    AwardWinningGame     & $\texttt{VideoGame} \sqcap \exists\texttt{wonAward.Award}$ \\
-    FranchiseGame        & $\texttt{VideoGame} \sqcap \exists\texttt{belongsTo.Franchise}$ \\
-    MultiplayerGame      & $\texttt{VideoGame} \sqcap \exists\texttt{hasGameMode.MultiplayerMode}$ \\
-    SinglePlayerGame     & $\texttt{VideoGame} \sqcap \exists\texttt{hasGameMode.SinglePlayerMode}$ \\
-    CoopGame             & $\texttt{VideoGame} \sqcap \exists\texttt{hasGameMode.CoopMode}$ \\
-    PCGame / ConsoleGame & $\texttt{VideoGame} \sqcap \exists\texttt{availableOn.}\{\texttt{PC},\texttt{Console}\}$ \\
-    MobileGame           & $\texttt{VideoGame} \sqcap \exists\texttt{availableOn.MobilePlatform}$ \\
-    PS / Xbox / Nin.\ Game & $\texttt{VideoGame} \sqcap \exists\texttt{availableOn.}\{\texttt{PS},\texttt{Xbox},\texttt{Nin}\}$ \\
-    SequelGame           & $\texttt{VideoGame} \sqcap \exists\texttt{sequelOf.VideoGame}$ \\
-    \bottomrule
-  \end{tabular}
-  \end{table}
-
-  \begin{itemize}
-    \item 13 classi con \texttt{owl:equivalentClass} e \texttt{someValuesFrom}
-    \item Il reasoner classifica automaticamente ogni gioco che soddisfa la condizione
-  \end{itemize}
-\end{frame}
-
-% ============================================================
-%  SLIDE 8 — Classi definite (2/2)
-% ============================================================
-\begin{frame}{Ontologia — Classi Definite (Altri Costrutti OWL 2)}
-
-  \begin{description}[StandaloneGame]
-    \item[StandaloneGame] $\texttt{VideoGame} \sqcap \lnot\exists\texttt{sequelOf.VideoGame}$ \\ {\small Costrutto: \texttt{complementOf} (negazione)}
-    \item[HighlyRatedGame] $\texttt{VideoGame} \sqcap \exists\texttt{metacriticScore.xsd:integer}[\ge 85]$ \\ {\small Datatype restriction su metacriticScore}
-    \item[RecentGame] $\texttt{VideoGame} \sqcap \exists\texttt{releaseDate.xsd:date}[\ge \texttt{2020-01-01}]$ \\ {\small Datatype restriction su releaseDate}
-    \item[GameWithSingleDev.] $\sqsubseteq\ \le 1\ \texttt{developedBy}$ {\small (maxCardinality, necessaria)}
-    \item[ExclusiveRelease] $\sqsubseteq\ \le 1\ \texttt{availableOn}$ {\small (maxCardinality, necessaria)}
-  \end{description}
-
-  \vspace{6pt}
-
-  \begin{block}{Costrutti OWL 2 DL impiegati}
-    \small
-    \texttt{someValuesFrom} $\cdot$ \texttt{complementOf} $\cdot$ \texttt{DatatypeRestriction} $\cdot$
-    \texttt{maxQualifiedCardinality} $\cdot$ \texttt{propertyChainAxiom} $\cdot$ \texttt{hasKey} $\cdot$
-    \texttt{AllDisjointClasses}
+  \begin{block}{3 chiavi \texttt{owl:hasKey}}
+    \footnotesize
+    \texttt{VideoGame(hasWikidataId)} $\cdot$
+    \texttt{VideoGame(hasSteamAppId)} $\cdot$
+    \texttt{Review(reviewedGame, reviewerName)} \\[2pt]
+    Identit\`a espressa con chiavi (valide sui soli individui nominati) anzich\'e con
+    \texttt{InverseFunctionalProperty} su datatype, non ammessa in OWL 2 DL.
   \end{block}
 \end{frame}
 
 % ============================================================
-%  SLIDE 9 — Disjointness & Allineamento
+%  SLIDE 6 — Classi definite (∃)
 % ============================================================
-\begin{frame}{Ontologia — Disjointness e Allineamento Esterno}
+\begin{frame}{Ontologia --- Classi Definite (Condizioni Necessarie e Sufficienti)}
+  \small
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    \textbf{Classe} & \textbf{Definizione (\texttt{owl:equivalentClass})} \\
+    \midrule
+    AwardWinningGame     & $\texttt{VideoGame} \sqcap \exists\,\texttt{wonAward.Award}$ \\
+    FranchiseGame        & $\texttt{VideoGame} \sqcap \exists\,\texttt{belongsTo.Franchise}$ \\
+    SequelGame           & $\texttt{VideoGame} \sqcap \exists\,\texttt{sequelOf.VideoGame}$ \\
+    Multiplayer / SinglePlayer / CoopGame & $\texttt{VideoGame} \sqcap \exists\,\texttt{hasGameMode}.M$ \\
+    PC / Console / MobileGame & $\texttt{VideoGame} \sqcap \exists\,\texttt{availableOn}.P$ \\
+    PlayStation / Xbox / NintendoGame & $\texttt{VideoGame} \sqcap \exists\,\texttt{availableOn}.P$ \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{2pt}
+  {\footnotesize $M$ = la modalit\`a corrispondente (es.\ \texttt{MultiplayerMode});
+  $P$ = la classe di piattaforma corrispondente (es.\ \texttt{PCPlatform}, \texttt{PlayStationPlatform})\par}
+
+  \vspace{6pt}
+
+  \begin{itemize}
+    \item 12 classi definite con \texttt{intersectionOf} + \texttt{someValuesFrom} su object property
+    \item Altre 3 (HighlyRated, Recent, Standalone) usano costrutti pi\`u espressivi $\to$ 15 in totale
+    \item La gerarchia delle piattaforme propaga la classificazione
+      (PS5 $\Rightarrow$ PlayStationGame e ConsoleGame)
+  \end{itemize}
+\end{frame}
+
+% ============================================================
+%  SLIDE 7 — Classi definite: altri costrutti
+% ============================================================
+\begin{frame}{Ontologia --- Negazione, Datatype e Cardinalit\`a}
+  \footnotesize
+  \begin{tabular}{@{}l l l@{}}
+    \toprule
+    \textbf{Classe} & \textbf{Assioma} & \textbf{Costrutto} \\
+    \midrule
+    StandaloneGame  & $\equiv \texttt{VideoGame} \sqcap \lnot\exists\,\texttt{sequelOf.VideoGame}$ & \texttt{complementOf} \\
+    HighlyRatedGame & $\equiv \texttt{VideoGame} \sqcap \exists\,\texttt{metacriticScore}.\texttt{integer}[\ge 85]$ & \texttt{minInclusive} \\
+    RecentGame      & $\equiv \texttt{VideoGame} \sqcap \exists\,\texttt{releaseDate}.\texttt{date}[\ge 2020\text{-}01\text{-}01]$ & \texttt{minInclusive} \\
+    \midrule
+    GameWithSingleDeveloper & $\sqsubseteq \texttt{VideoGame} \sqcap {\le}1\,\texttt{developedBy}$ & \texttt{maxCardinality} \\
+    ExclusiveRelease        & $\sqsubseteq \texttt{VideoGame} \sqcap {\le}1\,\texttt{availableOn}$ & \texttt{maxCardinality} \\
+    \bottomrule
+  \end{tabular}
+
+  {\scriptsize Le cardinalit\`a sono \emph{non qualificate} (nessun \texttt{owl:onClass}).\par}
+
+  \vspace{6pt}
+
+  \begin{itemize}
+    \item Le ultime due hanno \textbf{sole condizioni necessarie}: per l'Open World
+      Assumption un reasoner dedurrebbe ${\le}1$ solo con assiomi di chiusura, quindi fungono da
+      vincoli di integrit\`a e non da classificatori
+    \item \texttt{complementOf} e le datatype restriction \textbf{escono dal profilo OWL 2 RL}:
+      motivano il secondo livello di reasoning
+  \end{itemize}
+\end{frame}
+
+% ============================================================
+%  SLIDE 8 — L'OWL in pratica
+% ============================================================
+\begin{frame}[fragile]{Ontologia --- Gli Assiomi in Turtle}
+  {\small Estratti da \texttt{videogames.owl} (serializzati in Turtle)}
+  \vspace{2pt}
 
   \begin{columns}[T]
-    \column{0.48\textwidth}
-    \textbf{12 Blocchi AllDisjointClasses}
-    \vspace{4pt}
+    \column{0.50\textwidth}
+\begin{lstlisting}[style=turtle]
+# Classe definita con datatype restriction
+vg:HighlyRatedGame a owl:Class ;
+  owl:equivalentClass [
+    owl:intersectionOf ( vg:VideoGame
+      [ a owl:Restriction ;
+        owl:onProperty vg:metacriticScore ;
+        owl:someValuesFrom [
+          a rdfs:Datatype ;
+          owl:onDatatype xsd:integer ;
+          owl:withRestrictions
+            ( [ xsd:minInclusive 85 ] ) ] ] ) ] .
+\end{lstlisting}
 
-    \small
-    \begin{tabular}{@{}ll@{}}
+    \column{0.50\textwidth}
+\begin{lstlisting}[style=turtle]
+# Property chain + simmetria
+vg:sharesDeveloperWith
+  a owl:ObjectProperty ,
+    owl:SymmetricProperty ;
+  owl:propertyChainAxiom
+    ( vg:developedBy vg:developerOf ) .
+
+# Condizione solo necessaria
+vg:GameWithSingleDeveloper
+  rdfs:subClassOf vg:VideoGame ,
+    [ a owl:Restriction ;
+      owl:onProperty vg:developedBy ;
+      owl:maxCardinality
+        "1"^^xsd:nonNegativeInteger ] .
+\end{lstlisting}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+%  SLIDE 9 — Disjointness
+% ============================================================
+\begin{frame}{Ontologia --- Disjointness}
+  \textbf{12 blocchi \texttt{owl:AllDisjointClasses}}: nessuna istanza pu\`o appartenere
+  a due classi dello stesso blocco
+  \vspace{4pt}
+
+  \scriptsize
+  \begin{columns}[T]
+    \column{0.44\textwidth}
+    \begin{tabular}{@{}r l@{}}
       \toprule
-      \textbf{Blocco} & \textbf{Classi} \\
+      \textbf{\#} & \textbf{Classi disgiunte} \\
       \midrule
-      Platform      & 3 (Console, PC, Mobile) \\
-      ConsolePlat.  & 3 (PS, Xbox, Nintendo) \\
-      PSPlatform    & 6 (PS3--PS5, PSP, \dots) \\
-      XboxPlatform  & 4 (360, One, Series, \dots) \\
-      PCPlatform    & 3 (Windows, MacOS, Linux) \\
-      MobilePlat.   & 2 (iOS, Android) \\
-      Genre         & 10 (Action, RPG, \dots) \\
+      12 & le classi top-level \\
+      3  & Console / PC / MobilePlatform \\
+      3  & PlayStation / Xbox / NintendoPlatform \\
+      3  & Windows / MacOS / LinuxPlatform \\
+      2  & IOS / AndroidPlatform \\
+      3  & Industry / Editorial / UserAward \\
       \bottomrule
     \end{tabular}
 
-    \column{0.52\textwidth}
-    \textbf{Allineamento Esterno}
-    \vspace{4pt}
-
-    \begin{block}{4 equivalentClass con Wikidata}
-      \begin{itemize}
-        \item \texttt{vg:VideoGame} $\equiv$ \texttt{wd:Q7889}
-        \item \texttt{vg:Developer} $\equiv$ \texttt{wd:Q210167}
-        \item \texttt{vg:GameEngine} $\equiv$ \texttt{wd:Q193564}
-        \item \texttt{vg:Genre} $\equiv$ \texttt{wd:Q65956376}
-      \end{itemize}
-    \end{block}
-
-    \begin{block}{3 equivalentProperty con Dublin Core}
-      \begin{itemize}
-        \item \texttt{vg:releaseDate} $\equiv$ \texttt{dcterms:issued}
-        \item \texttt{vg:gameName} $\equiv$ \texttt{dcterms:title}
-        \item \texttt{vg:gameDescription} $\equiv$ \texttt{dcterms:description}
-      \end{itemize}
-    \end{block}
+    \column{0.54\textwidth}
+    \begin{tabular}{@{}r l@{}}
+      \toprule
+      \textbf{\#} & \textbf{Classi disgiunte} \\
+      \midrule
+      2 & Player / NonPlayerCharacter \\
+      2 & Proprietary / OpenSourceEngine \\
+      4 & Released / EarlyAccess / Cancelled / DelistedGame \\
+      2 & IndieGame / AAAGame \\
+      4 & SinglePlayer / Multiplayer / Coop / MMOMode \\
+      4 & Announcement / Release / Update / DelistingEvent \\
+      \bottomrule
+    \end{tabular}
   \end{columns}
-
-\end{frame}
-
-% ============================================================
-%  SLIDE 10 — Reasoning
-% ============================================================
-\begin{frame}{Reasoning — Architettura a Due Livelli}
-
-  \begin{columns}[T]
-    \column{0.42\textwidth}
-
-    \begin{center}
-    \begin{tikzpicture}[
-      node distance=8mm,
-      box/.style={rectangle, draw, rounded corners, minimum width=38mm, minimum height=16mm, fill=accent!10, font=\footnotesize, align=center},
-      arr/.style={-{Stealth}, thick, accent}
-    ]
-
-    \node[box] (input) {\textbf{Grafo RDF}\\997 triple (test)};
-    \node[box, below=of input] (owlrl) {\textbf{Livello 1: owlrl}\\(OWL 2 RL)};
-    \node[box, below=of owlrl] (construct) {\textbf{Livello 2: CONSTRUCT}\\21 regole custom};
-    \node[box, below=of construct] (output) {\textbf{Grafo inferito}\\2.680 triple};
-
-    \draw[arr] (input) -- (owlrl);
-    \draw[arr] (owlrl) -- (construct);
-    \draw[arr] (construct) -- (output);
-
-    \end{tikzpicture}
-    \end{center}
-
-    \column{0.58\textwidth}
-    \textbf{owlrl materializza:}
-    \begin{itemize}
-      \item subClassOf, intersectionOf
-      \item someValuesFrom, hasValue
-      \item inverseOf, SymmetricProperty
-      \item TransitiveProperty
-      \item propertyChainAxiom
-    \end{itemize}
-
-    \vspace{4pt}
-
-    \textbf{CONSTRUCT gestisce:}
-    \begin{itemize}
-      \item HighlyRated, Recent, Standalone
-      \item Platform/mode classification
-      \item Inverse completion
-      \item sharedGenreWith, sharedEngineWith
-    \end{itemize}
-
-    \vspace{4pt}
-
-    \textbf{Perch\'e due livelli}: owlrl non supporta complementOf, datatype restriction e maxCardinality $\to$ colmati con regole SPARQL CONSTRUCT.
-  \end{columns}
-
-\end{frame}
-
-% ============================================================
-%  SLIDE 11 — Bug Critico
-% ============================================================
-\begin{frame}{Bug Critico — owlrl e DatatypeProperty funzionali}
-
-  \begin{alertblock}{Il problema}
-    owlrl inferisce \texttt{owl:sameAs} falsi tra giochi distinti quando \texttt{FunctionalProperty} o \texttt{hasKey} sono applicati a DatatypeProperty: owlrl tratta i valori letterali come individui, causando l'identificazione errata di risorse.
-  \end{alertblock}
-
-  \vspace{8pt}
-
-  \begin{columns}[T]
-    \column{0.48\textwidth}
-    \textbf{Prima del fix}
-    \begin{itemize}
-      \item 3 giochi classificati \texttt{AwardWinningGame}
-      \item 2 sameAs errati tra giochi con stesso Metacritic o data
-      \item Classificazioni falsate
-    \end{itemize}
-
-    \column{0.48\textwidth}
-    \textbf{Dopo il fix}
-    \begin{itemize}
-      \item 1 gioco classificato \texttt{AwardWinningGame} (corretto)
-      \item Nessun sameAs spurio
-      \item Classificazioni accurate
-    \end{itemize}
-  \end{columns}
-
-  \vspace{8pt}
-
-  \begin{block}{Soluzione adottata}
-    \textbf{Sezione ``DL-only axioms'' separata} nell'ontologia.
-    17 assiomi (FunctionalProperty, InverseFunctionalProperty, hasKey su DatatypeProperty) isolati con flag \texttt{--keep-dl-axioms}.
-    Funzioni \texttt{strip\_dl\_only\_axioms()} / \texttt{restore\_dl\_only\_axioms()} in \texttt{enrich\_owl.py}.
-  \end{block}
-
-\end{frame}
-
-% ============================================================
-%  SLIDE 12 — Popolamento
-% ============================================================
-\begin{frame}{Popolamento e Performance}
-
-  \begin{block}{Pipeline di Popolamento}
-    \small
-    \begin{enumerate}
-      \item \textbf{populate\_wikidata.py}: 13 query SPARQL $\times$ (anno $\times$ mese) = 204 iterazioni, $\sim$5 ore
-      \item \textbf{Deduplicazione}: 4.420 entit\`a rimosse (stesso ID Wikidata)
-      \item \textbf{OWL-RL reasoning}: $\sim$1M $\to$ $\sim$1.4M triple
-      \item \textbf{Pruning}: $\sim$253k triple ridondanti rimosse $\to$ $\sim$1.17M
-      \item \textbf{Demo}: finestra 2020--2026, $\sim$745k triple, $\sim$68.7k giochi
-    \end{enumerate}
-  \end{block}
 
   \vspace{6pt}
 
-  \begin{table}
-  \centering\small
-  \begin{tabular}{@{}lccc@{}}
-    \toprule
-    \textbf{Operazione} & \textbf{RDFLib} & \textbf{pyoxigraph} & \textbf{Speedup} \\
-    \midrule
-    Caricamento (745k triple) & $\sim$45s  & $\sim$9s     & $\mathbf{5\times}$ \\
-    Query SPARQL semplice    & $\sim$2.8s & $\sim$0.045s & $\mathbf{62\times}$ \\
-    RAM (demo, 745k triple)  & $\sim$1.5GB & $\sim$250MB & $\mathbf{6\times}$ \\
-    \bottomrule
-  \end{tabular}
-  \end{table}
-
+  \small
+  \begin{itemize}
+    \item \textbf{Scelta deliberata}: SinglePlayerGame e MultiplayerGame \emph{non} sono disgiunte
+      (un gioco pu\`o avere entrambe le modalit\`a); i generi restano una tassonomia aperta
+    \item Con un reasoner DL le disjointness rilevano dati incoerenti provenienti da Wikidata
+  \end{itemize}
 \end{frame}
 
 % ============================================================
-%  SLIDE 13 — Validazione
+%  SLIDE 10 — Allineamento e profilo
 % ============================================================
-\begin{frame}{Validazione dello Schema}
-  \textbf{\texttt{validate\_tbox.py} — 10 controlli automatici}
+\begin{frame}{Ontologia --- Allineamento Esterno e Profilo OWL 2 DL}
+  \begin{columns}[T]
+    \column{0.50\textwidth}
+    \begin{block}{4 \texttt{equivalentClass} con Wikidata}
+      \small
+      \texttt{vg:VideoGame} $\equiv$ \texttt{wd:Q7889} \\
+      \texttt{vg:Developer} $\equiv$ \texttt{wd:Q210167} \\
+      \texttt{vg:GameEngine} $\equiv$ \texttt{wd:Q193564} \\
+      \texttt{vg:Genre} $\equiv$ \texttt{wd:Q65956376}
+    \end{block}
+
+    \begin{block}{3 \texttt{equivalentProperty} con Dublin Core}
+      \small
+      \texttt{vg:releaseDate} $\equiv$ \texttt{dcterms:issued} \\
+      \texttt{vg:gameName} $\equiv$ \texttt{dcterms:title} \\
+      \texttt{vg:gameDescription} $\equiv$ \texttt{dcterms:description}
+    \end{block}
+
+    \column{0.48\textwidth}
+    \begin{block}{Vincoli globali OWL 2 DL sulle propriet\`a}
+      \small
+      \begin{itemize}
+        \item Nessuna propriet\`a non semplice in asimmetria, irriflessivit\`a,
+          funzionalit\`a, cardinalit\`a o \texttt{hasKey}
+        \item Nessuna \texttt{InverseFunctionalProperty} su datatype property
+        \item Verifica: \textbf{0 violazioni}
+      \end{itemize}
+    \end{block}
+    {\footnotesize Nota: \texttt{xsd:date} non \`e nella datatype map di OWL 2 (solo
+    \texttt{xsd:dateTime}); per usare HermiT va migrato a \texttt{xsd:dateTime}.\par}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+%  SLIDE 11 — Reasoning a due livelli
+% ============================================================
+\begin{frame}{Reasoning --- Architettura a Due Livelli}
+  \begin{center}
+  \begin{tikzpicture}[
+    node distance=5mm,
+    box/.style={rectangle, draw, rounded corners, minimum width=24mm, minimum height=11mm,
+                fill=accent!10, font=\footnotesize, align=center},
+    data/.style={rectangle, draw=gray, dashed, rounded corners, minimum width=18mm,
+                 minimum height=9mm, font=\scriptsize, align=center},
+    arr/.style={-{Stealth}, thick, accent}
+  ]
+    \node[data] (in) {Grafo RDF\\$\sim$997 triple};
+    \node[box, right=of in] (l1) {\textbf{Livello 1}\\owlrl (OWL 2 RL)};
+    \node[data, right=of l1] (mid) {$\sim$2.680\\triple};
+    \node[box, right=of mid] (l2) {\textbf{Livello 2}\\21 regole CONSTRUCT};
+    \node[data, right=of l2] (out) {Grafo inferito\\2.715 triple};
+    \draw[arr] (in) -- (l1);
+    \draw[arr] (l1) -- (mid);
+    \draw[arr] (mid) -- (l2);
+    \draw[arr] (l2) -- (out);
+  \end{tikzpicture}
+  \end{center}
+  {\centering\scriptsize (valori sull'insieme di istanze di test: 3 giochi, 2 developer, piattaforme)\par}
+
   \vspace{4pt}
 
   \begin{columns}[T]
-    \column{0.50\textwidth}
-    \begin{enumerate}\small
-      \item Dangling references
-      \item Unsatisfiable disjoint
-      \item Circular subclass
-      \item Inverse consistency
-      \item Property type conflict
-    \end{enumerate}
-    \column{0.50\textwidth}
-    \begin{enumerate}\small
-      \setcounter{enumi}{5}
-      \item Missing domain/range
-      \item Missing labels
-      \item Unused classes
-      \item Restriction completeness
-      \item Datatype restriction syntax
-    \end{enumerate}
+    \column{0.49\textwidth}
+    \textbf{owlrl materializza}
+    \begin{itemize}\small
+      \item \texttt{subClassOf}, \texttt{intersectionOf} + \texttt{someValuesFrom}
+      \item \texttt{inverseOf}, \texttt{Symmetric}, \texttt{Transitive}
+      \item \texttt{propertyChainAxiom}
+    \end{itemize}
+
+    \column{0.49\textwidth}
+    \textbf{Livello 2: regole CONSTRUCT}
+    \begin{itemize}\small
+      \item datatype restriction: \texttt{FILTER(?s >= 85)}
+      \item \texttt{complementOf}: \texttt{FILTER NOT EXISTS} (NAF)
+      \item classificazioni e inverse (ridondanti con RL)
+    \end{itemize}
   \end{columns}
 
-  \vspace{8pt}
-  \begin{center}
-  \large\textbf{Risultato: 0 ERROR, 18 WARNING, \textcolor{green!60!black}{PASS}}
-  \end{center}
+  \vspace{4pt}
+  {\small ${\le}1$ in superclasse \`e ammessa in RL (\texttt{cls-maxc2}) ma non classifica: serve solo come vincolo.}
 \end{frame}
 
 % ============================================================
-%  SLIDE 14 — Frontend e Backend
+%  SLIDE 12 — Esempio d'inferenza
 % ============================================================
-\begin{frame}{Frontend e Backend}
+\begin{frame}[fragile]{Reasoning --- Un Esempio di Inferenza}
   \begin{columns}[T]
-    \column{0.48\textwidth}
-    \textbf{Frontend — Grafo interattivo}
-    \begin{itemize}\small
-      \item React 18 + TypeScript + Vite + Tailwind
-      \item react-force-graph-2d: nodi colorati per tipo
-      \item VideoGame = rettangoli con cover art
-      \item Long-press mobile, context menu, zoom/pan
-      \item Espansione ricorsiva nodi, filtri per tipo
-      \item Deploy: Vercel
-    \end{itemize}
+    \column{0.40\textwidth}
+    \textbf{Asserito}
+\begin{lstlisting}[style=turtle]
+# GameA = Elden Ring
+vg:GameA a vg:VideoGame ;
+  vg:releaseDate
+      "2022-02-25"^^xsd:date ;
+  vg:metacriticScore 96 ;
+  vg:developedBy vg:Dev1 ;
+  vg:hasGameMode vg:SinglePlayer ,
+      vg:OnlineMultiplayer ;
+  vg:availableOn vg:PS5 ,
+      vg:PC_Windows ;
+  vg:wonAward vg:TGAAward2022 .
+vg:GameC vg:developedBy vg:Dev1 .
+vg:PS5 a vg:PlayStationPlatform .
+vg:PC_Windows a vg:WindowsPlatform .
+\end{lstlisting}
 
-    \column{0.52\textwidth}
-    \textbf{Backend — FastAPI async}
-    \begin{itemize}\small
-      \item 6 endpoint REST (/query, /node, /stats, /image-search, /health, /cross-links)
-      \item SPARQL Agent (GPT-4.1-mini): NL $\to$ SPARQL con retry max 3
-      \item Cache 2 livelli: Upstash Redis + in-memory
-      \item Validazione sintattica query prima dell'esecuzione
-      \item Deploy: Render
-    \end{itemize}
+    \column{0.58\textwidth}
+    \textbf{Inferito}
+    \vspace{2pt}
+
+    \scriptsize
+    \setlength{\tabcolsep}{2.5pt}
+    \begin{tabular}{@{}l l@{}}
+      \toprule
+      \textbf{Tipi inferiti di GameA} & \textbf{Motivo} \\
+      \midrule
+      PlayStation-, ConsoleGame   & PS5 : PlayStationPlatform \\
+      PCGame                      & Windows $\sqsubseteq$ PCPlatform \\
+      Single-, MultiplayerGame    & $\exists$\,hasGameMode.$M$ \\
+      AwardWinningGame            & $\exists$\,wonAward.Award \\
+      \textit{HighlyRatedGame}    & \textit{$96 \ge 85$} \\
+      \textit{RecentGame}         & \textit{$2022 \ge 2020$} \\
+      \textit{StandaloneGame}     & \textit{nessun sequelOf} \\
+      \midrule
+      \textbf{Relazioni inferite} & \\
+      Dev1 developerOf GameA      & inverseOf \\
+      GameA sharesDeveloperWith GameC & catena + simm. \\
+      \bottomrule
+    \end{tabular}
+
+    \vspace{3pt}
+    {\scriptsize In tondo: livello 1 (owlrl). In corsivo: livello 2 (CONSTRUCT).\par}
   \end{columns}
 \end{frame}
 
 % ============================================================
-%  SLIDE 15 — Conclusione
+%  SLIDE 13 — Query SPARQL
 % ============================================================
-\begin{frame}{Riepilogo e Sviluppi Futuri}
+\begin{frame}[fragile]{Interrogare l'Ontologia --- SPARQL}
+  \begin{columns}[T]
+    \column{0.50\textwidth}
+    \textbf{Classi inferite al posto dei filtri}
+\begin{lstlisting}[style=sparql]
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+SELECT ?name ?score WHERE {
+  ?g a vg:HighlyRatedGame ,
+       vg:MultiplayerGame ,
+       vg:PlayStationGame ;
+     vg:gameName ?name ;
+     vg:metacriticScore ?score .
+}
+ORDER BY DESC(?score) LIMIT 10
+\end{lstlisting}
+    {\scriptsize Nessun filtro su punteggio, modalit\`a o gerarchia delle piattaforme:
+    li ha gi\`a risolti il reasoner.}
 
-  \begin{block}{Riepilogo del Lavoro Svolto}
-    \begin{itemize}
-      \item Ontologia OWL 2 completa: \textbf{11 $\to$ 78 classi}, \textbf{2 $\to$ 17 definite}, \textbf{0 $\to$ 12 blocchi disjoint}
-      \item Popolamento da Wikidata: $\sim$745k triple demo, $\sim$68.7k giochi
-      \item Reasoning a due livelli con gestione safety owlrl
-      \item Validazione automatica: 0 errori su 10 controlli
-      \item Interfaccia web con grafo interattivo e interrogazione NL
-    \end{itemize}
-  \end{block}
+    \column{0.50\textwidth}
+    \textbf{Relazioni derivate dalle catene}
+\begin{lstlisting}[style=sparql]
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+SELECT DISTINCT ?other WHERE {
+  ?er vg:gameName "Elden Ring" ;
+      vg:sharesDeveloperWith ?g .
+  ?g  vg:gameName ?other .
+  FILTER(?g != ?er)
+}
+\end{lstlisting}
+    {\scriptsize \texttt{sharesDeveloperWith} non \`e mai asserita: deriva da
+    \texttt{developedBy} $\circ$ \texttt{developerOf}. Il \texttt{FILTER} esclude la coppia
+    riflessiva prodotta dalla catena.}
+  \end{columns}
+\end{frame}
 
-  \vspace{8pt}
+% ============================================================
+%  SLIDE 14 — Popolamento e architettura
+% ============================================================
+\begin{frame}{Popolamento e Contesto Applicativo}
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+    \textbf{Popolamento da Wikidata}
+    \begin{enumerate}\small
+      \item 12 tipologie di query SPARQL, ciascuna su 204 finestre anno $\times$ mese
+      \item Deduplicazione: 4.420 entit\`a rimosse
+      \item Chiusura OWL 2 RL: $\sim$1M $\to$ $\sim$1.4M triple
+      \item Pruning: $\sim$1.17M triple (2010--2026)
+      \item Demo 2020--2026: $\sim$745k triple, $\sim$68.7k giochi
+    \end{enumerate}
 
-  \begin{block}{Sviluppi Futuri}
-    \begin{itemize}
-      \item \textbf{Reasoner DL completo}: HermiT per OWL 2 DL piena (complementOf, maxCardinality, datatype restriction)
-      \item \textbf{Validazione SHACL}: shape constraints per coerenza istanze
-      \item \textbf{Regole SWRL}: inferenza avanzata (es.\ gioco di successo da vendite + recensioni)
-      \item \textbf{Estensione pipeline}: copertura pre-2010, aggiornamento periodico automatico
-    \end{itemize}
-  \end{block}
+    \column{0.46\textwidth}
+    \textbf{Architettura applicativa}
+    \vspace{2pt}
+
+    \begin{tikzpicture}[
+      node distance=3mm,
+      box/.style={rectangle, draw, rounded corners, text width=54mm, minimum height=7mm,
+                  fill=accent!10, font=\scriptsize, align=center},
+      arr/.style={-{Stealth[scale=0.7]}, thick, accent}
+    ]
+      \node[box] (fe) {\textbf{Frontend} React + grafo interattivo};
+      \node[box, below=of fe] (be) {\textbf{Backend} FastAPI + agente NL $\to$ SPARQL};
+      \node[box, below=of be] (st) {\textbf{Store} pyoxigraph (Rust) sull'ontologia};
+      \draw[arr] (fe) -- (be);
+      \draw[arr] (be) -- (st);
+    \end{tikzpicture}
+
+    \vspace{4pt}
+    {\scriptsize pyoxigraph vs rdflib: query 5--62$\times$ pi\`u veloci, caricamento
+    $\sim$2\,s invece di $\sim$41\,s, RAM ridotta di circa 4$\times$.}
+  \end{columns}
 \end{frame}
 
 % ============================================================
@@ -648,7 +649,7 @@
 \begin{frame}[standout]
   \Huge Grazie per l'attenzione \\[12pt]
   \normalsize Videogame Semantic Search Project \\[6pt]
-  \footnotesize Ontologia OWL 2 · Reasoning · Grafo interattivo
+  \footnotesize Ontologia OWL 2 DL · Reasoning · Interrogazione SPARQL
 \end{frame}
 
 \end{document}

@@ -1,0 +1,121 @@
+\section{Profilo OWL 2 ed Espressivit\`a DL}
+\label{sec:profilo_dl}
+
+Questa sezione colloca l'ontologia rispetto alla teoria delle Description Logic
+e ai profili di OWL 2, e spiega perch\'e lo schema \`e progettato per OWL 2 DL
+mentre il reasoning pratico usa il profilo OWL 2 RL (Sezione~\ref{sec:reasoning}).
+
+\subsection{Espressivit\`a: $\mathcal{SRIN}^{(\mathcal{D})}$}
+
+OWL 2 DL corrisponde alla logica descrittiva $\mathcal{SROIQ}^{(\mathcal{D})}$.
+I costrutti effettivamente usati nello schema collocano l'ontologia nel frammento
+$\mathcal{SRIN}^{(\mathcal{D})}$. La Tabella~\ref{tab:espressivita} associa a ogni
+lettera il costrutto e il punto dello schema che lo richiede.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Espressivit\`a DL dell'ontologia}
+\label{tab:espressivita}
+\begin{tabularx}{\textwidth}{l >{\raggedright\arraybackslash}p{4.8cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Lettera} & \textbf{Costrutto} & \textbf{Uso nello schema} \\
+\midrule
+$\mathcal{ALC}$ & $\sqcap$, $\exists$, $\lnot$ (e $\forall$, $\sqcup$ per dualit\`a) &
+  classi definite \texttt{VideoGame} $\sqcap$ $\exists p.C$; complemento in \texttt{StandaloneGame} \\
+$\mathcal{S}$   & $\mathcal{ALC}$ + ruoli transitivi & \texttt{sequelOf}, \texttt{partOfFranchise}, \texttt{subsidiaryOf} \\
+$\mathcal{R}$   & inclusioni complesse di ruoli, asimmetria, irriflessivit\`a &
+  3 property chain; 13 propriet\`a asimmetriche e 18 irriflessive \\
+$\mathcal{I}$   & ruoli inversi & 12 \texttt{owl:inverseOf}; 3 propriet\`a simmetriche ($R \equiv R^-$) \\
+$\mathcal{N}$   & restrizioni di cardinalit\`a non qualificate &
+  ${\le}1\,\texttt{developedBy}$, ${\le}1\,\texttt{availableOn}$; \texttt{reviewedGame} funzionale \\
+$(\mathcal{D})$ & datatype, facet, data property funzionali &
+  26 datatype property; \texttt{minInclusive} in \texttt{HighlyRatedGame} e \texttt{RecentGame} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Rispetto a $\mathcal{SROIQ}^{(\mathcal{D})}$ mancano due componenti:
+\begin{itemize}[nosep]
+  \item $\mathcal{O}$ (nominali): lo schema non usa \texttt{owl:oneOf} n\'e
+    \texttt{owl:hasValue}; le categorie (generi, piattaforme, modalit\`a) sono modellate
+    come classi e non come insiemi chiusi di individui;
+  \item $\mathcal{Q}$ (cardinalit\`a qualificate): le due restrizioni di cardinalit\`a
+    non specificano \texttt{owl:onClass}.
+\end{itemize}
+Gli assiomi \texttt{owl:hasKey} non modificano l'espressivit\`a: sono \emph{DL-safe},
+cio\`e si applicano solo agli individui nominati (Sezione~\ref{sec:haskey}).
+
+\subsection{Profili OWL 2: perch\'e serve il reasoning a due livelli}
+
+OWL 2 definisce tre profili trattabili (EL, QL, RL). L'ontologia non appartiene a
+nessuno di essi:
+\begin{itemize}[nosep]
+  \item \textbf{OWL 2 EL} esclude ruoli inversi, complemento e cardinalit\`a;
+  \item \textbf{OWL 2 QL} esclude, tra l'altro, le property chain e la transitivit\`a;
+  \item \textbf{OWL 2 RL} ammette $\exists p.C$ solo come \emph{sottoclasse} e non ammette
+    datatype restriction n\'e complemento in posizione di sottoclasse.
+\end{itemize}
+
+Il caso di OWL 2 RL \`e quello rilevante per il progetto. Un'equivalenza
+$X \equiv \texttt{VideoGame} \sqcap \exists p.C$ contiene due inclusioni:
+\begin{itemize}[nosep]
+  \item $\texttt{VideoGame} \sqcap \exists p.C \sqsubseteq X$ (condizione sufficiente):
+    ammessa in RL, \`e quella che serve per \emph{classificare} (regole
+    \texttt{cls-int1} e \texttt{cls-svf1});
+  \item $X \sqsubseteq \exists p.C$ (condizione necessaria): non ammessa in RL, perch\'e
+    richiederebbe di introdurre individui anonimi.
+\end{itemize}
+Un reasoner RL come \texttt{owlrl} applica quindi correttamente la direzione utile
+alla classificazione e ignora l'altra. Restano invece fuori dal profilo, in entrambe
+le direzioni, le datatype restriction (\texttt{HighlyRatedGame}, \texttt{RecentGame})
+e il complemento usato come condizione sufficiente (\texttt{StandaloneGame}): per
+questi costrutti il progetto usa il secondo livello di reasoning basato su SPARQL
+CONSTRUCT.
+
+Le cardinalit\`a massime ${\le}1$ in posizione di superclasse, al contrario, sono
+ammesse in RL: la regola \texttt{cls-maxc2} identifica (\texttt{owl:sameAs}) i due valori
+di un individuo che ne avesse pi\`u di uno. Non producono per\`o classificazioni,
+perch\'e \texttt{GameWithSingleDeveloper} ed \texttt{ExclusiveRelease} hanno sole
+condizioni necessarie.
+
+\subsection{Vincoli globali di OWL 2 DL}
+
+Per garantire la decidibilit\`a, OWL 2 DL impone vincoli globali sull'uso delle
+propriet\`a. Una propriet\`a \`e \emph{non semplice} se \`e transitiva, se \`e
+super-propriet\`a di una catena, oppure se \`e inversa o super-propriet\`a di una
+propriet\`a non semplice. Nello schema le propriet\`a non semplici sono sette:
+\texttt{sequelOf}, \texttt{hasSequel}, \texttt{partOfFranchise}, \texttt{subsidiaryOf},
+\texttt{sharedFranchiseWith}, \texttt{sharesDeveloperWith}, \texttt{sharesPublisherWith}.
+
+I vincoli rispettati dallo schema sono:
+\begin{enumerate}[nosep]
+  \item \textbf{Propriet\`a semplici}: nessuna propriet\`a non semplice compare in
+    assiomi di asimmetria, irriflessivit\`a, funzionalit\`a (diretta o inversa),
+    cardinalit\`a o \texttt{hasKey}. Per questo le tre transitive e \texttt{hasSequel}
+    non sono dichiarate asimmetriche n\'e irriflessive (Sezione~\ref{sec:tbox_proprieta});
+  \item \textbf{Regolarit\`a delle catene}: le tre catene hanno la forma
+    $R_1 \circ R_2 \sqsubseteq S$ con $S$ distinta da $R_1$ e $R_2$ e senza dipendenze
+    cicliche tra catene, quindi la gerarchia di ruoli \`e regolare;
+  \item \textbf{Nessuna InverseFunctionalProperty su datatype property}: OWL 2 DL non
+    prevede l'inversa di una data property; l'identit\`a \`e espressa con \texttt{hasKey}.
+\end{enumerate}
+
+La verifica \`e stata eseguita con uno script basato su \texttt{rdflib}, che calcola
+l'insieme delle propriet\`a non semplici e ne controlla l'uso negli assiomi elencati:
+il risultato \`e di 0 violazioni.
+
+\subsection{Limiti Noti}
+
+Per l'uso con un reasoner DL completo (HermiT, Pellet) restano due aspetti:
+\begin{itemize}[nosep]
+  \item \textbf{Datatype \texttt{xsd:date}}. \`E il range di \texttt{releaseDate},
+    \texttt{reviewDate} ed \texttt{eventDate} e la base della restrizione di
+    \texttt{RecentGame}, ma non fa parte della \emph{datatype map} di OWL 2, che per gli
+    istanti temporali prevede solo \texttt{xsd:dateTime} e \texttt{xsd:dateTimeStamp}.
+    HermiT lo rifiuta come datatype non supportato; la soluzione \`e migrare schema e
+    dati a \texttt{xsd:dateTime};
+  \item \textbf{Entit\`a esterne non dichiarate}. Le entit\`a usate negli allineamenti
+    (\texttt{wd:*}, \texttt{dcterms:*}) non hanno una dichiarazione di tipo esplicita;
+    strumenti come l'OWL API le dichiarano implicitamente in fase di caricamento.
+\end{itemize}

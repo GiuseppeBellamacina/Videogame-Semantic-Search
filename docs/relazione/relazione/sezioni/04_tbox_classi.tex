@@ -5,7 +5,9 @@
 
 L'ontologia definisce \textbf{12 classi top-level}, ciascuna corrispondente a
 un'entit\`a fondamentale del dominio, pi\`u un ricco albero di sottoclassi che
-raggiunge un totale di \textbf{78 classi} (di cui 61 primitive e 17 definite).
+raggiunge un totale di \textbf{78 classi}: 61 primitive, 15 definite tramite
+\texttt{owl:equivalentClass} e 2 caratterizzate da un vincolo di cardinalit\`a massima
+(condizione solo necessaria).
 
 Le 12 classi top-level sono:
 \begin{enumerate}[nosep]
@@ -25,8 +27,8 @@ Le 12 classi top-level sono:
 
 \subsection{Tabella Completa delle Classi Primitive}
 
-La Tabella~\ref{tab:classi} elenca tutte le 61 classi primitive (escluse le 17
-definite, trattate nella Sezione~\ref{sec:classi_definite}), raggruppate per
+La Tabella~\ref{tab:classi} elenca tutte le 61 classi primitive (escluse le 15
+definite e le 2 con vincolo di cardinalit\`a, trattate nella Sezione~\ref{sec:classi_definite}), raggruppate per
 classe top-level di appartenenza.
 
 \begin{longtable}{llp{5cm}}
@@ -151,6 +153,12 @@ CoopMode            & GameMode        & Cooperativa \\
 MMOMode             & GameMode        & Massively Multiplayer Online \\
 \midrule
 
+% ── Review ──
+\multicolumn{3}{c}{\textbf{Review (classe top-level)}} \\
+\midrule
+Review              & owl:Thing       & Recensione (relazione N-aria gioco--revisore--punteggio) \\
+\midrule
+
 % ── GameEvent ──
 \multicolumn{3}{c}{\textbf{GameEvent (classe top-level)}} \\
 \midrule
@@ -189,7 +197,7 @@ Questa struttura consente interrogazioni a diversi livelli di granularit\`a:
 \textless{}giochi disponibili su console\textgreater{} (\texttt{ConsolePlatform}),
 \textless{}giochi per PlayStation\textgreater{} (\texttt{PlayStationPlatform}),
 oppure \textless{}giochi per PC Windows\textgreater{} (\texttt{WindowsPlatform}).
-La partizione \`e resa semanticamente rigorosa da 5 blocchi \texttt{AllDisjointClasses}
+La partizione \`e resa semanticamente rigorosa da 4 blocchi \texttt{AllDisjointClasses}
 (cfr.~Sezione~\ref{sec:disjointness}). Ogni piattaforma Wikidata viene classificata
 al livello pi\`u specifico tramite le regole di reasoning (cfr.~Sezione~\ref{sec:reasoning}).
 

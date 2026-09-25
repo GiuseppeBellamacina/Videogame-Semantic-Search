@@ -21,7 +21,7 @@ seguente illustra il flusso dati:
 |  +---------------------------------------------+  |
 |  |  SPARQL Agent (GPT-4.1-mini)                |  |
 |  |  NL -> SPARQL -> Validate -> Execute        |  |
-|  |  (retry automatico, max 3 tentativi)        |  |
+|  |  (retry automatico, max 3 retry)            |  |
 |  +---------------------------------------------+  |
 |  +------------------+  +-----------------------+  |
 |  | OntologyService  |  |    GraphBuilder       |  |
@@ -56,7 +56,8 @@ La Tabella~\ref{tab:stack} riassume le tecnologie impiegate per ciascun livello.
 Frontend            & React 18, TypeScript, Vite, Tailwind CSS    \\
 Grafo interattivo   & react-force-graph-2d                        \\
 Backend             & FastAPI (Python 3.12+, async)               \\
-Ontologia           & pyoxigraph (Rust), OWL 2, owlrl (rdflib)    \\
+Ontologia (runtime) & pyoxigraph (Rust), OWL 2                    \\
+Ontologia (offline) & rdflib + owlrl (reasoning, validazione)     \\
 LLM / Agente        & OpenAI GPT-4.1-mini                         \\
 Cache               & Upstash Redis (async) + cache in-memory      \\
 Fonte dati          & Wikidata SPARQL                             \\
@@ -72,7 +73,7 @@ Il flusso di una tipica interrogazione \`e il seguente:
   \item L'utente digita una domanda in linguaggio naturale (NL) nella SearchBar del frontend;
   \item Il frontend invia la domanda al backend via HTTP POST su \texttt{/api/query};
   \item Lo \textbf{SPARQL Agent} (GPT-4.1-mini) genera una query SPARQL a partire dalla domanda NL, utilizzando il contesto dell'ontologia (classi, propriet\`a, esempi);
-  \item Il \textbf{SPARQL Validator} controlla la correttezza sintattica della query generata; se invalida, l'agente ritenta (max 3 tentativi);
+  \item Il \textbf{SPARQL Validator} controlla con rdflib la correttezza sintattica della query generata; se la query \`e invalida, fallisce in esecuzione o restituisce zero risultati, l'agente ritenta (fino a 3 retry, quindi al massimo 4 tentativi);
   \item La query viene eseguita su \textbf{pyoxigraph} contro il file OWL;
   \item Il \textbf{GraphBuilder} trasforma i risultati SPARQL in nodi e archi per il frontend (con metadati di tipo, label, colore);
   \item Il frontend riceve i risultati e li visualizza nella ResultList e nel Knowledge Graph 2D interattivo.
@@ -82,8 +83,8 @@ Il flusso di una tipica interrogazione \`e il seguente:
 
 Per ottimizzare le performance, il sistema adotta una cache a due livelli:
 \begin{itemize}[nosep]
-  \item \textbf{Upstash Redis} (cloud, persistente, TTL 7 giorni): memorizza i risultati delle query SPARQL e le immagini (cover art) recuperate da Wikipedia. I risultati nulli non vengono cachati per consentire retry successivi;
-  \item \textbf{Cache in-memory} (Python dict): mantiene in RAM label e tipi derivati dal grafo RDF per accessi rapidissimi durante la costruzione del grafo.
+  \item \textbf{Upstash Redis} (cloud, persistente): memorizza i risultati delle query (TTL 14 giorni) e le immagini (cover art) recuperate da Wikipedia (TTL 6 mesi). I risultati vuoti non vengono cachati per consentire retry successivi;
+  \item \textbf{Cache in-memory} (Python dict): mantiene in RAM label e tipi dei nodi, popolati al primo accesso, e funge da fallback per risultati e immagini quando Redis non \`e disponibile.
 \end{itemize}
 
 \subsection{Tabella dei Componenti}
@@ -103,11 +104,11 @@ La Tabella~\ref{tab:componenti} elenca i principali componenti software con le r
 \texttt{ontology\_service.py}& Caricamento OWL, esecuzione query via pyoxigraph                 \\
 \texttt{graph\_builder.py}   & Costruzione nodi/archi da risultati RDF per il frontend          \\
 \texttt{image\_cache.py}     & Recupero e cache immagini da Wikipedia API                       \\
-\texttt{SearchBar.tsx}       & Input NL, ricerca con autocomplete                               \\
-\texttt{ResultList.tsx}      & Visualizzazione risultati testuali con espansione dettaglio      \\
+\texttt{SearchBar.tsx}       & Input NL con domande suggerite                                   \\
+\texttt{ResultList.tsx}      & Tabella dei risultati; le URI aprono il dettaglio nodo           \\
 \texttt{KnowledgeGraph.tsx}  & Grafo 2D interattivo con force layout, zoom, filtri              \\
 \texttt{NodeDetail.tsx}      & Pannello laterale con dettaglio nodo (propriet\`a, relazioni)    \\
-\texttt{NodeContextMenu.tsx} & Menu contestuale (click destro): espandi, rimuovi nodo           \\
+\texttt{NodeContextMenu.tsx} & Menu contestuale: relazioni per predicato, espandi, nascondi nodo \\
 \texttt{SparqlViewer.tsx}    & Visualizzazione query SPARQL generata (espandibile)              \\
 \bottomrule
 \end{tabularx}
@@ -126,6 +127,7 @@ La Tabella~\ref{tab:endpoint} riassume gli endpoint REST esposti dal backend.
 \textbf{Metodo} & \textbf{Endpoint}             & \textbf{Descrizione}                     \\
 \midrule
 POST   & \texttt{/api/query}         & Ricerca NL $\rightarrow$ risultati + grafo \\
+POST   & \texttt{/api/cross-links}   & Archi tra nodi gi\`a presenti e nuovi nodi \\
 GET    & \texttt{/api/node/\{uri\}}  & Dettaglio nodo + sottografo               \\
 GET    & \texttt{/api/image-search}  & Cerca cover art da Wikipedia              \\
 GET    & \texttt{/api/stats}         & Statistiche ontologia                     \\
