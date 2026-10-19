@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Videogame Semantic Search</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ef; --ink:#1d2330; --muted:#5d6475; --line:#d9d5cb;
+  --accent:#3b4cca; --accent2:#c2410c; --ok:#15803d; --card:#ffffff; --code:#1f2433; --codeink:#e6e8ef;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#20232b;font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+#deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.slide{position:absolute;width:1280px;height:720px;background:var(--bg);padding:56px 72px 48px;
+  display:none;flex-direction:column;transform-origin:center center}
+.slide.active{display:flex}
+.slide h2{font-size:38px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
+.slide .kicker{font-size:14px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.slide .lead{font-size:20px;color:var(--muted);margin-bottom:26px;max-width:1000px;line-height:1.4}
+.slide .foot{position:absolute;left:72px;right:72px;bottom:20px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.body{flex:1;display:flex;gap:40px;min-height:0}
+.col{flex:1;min-width:0}
+ul.b{list-style:none;font-size:20px;line-height:1.45}
+ul.b li{position:relative;padding-left:22px;margin-bottom:12px}
+ul.b li::before{content:"";position:absolute;left:0;top:11px;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+ul.b.sm{font-size:17px}
+ul.b.sm li{margin-bottom:9px}
+ul.b.sm li::before{top:9px}
+b,strong{font-weight:600}
+code,.m{font-family:"JetBrains Mono",monospace;font-size:.88em;background:#e9e5da;padding:1px 6px;border-radius:4px}
+.dl{font-family:"JetBrains Mono",monospace;font-size:.92em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px}
+.card h3{font-size:17px;font-weight:600;margin-bottom:8px;color:var(--accent)}
+.card p{font-size:16px;line-height:1.45;color:var(--ink)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.stack>*+*{margin-top:16px}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--ink);padding:6px 10px}
+td{padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+pre{background:var(--code);color:var(--codeink);border-radius:12px;padding:18px 20px;font-family:"JetBrains Mono",monospace;font-size:14.5px;line-height:1.5;overflow:hidden;white-space:pre}
+pre .k{color:#8fb3ff} pre .p{color:#f5b971} pre .s{color:#9fe0a8} pre .c{color:#7d8597;font-style:italic}
+.note{font-size:16px;color:var(--muted);border-left:3px solid var(--accent2);padding:6px 0 6px 14px;line-height:1.45}
+.pill{display:inline-block;font-size:13px;font-weight:600;padding:2px 10px;border-radius:999px;background:#e3e6fb;color:var(--accent);margin:0 4px 6px 0}
+.pill.o{background:#fde7dc;color:var(--accent2)}
+.big{font-size:44px;font-weight:700;color:var(--accent);line-height:1}
+.stat{display:flex;flex-direction:column;gap:4px}
+.stat span{font-size:14px;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:10px 11px}
+.tile .L{font-size:34px;font-weight:700;color:var(--accent);line-height:1.1}
+.tile h4{font-size:14px;font-weight:600;margin:4px 0}
+.tile p{font-size:12.5px;line-height:1.35;color:var(--muted)}
+.tile .ex{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink);margin-top:6px;font-variant-ligatures:none}
+.tile.off{opacity:.55;border-top-color:var(--muted)}.tile.off .L{color:var(--muted)}
+svg text{font-family:Inter,sans-serif}
+/* title slide */
+.title{background:var(--ink);color:#f6f4ef;justify-content:center}
+.title h1{font-size:68px;font-weight:700;letter-spacing:-1.5px;line-height:1.05}
+.title .sub{font-size:26px;color:#b7bdd0;margin-top:20px;max-width:900px;line-height:1.35}
+.title .tags{margin-top:44px;font-family:"JetBrains Mono",monospace;font-size:16px;color:#8fb3ff}
+.title .foot{color:#8a90a3}
+code,pre,.dl{font-variant-ligatures:none}
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:none}
+  #deck{position:static;display:block}
+  .slide{display:flex!important;position:relative;transform:none!important;page-break-after:always;break-after:page}
+}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- 1 -->
+<section class="slide title">
+  <div class="kicker" style="color:#8fb3ff">Semantic Web · Progetto</div>
+  <h1>Videogame Semantic Search</h1>
+  <p class="sub">Un'ontologia OWL 2 DL per il dominio dei videogiochi:<br>modellazione, reasoning e interrogazione SPARQL</p>
+  <div class="tags">RDF · RDFS · OWL 2 · Description Logic · SPARQL · Linked Data</div>
+  <div class="foot"><span>Giuseppe Bellamacina</span><span>←  →  per navigare · F schermo intero</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="kicker">Contesto</div>
+  <h2>Semantic Web e ontologie</h2>
+  <p class="lead">Dati con semantica formale, che le macchine possono interpretare e su cui possono ragionare.</p>
+  <div class="body">
+    <div class="col stack">
+      <div class="card"><h3>Ontologia</h3><p>«Una specifica esplicita e formale di una concettualizzazione condivisa» <span style="color:var(--muted)">— Gruber, 1993</span></p></div>
+      <ul class="b sm">
+        <li><b>Classi</b>: categorie di entità (<code>VideoGame</code>, <code>Developer</code>)</li>
+        <li><b>Proprietà</b>: relazioni (<code>developedBy</code>) e attributi (<code>metacriticScore</code>)</li>
+        <li><b>Assiomi</b>: vincoli logici (classi definite, disjointness, catene di proprietà)</li>
+        <li><b>Knowledge graph</b>: l'ontologia popolata con dati reali, interrogabile con SPARQL</li>
+      </ul>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 520 400" width="100%" height="400">
+        <g font-size="16" font-weight="600">
+          <rect x="60" y="10"  width="400" height="58" rx="10" fill="#c2410c"/><text x="260" y="45" fill="#fff" text-anchor="middle">SPARQL — interrogazione</text>
+          <rect x="60" y="80"  width="400" height="58" rx="10" fill="#3b4cca"/><text x="260" y="115" fill="#fff" text-anchor="middle">OWL 2 — assiomi, reasoning</text>
+          <rect x="60" y="150" width="400" height="58" rx="10" fill="#5a68d6"/><text x="260" y="185" fill="#fff" text-anchor="middle">RDFS — classi, gerarchie, domain/range</text>
+          <rect x="60" y="220" width="400" height="58" rx="10" fill="#7b87e0"/><text x="260" y="255" fill="#fff" text-anchor="middle">RDF — triple soggetto · predicato · oggetto</text>
+          <rect x="60" y="290" width="400" height="58" rx="10" fill="#1d2330"/><text x="260" y="325" fill="#fff" text-anchor="middle">URI / IRI — identificatori globali</text>
+        </g>
+        <text x="260" y="385" font-size="14" fill="#5d6475" text-anchor="middle">Lo stack usato nel progetto</text>
+      </svg>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>2</span></div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="kicker">L'ontologia</div>
+  <h2>Dominio, namespace e metriche</h2>
+  <p class="lead">Videogiochi 2010–2026, dati da Wikidata. Schema (TBox) e istanze (ABox) separati.</p>
+  <div class="body">
+    <div class="col stack">
+      <ul class="b sm">
+        <li><b>12 classi top-level</b>: VideoGame, Developer, Publisher, Genre, Platform, Character, Franchise, Award, GameEngine, GameMode, Review, GameEvent</li>
+        <li>Namespace <code>http://www.videogame-ontology.org/ontology#</code>, prefisso <code>vg:</code>: un URI che <i>identifica</i>, non un URL da risolvere</li>
+        <li>Lo <b>schema</b> contiene solo classi, proprietà e assiomi; le <b>istanze</b> (giochi, studi, piattaforme…) vivono in un grafo separato</li>
+        <li>Popolamento da <b>Wikidata</b> via SPARQL: le sue proprietà (P31, P136, P400, P577…) sono mappate su quelle di <code>vg:</code></li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="grid3" style="gap:22px 18px">
+        <div class="stat"><div class="big">78</div><span>classi (61 primitive)</span></div>
+        <div class="stat"><div class="big">15</div><span>classi definite</span></div>
+        <div class="stat"><div class="big">57</div><span>proprietà (31 object, 26 datatype)</span></div>
+        <div class="stat"><div class="big">12</div><span>coppie inverse</span></div>
+        <div class="stat"><div class="big">12</div><span>blocchi AllDisjointClasses</span></div>
+        <div class="stat"><div class="big">3</div><span>property chain</span></div>
+        <div class="stat"><div class="big">3</div><span>proprietà transitive</span></div>
+        <div class="stat"><div class="big">3</div><span>chiavi <code>owl:hasKey</code></span></div>
+        <div class="stat"><div class="big">7</div><span>allineamenti (Wikidata, Dublin Core)</span></div>
+      </div>
+      <p class="note" style="margin-top:22px">Più 2 classi con solo vincolo di cardinalità (condizioni necessarie). Schema: ~934 triple.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>3</span></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="kicker">TBox · Classi</div>
+  <h2>Gerarchia: Platform su due livelli</h2>
+  <p class="lead">La gerarchia <code>rdfs:subClassOf</code> permette domande a granularità diverse: console, PlayStation, Windows.</p>
+  <div class="body">
+    <div class="col" style="flex:1.5">
+      <svg viewBox="0 0 700 380" width="100%" height="380">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#5d6475"/></marker></defs>
+        <g stroke="#5d6475" stroke-width="1.5" fill="none" marker-end="url(#ar)">
+          <path d="M120,100 L330,42"/><path d="M350,100 L350,42"/><path d="M580,100 L370,42"/>
+          <path d="M50,230 L105,138"/><path d="M190,230 L135,138"/>
+          <path d="M280,230 L335,138"/><path d="M420,230 L365,138"/>
+          <path d="M535,230 L570,138"/><path d="M630,230 L590,138"/>
+        </g>
+        <g font-size="14" font-weight="600" text-anchor="middle">
+          <rect x="280" y="10" width="140" height="32" rx="8" fill="#1d2330"/><text x="350" y="31" fill="#fff">Platform</text>
+          <rect x="45"  y="104" width="150" height="34" rx="8" fill="#3b4cca"/><text x="120" y="126" fill="#fff">ConsolePlatform</text>
+          <rect x="285" y="104" width="130" height="34" rx="8" fill="#3b4cca"/><text x="350" y="126" fill="#fff">PCPlatform</text>
+          <rect x="505" y="104" width="150" height="34" rx="8" fill="#3b4cca"/><text x="580" y="126" fill="#fff">MobilePlatform</text>
+        </g>
+        <g font-size="12.5" text-anchor="middle" fill="#1d2330">
+          <rect x="5"   y="234" width="90" height="56" rx="7" fill="#e3e6fb"/><text x="50" y="258">PlayStation</text><text x="50" y="276">Platform</text>
+          <rect x="85"  y="300" width="70" height="56" rx="7" fill="#e3e6fb"/><text x="120" y="324">Xbox</text><text x="120" y="342">Platform</text>
+          <rect x="145" y="234" width="90" height="56" rx="7" fill="#e3e6fb"/><text x="190" y="258">Nintendo</text><text x="190" y="276">Platform</text>
+          <rect x="240" y="234" width="80" height="56" rx="7" fill="#e3e6fb"/><text x="280" y="258">Windows</text><text x="280" y="276">Platform</text>
+          <rect x="315" y="300" width="70" height="56" rx="7" fill="#e3e6fb"/><text x="350" y="324">MacOS</text><text x="350" y="342">Platform</text>
+          <rect x="380" y="234" width="80" height="56" rx="7" fill="#e3e6fb"/><text x="420" y="258">Linux</text><text x="420" y="276">Platform</text>
+          <rect x="495" y="234" width="80" height="56" rx="7" fill="#e3e6fb"/><text x="535" y="258">iOS</text><text x="535" y="276">Platform</text>
+          <rect x="590" y="234" width="80" height="56" rx="7" fill="#e3e6fb"/><text x="630" y="258">Android</text><text x="630" y="276">Platform</text>
+        </g>
+        <g stroke="#5d6475" stroke-width="1.5" fill="none" marker-end="url(#ar)"><path d="M120,300 L120,138"/><path d="M350,300 L350,138"/></g>
+        <text x="350" y="376" font-size="13" fill="#5d6475" text-anchor="middle">ogni livello è chiuso da un blocco AllDisjointClasses</text>
+      </svg>
+    </div>
+    <div class="col stack">
+      <div class="card"><h3>Generi: tassonomia aperta</h3><p>10 sottoclassi di <code>Genre</code>, ma <b>nessun</b> <code>owl:oneOf</code> né copertura con unione. Wikidata può contenere generi non previsti (Battle Royale, Roguelike): restano istanze di <code>Genre</code> senza violare la semantica.</p></div>
+      <div class="card"><h3>Altre partizioni</h3><p>Stato di rilascio (Released, EarlyAccess, Cancelled, Delisted), budget (Indie, AAA), premi (Industry, Editorial, User), personaggi (Player, NonPlayer), motori (Proprietary, OpenSource).</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>4</span></div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="kicker">TBox · Pattern</div>
+  <h2>Pattern di modellazione</h2>
+  <p class="lead">Alcune entità del dominio non sono semplici attributi: vanno reificate come classi.</p>
+  <div class="body" style="flex-direction:column;gap:24px">
+    <div class="grid3">
+      <div class="card"><h3>N-ary Relation · Review</h3><p>Una recensione lega <b>gioco</b>, <b>revisore</b> e <b>punteggio</b>. Una proprietà binaria non basta: il punteggio dipende dalla coppia gioco–revisore.</p>
+        <p style="margin-top:10px" class="dl">reviewedGame · reviewer / reviewerName · reviewScore · reviewDate</p></div>
+      <div class="card"><h3>Lifecycle Event · GameEvent</h3><p>Annunci, rilasci, aggiornamenti e rimozioni dagli store diventano individui con una data (<code>eventDate</code>) e un collegamento al gioco (<code>eventFor</code>).</p>
+        <p style="margin-top:10px"><span class="pill">Announcement</span><span class="pill">Release</span><span class="pill">Update</span><span class="pill">Delisting</span></p></div>
+      <div class="card"><h3>Value Partition · GameMode</h3><p>Modalità come classe top-level con 4 sottoclassi <b>disgiunte</b>. Un gioco multimodale ha più asserzioni <code>hasGameMode</code>, ognuna non ambigua.</p>
+        <p style="margin-top:10px"><span class="pill">SinglePlayer</span><span class="pill">Multiplayer</span><span class="pill">Coop</span><span class="pill">MMO</span></p></div>
+    </div>
+    <svg viewBox="0 0 1136 150" width="100%" height="150">
+      <defs><marker id="ar2" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#3b4cca"/></marker></defs>
+      <g font-size="14" text-anchor="middle">
+        <rect x="470" y="50" width="196" height="48" rx="24" fill="#3b4cca"/><text x="568" y="79" fill="#fff" font-weight="600">:review_42 a vg:Review</text>
+        <rect x="120" y="50" width="200" height="48" rx="8" fill="#fff" stroke="#d9d5cb"/><text x="220" y="79">vg:EldenRing</text>
+        <rect x="820" y="10" width="200" height="40" rx="8" fill="#fff" stroke="#d9d5cb"/><text x="920" y="35">"IGN"</text>
+        <rect x="820" y="100" width="200" height="40" rx="8" fill="#fff" stroke="#d9d5cb"/><text x="920" y="125">10</text>
+      </g>
+      <g stroke="#3b4cca" stroke-width="1.6" fill="none" marker-end="url(#ar2)"><path d="M470,74 L320,74"/><path d="M666,66 L820,30"/><path d="M666,84 L820,120"/></g>
+      <g font-size="13" fill="#3b4cca" font-family="JetBrains Mono,monospace"><text x="395" y="66" text-anchor="middle">reviewedGame</text><text x="742" y="36" text-anchor="middle">reviewerName</text><text x="742" y="124" text-anchor="middle">reviewScore</text></g>
+    </svg>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>5</span></div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="kicker">TBox · Proprietà</div>
+  <h2>Caratteristiche delle proprietà</h2>
+  <p class="lead">Le caratteristiche OWL 2 aggiungono semantica alle relazioni: il reasoner ne deriva triple nuove o rileva errori.</p>
+  <div class="body">
+    <div class="col" style="flex:1.3">
+      <table>
+        <tr><th>Caratteristica</th><th style="text-align:right">N.</th><th>Esempi</th></tr>
+        <tr><td><code>owl:inverseOf</code></td><td class="n">12</td><td>developedBy / developerOf, belongsTo / includes, sequelOf / hasSequel</td></tr>
+        <tr><td>Transitive</td><td class="n">3</td><td>sequelOf, partOfFranchise, subsidiaryOf</td></tr>
+        <tr><td>Symmetric</td><td class="n">3</td><td>sharedFranchiseWith, sharesDeveloperWith, sharesPublisherWith</td></tr>
+        <tr><td>Asymmetric</td><td class="n">13</td><td>developedBy, hasGenre, belongsTo…</td></tr>
+        <tr><td>Irreflexive</td><td class="n">18</td><td>availableOn, wonAward, hasGameMode…</td></tr>
+        <tr><td>Functional</td><td class="n">14</td><td>reviewedGame (object) + 13 datatype: releaseDate, metacriticScore…</td></tr>
+        <tr><td><code>subPropertyOf name</code></td><td class="n">9</td><td>gameName, developerName… → una query su <code>name</code> trova ogni nome</td></tr>
+      </table>
+    </div>
+    <div class="col stack">
+      <div class="card"><h3>Inverse</h3><p>Basta asserire <code>developedBy</code> nei dati: il reasoner deriva <code>developerOf</code> e il grafo si naviga in entrambe le direzioni.</p></div>
+      <div class="card"><h3>Transitività</h3><p>Dark Souls III <span class="dl">sequelOf</span> Dark Souls II <span class="dl">sequelOf</span> Dark Souls ⇒ Dark Souls III <span class="dl">sequelOf</span> Dark Souls.</p></div>
+      <p class="note">Le transitive <b>non</b> sono anche asimmetriche/irriflessive: OWL 2 DL lo vieta sulle proprietà non semplici. L'aciclicità dei sequel resta un vincolo sui dati.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>6</span></div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="kicker">TBox · Proprietà</div>
+  <h2>Property chain</h2>
+  <p class="lead">Relazioni derivate per <b>composizione</b>: un'inclusione di ruoli <span class="dl">R₁ ∘ R₂ ⊑ S</span>, non un'equivalenza.</p>
+  <div class="body">
+    <div class="col" style="flex:1.3">
+      <svg viewBox="0 0 640 300" width="100%" height="300">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#3b4cca"/></marker>
+          <marker id="a2" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#c2410c"/></marker>
+        </defs>
+        <g font-size="15" font-weight="600" text-anchor="middle">
+          <rect x="10" y="190" width="160" height="50" rx="10" fill="#fff" stroke="#1d2330" stroke-width="1.5"/><text x="90" y="220">Elden Ring</text>
+          <rect x="240" y="40" width="160" height="50" rx="10" fill="#1d2330"/><text x="320" y="70" fill="#fff">FromSoftware</text>
+          <rect x="470" y="190" width="160" height="50" rx="10" fill="#fff" stroke="#1d2330" stroke-width="1.5"/><text x="550" y="220">Dark Souls III</text>
+        </g>
+        <g stroke="#3b4cca" stroke-width="2" fill="none" marker-end="url(#a1)"><path d="M110,190 L265,90"/><path d="M375,90 L530,190"/></g>
+        <path d="M170,226 L470,226" stroke="#c2410c" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#a2)"/>
+        <g font-family="JetBrains Mono,monospace" font-size="14">
+          <text x="150" y="130" fill="#3b4cca" text-anchor="middle">developedBy</text>
+          <text x="490" y="130" fill="#3b4cca" text-anchor="middle">developerOf</text>
+          <text x="320" y="262" fill="#c2410c" text-anchor="middle">sharesDeveloperWith (inferita)</text>
+        </g>
+      </svg>
+      <div class="card dl" style="font-size:17px;line-height:1.8">
+        belongsTo ∘ includes ⊑ sharedFranchiseWith<br>
+        developedBy ∘ developerOf ⊑ sharesDeveloperWith<br>
+        publishedBy ∘ publisherOf ⊑ sharesPublisherWith
+      </div>
+    </div>
+    <div class="col">
+      <ul class="b sm">
+        <li><b>Ben tipata</b>: VideoGame → Developer → VideoGame, quindi la super-proprietà ha dominio e range <code>VideoGame</code></li>
+        <li><b>Ordine</b>: la catena è una lista RDF ordinata, <span class="dl">developedBy ∘ developerOf</span> ≠ <span class="dl">developerOf ∘ developedBy</span></li>
+        <li><b>Simmetria</b>: già implicata da catena + inverse; dichiararla documenta l'intento</li>
+        <li><b>Coppia riflessiva</b>: poiché <code>developerOf</code> è l'inversa, la catena deriva anche <span class="dl">(g, g)</span>. Non è un errore (la proprietà non è semplice, non può essere irriflessiva): nelle query si esclude con <code>FILTER(?g != ?altro)</code></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>7</span></div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="kicker">TBox · Identità</div>
+  <h2>Chiavi: <code style="font-size:.8em">owl:hasKey</code></h2>
+  <p class="lead">Due individui nominati della classe con gli stessi valori per tutte le proprietà della chiave sono lo stesso individuo.</p>
+  <div class="body">
+    <div class="col stack">
+      <table style="font-size:18px">
+        <tr><th>Classe</th><th>Chiave</th></tr>
+        <tr><td>VideoGame</td><td><code>hasWikidataId</code></td></tr>
+        <tr><td>VideoGame</td><td><code>hasSteamAppId</code></td></tr>
+        <tr><td>Review</td><td><code>reviewedGame</code>, <code>reviewerName</code></td></tr>
+      </table>
+      <p class="note">La chiave composta di <code>Review</code> dice che un revisore scrive al più una recensione per gioco: due recensioni con stesso gioco e stesso revisore vengono identificate (<code>owl:sameAs</code>).</p>
+    </div>
+    <div class="col stack">
+      <div class="card"><h3>Perché non InverseFunctionalProperty?</h3><p>Avrebbe lo stesso effetto (valore condiviso ⇒ stesso individuo), ma su una <b>datatype</b> property servirebbe l'inversa di una data property, che in OWL 2 DL non esiste.</p></div>
+      <div class="card"><h3>DL-safe</h3><p><code>hasKey</code> vale solo per gli individui <b>nominati</b>, non per quelli anonimi introdotti dal ragionamento: si aggiunge senza compromettere la decidibilità e senza cambiare l'espressività.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>8</span></div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="kicker">TBox · Classi definite</div>
+  <h2>Condizioni necessarie e sufficienti</h2>
+  <p class="lead">Una classe primitiva richiede <code>rdf:type</code> esplicito. Una classe <b>definita</b> (<code>owl:equivalentClass</code>) viene <b>inferita</b> dal reasoner.</p>
+  <div class="body">
+    <div class="col" style="flex:1.25">
+      <table style="font-size:15px">
+        <tr><th>Classe</th><th>Definizione</th></tr>
+        <tr><td>MultiplayerGame · SinglePlayerGame · CoopGame</td><td class="dl">VideoGame ⊓ ∃hasGameMode.<i>XMode</i></td></tr>
+        <tr><td>PCGame · ConsoleGame · MobileGame</td><td class="dl">VideoGame ⊓ ∃availableOn.<i>XPlatform</i></td></tr>
+        <tr><td>PlayStationGame · XboxGame · NintendoGame</td><td class="dl">VideoGame ⊓ ∃availableOn.<i>XPlatform</i></td></tr>
+        <tr><td>SequelGame</td><td class="dl">VideoGame ⊓ ∃sequelOf.VideoGame</td></tr>
+        <tr><td>AwardWinningGame</td><td class="dl">VideoGame ⊓ ∃wonAward.Award</td></tr>
+        <tr><td>FranchiseGame</td><td class="dl">VideoGame ⊓ ∃belongsTo.Franchise</td></tr>
+      </table>
+      <p class="note" style="margin-top:16px">12 classi con <code>intersectionOf</code> + <code>someValuesFrom</code> su object property. Altre 3 usano costrutti più espressivi → slide successiva. Totale: <b>15</b>.</p>
+    </div>
+    <div class="col stack">
+      <div class="card"><h3>Due direzioni in un'equivalenza</h3><p><span class="dl">VideoGame ⊓ ∃p.C ⊑ X</span> — <b>sufficiente</b>: serve a classificare.<br><span class="dl">X ⊑ VideoGame ⊓ ∃p.C</span> — <b>necessaria</b>: ogni X ha almeno un valore.</p></div>
+      <div class="card"><h3>La gerarchia propaga</h3><p>Un gioco <code>availableOn</code> PS5, con PS5 <code>a PlayStationPlatform ⊑ ConsolePlatform</code>, risulta sia <b>PlayStationGame</b> sia <b>ConsoleGame</b>.</p></div>
+      <p class="note">SinglePlayerGame e MultiplayerGame <b>non</b> sono disgiunte: Elden Ring è entrambe.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>9</span></div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <div class="kicker">TBox · Costrutti avanzati</div>
+  <h2>Negazione, datatype e cardinalità</h2>
+  <p class="lead">I costrutti più espressivi dello schema, e cosa implicano sotto l'Open World Assumption.</p>
+  <div class="body" style="flex-direction:column;gap:22px">
+    <table style="font-size:16px">
+      <tr><th>Classe</th><th>Assioma</th><th>Costrutto</th></tr>
+      <tr><td>StandaloneGame</td><td class="dl">≡ VideoGame ⊓ ¬∃sequelOf.VideoGame</td><td><code>owl:complementOf</code></td></tr>
+      <tr><td>HighlyRatedGame</td><td class="dl">≡ VideoGame ⊓ ∃metacriticScore.integer[≥ 85]</td><td>datatype restriction, <code>xsd:minInclusive</code></td></tr>
+      <tr><td>RecentGame</td><td class="dl">≡ VideoGame ⊓ ∃releaseDate.date[≥ 2020-01-01]</td><td>datatype restriction, <code>xsd:minInclusive</code></td></tr>
+      <tr><td>GameWithSingleDeveloper</td><td class="dl">⊑ VideoGame ⊓ ≤1 developedBy</td><td><code>owl:maxCardinality</code>, solo necessaria</td></tr>
+      <tr><td>ExclusiveRelease</td><td class="dl">⊑ VideoGame ⊓ ≤1 availableOn</td><td><code>owl:maxCardinality</code>, solo necessaria</td></tr>
+    </table>
+    <div class="grid3">
+      <div class="card"><h3>Data range</h3><p>Il filler di <code>someValuesFrom</code> non è una classe ma un sottoinsieme di <code>xsd:integer</code> vincolato da un facet.</p></div>
+      <div class="card"><h3>Open World</h3><p>Che un gioco abbia <b>≤1</b> sviluppatore si può dedurre solo con assiomi di chiusura: le due classi di cardinalità sono <b>vincoli di integrità</b>, non classificatori.</p></div>
+      <div class="card"><h3>Fuori da OWL 2 RL</h3><p>Complemento e datatype restriction non rientrano nel profilo RL: richiedono un secondo livello di reasoning.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>10</span></div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <div class="kicker">Serializzazione</div>
+  <h2>Dalla Description Logic alle triple</h2>
+  <p class="lead">Ogni assioma è un insieme di triple RDF: restrizioni e intersezioni sono <b>nodi blank</b> <code>[ ]</code>, le liste sono <b>liste RDF</b> <code>( )</code>.</p>
+  <div class="body">
+    <div class="col">
+<pre><span class="c"># HighlyRatedGame ≡ VideoGame ⊓</span>
+<span class="c">#   ∃metacriticScore.integer[≥85]</span>
+<span class="p">vg:HighlyRatedGame</span> <span class="k">a</span> owl:Class ;
+  owl:equivalentClass [ <span class="k">a</span> owl:Class ;
+    owl:intersectionOf ( <span class="p">vg:VideoGame</span>
+      [ <span class="k">a</span> owl:Restriction ;
+        owl:onProperty <span class="p">vg:metacriticScore</span> ;
+        owl:someValuesFrom [ <span class="k">a</span> rdfs:Datatype ;
+          owl:onDatatype xsd:integer ;
+          owl:withRestrictions (
+            [ xsd:minInclusive <span class="s">85</span> ] ) ] ] ) ] .</pre>
+    </div>
+    <div class="col">
+<pre><span class="c"># developedBy ∘ developerOf ⊑ sharesDeveloperWith</span>
+<span class="p">vg:sharesDeveloperWith</span>
+  <span class="k">a</span> owl:ObjectProperty, owl:SymmetricProperty ;
+  rdfs:domain <span class="p">vg:VideoGame</span> ; rdfs:range <span class="p">vg:VideoGame</span> ;
+  owl:propertyChainAxiom
+    ( <span class="p">vg:developedBy</span> <span class="p">vg:developerOf</span> ) .
+
+<span class="c"># GameWithSingleDeveloper ⊑ VideoGame ⊓ ≤1 developedBy</span>
+<span class="p">vg:GameWithSingleDeveloper</span> <span class="k">a</span> owl:Class ;
+  rdfs:subClassOf <span class="p">vg:VideoGame</span> ,
+    [ <span class="k">a</span> owl:Restriction ;
+      owl:onProperty <span class="p">vg:developedBy</span> ;
+      owl:maxCardinality <span class="s">"1"^^xsd:nonNegativeInteger</span> ] .</pre>
+    </div>
+  </div>
+  <p class="note" style="margin-top:14px">Nessun <code>owl:onClass</code> ⇒ cardinalità <b>non qualificata</b>. <code>subClassOf</code> invece di <code>equivalentClass</code> ⇒ solo condizione necessaria.</p>
+  <div class="foot"><span>Videogame Semantic Search</span><span>11</span></div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <div class="kicker">TBox · Disjointness</div>
+  <h2>Classi disgiunte</h2>
+  <p class="lead"><code>owl:AllDisjointClasses</code>: un solo assioma per <i>n</i> classi, invece di <i>n(n−1)/2</i> <code>owl:disjointWith</code>.</p>
+  <div class="body">
+    <div class="col" style="flex:1.2">
+      <table style="font-size:15px">
+        <tr><th>Blocco</th><th style="text-align:right">Classi</th></tr>
+        <tr><td>Le 12 classi top-level</td><td class="n">12</td></tr>
+        <tr><td>Console / PC / Mobile</td><td class="n">3</td></tr>
+        <tr><td>PlayStation / Xbox / Nintendo · Windows / MacOS / Linux · iOS / Android</td><td class="n">3·3·2</td></tr>
+        <tr><td>Industry / Editorial / User Award</td><td class="n">3</td></tr>
+        <tr><td>Player / NonPlayer Character · Proprietary / OpenSource Engine</td><td class="n">2·2</td></tr>
+        <tr><td>Released / EarlyAccess / Cancelled / Delisted</td><td class="n">4</td></tr>
+        <tr><td>Indie / AAA</td><td class="n">2</td></tr>
+        <tr><td>SinglePlayer / Multiplayer / Coop / MMO Mode</td><td class="n">4</td></tr>
+        <tr><td>Announcement / Release / Update / Delisting Event</td><td class="n">4</td></tr>
+      </table>
+    </div>
+    <div class="col stack">
+      <div class="card"><h3>Rilevare inconsistenze</h3><p>Se un'entità di Wikidata fosse classificata sia <code>ConsolePlatform</code> sia <code>PCPlatform</code>, un reasoner DL (HermiT, Pellet) segnalerebbe l'ontologia come inconsistente: un controllo automatico sulla qualità dei dati.</p></div>
+      <div class="card"><h3>Inferenza per esclusione</h3><p>Un <code>PlayerCharacter</code> è, per assioma, <b>non</b> un <code>NonPlayerCharacter</code>.</p></div>
+      <p class="note">Le <b>modalità</b> sono disgiunte, i <b>giochi</b> per modalità no: un gioco può avere campagna e multiplayer.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>12</span></div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <div class="kicker">Linked Data</div>
+  <h2>Allineamento esterno</h2>
+  <p class="lead">Riusare URI esistenti invece di reinventare vocabolari: il principio dei Linked Data.</p>
+  <div class="body">
+    <div class="col stack">
+      <table style="font-size:17px">
+        <tr><th>vg:</th><th>≡ Wikidata</th><th></th></tr>
+        <tr><td>VideoGame</td><td><code>wd:Q7889</code></td><td>video game</td></tr>
+        <tr><td>Developer</td><td><code>wd:Q210167</code></td><td>video game developer</td></tr>
+        <tr><td>GameEngine</td><td><code>wd:Q193564</code></td><td>game engine</td></tr>
+        <tr><td>Genre</td><td><code>wd:Q65956376</code></td><td>video game genre</td></tr>
+      </table>
+      <table style="font-size:17px">
+        <tr><th>vg:</th><th>≡ Dublin Core</th></tr>
+        <tr><td>releaseDate</td><td><code>dcterms:issued</code></td></tr>
+        <tr><td>gameName</td><td><code>dcterms:title</code></td></tr>
+        <tr><td>gameDescription</td><td><code>dcterms:description</code></td></tr>
+      </table>
+    </div>
+    <div class="col stack">
+      <div class="card"><h3>Interoperabilità</h3><p>Chi consuma Dublin Core legge <code>vg:releaseDate</code> come <code>dcterms:issued</code> senza mapping manuali (<code>owl:equivalentProperty</code>).</p></div>
+      <div class="card"><h3>Linkage</h3><p>Le entità che Wikidata classifica come Q7889 sono riconosciute come <code>vg:VideoGame</code> (<code>owl:equivalentClass</code>).</p></div>
+      <p class="note">Per sfruttare questi assiomi serve un reasoner che importi anche le definizioni esterne; le entità <code>wd:*</code> e <code>dcterms:*</code> non hanno una dichiarazione di tipo propria.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>13</span></div>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <div class="kicker">Teoria</div>
+  <h2>Espressività: come si legge 𝒮ℛℐ𝒩<sup style="font-size:.55em">(𝒟)</sup></h2>
+  <p class="lead">Le <b>Description Logic</b> sono la logica formale su cui si basa OWL. Il nome di una DL è una sigla: <b>ogni lettera aggiunge un tipo di costrutto</b>. Più lettere vuol dire più espressività, ma un ragionamento più costoso.</p>
+  <div class="body" style="flex-direction:column;gap:18px">
+    <div class="tiles">
+      <div class="tile"><div class="L">𝒮</div><h4>Base + transitività</h4><p>La logica base 𝒜ℒ𝒞 (intersezione ⊓, esistenziale ∃, negazione ¬) più le proprietà transitive</p><p class="ex">VideoGame ⊓ ∃wonAward.Award<br>sequelOf transitiva</p></div>
+      <div class="tile"><div class="L">ℛ</div><h4>Catene di ruoli</h4><p>Proprietà composte da altre, più asimmetria e irriflessività</p><p class="ex">developedBy ∘ developerOf<br>⊑ sharesDeveloperWith</p></div>
+      <div class="tile"><div class="L">ℐ</div><h4>Inverse</h4><p>Una proprietà letta al contrario</p><p class="ex">developedBy ↔ developerOf</p></div>
+      <div class="tile"><div class="L">𝒩</div><h4>Cardinalità</h4><p>Quanti valori al massimo/minimo, senza dire di che classe</p><p class="ex">≤1 developedBy</p></div>
+      <div class="tile"><div class="L">(𝒟)</div><h4>Datatype</h4><p>Valori letterali con vincoli (facet)</p><p class="ex">metacriticScore ≥ 85</p></div>
+      <div class="tile off"><div class="L">𝒪</div><h4>Nominali</h4><p>Classi come elenco chiuso di individui</p><p class="ex">non usato: niente owl:oneOf, i generi restano aperti</p></div>
+      <div class="tile off"><div class="L">𝒬</div><h4>Cardinalità qualificate</h4><p>Cardinalità su una classe precisa</p><p class="ex">non usato: niente owl:onClass</p></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>OWL 2 DL = 𝒮ℛ𝒪ℐ𝒬<sup>(𝒟)</sup></h3><p>Il massimo che OWL 2 DL permette restando <b>decidibile</b>.</p></div>
+      <div class="card"><h3>Lo schema = 𝒮ℛℐ𝒩<sup>(𝒟)</sup></h3><p>Tutto OWL 2 DL tranne 𝒪 e 𝒬. Le chiavi <code>hasKey</code> non aggiungono lettere: valgono solo sugli individui nominati.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>14</span></div>
+</section>
+
+<!-- 14b -->
+<section class="slide">
+  <div class="kicker">Teoria</div>
+  <h2>Profili OWL 2 e vincoli DL</h2>
+  <p class="lead">I profili sono sottoinsiemi di OWL 2 con ragionamento polinomiale. Lo schema non rientra in nessuno: è il motivo dei due livelli di reasoning.</p>
+  <div class="body" style="flex-direction:column;gap:20px">
+    <div class="grid3">
+      <div class="card"><h3>OWL 2 EL</h3><p>Esclude inverse, complemento e cardinalità: lo schema usa tutti e tre.</p></div>
+      <div class="card"><h3>OWL 2 QL</h3><p>Esclude property chain e transitività: lo schema ha 3 catene e 3 transitive.</p></div>
+      <div class="card" style="border-color:var(--accent2)"><h3 style="color:var(--accent2)">OWL 2 RL</h3><p>Ammette <span class="dl">∃p.C</span> solo come condizione sufficiente; esclude datatype restriction e complemento (HighlyRated, Recent, Standalone).</p></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Vincoli globali DL (0 violazioni)</h3><p>Una proprietà è <b>non semplice</b> se è transitiva, inversa di una transitiva o super-proprietà di una catena (7 nello schema). Queste non compaiono mai in asimmetria, irriflessività, funzionalità, cardinalità o <code>hasKey</code>: è la condizione per la decidibilità. Catene regolari, nessuna IFP su datatype.</p></div>
+      <div class="stack">
+        <p class="note">Per questo <code>sequelOf</code> è transitiva ma <b>non</b> dichiarata asimmetrica: le due cose insieme non sono ammesse in OWL 2 DL.</p>
+        <p class="note"><code>xsd:date</code> non è nella datatype map di OWL 2: per un reasoner DL come HermiT serve migrare a <code>xsd:dateTime</code>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>15</span></div>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <div class="kicker">Reasoning</div>
+  <h2>Due livelli: OWL 2 RL + regole</h2>
+  <p class="lead">RL è polinomiale: applica la direzione <b>sufficiente</b> delle definizioni. Il resto lo coprono regole SPARQL.</p>
+  <div class="body">
+    <div class="col stack" style="flex:.9">
+      <div class="card"><h3>Livello 1 · OWL 2 RL</h3><p>subClassOf, <span class="dl">VideoGame ⊓ ∃p.C ⊑ X</span> (cls-int1, cls-svf1), inverse, simmetria, transitività, property chain (prp-spo2).</p></div>
+      <div class="card" style="border-color:var(--accent2)"><h3 style="color:var(--accent2)">Livello 2 · SPARQL CONSTRUCT</h3><p>Datatype restriction → <code>FILTER(?s &gt;= 85)</code>.<br>Complemento → <code>FILTER NOT EXISTS</code>: <b>negation-as-failure</b>, una Closed World Assumption locale su <code>sequelOf</code>.</p></div>
+      <p class="note">In OWL (Open World) l'assenza di <code>sequelOf</code> non prova nulla: StandaloneGame si legge «nessun predecessore <i>noto</i>».</p>
+    </div>
+    <div class="col" style="flex:1.1">
+      <table style="font-size:14px">
+        <tr><th colspan="2">Elden Ring — asserito</th></tr>
+        <tr><td colspan="2" class="dl" style="font-size:13.5px;line-height:1.6">a VideoGame · metacriticScore 96 · releaseDate 2022-02-25<br>developedBy Dev1 · availableOn PS5, PC_Windows<br>hasGameMode SinglePlayer, OnlineMultiplayer · wonAward TGA2022</td></tr>
+        <tr><th>Inferito</th><th>Perché</th></tr>
+        <tr><td>PlayStationGame, ConsoleGame</td><td>PS5 : PlayStationPlatform ⊑ ConsolePlatform <span class="pill">L1</span></td></tr>
+        <tr><td>PCGame</td><td>WindowsPlatform ⊑ PCPlatform <span class="pill">L1</span></td></tr>
+        <tr><td>SinglePlayer-, MultiplayerGame</td><td>∃hasGameMode verso le due modalità <span class="pill">L1</span></td></tr>
+        <tr><td>AwardWinningGame</td><td>∃wonAward.Award <span class="pill">L1</span></td></tr>
+        <tr><td>HighlyRatedGame, RecentGame</td><td>96 ≥ 85; 2022 ≥ 2020 <span class="pill o">L2</span></td></tr>
+        <tr><td>StandaloneGame</td><td>nessun sequelOf noto <span class="pill o">L2</span></td></tr>
+        <tr><td>Dev1 developerOf ER</td><td>inversa <span class="pill">L1</span></td></tr>
+        <tr><td>ER sharesDeveloperWith DS III</td><td>catena + simmetria <span class="pill">L1</span></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>16</span></div>
+</section>
+
+<!-- 16 -->
+<section class="slide">
+  <div class="kicker">Interrogazione</div>
+  <h2>SPARQL sulla conoscenza inferita</h2>
+  <p class="lead">Dopo il reasoning, la conoscenza implicita è fatta di triple esplicite: le query la usano senza ricostruire la logica dello schema.</p>
+  <div class="body">
+    <div class="col stack">
+<pre><span class="k">SELECT</span> ?name ?score <span class="k">WHERE</span> {
+  ?g <span class="k">a</span> <span class="p">vg:HighlyRatedGame</span> ,
+       <span class="p">vg:MultiplayerGame</span> ,
+       <span class="p">vg:PlayStationGame</span> ;
+     <span class="p">vg:gameName</span> ?name ;
+     <span class="p">vg:metacriticScore</span> ?score .
+} <span class="k">ORDER BY DESC</span>(?score) <span class="k">LIMIT</span> 10</pre>
+      <p class="note">Tre classi inferite al posto di un filtro sul punteggio e due join (modalità, tipo di piattaforma).</p>
+    </div>
+    <div class="col stack">
+<pre><span class="k">SELECT DISTINCT</span> ?other <span class="k">WHERE</span> {
+  ?er <span class="p">vg:gameName</span> <span class="s">"Elden Ring"</span> ;
+      <span class="p">vg:sharesDeveloperWith</span> ?g .
+  ?g  <span class="p">vg:gameName</span> ?other .
+  <span class="k">FILTER</span>(?g != ?er)   <span class="c"># coppia riflessiva</span>
+}</pre>
+      <p class="note">Relazione mai asserita: deriva dalla property chain.</p>
+<pre><span class="c"># transitività materializzata dal reasoner</span>
+?g <span class="p">vg:sequelOf</span> ?pred .
+<span class="c"># oppure, senza reasoning, property path</span>
+?g <span class="p">vg:sequelOf</span>+ ?pred .</pre>
+      <p class="note">Assioma: la transitività vale per ogni applicazione. Property path: è una scelta di chi scrive la query.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>17</span></div>
+</section>
+
+<!-- 17 -->
+<section class="slide">
+  <div class="kicker">Conclusioni</div>
+  <h2>Risultati</h2>
+  <p class="lead">Un'ontologia OWL 2 DL espressiva, conforme ai vincoli globali, allineata a Wikidata e Dublin Core e interrogabile sulla conoscenza inferita.</p>
+  <div class="body">
+    <div class="col">
+      <ul class="b">
+        <li>Da 11 a <b>78 classi</b>: 15 definite e 2 con vincolo di cardinalità</li>
+        <li>Inverse, transitive, catene e chiavi: navigazione bidirezionale e relazioni derivate</li>
+        <li>12 blocchi di disjointness per far emergere i dati incoerenti</li>
+      </ul>
+    </div>
+    <div class="col">
+      <ul class="b">
+        <li>Frammento <span class="dl">𝒮ℛℐ𝒩<sup>(𝒟)</sup></span> di OWL 2 DL, 0 violazioni dei vincoli globali</li>
+        <li>Reasoning RL + regole per ciò che il profilo non copre, con la distinzione OWA / CWA esplicita</li>
+        <li>Query SPARQL più semplici grazie a classi e relazioni inferite</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Videogame Semantic Search</span><span>18</span></div>
+</section>
+
+<!-- 18 -->
+<section class="slide title" style="align-items:center;text-align:center">
+  <h1>Grazie per l'attenzione</h1>
+  <p class="sub" style="margin-left:auto;margin-right:auto">Videogame Semantic Search</p>
+  <div class="tags">Ontologia OWL 2 DL · Reasoning · SPARQL</div>
+</section>
+
+</div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let i=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1))||1)-1));
+function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);slides.forEach(el=>el.style.transform=`scale(${s})`)}
+function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((el,k)=>el.classList.toggle('active',k===i));history.replaceState(null,'','#'+(i+1))}
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1)}
+  else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(i-1)}
+  else if(e.key==='Home')show(0); else if(e.key==='End')show(slides.length-1);
+  else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+});
+addEventListener('click',e=>show(e.clientX>innerWidth/3?i+1:i-1));
+addEventListener('resize',fit);
+fit();show(i);
+</script>
+</body>
+</html>
