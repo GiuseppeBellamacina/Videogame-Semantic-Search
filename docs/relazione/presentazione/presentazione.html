@@ -64,7 +64,7 @@ pre .k{color:#8fb3ff} pre .p{color:#f5b971} pre .s{color:#9fe0a8} pre .c{color:#
 .big{font-family:var(--head);font-size:46px;font-weight:800;line-height:1;background:linear-gradient(135deg,var(--accent),#7b87e0);-webkit-background-clip:text;background-clip:text;color:transparent}
 .stat{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;box-shadow:var(--shadow)}
 .stat span{font-size:13.5px;color:var(--muted);line-height:1.3}
-.tiles{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
 .tile{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:12px;padding:10px 11px;box-shadow:var(--shadow)}
 .tile .L{font-family:var(--head);font-size:34px;font-weight:800;color:var(--accent);line-height:1.1}
 .tile h4{font-size:14px;font-weight:650;margin:4px 0}
@@ -156,14 +156,14 @@ code,pre,.dl{font-variant-ligatures:none}
       <ul class="b sm">
         <li><b>12 classi top-level</b>: VideoGame, Developer, Publisher, Genre, Platform, Character, Franchise, Award, GameEngine, GameMode, Review, GameEvent</li>
         <li>Namespace <code>http://www.videogame-ontology.org/ontology#</code>, prefisso <code>vg:</code>: un URI che <i>identifica</i>, non un URL da risolvere</li>
-        <li>Lo <b>schema</b> contiene solo classi, proprietà e assiomi; le <b>istanze</b> (giochi, studi, piattaforme…) vivono in un grafo separato</li>
+        <li>Lo <b>schema</b> contiene classi, proprietà e assiomi (più l'individuo <code>pub/Nintendo</code>, richiesto da un nominale); le <b>istanze</b> (giochi, studi, piattaforme…) vivono in un grafo separato</li>
         <li>Popolamento da <b>Wikidata</b> via SPARQL: le sue proprietà (P31, P136, P400, P577…) sono mappate su quelle di <code>vg:</code></li>
       </ul>
     </div>
     <div class="col">
       <div class="grid3" style="gap:22px 18px">
-        <div class="stat"><div class="big">78</div><span>classi (61 primitive)</span></div>
-        <div class="stat"><div class="big">15</div><span>classi definite</span></div>
+        <div class="stat"><div class="big">80</div><span>classi (61 primitive)</span></div>
+        <div class="stat"><div class="big">17</div><span>classi definite</span></div>
         <div class="stat"><div class="big">57</div><span>proprietà (31 object, 26 datatype)</span></div>
         <div class="stat"><div class="big">12</div><span>coppie inverse</span></div>
         <div class="stat"><div class="big">12</div><span>blocchi AllDisjointClasses</span></div>
@@ -494,21 +494,20 @@ code,pre,.dl{font-variant-ligatures:none}
 <!-- 14 -->
 <section class="slide">
   <div class="kicker">Teoria</div>
-  <h2>Espressività: come si legge 𝒮ℛℐ𝒩<sup style="font-size:.55em">(𝒟)</sup></h2>
+  <h2>Espressività: come si legge 𝒮ℛ𝒪ℐ𝒬<sup style="font-size:.55em">(𝒟)</sup></h2>
   <p class="lead">Le <b>Description Logic</b> sono la logica formale su cui si basa OWL. Il nome di una DL è una sigla: <b>ogni lettera aggiunge un tipo di costrutto</b>. Più lettere vuol dire più espressività, ma un ragionamento più costoso.</p>
   <div class="body" style="flex-direction:column;gap:18px">
     <div class="tiles">
       <div class="tile"><div class="L">𝒮</div><h4>Base + transitività</h4><p>La logica base 𝒜ℒ𝒞 (intersezione ⊓, esistenziale ∃, negazione ¬) più le proprietà transitive</p><p class="ex">VideoGame ⊓ ∃wonAward.Award<br>sequelOf transitiva</p></div>
       <div class="tile"><div class="L">ℛ</div><h4>Catene di ruoli</h4><p>Proprietà composte da altre, più asimmetria e irriflessività</p><p class="ex">developedBy ∘ developerOf<br>⊑ sharesDeveloperWith</p></div>
+      <div class="tile"><div class="L">𝒪</div><h4>Nominali</h4><p>Un individuo nominato dentro una definizione</p><p class="ex">publishedBy value Nintendo</p></div>
       <div class="tile"><div class="L">ℐ</div><h4>Inverse</h4><p>Una proprietà letta al contrario</p><p class="ex">developedBy ↔ developerOf</p></div>
-      <div class="tile"><div class="L">𝒩</div><h4>Cardinalità</h4><p>Quanti valori al massimo/minimo, senza dire di che classe</p><p class="ex">≤1 developedBy</p></div>
+      <div class="tile"><div class="L">𝒬</div><h4>Cardinalità qualificate</h4><p>Quanti valori, di una classe precisa (include la 𝒩, senza classe)</p><p class="ex">≥2 availableOn.ConsolePlatform<br>≤1 developedBy</p></div>
       <div class="tile"><div class="L">(𝒟)</div><h4>Datatype</h4><p>Valori letterali con vincoli (facet)</p><p class="ex">metacriticScore ≥ 85</p></div>
-      <div class="tile off"><div class="L">𝒪</div><h4>Nominali</h4><p>Classi come elenco chiuso di individui</p><p class="ex">non usato: niente owl:oneOf, i generi restano aperti</p></div>
-      <div class="tile off"><div class="L">𝒬</div><h4>Cardinalità qualificate</h4><p>Cardinalità su una classe precisa</p><p class="ex">non usato: niente owl:onClass</p></div>
     </div>
     <div class="grid2">
       <div class="card"><h3>OWL 2 DL = 𝒮ℛ𝒪ℐ𝒬<sup>(𝒟)</sup></h3><p>Il massimo che OWL 2 DL permette restando <b>decidibile</b>.</p></div>
-      <div class="card"><h3>Lo schema = 𝒮ℛℐ𝒩<sup>(𝒟)</sup></h3><p>Tutto OWL 2 DL tranne 𝒪 e 𝒬. Le chiavi <code>hasKey</code> non aggiungono lettere: valgono solo sugli individui nominati.</p></div>
+      <div class="card"><h3>Lo schema = 𝒮ℛ𝒪ℐ𝒬<sup>(𝒟)</sup></h3><p>Tutte le componenti di OWL 2 DL. Le chiavi <code>hasKey</code> non aggiungono lettere: valgono solo sugli individui nominati.</p></div>
     </div>
   </div>
   <div class="foot"><span>Videogame Semantic Search</span><span>14</span></div>
@@ -608,14 +607,14 @@ code,pre,.dl{font-variant-ligatures:none}
   <div class="body">
     <div class="col">
       <ul class="b">
-        <li>Da 11 a <b>78 classi</b>: 15 definite e 2 con vincolo di cardinalità</li>
+        <li>Da 11 a <b>80 classi</b>: 17 definite e 2 con vincolo di cardinalità</li>
         <li>Inverse, transitive, catene e chiavi: navigazione bidirezionale e relazioni derivate</li>
         <li>12 blocchi di disjointness per far emergere i dati incoerenti</li>
       </ul>
     </div>
     <div class="col">
       <ul class="b">
-        <li>Frammento <span class="dl">𝒮ℛℐ𝒩<sup>(𝒟)</sup></span> di OWL 2 DL, 0 violazioni dei vincoli globali</li>
+        <li>Tutto <span class="dl">𝒮ℛ𝒪ℐ𝒬<sup>(𝒟)</sup></span> (OWL 2 DL), 0 violazioni dei vincoli globali</li>
         <li>Reasoning RL + regole per ciò che il profilo non copre, con la distinzione OWA / CWA esplicita</li>
         <li>Query SPARQL più semplici grazie a classi e relazioni inferite</li>
       </ul>

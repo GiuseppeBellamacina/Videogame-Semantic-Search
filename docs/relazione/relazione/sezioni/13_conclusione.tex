@@ -8,11 +8,11 @@ di ricerca semantica che integra:
 
 \begin{itemize}[nosep]
   \item \textbf{Un'ontologia OWL 2 DL} espressiva e ben strutturata, evoluta da 11 a
-    78 classi (61 primitive, 15 definite e 2 con vincolo di cardinalit\`a), con
+    80 classi (61 primitive, 17 definite e 2 con vincolo di cardinalit\`a), con
     31 object property, 26 datatype property, 12 coppie inverse, 3 property chain,
     3 propriet\`a transitive, 12 blocchi di disjointness e allineamento esterno a
     Wikidata e Dublin Core, nel rispetto dei vincoli globali di OWL 2 DL sulle propriet\`a;
-  \item \textbf{Un sistema di reasoning a due livelli} (OWL 2 RL + 21 regole
+  \item \textbf{Un sistema di reasoning a due livelli} (OWL 2 RL + 22 regole
     CONSTRUCT) funzionante end-to-end, con 0 falsi \texttt{owl:sameAs} dopo
     il fix del bug critico degli assiomi DL-only;
   \item \textbf{Un knowledge graph popolato} da Wikidata (2010--2026) tramite una pipeline unica,
@@ -36,7 +36,7 @@ Il sistema offre numerose direzioni di sviluppo futuro:
   \item \textbf{Validazione delle istanze con SHACL} --- definire SHACL shapes per
     validare la conformit\`a delle istanze (es. ogni VideoGame deve avere
     almeno un \texttt{gameName}, le date devono essere nel formato corretto);
-  \item \textbf{SWRL rules reali} --- sostituire le 21 regole CONSTRUCT con
+  \item \textbf{SWRL rules reali} --- sostituire le 22 regole CONSTRUCT con
     autentiche SWRL rules, sfruttando un reasoner che le supporti nativamente;
   \item \textbf{Estensione della pipeline Wikidata} --- aggiungere query per
     recuperare \texttt{hasSteamAppId}, \texttt{budgetTier}, \texttt{playerCount}

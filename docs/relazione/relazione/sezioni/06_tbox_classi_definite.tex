@@ -9,9 +9,9 @@ l'asserzione esplicita \texttt{rdf:type}, le classi definite specificano
 condizioni necessarie e sufficienti (\texttt{owl:equivalentClass}) che permettono
 a un reasoner di \textbf{inferire automaticamente} l'appartenenza di un'istanza.
 
-L'ontologia definisce \textbf{15 classi definite}, raggruppabili in cinque categorie
+L'ontologia definisce \textbf{17 classi definite}, raggruppabili in cinque categorie
 logiche, a cui si affiancano \textbf{2 classi con vincolo di cardinalit\`a} dotate di
-sole condizioni necessarie. La Tabella~\ref{tab:definite} le elenca tutte e 17 con la
+sole condizioni necessarie. La Tabella~\ref{tab:definite} le elenca tutte e 19 con la
 sintassi DL e il tipo di condizione.
 
 \begingroup\footnotesize\setlength{\tabcolsep}{2.5pt}
@@ -49,6 +49,9 @@ RecentGame          & S/N & VideoGame $\sqcap$ $\exists$releaseDate.date[$\geq$ 
 % Preesistenti
 AwardWinningGame    & S/N & VideoGame $\sqcap$ $\exists$wonAward.Award                 & intersectionOf, someValuesFrom \\
 FranchiseGame       & S/N & VideoGame $\sqcap$ $\exists$belongsTo.Franchise            & intersectionOf, someValuesFrom \\
+% Cardinalit\`a qualificata e nominale
+MultiConsoleGame    & S/N & VideoGame $\sqcap$ $\geq2$\,availableOn.ConsolePlatform & intersectionOf, minQualifiedCardinality, onClass \\
+NintendoPublishedGame & S/N & VideoGame $\sqcap$ $\exists$publishedBy.\{Nintendo\}   & intersectionOf, hasValue (nominale) \\
 % Cardinality (solo necessarie)
 GameWithSingleDeveloper & N & $\sqsubseteq$ VideoGame $\sqcap$ $\leq1$developedBy     & subClassOf, maxCardinality \\
 ExclusiveRelease    & N & $\sqsubseteq$ VideoGame $\sqcap$ $\leq1$availableOn        & subClassOf, maxCardinality \\
@@ -164,9 +167,11 @@ nell'Appendice~\ref{sec:app_turtle}.
 \textbf{Costrutto}          & \textbf{Classi}                                   & \textbf{Rif. Lezione} \\
 \midrule
 \texttt{owl:someValuesFrom}& 14: 12 su object property, 2 su datatype property & Lez.~15 (esistenziale) \\
-\texttt{owl:intersectionOf}& Tutte le 15 classi definite                      & Lez.~16 (intersezione) \\
+\texttt{owl:intersectionOf}& Tutte le 17 classi definite                      & Lez.~16 (intersezione) \\
 \texttt{owl:complementOf}  & StandaloneGame                                   & Lez.~16 (complemento) \\
 \texttt{owl:maxCardinality}& GameWithSingleDeveloper, ExclusiveRelease        & Lez.~17--18 \\
+\texttt{owl:minQualifiedCardinality} & MultiConsoleGame                          & Lez.~17--18 \\
+\texttt{owl:hasValue}       & NintendoPublishedGame (individuo \texttt{pub/Nintendo}) & nominale \\
 \texttt{owl:withRestrictions} & HighlyRatedGame, RecentGame                   & Lez.~17--18 (datatype) \\
 \texttt{xsd:minInclusive}  & HighlyRatedGame, RecentGame                      & Lez.~17--18 \\
 \bottomrule

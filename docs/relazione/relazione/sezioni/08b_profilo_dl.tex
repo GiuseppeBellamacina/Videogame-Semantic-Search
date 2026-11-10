@@ -5,11 +5,11 @@ Questa sezione colloca l'ontologia rispetto alla teoria delle Description Logic
 e ai profili di OWL 2, e spiega perch\'e lo schema \`e progettato per OWL 2 DL
 mentre il reasoning pratico usa il profilo OWL 2 RL (Sezione~\ref{sec:reasoning}).
 
-\subsection{Espressivit\`a: $\mathcal{SRIN}^{(\mathcal{D})}$}
+\subsection{Espressivit\`a: $\mathcal{SROIQ}^{(\mathcal{D})}$}
 
 OWL 2 DL corrisponde alla logica descrittiva $\mathcal{SROIQ}^{(\mathcal{D})}$.
-I costrutti effettivamente usati nello schema collocano l'ontologia nel frammento
-$\mathcal{SRIN}^{(\mathcal{D})}$. La Tabella~\ref{tab:espressivita} associa a ogni
+I costrutti effettivamente usati nello schema coprono tutte le componenti di
+$\mathcal{SROIQ}^{(\mathcal{D})}$. La Tabella~\ref{tab:espressivita} associa a ogni
 lettera il costrutto e il punto dello schema che lo richiede.
 
 \begin{table}[h]
@@ -27,22 +27,20 @@ $\mathcal{S}$   & $\mathcal{ALC}$ + ruoli transitivi & \texttt{sequelOf}, \textt
 $\mathcal{R}$   & inclusioni complesse di ruoli, asimmetria, irriflessivit\`a &
   3 property chain; 13 propriet\`a asimmetriche e 18 irriflessive \\
 $\mathcal{I}$   & ruoli inversi & 12 \texttt{owl:inverseOf}; 3 propriet\`a simmetriche ($R \equiv R^-$) \\
-$\mathcal{N}$   & restrizioni di cardinalit\`a non qualificate &
-  ${\le}1\,\texttt{developedBy}$, ${\le}1\,\texttt{availableOn}$; \texttt{reviewedGame} funzionale \\
+$\mathcal{O}$   & nominali (\texttt{owl:hasValue} su un individuo) &
+  \texttt{NintendoPublishedGame} $\equiv$ VideoGame $\sqcap$ $\exists$publishedBy.\{Nintendo\} \\
+$\mathcal{Q}$   & cardinalit\`a qualificate (include $\mathcal{N}$) &
+  $\geq2\,\texttt{availableOn.ConsolePlatform}$ in \texttt{MultiConsoleGame}; ${\le}1\,\texttt{developedBy}$, ${\le}1\,\texttt{availableOn}$; \texttt{reviewedGame} funzionale \\
 $(\mathcal{D})$ & datatype, facet, data property funzionali &
   26 datatype property; \texttt{minInclusive} in \texttt{HighlyRatedGame} e \texttt{RecentGame} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Rispetto a $\mathcal{SROIQ}^{(\mathcal{D})}$ mancano due componenti:
-\begin{itemize}[nosep]
-  \item $\mathcal{O}$ (nominali): lo schema non usa \texttt{owl:oneOf} n\'e
-    \texttt{owl:hasValue}; le categorie (generi, piattaforme, modalit\`a) sono modellate
-    come classi e non come insiemi chiusi di individui;
-  \item $\mathcal{Q}$ (cardinalit\`a qualificate): le due restrizioni di cardinalit\`a
-    non specificano \texttt{owl:onClass}.
-\end{itemize}
+L'ontologia usa quindi tutte le componenti di $\mathcal{SROIQ}^{(\mathcal{D})}$, cio\`e
+l'intero OWL 2 DL. I nominali compaiono in un solo punto: l'individuo \texttt{pub/Nintendo}
+\`e dichiarato nello schema (con lo stesso URI che il popolamento genera per il publisher),
+perch\'e un nominale richiede un individuo nominato.
 Gli assiomi \texttt{owl:hasKey} non modificano l'espressivit\`a: sono \emph{DL-safe},
 cio\`e si applicano solo agli individui nominati (Sezione~\ref{sec:haskey}).
 
@@ -54,7 +52,7 @@ nessuno di essi:
   \item \textbf{OWL 2 EL} esclude ruoli inversi, complemento e cardinalit\`a;
   \item \textbf{OWL 2 QL} esclude, tra l'altro, le property chain e la transitivit\`a;
   \item \textbf{OWL 2 RL} ammette $\exists p.C$ solo come \emph{sottoclasse} e non ammette
-    datatype restriction n\'e complemento in posizione di sottoclasse.
+    datatype restriction, complemento n\'e cardinalit\`a minime in posizione di sottoclasse.
 \end{itemize}
 
 Il caso di OWL 2 RL \`e quello rilevante per il progetto. Un'equivalenza

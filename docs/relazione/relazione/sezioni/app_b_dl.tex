@@ -1,7 +1,7 @@
 \section{Sintassi DL delle Classi Definite}
 \label{sec:app_dl}
 
-Di seguito si riporta la sintassi DL compatta delle 15 classi definite
+Di seguito si riporta la sintassi DL compatta delle 17 classi definite
 dell'ontologia e delle 2 classi con vincolo di cardinalit\`a. La notazione $\sqcap$ indica intersezione ($\mathtt{owl:intersectionOf}$),
 $\exists$ indica restrizione esistenziale ($\mathtt{owl:someValuesFrom}$),
 $\neg$ indica complemento ($\mathtt{owl:complementOf}$), $\leq$ indica
@@ -26,7 +26,9 @@ cardinalit\`a massima ($\mathtt{owl:maxCardinality}$).
 \text{HighlyRatedGame}      &\equiv \text{VideoGame} \sqcap \exists\text{metacriticScore.integer}[\geq 85] \\
 \text{RecentGame}           &\equiv \text{VideoGame} \sqcap \exists\text{releaseDate.date}[\geq \text{2020-01-01}] \\
 \text{AwardWinningGame}     &\equiv \text{VideoGame} \sqcap \exists\text{wonAward.Award} \\
-\text{FranchiseGame}        &\equiv \text{VideoGame} \sqcap \exists\text{belongsTo.Franchise} \\[4pt]
+\text{FranchiseGame}        &\equiv \text{VideoGame} \sqcap \exists\text{belongsTo.Franchise} \\
+\text{MultiConsoleGame}     &\equiv \text{VideoGame} \sqcap \mathopen{\geq}2\,\text{availableOn.ConsolePlatform} \\
+\text{NintendoPublishedGame} &\equiv \text{VideoGame} \sqcap \exists\text{publishedBy.}\{\text{Nintendo}\} \\[4pt]
 \text{GameWithSingleDeveloper} &\sqsubseteq \text{VideoGame} \sqcap \mathopen{\leq}1\,\text{developedBy} \\
 \text{ExclusiveRelease}     &\sqsubseteq \text{VideoGame} \sqcap \mathopen{\leq}1\,\text{availableOn}
 \end{align*}
@@ -34,6 +36,6 @@ cardinalit\`a massima ($\mathtt{owl:maxCardinality}$).
 
 \vspace{8pt}
 \noindent
-Le prime 15 classi utilizzano $\equiv$ (condizioni necessarie e sufficienti,
+Le prime 17 classi utilizzano $\equiv$ (condizioni necessarie e sufficienti,
 \texttt{owl:equivalentClass}); le ultime due usano $\sqsubseteq$ (sole condizioni
 necessarie, \texttt{rdfs:subClassOf}).

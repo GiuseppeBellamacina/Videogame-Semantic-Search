@@ -75,6 +75,8 @@ RESTRICTION_VALUE_PREDICATES = {
     OWL.minCardinality,
     OWL.maxCardinality,
     OWL.qualifiedCardinality,
+    OWL.minQualifiedCardinality,
+    OWL.maxQualifiedCardinality,
 }
 
 # Symmetric chain-inferred properties — exclude from missing domain/range

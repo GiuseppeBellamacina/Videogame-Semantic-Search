@@ -63,7 +63,7 @@ La tabella elenca le classi base e le principali classi definite. La TBox includ
 | **GameMode**         | Primitiva  | Una modalità di gioco (individui tipizzati con una sottoclasse `*Mode`) | `vg:GameMode`         |
 | **AwardWinningGame** | Definita ¹ | Sottoclasse di VideoGame: giochi che hanno vinto almeno un premio       | `vg:AwardWinningGame` |
 | **FranchiseGame**    | Definita ¹ | Sottoclasse di VideoGame: giochi che appartengono a una serie/franchise | `vg:FranchiseGame`    |
-| Altre classi definite ¹ | Definita | `SinglePlayerGame`, `MultiplayerGame`, `CoopGame`, `PCGame`, `ConsoleGame`, `MobileGame`, `NintendoGame`, `PlayStationGame`, `XboxGame`, `HighlyRatedGame`, `RecentGame`, `SequelGame`, `StandaloneGame` | — |
+| Altre classi definite ¹ | Definita | `MultiConsoleGame` (almeno due console, cardinalità qualificata), `NintendoPublishedGame` (nominale su `pub/Nintendo`), `SinglePlayerGame`, `MultiplayerGame`, `CoopGame`, `PCGame`, `ConsoleGame`, `MobileGame`, `NintendoGame`, `PlayStationGame`, `XboxGame`, `HighlyRatedGame`, `RecentGame`, `SequelGame`, `StandaloneGame` | — |
 
 > ¹ **Classi definite** — istanze materializzate dalla pipeline di reasoning (`build_ontology.py`: OWL-RL, `enrich_owl._materialise`, regole CONSTRUCT).
 > Nel grafo di visualizzazione appaiono come normali `VideoGame` (stessa icona e colore); sottoclassi di piattaforme, generi e modalità sono ricondotte al tipo base tramite `rdfs:subClassOf`.
@@ -243,6 +243,7 @@ L'ontologia include classi **definite** (OWL 2 `equivalentClass` + `intersection
 - `AwardWinningGame`, `FranchiseGame`, `SinglePlayerGame`, `MultiplayerGame`, `CoopGame`
 - `PCGame`, `ConsoleGame`, `MobileGame`, `NintendoGame`, `PlayStationGame`, `XboxGame`
 - `HighlyRatedGame` (`metacriticScore ≥ 85`), `RecentGame` (`releaseDate ≥ 2020-01-01`), `SequelGame`, `StandaloneGame`
+- `MultiConsoleGame` (`≥2 availableOn.ConsolePlatform`, cardinalità qualificata, classificata da una regola CONSTRUCT) e `NintendoPublishedGame` (`publishedBy value pub/Nintendo`, nominale: l'individuo è dichiarato nello schema con lo stesso URI generato dal fetch)
 
 e proprietà con **catene di composizione** (`owl:propertyChainAxiom`) simmetriche: `sharedFranchiseWith` (`belongsTo ∘ includes`), `sharesDeveloperWith`, `sharesPublisherWith`; più `sharedGenreWith` e `sharedEngineWith` materializzate dalle regole CONSTRUCT.
 
