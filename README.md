@@ -178,9 +178,12 @@ Scrivi domande come:
 
 ### Processo di popolamento
 
-1. **Query per anno × mese** (2010–2026) verso Wikidata per 11 tipologie di dati (core, generi, piattaforme, personaggi, franchise, game mode, Metacritic, engine, paese, premi, sequel)
-2. **Deduplicazione** degli URI con stesso nome (normalizzato): 4.420 entità duplicate rimosse
-3. **OWL-RL reasoning** con `owlrl`: materializzazione di proprietà inverse e catene subPropertyOf → da ~1M a ~1.4M triple
+Tutto è eseguito da `ontology/build_ontology.py` (vedi Setup):
+
+1. **Fetch** per anno × mese (2010–2026) da Wikidata, 11 tipologie di dati (core, generi, piattaforme, personaggi, franchise, game mode, Metacritic, engine, paese, premi, sequel), con checkpoint su disco
+2. **Tipizzazione V2 e deduplicazione**: sottoclassi di piattaforme/generi/modalità in base all'etichetta, modalità di gioco come individui `GameMode`, unione delle entità con lo stesso nome normalizzato
+3. **Reasoning**: assiomi V2, rimozione degli assiomi solo-DL, chiusura OWL-RL (`owlrl`), materializzazione mirata e regole SPARQL CONSTRUCT
+4. **Validazione e output**: controlli sulla TBox, conteggio delle istanze per classe (stampato a fine esecuzione), scrittura di `.owl` e `.ttl`
 
 ### Fonti dati
 

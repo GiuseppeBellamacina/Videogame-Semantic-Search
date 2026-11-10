@@ -59,18 +59,19 @@ Il Knowledge Graph offre un'esperienza di navigazione ricca:
 \subsection{Backend: FastAPI Async}
 
 Il backend \`e sviluppato con \textbf{FastAPI} \citep{fastapi} in modalit\`a
-asincrona, esponendo 6 endpoint REST (cfr.~Tabella~\ref{tab:endpoint},
+asincrona, esponendo 9 endpoint REST (cfr.~Tabella~\ref{tab:endpoint},
 Sezione~\ref{sec:architettura}). I componenti chiave sono:
 
 \subsubsection{SPARQL Agent}
 
 Il cuore intelligente del sistema \`e lo \texttt{sparql\_agent.py}, che utilizza
-\textbf{GPT-4.1-mini} di OpenAI \citep{openai} per tradurre domande in linguaggio
-naturale (italiano o inglese) in query SPARQL. Il prompt include:
+un LLM, scelto con la variabile \texttt{LLM\_MODEL} nel formato \texttt{provider:modello}
+(es.\ \texttt{openai:gpt-4.1-mini} \citep{openai} oppure \texttt{anthropic:haiku5.5}), per tradurre
+domande in linguaggio naturale (italiano o inglese) in query SPARQL. Il client \`e in \texttt{llm.py}. Il prompt include:
 \begin{itemize}[nosep]
   \item Un riassunto dello schema dell'ontologia (classi principali, classi
     definite, propriet\`a e catene rilevanti per l'interrogazione);
-  \item I prefissi SPARQL (\texttt{vg:}, \texttt{rdf:}, \texttt{xsd:});
+  \item I prefissi SPARQL (\texttt{vg:}, \texttt{rdf:}, \texttt{rdfs:}, \texttt{xsd:});
   \item Esempi di domande e query corrispondenti (\textit{few-shot prompting});
   \item Istruzioni per generare solo la query SPARQL, senza testo aggiuntivo.
 \end{itemize}
@@ -101,11 +102,24 @@ copertina sono richieste separatamente tramite \texttt{/api/image-search}.
 Il builder arricchisce i nodi con metadati derivati dal grafo RDF (tipo tramite
 \texttt{rdf:type}, label tramite le propriet\`a \texttt{*Name}).
 
-\subsubsection{Cache a Due Livelli}
+\subsubsection{Autosuggest e query builder}
+
+Oltre alla ricerca via LLM, il backend offre due funzioni che non richiedono il modello:
+\begin{itemize}[nosep]
+  \item \textbf{Autosuggest} (\texttt{/api/suggest}): un indice in memoria dei nomi di giochi, studi,
+    publisher, generi, piattaforme, serie, personaggi, premi, engine e modalit\`a, costruito al caricamento
+    dell'ontologia; propone completamenti sulle ultime parole digitate;
+  \item \textbf{Query builder assistito} (\texttt{/api/builder/*}): l'utente compone filtri su
+    sviluppatore, genere, piattaforma, modalit\`a, anno, punteggio Metacritic o categorie inferite
+    (es.\ \texttt{HighlyRatedGame}); il backend genera il SPARQL da una whitelist di campi, con
+    escaping dei valori, e lo esegue restituendo risultati e grafo come per la ricerca libera.
+\end{itemize}
+
+\subsubsection{Cache}
 
 \begin{itemize}[nosep]
   \item \textbf{SQLite}: cache locale persistente per i
-    risultati delle query (TTL 14 giorni) e gli URL delle immagini (TTL 6 mesi);
+    risultati delle query (TTL 14 giorni, invalidati quando l'ontologia viene rigenerata) e gli URL delle immagini (TTL 6 mesi);
   \item \textbf{Cache in-memory}: dizionari Python per label e tipi, popolati
     al primo accesso e consultabili in O(1); fungono anche da fallback per
     risultati e immagini quando il database SQLite non \`e disponibile.

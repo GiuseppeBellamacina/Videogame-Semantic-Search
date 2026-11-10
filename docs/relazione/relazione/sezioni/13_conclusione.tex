@@ -15,13 +15,11 @@ di ricerca semantica che integra:
   \item \textbf{Un sistema di reasoning a due livelli} (OWL 2 RL + 21 regole
     CONSTRUCT) funzionante end-to-end, con 0 falsi \texttt{owl:sameAs} dopo
     il fix del bug critico degli assiomi DL-only;
-  \item \textbf{Un knowledge graph popolato} da Wikidata con oltre 1.1 milioni
-    di triple (dataset completo 2010--2026) e $\sim$745k triple nel sottoinsieme
-    demo (2020--2026, $\sim$68.700 giochi);
-  \item \textbf{Un'interfaccia web interattiva} con ricerca in linguaggio naturale,
-    agente SPARQL intelligente, grafo 2D navigabile e filtri per tipo;
-  \item \textbf{Performance ottimizzate} grazie al passaggio da rdflib a pyoxigraph
-    (query 5--62$\times$ pi\`u veloci, caricamento in $<$3s, RAM $\sim$250 MB sulla demo).
+  \item \textbf{Un knowledge graph popolato} da Wikidata (2010--2026) tramite una pipeline unica,
+    riprendibile e con checkpoint, che integra fetch, reasoning e validazione;
+  \item \textbf{Un'interfaccia web interattiva} con ricerca in linguaggio naturale (OpenAI o
+    Anthropic), query builder assistito, autosuggest, grafo 2D navigabile e filtri per tipo;
+  \item \textbf{Un backend locale} basato su pyoxigraph, con cache SQLite persistente.
 \end{itemize}
 
 \subsection{Possibili Estensioni Future}

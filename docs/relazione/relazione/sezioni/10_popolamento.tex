@@ -1,15 +1,15 @@
 \section{Popolamento dell'Ontologia}
 \label{sec:popolamento}
 
-\subsection{Pipeline \texttt{populate\_wikidata.py}}
+\subsection{Pipeline \texttt{build\_ontology.py}}
 
-La popolazione delle istanze avviene tramite lo script \texttt{populate\_wikidata.py},
-che interroga l'endpoint SPARQL pubblico di Wikidata. La pipeline \`e strutturata
-in quattro fasi principali.
+La costruzione dell'ontologia popolata \`e un unico script che esegue fetch,
+reasoning, validazione e scrittura (cfr.\ Sezione~\ref{sec:ontologia_overview}). La parte di
+fetch (\texttt{populate\_wikidata.py}) interroga l'endpoint SPARQL pubblico di Wikidata.
 
 \subsubsection{Query SPARQL verso Wikidata}
 
-Vengono eseguite 12 tipologie di query SPARQL, ciascuna mirata a estrarre una
+Vengono eseguite 11 tipologie di query SPARQL, ciascuna mirata a estrarre una
 specifica categoria di dati:
 
 \begin{enumerate}[nosep]
@@ -18,88 +18,48 @@ specifica categoria di dati:
   \item \textbf{Piattaforme} --- piattaforme via P400;
   \item \textbf{Personaggi} --- personaggi presenti nel gioco via P674;
   \item \textbf{Franchise} --- serie di appartenenza via P179;
-  \item \textbf{Game Mode} --- modalit\`a di gioco via P404;
+  \item \textbf{Game Mode} --- modalit\`a di gioco via P404, create come individui \texttt{GameMode};
   \item \textbf{Metacritic} --- punteggio via P444 con qualificatore P447 (Metacritic);
   \item \textbf{Engine} --- motore grafico via P408;
   \item \textbf{Paese} --- paese d'origine via P495;
-  \item \textbf{Sito web} --- sito ufficiale via P856;
   \item \textbf{Premi} --- premi ricevuti via P166;
-  \item \textbf{Descrizioni} --- descrizioni testuali via \texttt{schema:description}.
+  \item \textbf{Sequel} --- gioco precedente della serie via P155, mappato su \texttt{sequelOf}.
 \end{enumerate}
+
+Descrizioni testuali e siti web non vengono scaricati, perch\'e non sono usati dal sistema.
 
 Per evitare i timeout dell'endpoint pubblico Wikidata (limite $\sim$60 secondi),
 le query sono partizionate per \textbf{anno $\times$ mese}: 17 anni (2010--2026)
-$\times$ 12 mesi = \textbf{204 iterazioni} per ciascuna tipologia di query. Tra ogni richiesta viene inserito un
-\texttt{polite delay} di 1 secondo. Il tempo totale di esecuzione \`e di circa
-\textbf{5 ore}.
+$\times$ 12 mesi = \textbf{204 iterazioni} per ciascuna tipologia di query. Ogni risposta
+viene salvata su disco (checkpoint per query e mese): un'esecuzione interrotta riparte dai mesi
+mancanti. In caso di rate limit (HTTP 429) lo script attende il tempo richiesto da Wikidata e riprova;
+una query che fallisce definitivamente interrompe l'esecuzione invece di salvare un mese vuoto.
+Il tempo totale dipende dai limiti di Wikidata (alcune ore).
+
+\subsubsection{Tipizzazione con le sottoclassi V2}
+
+Per rendere inferibili classi come \texttt{PlayStationGame} o \texttt{SinglePlayerGame}, le
+istanze di piattaforme, generi e modalit\`a ricevono la sottoclasse V2 corrispondente in base
+all'etichetta (es.\ ``PlayStation 5'' $\rightarrow$ \texttt{PlayStationPlatform}, ``role-playing''
+$\rightarrow$ \texttt{RPGGenre}, ``single-player video game'' $\rightarrow$ \texttt{SinglePlayerMode}).
 
 \subsubsection{Deduplicazione}
 
 Wikidata pu\`o restituire la stessa entit\`a con URI diversi ma stesso nome
-normalizzato (es. entit\`a omonime restituite da query diverse). La pipeline
-applica una normalizzazione del nome (trim degli spazi e lowercase) e rimuove
-\textbf{4.420 entit\`a duplicate}, preservando per ciascun nome l'URI con il
-maggior numero di triple associate.
+normalizzato. La pipeline applica una normalizzazione del nome (trim degli spazi e lowercase)
+e, per ciascun nome, mantiene l'URI con il maggior numero di triple associate.
 
-\subsubsection{OWL-RL Reasoning}
+\subsubsection{Reasoning}
 
-Dopo la popolazione iniziale ($\sim$1.019.589 triple grezze), viene applicata
-la chiusura deduttiva OWL 2 RL tramite \texttt{owlrl}:
-\begin{itemize}[nosep]
-  \item Materializzazione propriet\`a inverse: per ogni \texttt{developedBy},
-    viene aggiunto \texttt{developerOf};
-  \item Catene subPropertyOf: \texttt{gameName} $\rightarrow$ \texttt{name};
-  \item Inferenze da classi definite (\texttt{AwardWinningGame}, \texttt{FranchiseGame}).
-\end{itemize}
+Dopo il fetch e gli assiomi V2 viene eseguito il reasoning (cfr.\ Sezione~\ref{sec:reasoning}):
+chiusura OWL 2 RL tramite \texttt{owlrl}, materializzazione mirata delle classi definite e
+regole SPARQL CONSTRUCT. I conteggi finali (triple e istanze per classe) sono stampati dallo script
+a fine esecuzione e disponibili a runtime su \texttt{/api/stats}.
 
-Il grafo cresce da $\sim$1M a $\sim$1.4M triple.
+\subsection{Store RDF a runtime: pyoxigraph}
 
-\subsubsection{Pruning}
-
-Lo step finale di pruning (\texttt{prune\_owl.py}) rimuove triple non necessarie
-a runtime:
-\begin{itemize}[nosep]
-  \item \texttt{owl:sameAs} riflessivi (la chiusura OWL 2 RL genera un sameAs
-    di ogni entit\`a con s\'e stessa);
-  \item \texttt{gameDescription}: testi lunghi non usati nelle query;
-  \item \texttt{officialWebsite}: URI non necessari per la ricerca semantica.
-\end{itemize}
-
-Complessivamente vengono rimosse $\sim$253k triple.
-Risultato finale: $\sim$1.173.959 triple (dataset completo 2010--2026).
-
-\subsection{Demo Subset 2020--2026}
-
-Per rispettare i limiti di RAM del deploy su Render (512 MB), la demo live utilizza
-un sottoinsieme dell'ontologia limitato ai giochi dal 2020 in poi (\texttt{prune\_years.py}):
-\begin{itemize}[nosep]
-  \item $\sim$745.400 triple;
-  \item $\sim$68.700 giochi;
-  \item RAM a runtime: $\sim$250 MB (pyoxigraph).
-\end{itemize}
-
-\subsection{Performance: rdflib vs pyoxigraph}
-
-La Tabella~\ref{tab:perf} confronta le performance dei due store RDF utilizzati
-nel progetto. Il passaggio da \texttt{rdflib} (Python puro) a \texttt{pyoxigraph}
-(binding Rust) ha prodotto un miglioramento drastico.
-
-\begin{table}[h]
-\centering
-\caption{Confronto performance rdflib vs pyoxigraph}
-\label{tab:perf}
-\begin{tabular}{lccc}
-\toprule
-\textbf{Metrica}              & \textbf{rdflib} & \textbf{pyoxigraph (completo)} & \textbf{pyoxigraph (demo)} \\
-\midrule
-RAM a runtime                 & $\sim$1.550 MB  & $\sim$389 MB                   & $\sim$250 MB               \\
-Tempo di caricamento          & $\sim$41s       & $\sim$2.2s                     & $\sim$1.5s                 \\
-Query SPARQL tipica           & 1--23s          & 0.08--0.37s                    & 0.05--0.25s                \\
-Speedup query                 & ---             & 5--62$\times$                  & ---                        \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\texttt{pyoxigraph} \citep{pyoxigraph} garantisce un caricamento quasi istantaneo
-($<$3 secondi contro 41 secondi) e query 5--62 volte pi\`u veloci, rendendo
-l'esperienza utente fluida anche su hardware limitato.
+Il backend carica l'ontologia completa in \texttt{pyoxigraph} \citep{pyoxigraph}, binding Python
+di Oxigraph scritto in Rust, anzich\'e in \texttt{rdflib} (Python puro). A parit\`a di dati, lo store
+in Rust ha un footprint di memoria molto minore, un caricamento molto pi\`u rapido e query SPARQL
+nettamente pi\`u veloci; \texttt{rdflib} resta usato solo dalla pipeline offline
+(\texttt{build\_ontology.py}) e dal validatore sintattico delle query.

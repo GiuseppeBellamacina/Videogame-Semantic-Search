@@ -7,76 +7,47 @@ L'ontologia **Video Game Ontology** (`vg:`) modella il dominio dei videogiochi p
 - **Namespace:** `http://www.videogame-ontology.org/ontology#`
 - **Prefisso:** `vg:`
 - **File schema:** `ontology/videogames.owl`
-- **File popolato:** `ontology/videogames_wikidata.owl` (generato dallo script di popolazione)
-- **File pruned:** `ontology/videogames_pruned.owl` (generato da `prune_owl.py`, usato a runtime)
+- **File popolato:** `ontology/videogames_full.owl` (generato da `ontology/build_ontology.py`, caricato a runtime) e la copia leggibile `ontology/videogames_full.ttl`
 
 ---
 
 ## Architettura dei file OWL
 
-| File                         | Ruolo                                                                                                           | Cancellabile?                                        |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `videogames.owl`             | **Schema/TBox** — definisce classi, proprietà e assiomi. NON contiene dati.                                     | ❌ Mai cancellare                                    |
-| `videogames_wikidata.owl`    | **Dati/ABox completo** — schema + tutte le istanze (~1.427.081 triple)                                          | ✅ Si cancella e rigenera con `populate_wikidata.py` |
-| `videogames_pruned.owl`      | **Dati/ABox ottimizzato** — come sopra ma senza triple inutili (~1.173.959 triple, 2010–2026)                   | ✅ Si cancella e rigenera con `prune_owl.py`         |
-| `videogames_pruned_2020.owl` | **Dati/ABox demo** — solo giochi dal 2020 in poi (~745.400 triple, ~68.700 giochi). Usato nella demo su Render. | ✅ Si cancella e rigenera con `prune_years.py`       |
+| File                    | Ruolo                                                                                    | Cancellabile?                                |
+| ----------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `videogames.owl`        | **Schema/TBox** — definisce classi, proprietà e assiomi. NON contiene dati.              | ❌ Mai cancellare                            |
+| `videogames_full.owl`   | **TBox + ABox + inferenze** (RDF/XML) — l'unico file caricato dal backend a runtime.     | ✅ Si rigenera con `build_ontology.py`       |
+| `videogames_full.ttl`   | Stessa ontologia in Turtle, per la lettura umana.                                        | ✅ Si rigenera con `build_ontology.py`       |
+| `.cache/`               | Checkpoint del fetch (un JSON per query × mese) e stati intermedi della pipeline.        | ✅ Cancellare per rifare il fetch da zero    |
 
 ### Workflow di rigenerazione
 
+Si esegue una sola volta, dalla root del repository:
+
 ```bash
-cd ontology/
-
-# 1. Popolazione (~5 ore, richiede connessione internet)
-uv run python populate_wikidata.py
-
-# 2. Pruning predicati (pochi minuti, rimuove triple inutili a runtime)
-uv run python prune_owl.py
-
-# 3. Pruning temporale (per la demo, rimuove giochi 2010-2019)
-uv run python prune_years.py
-
-# 4. Arricchimento ontologia con classi/proprietà inferite (opzionale)
-#    Aggiunge assiomi OWL avanzati. Con --reason materializza le triple inferite.
-uv run python enrich_owl.py videogames_pruned_2020.owl
-uv run python enrich_owl.py --reason videogames_pruned_2020.owl
+uv run python ontology/build_ontology.py                      # tutto: fetch → reasoning → validazione → .owl + .ttl
+uv run python ontology/build_ontology.py --years 2020-2026    # sottoinsieme di anni
+uv run python ontology/build_ontology.py --from-stage reason  # riusa il fetch già fatto
 ```
 
-Lo script di popolazione:
+Lo script mostra barre `tqdm` per ogni fase. Fasi:
 
-1. Carica `videogames.owl` (schema)
-2. Interroga Wikidata con 13 query SPARQL (per anno × mese)
-3. Applica OWL-RL reasoning con `owlrl` (materializza proprietà inverse)
-4. Produce `videogames_wikidata.owl` (schema + dati, ~1.4M triple)
+1. **fetch** (`populate_wikidata.py`): carica `videogames.owl` e interroga Wikidata per anno × mese con 11 tipologie di query. Ogni risposta è salvata in `ontology/.cache/wikidata/<tipo>/<anno>-<mese>.json`: se il processo si interrompe, rilanciandolo riparte dai mesi mancanti. Su HTTP 429 (rate limit) attende il tempo indicato da Wikidata e riprova; una query che fallisce definitivamente solleva un errore invece di salvare un mese vuoto. Assegna alle istanze le sottoclassi V2 (es. `PlayStationPlatform`, `RPGGenre`, `SinglePlayerMode`) in base all'etichetta, crea le modalità di gioco come individui `vg:GameMode` e deduplica le entità omonime.
+2. **reason**: applica gli assiomi V2 (`enrich_owl.py`), rimuove gli assiomi solo-DL (`strip_dl_only_axioms`), esegue la chiusura **OWL-RL** (`owlrl`), poi la materializzazione mirata di `enrich_owl.py` (classi definite, catene `shared*With`) e infine le regole **SPARQL CONSTRUCT** di `ontology/scripts/construct_reasoner.py` (inverse, classi di piattaforma/modalità, `shared*With`). Gli assiomi solo-DL non vengono ripristinati nell'output salvo `--keep-dl-axioms`.
+3. **validate**: controlli sulla TBox (`validate_tbox.py`) e conteggio delle istanze delle classi inferite; le classi vuote sono segnalate con `EMPTY`.
+4. **write**: scrive `videogames_full.owl` e `videogames_full.ttl`.
 
-Lo script di pruning predicati (`prune_owl.py`):
+Opzioni: `--cache-dir`, `--output`, `--max-group N` (limite ai gruppi per i link pairwise `shared*With`, evita esplosioni combinatorie), `--keep-dl-axioms`.
 
-1. Carica `videogames_wikidata.owl`
-2. Rimuove triple `owl:sameAs` (tutte riflessive, A sameAs A)
-3. Rimuove `vg:gameDescription` (non usato a runtime)
-4. Rimuove `vg:officialWebsite` (non usato a runtime)
-5. Produce `videogames_pruned.owl` (~1.17M triple, -253k)
+`enrich_owl.py` può essere usato anche da solo su un file OWL (idempotente, `--reason` per materializzare, salta `videogames.owl`).
 
-Lo script di pruning temporale (`prune_years.py`):
-
-1. Carica `videogames_pruned.owl`
-2. Rimuove tutti i giochi con `releaseDate` dal 2010 al 2019
-3. Rimuove le entità orfane (developer, publisher, ecc. non più collegati a nessun gioco)
-4. Produce `videogames_pruned_2020.owl` (~745k triple, -429k)
-
-Lo script di arricchimento (`enrich_owl.py`):
-
-1. Aggiunge classi definite e proprietà con catene inferenziali a qualsiasi file OWL
-2. È idempotente (non duplica assiomi già presenti)
-3. Con `--reason` materializza le triple inferite tramite un materializzatore mirato
-   (molto più veloce dell'OWL-RL completo: applica solo le 5 regole necessarie)
-4. Salta automaticamente `videogames.owl` (TBox pura, nessun dato)
-5. `--max-group N` limita i gruppi per evitare esplosione combinatoria
-
-Il backend (demo) carica a runtime `videogames_pruned_2020.owl` (con fallback a `videogames_wikidata.owl` → `videogames.owl`).
+Non vengono più scaricati `gameDescription` e `officialWebsite` (non usati dal sistema) e non esiste più nessuno step di pruning: il backend carica l'ontologia completa.
 
 ---
 
-## Classi (11)
+## Classi
+
+La tabella elenca le classi base e le principali classi definite. La TBox include anche le sottoclassi V2 (famiglie di piattaforme come `PlayStationPlatform`/`WindowsPlatform`, generi come `RPGGenre`, modalità `SinglePlayerMode`/`MultiplayerMode`/`CoopMode`/`MMOMode`, `Review`, `GameEvent`, ecc.), descritte nella relazione (`docs/relazione`).
 
 | Classe               | Tipo       | Descrizione                                                             | URI                   |
 | -------------------- | ---------- | ----------------------------------------------------------------------- | --------------------- |
@@ -89,11 +60,13 @@ Il backend (demo) carica a runtime `videogames_pruned_2020.owl` (con fallback a 
 | **Franchise**        | Primitiva  | Una serie/franchise (Zelda, Dark Souls, ecc.)                           | `vg:Franchise`        |
 | **Award**            | Primitiva  | Un premio assegnato a un gioco                                          | `vg:Award`            |
 | **GameEngine**       | Primitiva  | Un motore di gioco (Unreal Engine, Unity, ecc.)                         | `vg:GameEngine`       |
+| **GameMode**         | Primitiva  | Una modalità di gioco (individui tipizzati con una sottoclasse `*Mode`) | `vg:GameMode`         |
 | **AwardWinningGame** | Definita ¹ | Sottoclasse di VideoGame: giochi che hanno vinto almeno un premio       | `vg:AwardWinningGame` |
 | **FranchiseGame**    | Definita ¹ | Sottoclasse di VideoGame: giochi che appartengono a una serie/franchise | `vg:FranchiseGame`    |
+| Altre classi definite ¹ | Definita | `SinglePlayerGame`, `MultiplayerGame`, `CoopGame`, `PCGame`, `ConsoleGame`, `MobileGame`, `NintendoGame`, `PlayStationGame`, `XboxGame`, `HighlyRatedGame`, `RecentGame`, `SequelGame`, `StandaloneGame` | — |
 
-> ¹ **Classi definite** — istanze materializzate tramite OWL-RL reasoning (`enrich_owl.py --reason`).
-> Nel grafo di visualizzazione appaiono come normali `VideoGame` (stessa icona e colore).
+> ¹ **Classi definite** — istanze materializzate dalla pipeline di reasoning (`build_ontology.py`: OWL-RL, `enrich_owl._materialise`, regole CONSTRUCT).
+> Nel grafo di visualizzazione appaiono come normali `VideoGame` (stessa icona e colore); sottoclassi di piattaforme, generi e modalità sono ricondotte al tipo base tramite `rdfs:subClassOf`.
 
 ---
 
@@ -105,21 +78,21 @@ Il backend (demo) carica a runtime `videogames_pruned_2020.owl` (con fallback a 
 | `vg:developerOf`           | Developer → VideoGame     | `vg:developedBy`            | Asimmetrica, Irriflessiva                             |
 | `vg:publishedBy`           | VideoGame → Publisher     | `vg:publisherOf`            | Asimmetrica, Irriflessiva                             |
 | `vg:publisherOf`           | Publisher → VideoGame     | `vg:publishedBy`            | Asimmetrica, Irriflessiva                             |
-| `vg:hasGenre`              | VideoGame → Genre         | —                           | Irriflessiva                                          |
-| `vg:availableOn`           | VideoGame → Platform      | —                           | Irriflessiva                                          |
+| `vg:hasGenre`              | VideoGame → Genre         | `vg:genreOf`                         | Irriflessiva                                          |
+| `vg:availableOn`           | VideoGame → Platform      | `vg:platformFor`                         | Irriflessiva                                          |
 | `vg:hasCharacter`          | VideoGame → Character     | `vg:appearsIn`              | Asimmetrica, Irriflessiva                             |
 | `vg:appearsIn`             | Character → VideoGame     | `vg:hasCharacter`           | Asimmetrica, Irriflessiva                             |
 | `vg:belongsTo`             | VideoGame → Franchise     | `vg:includes`               | Asimmetrica, Irriflessiva                             |
 | `vg:includes`              | Franchise → VideoGame     | `vg:belongsTo`              | Asimmetrica, Irriflessiva                             |
-| `vg:wonAward`              | VideoGame → Award         | —                           | Irriflessiva                                          |
-| `vg:sequelOf`              | VideoGame → VideoGame     | —                           | Asimmetrica, Irriflessiva                             |
-| `vg:madeWith`              | VideoGame → GameEngine    | —                           | Irriflessiva                                          |
-| `vg:hasGameMode`           | VideoGame → rdfs:Resource | —                           | Irriflessiva (valore letterale, e.g. "single-player") |
+| `vg:wonAward`              | VideoGame → Award         | `vg:awardWonBy`                         | Irriflessiva                                          |
+| `vg:sequelOf`              | VideoGame → VideoGame     | `vg:hasSequel`              | Transitiva, Asimmetrica, Irriflessiva                           |
+| `vg:madeWith`              | VideoGame → GameEngine    | `vg:engineUsedIn`                         | Irriflessiva                                          |
+| `vg:hasGameMode`           | VideoGame → GameMode      | `vg:modeInGame`             | Irriflessiva (individui `GameMode`, non stringhe)     |
 | `vg:sharedFranchiseWith` ² | VideoGame ↔ VideoGame     | `belongsTo ∘ includes`      | Simmetrica, property chain inferita                   |
 | `vg:sharesDeveloperWith` ² | VideoGame ↔ VideoGame     | `developedBy ∘ developerOf` | Simmetrica, property chain inferita                   |
 | `vg:sharesPublisherWith` ² | VideoGame ↔ VideoGame     | `publishedBy ∘ publisherOf` | Simmetrica, property chain inferita                   |
 
-> ² **Proprietà inferite** — triple materializzate tramite `enrich_owl.py --reason`.
+> ² **Proprietà inferite** — triple materializzate dalla pipeline di reasoning. Esistono anche `vg:sharedGenreWith` e `vg:sharedEngineWith`.
 > Permettono query dirette senza join espliciti (es. "tutti i giochi della stessa serie").
 
 ---
@@ -131,7 +104,6 @@ Il backend (demo) carica a runtime `videogames_pruned_2020.owl` (con fallback a 
 | `vg:gameName`        | VideoGame  | xsd:string  | ✅          | Nome del gioco                   |
 | `vg:releaseDate`     | VideoGame  | xsd:date    | ❌          | Formato "YYYY-MM-DD"             |
 | `vg:metacriticScore` | VideoGame  | xsd:integer | ❌          | Punteggio 0–100                  |
-| `vg:imageUrl`        | VideoGame  | xsd:anyURI  | ❌          | URL immagine (Wikimedia Commons) |
 | `vg:countryOfOrigin` | VideoGame  | xsd:string  | ❌          | Paese di produzione              |
 | `vg:developerName`   | Developer  | xsd:string  | ✅          | Nome dello studio                |
 | `vg:publisherName`   | Publisher  | xsd:string  | ✅          | Nome dell'editore                |
@@ -143,7 +115,7 @@ Il backend (demo) carica a runtime `videogames_pruned_2020.owl` (con fallback a 
 | `vg:awardYear`       | Award      | xsd:integer | ❌          | Anno di assegnazione             |
 | `vg:engineName`      | GameEngine | xsd:string  | ✅          | Nome del motore                  |
 
-> **Nota:** `vg:gameDescription` e `vg:officialWebsite` esistono nello schema ma vengono rimossi durante il pruning perché non utilizzati a runtime (l'agente SPARQL non li interroga e il frontend non li visualizza).
+> **Nota:** `vg:gameDescription` e `vg:officialWebsite` esistono nello schema ma non vengono popolati dalla pipeline, perché il sistema non li usa (l'agente SPARQL non li interroga e il frontend non li visualizza).
 
 Tutte le proprietà `*Name` sono sotto-proprietà di `vg:name` (xsd:string).
 
@@ -184,12 +156,10 @@ I dati vengono recuperati dal SPARQL endpoint pubblico di Wikidata (`https://que
 | 5    | Franchise/serie                            | P179                                   |
 | 6    | Modalità di gioco                          | P404                                   |
 | 7    | Punteggio Metacritic                       | P444 + P447 (qualificatore Metacritic) |
-| 8    | Immagine                                   | P18                                    |
-| 9    | Motore di gioco                            | P408                                   |
-| 10   | Paese d'origine                            | P495                                   |
-| 11   | Sito web ufficiale                         | P856                                   |
-| 12   | Premi                                      | P166                                   |
-| 13   | Descrizione                                | schema:description                     |
+| 8    | Motore di gioco                            | P408                                   |
+| 9    | Paese d'origine                            | P495                                   |
+| 10   | Premi                                      | P166                                   |
+| 11   | Sequel (`sequelOf`)                        | P155                                   |
 
 ### Filtro temporale
 
@@ -221,23 +191,16 @@ L'ontologia è in OWL 2 DL (Description Logic), il che permette:
 
 Il backend usa **pyoxigraph** (binding Python di Oxigraph, scritto in Rust) anziché rdflib per:
 
-- **RAM**: ~389 MB vs ~1.550 MB con rdflib (-75%)
-- **Caricamento**: ~2.2s vs ~41s (-95%)
-- **Query SPARQL**: 5–62× più veloci (0.08–0.37s vs 1–23s)
+- **Footprint ridotto**: store in Rust, molto più leggero di un grafo rdflib in memoria
+- **Caricamento e query SPARQL** molto più rapidi
 - **Parsing nativo** di RDF/XML, Turtle, N-Triples
 - Totale compatibilità SPARQL 1.1
 
-Il reasoning OWL-RL viene comunque eseguito offline con `owlrl` (libreria Python) durante la fase di popolazione, e le triple materializzate sono già nel file OWL caricato a runtime.
+Il reasoning viene eseguito offline da `build_ontology.py` (owlrl + materializzazione mirata + regole CONSTRUCT), e le triple inferite sono già nel file OWL caricato a runtime. Nota: rdflib resta usato solo dalla pipeline offline.
 
-### 3. Pruning delle triple
+### 3. Nessun pruning
 
-Il file `videogames_pruned.owl` (~1.17M triple) è derivato dal file completo (~1.43M triple) rimuovendo:
-
-- **`owl:sameAs`**: 116.820 triple, tutte riflessive (A sameAs A). Zero non-riflessive trovate, nessun rischio di perdita di informazione.
-- **`vg:gameDescription`**: non visualizzato nel frontend né interrogato dall'agente SPARQL
-- **`vg:officialWebsite`**: idem
-
-Questo riduce la RAM di ~1.16 GB e velocizza il parsing senza perdere funzionalità.
+Il backend carica l'ontologia completa e materializzata (`videogames_full.owl`): non ci sono più i sottoinsiemi `pruned` / `pruned_2020` né step di rimozione di triple. L'unica scelta di contenuto è non scaricare `gameDescription` e `officialWebsite`.
 
 ### 4. Proprietà Funzionali per i nomi
 
@@ -251,17 +214,16 @@ Le coppie `developedBy/developerOf`, `publishedBy/publisherOf`, `hasCharacter/ap
 
 Tutte le relazioni sono marcate come irriflessive (un gioco non può essere sviluppato da sé stesso) e dove appropriato asimmetriche (se A è sviluppato da B, B non è sviluppato da A).
 
-### 7. Immagini con fallback + emoji placeholder
+### 7. Immagini da Wikipedia + emoji placeholder
 
-- **Primario:** URL da Wikidata (proprietà P18, Wikimedia Commons)
-- **Fallback:** API Wikipedia (`/api/image-search?name=...`) che cerca la thumbnail della pagina Wikipedia del gioco
-- **Placeholder:** Se nessuna immagine viene trovata, nel grafo viene mostrato un emoji casuale ma deterministico (basato su hash del nome del gioco) come placeholder visivo
+- **Sorgente:** API Wikipedia (`/api/image-search?name=...`) che cerca la thumbnail della pagina Wikipedia del gioco (prima il titolo esatto, poi con il suffisso "(video game)")
+- **Placeholder:** Se nessuna immagine viene trovata, nel grafo viene mostrato un emoji casuale ma deterministico (basato su hash del nome del gioco)
 
-I risultati null vengono cachati lato frontend per evitare richieste ripetute ad ogni render.
+Le immagini trovate sono salvate nella cache SQLite locale (`backend/cache.db`); i risultati null non vengono cachati, così si può riprovare.
 
 ### 8. Separazione TBox/ABox
 
-Lo schema (`videogames.owl`) è separato dai dati. Il file popolato include entrambi per semplicità di caricamento runtime, ma lo schema resta la "source of truth" per la struttura.
+Lo schema (`videogames.owl`) è separato dai dati. Il file `videogames_full.owl` include entrambi per semplicità di caricamento runtime, ma lo schema resta la "source of truth" per la struttura.
 
 ### 9. URI deterministiche
 
@@ -270,33 +232,28 @@ Le URI sono generate deterministicamente dal nome dell'entità (via `make_uri()`
 - Lo stesso developer/genere/piattaforma venga riconosciuto come la stessa entità anche se appare in query diverse
 - Non servano meccanismi di reconciliation complessi
 
-### 10. Game Mode come letterale
+### 10. Game Mode come individui
 
-`hasGameMode` usa un valore letterale (stringa) e non una classe dedicata, perché le modalità di gioco sono poche e non necessitano di proprietà aggiuntive.
+`hasGameMode` ha range `vg:GameMode`: ogni modalità (es. "single-player video game") è un individuo `vg:mode/<nome>` tipizzato con `GameMode` e, in base all'etichetta, con `SinglePlayerMode`, `MultiplayerMode`, `CoopMode` o `MMOMode`. Questo permette di inferire `SinglePlayerGame`, `MultiplayerGame` e `CoopGame`. Il nome leggibile è in `rdfs:label`.
 
 ### 11. Classi definite e proprietà inferite
 
-L'ontologia include due **classi definite** (OWL 2 `equivalentClass` + `someValuesFrom`):
+L'ontologia include classi **definite** (OWL 2 `equivalentClass` + `intersectionOf`/`someValuesFrom`/datatype restriction), tra cui:
 
-- `vg:AwardWinningGame` ≡ `VideoGame ⊓ (wonAward some Award)` — ogni gioco che ha vinto almeno un premio
-- `vg:FranchiseGame` ≡ `VideoGame ⊓ (belongsTo some Franchise)` — ogni gioco che appartiene a una serie
+- `AwardWinningGame`, `FranchiseGame`, `SinglePlayerGame`, `MultiplayerGame`, `CoopGame`
+- `PCGame`, `ConsoleGame`, `MobileGame`, `NintendoGame`, `PlayStationGame`, `XboxGame`
+- `HighlyRatedGame` (`metacriticScore ≥ 85`), `RecentGame` (`releaseDate ≥ 2020-01-01`), `SequelGame`, `StandaloneGame`
 
-E tre **proprietà con catene di composizione** (`owl:propertyChainAxiom`):
+e proprietà con **catene di composizione** (`owl:propertyChainAxiom`) simmetriche: `sharedFranchiseWith` (`belongsTo ∘ includes`), `sharesDeveloperWith`, `sharesPublisherWith`; più `sharedGenreWith` e `sharedEngineWith` materializzate dalle regole CONSTRUCT.
 
-- `vg:sharedFranchiseWith` ← `belongsTo ∘ includes` (simmetrica)
-- `vg:sharesDeveloperWith` ← `developedBy ∘ developerOf` (simmetrica)
-- `vg:sharesPublisherWith` ← `publishedBy ∘ publisherOf` (simmetrica)
-
-Queste strutture sono aggiunte agli ABox tramite `enrich_owl.py`. Il materializzatore mirato integrato nello script (`--reason`) applica solo le 5 regole necessarie anziché l'intera chiusura OWL-RL, riducendo drasticamente i tempi di esecuzione.
-
-Nel frontend, `AwardWinningGame` e `FranchiseGame` vengono normalizzati a `VideoGame` per la visualizzazione (stessa icona, stesso colore), mantenendo tutta la semantica per le query SPARQL.
+Gli assiomi sono aggiunti da `enrich_owl.py`; le inferenze sono materializzate da `build_ontology.py` (OWL-RL + materializzazione mirata + regole CONSTRUCT). Nel frontend le classi definite dei giochi sono normalizzate a `VideoGame` per la visualizzazione, mantenendo tutta la semantica per le query SPARQL.
 
 ### 12. Cache a due livelli
 
 - **SQLite locale** (`backend/cache.db`, persistente):
-  - TTL **14 giorni** per i risultati delle query SPARQL (`vg:query:*`)
+  - TTL **14 giorni** per i risultati delle query in linguaggio naturale (`vg:query:*`, invalidati quando l'ontologia viene rigenerata)
   - TTL **6 mesi** per le immagini cercate via Wikipedia API (`img:*`)
-- **In-memory** (Python dict): per label e tipi RDF derivati dallo store (derivati dal grafo caricato, non persistono al riavvio)
+- **In-memory** (Python dict): per label e tipi RDF derivati dallo store (non persistono al riavvio)
 
 Questa architettura evita chiamate HTTP ripetitive mantenendo bassa la RAM.
 
@@ -331,24 +288,6 @@ Questa architettura evita chiamate HTTP ripetitive mantenendo bassa la RAM.
 
 ---
 
-## Statistiche (dopo popolazione + reasoning + pruning + enrichment)
+## Statistiche
 
-| Metrica                         | Completo (2010–2026) | Demo (2020–2026) |
-| ------------------------------- | -------------------- | ---------------- |
-| Giochi totali                   | ~104.000             | ~68.700          |
-| Triple totali (dopo enrich_owl) | ~1.542.496           | ~885.218         |
-| Triple inferite da enrich_owl   | +368.478             | +139.759         |
-| Developer                       | ~13.000              | ~12.000          |
-| Publisher                       | ~7.000               | ~5.500           |
-| Generi                          | ~350                 | ~200             |
-| Piattaforme                     | ~180                 | ~180             |
-| Personaggi                      | ~7.000               | ~4.600           |
-| Franchise                       | ~4.500               | ~4.000           |
-| Awards                          | ~1.800               | ~1.670           |
-| Game Engine                     | ~500                 | ~350             |
-| RAM a runtime (pyoxigraph)      | ~389 MB              | ~250 MB          |
-| Tempo di caricamento            | ~2.2s                | ~1.5s            |
-
-> **Nota:** La demo live su Render usa il dataset 2020–2026 per rientrare nel limite RAM di 512 MB del piano gratuito. Il dataset completo è generabile localmente.
->
-> Le triple inferite da `enrich_owl --reason` (classi `AwardWinningGame`/`FranchiseGame` e proprietà `shared*With`) non sono incluse nel conteggio sopra: vengono materializzate separatamente e aumentano significativamente la dimensione del file.
+I conteggi dipendono dalla build: al termine, `build_ontology.py` stampa il numero di istanze per ogni classe (`VideoGame`, `Developer`, `Publisher`, `Genre`, `Platform`, `GameMode`, `AwardWinningGame`, `HighlyRatedGame`, `SequelGame`, …) e il numero di triple. Lo stesso riepilogo è disponibile a runtime su `GET /api/stats`.

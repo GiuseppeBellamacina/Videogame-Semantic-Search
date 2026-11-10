@@ -13,13 +13,13 @@ seguente illustra il flusso dati:
 \begin{verbatim}
 +----------------------------------------------------+
 |  Frontend (React + Tailwind + react-force-graph)   |
-|  [SearchBar]  [ResultList]   [Knowledge Graph 2D]  |
+|  [SearchBar] [QueryBuilder] [ResultList] [Graph 2D]|
 +--------------------------+-------------------------+
                            | HTTP REST
 +--------------------------v-------------------------+
 |               Backend (FastAPI)                    |
 |  +---------------------------------------------+  |
-|  |  SPARQL Agent (GPT-4.1-mini)                |  |
+|  |  SPARQL Agent (OpenAI / Anthropic)          |  |
 |  |  NL -> SPARQL -> Validate -> Execute        |  |
 |  |  (retry automatico, max 3 retry)            |  |
 |  +---------------------------------------------+  |
@@ -34,8 +34,8 @@ seguente illustra il flusso dati:
 +--------------------------+-------------------------+
                            |
 +--------------------------v-------------------------+
-|  Ontologia (videogames_pruned_2020.owl)            |
-|  Store: pyoxigraph (Rust)  ~745k triple            |
+|  Ontologia (videogames_full.owl / .ttl)            |
+|  Store: pyoxigraph (Rust), reasoning materializzato|
 +----------------------------------------------------+
 \end{verbatim}
 \end{minipage}
@@ -58,10 +58,9 @@ Grafo interattivo   & react-force-graph-2d                        \\
 Backend             & FastAPI (Python 3.12+, async)               \\
 Ontologia (runtime) & pyoxigraph (Rust), OWL 2                    \\
 Ontologia (offline) & rdflib + owlrl (reasoning, validazione)     \\
-LLM / Agente        & OpenAI GPT-4.1-mini                         \\
+LLM / Agente        & OpenAI o Anthropic (\texttt{LLM\_MODEL})      \\
 Cache               & SQLite (locale) + cache in-memory            \\
 Fonte dati          & Wikidata SPARQL                             \\
-Deploy              & Render (backend) + Vercel (frontend)         \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -70,9 +69,9 @@ Deploy              & Render (backend) + Vercel (frontend)         \\
 
 Il flusso di una tipica interrogazione \`e il seguente:
 \begin{enumerate}[nosep]
-  \item L'utente digita una domanda in linguaggio naturale (NL) nella SearchBar del frontend;
+  \item L'utente digita una domanda in linguaggio naturale (NL) nella SearchBar del frontend (mentre scrive, \texttt{/api/suggest} propone i nomi di giochi e altre entit\`a);
   \item Il frontend invia la domanda al backend via HTTP POST su \texttt{/api/query};
-  \item Lo \textbf{SPARQL Agent} (GPT-4.1-mini) genera una query SPARQL a partire dalla domanda NL, utilizzando il contesto dell'ontologia (classi, propriet\`a, esempi);
+  \item Lo \textbf{SPARQL Agent} (modello scelto con \texttt{LLM\_MODEL}, OpenAI o Anthropic) genera una query SPARQL a partire dalla domanda NL, utilizzando il contesto dell'ontologia (classi, propriet\`a, esempi);
   \item Il \textbf{SPARQL Validator} controlla con rdflib la correttezza sintattica della query generata; se la query \`e invalida, fallisce in esecuzione o restituisce zero risultati, l'agente ritenta (fino a 3 retry, quindi al massimo 4 tentativi);
   \item La query viene eseguita su \textbf{pyoxigraph} contro il file OWL;
   \item Il \textbf{GraphBuilder} trasforma i risultati SPARQL in nodi e archi per il frontend (con metadati di tipo, label, colore);
@@ -99,12 +98,16 @@ La Tabella~\ref{tab:componenti} elenca i principali componenti software con le r
 \toprule
 \textbf{Componente}          & \textbf{Responsabilit\`a}                                        \\
 \midrule
-\texttt{sparql\_agent.py}    & Traduzione NL $\rightarrow$ SPARQL via GPT-4.1-mini, retry       \\
+\texttt{sparql\_agent.py}    & Traduzione NL $\rightarrow$ SPARQL via LLM (\texttt{llm.py}), retry   \\
 \texttt{sparql\_validator.py}& Validazione sintattica SPARQL pre-esecuzione                     \\
 \texttt{ontology\_service.py}& Caricamento OWL, esecuzione query via pyoxigraph                 \\
 \texttt{graph\_builder.py}   & Costruzione nodi/archi da risultati RDF per il frontend          \\
 \texttt{image\_cache.py}     & Recupero e cache immagini da Wikipedia API                       \\
-\texttt{SearchBar.tsx}       & Input NL con domande suggerite                                   \\
+\texttt{cache.py}           & Cache SQLite locale con TTL                                      \\
+\texttt{search\_index.py}    & Indice dei nomi per l'autosuggest                                \\
+\texttt{query\_builder.py}   & Generazione SPARQL da filtri strutturati (query builder)         \\
+\texttt{SearchBar.tsx}       & Input NL con autosuggest sulle entit\`a digitate                 \\
+\texttt{QueryBuilder.tsx}    & Form a filtri per comporre query senza LLM                       \\
 \texttt{ResultList.tsx}      & Tabella dei risultati; le URI aprono il dettaglio nodo           \\
 \texttt{KnowledgeGraph.tsx}  & Grafo 2D interattivo con force layout, zoom, filtri              \\
 \texttt{NodeDetail.tsx}      & Pannello laterale con dettaglio nodo (propriet\`a, relazioni)    \\
@@ -131,6 +134,9 @@ POST   & \texttt{/api/cross-links}   & Archi tra nodi gi\`a presenti e nuovi nod
 GET    & \texttt{/api/node/\{uri\}}  & Dettaglio nodo + sottografo               \\
 GET    & \texttt{/api/image-search}  & Cerca cover art da Wikipedia              \\
 GET    & \texttt{/api/stats}         & Statistiche ontologia                     \\
+GET    & \texttt{/api/suggest}       & Autosuggest su nomi di entit\`a           \\
+GET    & \texttt{/api/builder/schema} & Campi e operatori del query builder       \\
+POST   & \texttt{/api/builder/query}  & Query builder $\rightarrow$ SPARQL + grafo \\
 GET    & \texttt{/api/health}        & Health check                              \\
 \bottomrule
 \end{tabular}

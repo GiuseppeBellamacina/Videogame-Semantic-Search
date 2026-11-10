@@ -31,9 +31,10 @@ separazione schema/istanze:
 \begin{itemize}[nosep]
   \item \texttt{videogames.owl} --- \textbf{schema}: contiene tutte le dichiarazioni
     di classi, propriet\`a, assiomi, disjointness e allineamenti esterni. Circa 934 triple;
-  \item \texttt{videogames\_pruned\_2020.owl} --- \textbf{insieme di istanze di demo}: contiene le istanze
-    (giochi, developer, publisher, generi, piattaforme, \dots{}) per il periodo
-    2020--2026. Circa 745.000 triple, 68.700 giochi.
+  \item \texttt{videogames\_full.owl} (e la copia leggibile \texttt{videogames\_full.ttl}) ---
+    \textbf{schema pi\`u istanze pi\`u inferenze}: prodotto da \texttt{build\_ontology.py}, contiene le istanze
+    (giochi, developer, publisher, generi, piattaforme, \dots{}) per il periodo 2010--2026 e le triple
+    materializzate dal reasoning. \`E l'unico file caricato dal backend.
 \end{itemize}
 
 \subsection{Fonte Dati: Wikidata}
@@ -46,23 +47,28 @@ propriet\`a dell'ontologia.
 
 \subsection{Pipeline di Popolamento}
 
-La pipeline completa si articola in quattro fasi:
+La pipeline \`e un unico script, \texttt{build\_ontology.py}, eseguito una sola volta, che
+mostra l'avanzamento di ogni fase con barre di progresso:
 
 \begin{enumerate}[nosep]
-  \item \texttt{populate\_wikidata.py} --- esegue 204 iterazioni (17 anni $\times$ 12 mesi)
-    di query SPARQL verso Wikidata, raccogliendo giochi, metadati e relazioni.
-    Tempo stimato: $\sim$5 ore con polite delay di 1 secondo tra le richieste.
-  \item \textbf{OWL-RL closure via \texttt{owlrl}} --- applica la chiusura deduttiva
-    OWL 2 RL per materializzare propriet\`a inverse, catene \texttt{subPropertyOf},
-    e inferenze da \texttt{someValuesFrom} e \texttt{intersectionOf}. Da $\sim$1M a $\sim$1.4M triple.
-  \item \textbf{Pruning} --- rimuove triple ridondanti o inutilizzate a runtime:
-    \texttt{owl:sameAs} riflessivi, \texttt{gameDescription}, \texttt{officialWebsite}.
-    Da $\sim$1.4M a $\sim$1.17M triple (completo) o $\sim$745k (demo 2020+).
-  \item \texttt{enrich\_owl.py} --- gestisce gli assiomi DL-only (FunctionalProperty sulle
-    datatype property e \texttt{hasKey}, cfr.\ Sezione~\ref{sec:reasoning}): li rimuove dalla
-    copia di lavoro prima del reasoning e, con l'opzione \texttt{-{}-keep-dl-axioms}, li
-    ripristina nel file serializzato.
+  \item \textbf{Fetch} (\texttt{populate\_wikidata.py}) --- 204 iterazioni (17 anni $\times$ 12 mesi)
+    di query SPARQL verso Wikidata, con checkpoint su disco per ogni query e mese: se il processo
+    si interrompe, il rilancio riprende dai mesi mancanti; in caso di rate limit (HTTP 429)
+    lo script attende e riprova. Le istanze ricevono le sottoclassi V2 in base all'etichetta
+    (famiglie di piattaforme, generi, modalit\`a di gioco).
+  \item \textbf{Assiomi V2 e rimozione degli assiomi DL-only} (\texttt{enrich\_owl.py}) --- gli assiomi
+    DL-only (FunctionalProperty sulle datatype property e \texttt{hasKey}, cfr.\ Sezione~\ref{sec:reasoning})
+    sono rimossi dalla copia di lavoro prima del reasoning e, con l'opzione \texttt{-{}-keep-dl-axioms},
+    ripristinati nel file serializzato.
+  \item \textbf{OWL-RL closure via \texttt{owlrl}} --- chiusura deduttiva OWL 2 RL che materializza
+    propriet\`a inverse, catene \texttt{subPropertyOf} e inferenze da \texttt{someValuesFrom} e \texttt{intersectionOf}.
+  \item \textbf{Materializzazione mirata e regole CONSTRUCT} --- classi definite e catene
+    (\texttt{enrich\_owl.py}), poi le regole SPARQL CONSTRUCT di \texttt{construct\_reasoner.py}.
+  \item \textbf{Validazione e scrittura} --- controlli sulla TBox e conteggio delle istanze delle
+    classi inferite; output in RDF/XML e Turtle.
 \end{enumerate}
+
+Non c'\`e alcuno step di pruning: il backend carica l'ontologia completa.
 
 \subsection{Statistiche Riassuntive}
 

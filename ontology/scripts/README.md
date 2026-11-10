@@ -1,6 +1,8 @@
 # Ontology Tools
 
-Python scripts for TBox enrichment, custom CONSTRUCT reasoning, and validation of the videogame ontology.
+Python scripts for custom CONSTRUCT reasoning and validation of the videogame ontology.
+
+Both are normally run for you by `ontology/build_ontology.py` (the single fetch + reasoning pipeline, see the root README); use them directly only to inspect or re-run one step.
 
 ## Setup
 
@@ -23,5 +25,5 @@ uv sync
 uv run python validate_tbox.py ../videogames.owl
 
 # Run custom CONSTRUCT reasoning on a populated ontology
-uv run python construct_reasoner.py ../videogames_pruned.owl --output ../videogames_inferred.owl
+uv run python construct_reasoner.py ../videogames_full.owl --output ../videogames_inferred.owl
 ```
