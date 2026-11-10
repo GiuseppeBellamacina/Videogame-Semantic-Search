@@ -70,3 +70,35 @@ export interface OntologyStats {
   franchises: number;
   awards: number;
 }
+
+export interface Suggestion {
+  label: string;
+  uri: string;
+  type: string;
+}
+
+export interface BuilderField {
+  field: string;
+  label: string;
+  kind: "entity" | "number" | "year" | "text" | "class";
+  target?: string;
+  options?: string[];
+  ops: string[];
+}
+
+export interface BuilderSchema {
+  fields: BuilderField[];
+  orders: string[];
+}
+
+export interface BuilderFilterInput {
+  field: string;
+  op: string;
+  value: string | number;
+}
+
+export interface BuilderRequest {
+  filters: BuilderFilterInput[];
+  order_by: string;
+  limit: number;
+}

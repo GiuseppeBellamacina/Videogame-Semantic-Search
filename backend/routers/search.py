@@ -22,7 +22,7 @@ async def suggest(
     limit: int = Query(8, ge=1, le=25),
 ):
     types = [t for t in (type or "").split(",") if t in search_index.NAME_PROPS or t == "GameMode"]
-    return {"suggestions": search_index.suggest(q, types or None, limit)}
+    return search_index.suggest_text(q, types or None, limit)
 
 
 @router.get("/builder/schema")

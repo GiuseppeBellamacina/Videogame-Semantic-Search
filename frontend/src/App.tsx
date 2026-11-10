@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { Gamepad2, BarChart3, Github, List, Network } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
+import { QueryBuilder } from "@/components/QueryBuilder";
 import { ResultList } from "@/components/ResultList";
 import { KnowledgeGraph } from "@/components/KnowledgeGraph";
 import { NodeDetail } from "@/components/NodeDetail";
@@ -9,12 +10,18 @@ import { SparqlViewer } from "@/components/SparqlViewer";
 import { Analytics } from "@vercel/analytics/react";
 import { useQuery } from "@/hooks/useQuery";
 import { getCrossLinks } from "@/lib/api";
-import type { GraphData, GraphLink, GraphNode } from "@/types";
+import type {
+  BuilderRequest,
+  GraphData,
+  GraphLink,
+  GraphNode,
+} from "@/types";
 
 const GAME_TYPES = new Set(["VideoGame", "AwardWinningGame", "FranchiseGame"]);
 
 export default function App() {
-  const { data, loading, error, search, cancel } = useQuery();
+  const { data, loading, error, search, searchBuilder, cancel } = useQuery();
+  const [searchMode, setSearchMode] = useState<"nl" | "builder">("nl");
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [highlightNode, setHighlightNode] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<"results" | "graph">("results");
@@ -38,6 +45,17 @@ export default function App() {
       search(query);
     },
     [search],
+  );
+
+  const handleBuilderRun = useCallback(
+    (body: BuilderRequest) => {
+      setExtraGraph({ nodes: [], links: [] });
+      setHiddenNodeIds(new Set());
+      setSelectedNode(null);
+      setHighlightNode(null);
+      searchBuilder(body);
+    },
+    [searchBuilder],
   );
 
   const handleRemoveNode = useCallback(
@@ -203,7 +221,7 @@ export default function App() {
                   Videogame Semantic Search
                 </h1>
                 <p className="text-xs text-gray-500 hidden sm:block">
-                  Knowledge Graph Explorer · Powered by OWL + SPARQL + GPT-4.1
+                  Knowledge Graph Explorer · Powered by OWL + SPARQL + LLM
                 </p>
               </div>
             </div>
@@ -217,11 +235,39 @@ export default function App() {
               <span className="hidden sm:inline">GiuseppeBellamacina</span>
             </a>
           </div>
-          <SearchBar
-            onSearch={handleSearch}
-            onCancel={cancel}
-            loading={loading}
-          />
+          <div className="flex gap-1 mb-3">
+            {(
+              [
+                ["nl", "Ricerca libera"],
+                ["builder", "Query builder"],
+              ] as const
+            ).map(([mode, label]) => (
+              <button
+                key={mode}
+                onClick={() => setSearchMode(mode)}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                  searchMode === mode
+                    ? "bg-indigo-600/20 text-indigo-300"
+                    : "text-gray-500 hover:text-gray-300"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {searchMode === "nl" ? (
+            <SearchBar
+              onSearch={handleSearch}
+              onCancel={cancel}
+              loading={loading}
+            />
+          ) : (
+            <QueryBuilder
+              onRun={handleBuilderRun}
+              onCancel={cancel}
+              loading={loading}
+            />
+          )}
         </div>
       </header>
 

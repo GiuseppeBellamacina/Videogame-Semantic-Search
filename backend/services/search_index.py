@@ -77,3 +77,17 @@ def suggest(q: str, types: list[str] | None = None, limit: int = 8) -> list[dict
         {"label": label, "uri": uri, "type": etype}
         for _, _, label, uri, etype in hits[:limit]
     ]
+
+
+def suggest_text(text: str, types: list[str] | None = None, limit: int = 8) -> dict:
+    """Suggest completions for the trailing words of free text: tries the last
+    4, 3, 2, 1 words and returns the longest suffix that has matches."""
+    words = text.split()
+    for n in range(min(4, len(words)), 0, -1):
+        suffix = " ".join(words[-n:])
+        if n == 1 and len(suffix) < 3:
+            continue  # avoid noise from short stop words ("di", "su")
+        hits = suggest(suffix, types, limit)
+        if hits:
+            return {"match": suffix, "suggestions": hits}
+    return {"match": "", "suggestions": []}

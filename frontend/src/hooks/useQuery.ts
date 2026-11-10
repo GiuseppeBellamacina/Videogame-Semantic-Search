@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
-import type { QueryResponse } from "@/types";
-import { queryOntology } from "@/lib/api";
+import type { BuilderRequest, QueryResponse } from "@/types";
+import { queryOntology, runBuilderQuery } from "@/lib/api";
 import { getCached, setCached, hasCached } from "@/lib/queryCache";
 
 export function useQuery() {
@@ -46,6 +46,24 @@ export function useQuery() {
     }
   }, []);
 
+  // Assisted query builder: same state as the NL search, no LLM involved
+  const searchBuilder = useCallback(async (body: BuilderRequest) => {
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    setData(null);
+    setLoading(true);
+    setError(null);
+    try {
+      setData(await runBuilderQuery(body, controller.signal));
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      if (!controller.signal.aborted) setLoading(false);
+    }
+  }, []);
+
   const cancel = useCallback(() => {
     abortControllerRef.current?.abort();
     abortControllerRef.current = null;
@@ -57,5 +75,5 @@ export function useQuery() {
     setError(null);
   }, []);
 
-  return { data, loading, error, search, cancel, reset };
+  return { data, loading, error, search, searchBuilder, cancel, reset };
 }
