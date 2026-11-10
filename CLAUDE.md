@@ -19,28 +19,28 @@ uv run uvicorn backend.main:app --reload --port 8000   # backend (API docs at /d
 
 Frontend (Bun, from `frontend/`): `bun install`, `bun run dev` (Vite on :5173, proxies `/api` to :8000), `bun run build`, `bun run lint` (= `tsc --noEmit`).
 
-Ontology pipeline (offline, slow — `populate_wikidata.py` takes ~5h and its output `videogames_wikidata.owl` is not committed):
+Ontology pipeline (offline, run once; several hours for the full fetch):
 
 ```bash
-uv run python ontology/populate_wikidata.py   # Wikidata -> OWL (per year x month queries) + OWL-RL closure
-uv run python ontology/prune_owl.py           # drop reflexive sameAs, descriptions, websites -> videogames_pruned.owl
-uv run python ontology/prune_years.py         # year-limited subset -> videogames_pruned_2020.owl (demo)
-uv run python ontology/enrich_owl.py          # add advanced TBox axioms (defined classes, property chains, disjointness)
+uv run python ontology/build_ontology.py                      # fetch -> reason -> validate -> write .owl + .ttl
+uv run python ontology/build_ontology.py --years 2024         # quick subset
+uv run python ontology/build_ontology.py --from-stage reason  # reuse the checkpointed fetch
 ```
 
-`ontology/scripts/` is a separate uv project (own `pyproject.toml`/`.venv`) with TBox validation and custom CONSTRUCT reasoning; see its README.
+Fetch is checkpointed per query x month in `ontology/.cache/` (restart resumes; Wikidata 429s are waited out). Stages: `populate_wikidata.py` (fetch + V2 subclass typing + dedup) -> `enrich_owl.py` (V2 axioms, strip DL-only axioms, `_materialise`) with owlrl in between -> `scripts/construct_reasoner.py` (CONSTRUCT rules) -> `validate_tbox`. Output: `ontology/videogames_full.owl` (loaded by the backend) and `.ttl` (readable copy). `ontology/scripts/` is also a standalone uv project; see its README.
 
-Config comes from the root `.env` (see `.env.example`): `OPENAI_API_KEY` (required), `OPENAI_MODEL`, `ALLOWED_ORIGINS`, optional Upstash Redis vars, `VITE_API_URL` for the deployed frontend. `LOCAL_BUILD=true` makes the backend load the full `videogames_pruned.owl` instead of the 2020+ demo file.
+Config comes from the root `.env` (see `.env.example`): `LLM_MODEL` as `provider:model` (`openai:gpt-4.1-mini`, `anthropic:haiku5.5`), `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`, `ALLOWED_ORIGINS`, `VITE_API_URL`.
 
 ## Architecture
 
-- `backend/config.py` picks the ontology file with a fallback chain (pruned_2020 → wikidata → videogames.owl). Demo file is used in deployment to fit Render's 512 MB RAM.
-- `backend/agents/sparql_agent.py`: `SPARQLAgent.run()` is a generate → validate (`utils/sparql_validator`) → execute loop with up to `MAX_SPARQL_RETRIES`, retrying on errors *and* empty results, feeding previous queries/errors back to the LLM. The prompt in `agents/prompts.py` embeds the schema from `OntologyService.get_ontology_schema()`, so ontology changes must stay consistent with it.
-- `backend/services/ontology_service.py`: `OntologyService` is a class-level singleton wrapping a pyoxigraph `Store` (loaded in the FastAPI lifespan). Also derives labels/types for nodes (in-memory caches) and node details/stats.
-- `backend/services/graph_builder.py`: converts SPARQL results / a node's neighborhood into `{nodes, links}` for the frontend; `image_cache.py` fetches cover art from Wikipedia and caches in Upstash Redis (falls back to in-memory when unset).
+- `backend/config.py` points at `ontology/videogames_full.owl` (no pruned/demo variants).
+- `backend/agents/sparql_agent.py`: `SPARQLAgent.run()` is a generate -> validate (`utils/sparql_validator`) -> execute loop with up to `MAX_SPARQL_RETRIES`, retrying on errors *and* empty results. LLM calls go through `agents/llm.py` (`parse_model`, `LLM.generate`) so OpenAI and Anthropic are interchangeable. The prompt in `agents/prompts.py` embeds `OntologyService.get_ontology_schema()`; keep both in sync with the TBox.
+- `backend/services/ontology_service.py`: `OntologyService` is a class-level singleton wrapping a pyoxigraph `Store` (loaded in the FastAPI lifespan). Node types are derived by mapping any rdf:type through the `rdfs:subClassOf` closure to a base type (`BASE_TYPES`); also labels, node details, stats.
+- `backend/services/graph_builder.py`: converts SPARQL results / a node's neighborhood into `{nodes, links}` for the frontend; `services/cache.py` is a SQLite key/value cache with TTL (`backend/cache.db`) used by `image_cache.py` (Wikipedia cover art) and the query cache in `routers/query.py` (keys are namespaced by the ontology file mtime).
+- `services/search_index.py` + `services/query_builder.py` + `routers/search.py`: autosuggest (`/api/suggest`, label index built at load) and the assisted query builder (`/api/builder/*`, whitelisted fields -> generated SPARQL, no LLM).
 - `backend/routers/query.py` (`POST /api/query`) and `graph.py` (node details, cross-links, image search, stats); health at `/api/health`.
 - Frontend (`frontend/src/`): `App.tsx` + `hooks/useQuery.ts`, API wrappers in `lib/`, types in `types/` (`GraphNode`/`GraphLink` must match the backend graph payload), `components/KnowledgeGraph.tsx` (react-force-graph-2d with custom canvas drawing, force/collision tuning, type filtering, context menu for expand/remove).
 - Ontology namespace: `http://www.videogame-ontology.org/ontology#`. Core classes: VideoGame, Developer, Publisher, Genre, Platform, Character, Franchise, Award, GameEngine. See `docs/ontology.md` and README for properties.
-- Deploy: backend on Render (`render.yaml`, `uv sync --frozen`), frontend on Vercel (`frontend/vercel.json`).
+- Local only: no deploy configs (Render/Vercel removed).
 
 `reference/` holds course material (lecture exercises) and `docs/relazione` the LaTeX report/presentation; neither is part of the app.
