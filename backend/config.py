@@ -17,7 +17,7 @@ ONTOLOGY_DIR = BASE_DIR / "ontology"
 ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames_full.owl"
 
 # LLM: "<provider>:<model>", e.g. openai:gpt-4.1-mini or anthropic:haiku5.5
-LLM_MODEL = os.getenv("LLM_MODEL", "openai:gpt-4.1-mini")
+LLM_MODEL = os.getenv("LLM_MODEL") or "openai:gpt-4.1-mini"  # empty counts as unset
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
