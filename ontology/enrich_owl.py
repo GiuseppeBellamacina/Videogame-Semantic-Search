@@ -1117,11 +1117,12 @@ def _materialise(g: Graph, max_group: int = 50) -> int:
     # ── 6: GameMode classification ─────────────────────────────────────────
     for s, p, o in g.triples((None, VG.hasGameMode, None)):
         if isinstance(s, URIRef) and isinstance(o, URIRef):
-            if o == VG.MultiplayerMode:
+            # the mode may be the class IRI itself or an individual typed with it
+            if o == VG.MultiplayerMode or (o, RDF.type, VG.MultiplayerMode) in g:
                 multiplayer_games.add(s)
-            elif o == VG.SinglePlayerMode:
+            if o == VG.SinglePlayerMode or (o, RDF.type, VG.SinglePlayerMode) in g:
                 singleplayer_games.add(s)
-            elif o == VG.CoopMode:
+            if o == VG.CoopMode or (o, RDF.type, VG.CoopMode) in g:
                 coop_games.add(s)
 
     total_class = (len(award_games) + len(franchise_games) +

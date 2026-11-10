@@ -4,17 +4,17 @@ Fetches video games released from 2010 onwards with their developers, publishers
 genres, platforms, and characters.
 """
 
+import json
 import logging
 import re
 import time
 from collections import defaultdict
 from pathlib import Path
 
-from rdflib import RDF, XSD, Graph, Literal, Namespace, URIRef
+from rdflib import RDF, RDFS, XSD, Graph, Literal, Namespace, URIRef
 from SPARQLWrapper import JSON, SPARQLWrapper
 from tqdm import tqdm
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Namespaces
@@ -144,18 +144,6 @@ SELECT DISTINCT ?game ?gameLabel ?countryLabel WHERE {{
 LIMIT 5000
 """
 
-# Query 11: Official website (P856)
-GAMES_WEBSITE_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?website WHERE {{
-  ?game wdt:P31 wd:Q7889 .
-  ?game wdt:P577 ?releaseDate .
-  FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
-  ?game wdt:P856 ?website .
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
-}}
-LIMIT 5000
-"""
-
 # Query 12: Awards (P166)
 GAMES_AWARD_QUERY = """
 SELECT DISTINCT ?game ?gameLabel ?award ?awardLabel WHERE {{
@@ -169,14 +157,15 @@ SELECT DISTINCT ?game ?gameLabel ?award ?awardLabel WHERE {{
 LIMIT 5000
 """
 
-# Query 13: Description (schema:description)
-GAMES_DESC_QUERY = """
-SELECT DISTINCT ?game ?gameLabel ?desc WHERE {{
+# Query 13: Sequels (P155 "follows" = previous game in the series)
+GAMES_SEQUEL_QUERY = """
+SELECT DISTINCT ?game ?gameLabel ?prevLabel WHERE {{
   ?game wdt:P31 wd:Q7889 .
   ?game wdt:P577 ?releaseDate .
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
-  ?game schema:description ?desc .
-  FILTER(LANG(?desc) = "en")
+  ?game wdt:P155 ?prev .
+  ?prev wdt:P31 wd:Q7889 .
+  ?prev rdfs:label ?prevLabel . FILTER(LANG(?prevLabel) = "en")
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
 }}
 LIMIT 5000
@@ -190,54 +179,78 @@ def make_uri(base: str, label: str) -> URIRef:
     return URIRef(f"{base}{safe}")
 
 
-def run_query(sparql: SPARQLWrapper, query: str, description: str) -> list:
-    """Execute a SPARQL query with retry logic."""
+def run_query(
+    sparql: SPARQLWrapper,
+    query: str,
+    description: str,
+    cache_file: Path | None = None,
+) -> list:
+    """Execute a SPARQL query with retry logic and an optional on-disk checkpoint.
+
+    A cached result is returned without touching the network. If every attempt
+    fails the error is raised (never an empty list), so a failed month is never
+    checkpointed and the run can simply be restarted.
+    """
+    if cache_file is not None and cache_file.exists():
+        return json.loads(cache_file.read_text(encoding="utf-8"))
+
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
 
-    for attempt in range(3):
+    last_error: Exception | None = None
+    for attempt in range(4):
         try:
-            logger.info(f"Executing query: {description} (attempt {attempt + 1})")
             raw = sparql.query().convert()
             results: dict = raw  # type: ignore[assignment]
             bindings: list = results["results"]["bindings"]
-            logger.info(f"  -> Got {len(bindings)} results")
+            if cache_file is not None:
+                cache_file.parent.mkdir(parents=True, exist_ok=True)
+                tmp = cache_file.with_suffix(".tmp")
+                tmp.write_text(json.dumps(bindings), encoding="utf-8")
+                tmp.replace(cache_file)
             return bindings
         except Exception as e:
-            logger.warning(f"  -> Attempt {attempt + 1} failed: {e}")
-            if attempt < 2:
-                wait = 10 * (attempt + 1)
-                logger.info(f"  -> Retrying in {wait}s...")
-                time.sleep(wait)
-            else:
-                logger.error(f"  -> All attempts failed for: {description}")
-
-    return []
+            last_error = e
+            logger.warning(f"{description}: attempt {attempt + 1} failed: {e}")
+            if attempt < 3:
+                time.sleep(15 * (attempt + 1))
+    raise RuntimeError(f"All attempts failed for: {description}") from last_error
 
 
 QID_PATTERN = re.compile(r"^Q\d+$")
 
 YEARS = list(range(2010, 2027))
 MONTHS = list(range(1, 13))
+CACHE_DIR = Path(__file__).parent / ".cache" / "wikidata"
 
 
 def run_per_year_month_queries(
-    sparql: SPARQLWrapper, query_template: str, description: str, delay: float = 1.0
+    sparql: SPARQLWrapper,
+    query_template: str,
+    key: str,
+    description: str,
+    years: list[int],
+    cache_dir: Path,
+    delay: float = 1.0,
 ) -> list:
     """
     Run a parameterised query for every (year, month) pair to avoid LIMIT truncation.
-    With LIMIT 5000 per month there is virtually no risk of missing data.
+    Each month is checkpointed in cache_dir/<key>/<year>-<month>.json.
     """
     all_bindings = []
-    pairs = [(y, m) for y in YEARS for m in MONTHS]
+    pairs = [(y, m) for y in years for m in MONTHS]
     with tqdm(pairs, desc=description, unit="month") as pbar:
         for year, month in pbar:
             pbar.set_postfix(year=year, month=f"{month:02d}")
+            cache_file = cache_dir / key / f"{year}-{month:02d}.json"
+            cached = cache_file.exists()
             query = query_template.format(year=year, month=month)
-            bindings = run_query(sparql, query, f"{description} ({year}-{month:02d})")
+            bindings = run_query(
+                sparql, query, f"{description} ({year}-{month:02d})", cache_file
+            )
             all_bindings.extend(bindings)
-            time.sleep(delay)
-    logger.info(f"  Total bindings for '{description}': {len(all_bindings)}")
+            if not cached:
+                time.sleep(delay)
     return all_bindings
 
 
@@ -323,8 +336,91 @@ def is_qid_label(value: str | None) -> bool:
     return value is not None and bool(QID_PATTERN.match(value))
 
 
-def populate_from_wikidata():
-    """Main population function."""
+# ---------------------------------------------------------------------------
+# Label -> V2 subclass classification (keeps the ABox consistent with the TBox
+# so that the platform/genre/mode defined classes can be inferred later)
+# ---------------------------------------------------------------------------
+
+_PLATFORM_RULES: list[tuple[str, URIRef]] = [
+    (r"playstation|\bps[0-9p]?\b|\bpsp\b|vita", VG.PlayStationPlatform),
+    (r"xbox", VG.XboxPlatform),
+    (
+        r"nintendo|\bswitch\b|\bwii\b|game ?boy|\b3?ds\b|gamecube|\bs?nes\b|\bn64\b",
+        VG.NintendoPlatform,
+    ),
+    (r"windows", VG.WindowsPlatform),
+    (r"macos|mac os|os x|macintosh|\bmac\b", VG.MacOSPlatform),
+    (r"linux", VG.LinuxPlatform),
+    (r"\bios\b|iphone|ipad", VG.IOSPlatform),
+    (r"android", VG.AndroidPlatform),
+    (r"personal computer|\bpc\b|\bdos\b|steam", VG.PCPlatform),
+    (r"mobile|phone", VG.MobilePlatform),
+]
+
+_GENRE_RULES: list[tuple[str, URIRef]] = [
+    (r"role-playing|\brpg\b", VG.RPGGenre),
+    (r"horror", VG.HorrorGenre),
+    (r"platform", VG.PlatformerGenre),
+    (r"strategy|tactic", VG.StrategyGenre),
+    (r"puzzle", VG.PuzzleGenre),
+    (r"simulat", VG.SimulationGenre),
+    (r"sport", VG.SportsGenre),
+    (r"racing|racer", VG.RacingGenre),
+    (r"adventure", VG.AdventureGenre),
+    (r"action|shooter|fighting|beat", VG.ActionGenre),
+]
+
+_MODE_RULES: list[tuple[str, URIRef]] = [
+    (r"massively|\bmmo", VG.MMOMode),
+    (r"co-?op", VG.CoopMode),
+    (r"multiplayer|multi-player|versus", VG.MultiplayerMode),
+    (r"single", VG.SinglePlayerMode),
+]
+
+
+def _classify(label: str, rules: list[tuple[str, URIRef]]) -> URIRef | None:
+    low = label.lower()
+    for pattern, cls in rules:
+        if re.search(pattern, low):
+            return cls
+    return None
+
+
+def _clean(row: dict, *keys: str) -> list[str] | None:
+    """Return the values for keys, or None if any is missing or a raw QID."""
+    out = []
+    for k in keys:
+        v = get_val(row, k)
+        if not v or is_qid_label(v):
+            return None
+        out.append(v)
+    return out
+
+
+# (cache key, template, label var, uri sub-path, class, name prop, link prop, rules)
+_LINKS = [
+    ("genre", GAMES_GENRE_QUERY, "genreLabel", "genre/", VG.Genre, VG.genreName,
+     VG.hasGenre, _GENRE_RULES),
+    ("platform", GAMES_PLATFORM_QUERY, "platformLabel", "platform/", VG.Platform,
+     VG.platformName, VG.availableOn, _PLATFORM_RULES),
+    ("character", GAMES_CHARACTER_QUERY, "charLabel", "char/", VG.Character,
+     VG.characterName, VG.hasCharacter, None),
+    ("franchise", GAMES_FRANCHISE_QUERY, "seriesLabel", "franchise/", VG.Franchise,
+     VG.franchiseName, VG.belongsTo, None),
+    ("engine", GAMES_ENGINE_QUERY, "engineLabel", "engine/", VG.GameEngine,
+     VG.engineName, VG.madeWith, None),
+    ("award", GAMES_AWARD_QUERY, "awardLabel", "award/", VG.Award, VG.awardName,
+     VG.wonAward, None),
+]
+
+
+def populate_from_wikidata(
+    years: list[int] | None = None, cache_dir: Path = CACHE_DIR
+) -> Graph:
+    """Fetch the ABox from Wikidata (checkpointed per query x month) and return
+    the graph (TBox + data, deduplicated). Reasoning is done by build_ontology.py.
+    """
+    years = years or YEARS
     sparql = SPARQLWrapper(WIKIDATA_ENDPOINT)
     sparql.addCustomHttpHeader(
         "User-Agent",
@@ -335,23 +431,23 @@ def populate_from_wikidata():
     g.bind("vg", VG)
     g.parse(str(Path(__file__).parent / "videogames.owl"))
 
-    games_seen = set()
-    # game_label -> earliest release date seen (string YYYY-MM-DD)
+    games_seen: set[str] = set()
     game_earliest_date: dict[str, str] = {}
-    # game_label -> set of (dev_label, pub_label) pairs already added
     game_devs_seen: dict[str, set] = {}
     game_pubs_seen: dict[str, set] = {}
 
-    # --- Step 1: Core game data (per-year-month to avoid LIMIT truncation) ---
-    logger.info("=" * 60)
-    logger.info("STEP 1: Fetching core game data from Wikidata (year × month)...")
-
-    pairs = [(y, m) for y in range(2010, 2027) for m in range(1, 13)]
+    # --- Step 1: Core game data ---
+    logger.info("STEP 1: core game data (year x month)")
+    pairs = [(y, m) for y in years for m in MONTHS]
     with tqdm(pairs, desc="Core game data", unit="month") as pbar:
         for year, month in pbar:
             pbar.set_postfix(year=year, month=f"{month:02d}", games=len(games_seen))
+            cache_file = cache_dir / "core" / f"{year}-{month:02d}.json"
+            cached = cache_file.exists()
             query = GAMES_CORE_QUERY.format(year=year, month=month)
-            bindings = run_query(sparql, query, f"Core game data ({year}-{month:02d})")
+            bindings = run_query(
+                sparql, query, f"Core game data ({year}-{month:02d})", cache_file
+            )
 
             for row in bindings:
                 game_uri_str = get_val(row, "game")
@@ -423,356 +519,113 @@ def populate_from_wikidata():
                         )
                         g.add((game_uri, VG.publishedBy, pub_uri))
 
-            time.sleep(1)  # Be polite to Wikidata (between months)
+            if not cached:
+                time.sleep(1)  # Be polite to Wikidata (between months)
 
     logger.info(f"Total games loaded: {len(games_seen)}")
-    time.sleep(3)
 
-    # --- Step 2: Genres ---
-    logger.info("=" * 60)
-    logger.info("STEP 2: Fetching genre data...")
-    bindings = run_per_year_month_queries(sparql, GAMES_GENRE_QUERY, "Genre data")
-
-    genres_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
-        genre_label = get_val(row, "genreLabel")
-        if not game_label or not genre_label:
-            continue
-        if is_qid_label(game_label) or is_qid_label(genre_label):
-            continue
-        if game_label not in games_seen:
-            continue
-
-        game_uri = make_uri(str(VG), game_label)
-        genre_uri = make_uri(str(VG) + "genre/", genre_label)
-
-        g.add((genre_uri, RDF.type, VG.Genre))
-        g.add((genre_uri, VG.genreName, Literal(genre_label, datatype=XSD.string)))
-        g.add((game_uri, VG.hasGenre, genre_uri))
-        genres_added += 1
-
-    logger.info(f"Genre associations added: {genres_added}")
-    time.sleep(3)
-
-    # --- Step 3: Platforms ---
-    logger.info("=" * 60)
-    logger.info("STEP 3: Fetching platform data...")
-    bindings = run_per_year_month_queries(sparql, GAMES_PLATFORM_QUERY, "Platform data")
-
-    platforms_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
-        platform_label = get_val(row, "platformLabel")
-        if not game_label or not platform_label:
-            continue
-        if is_qid_label(game_label) or is_qid_label(platform_label):
-            continue
-        if game_label not in games_seen:
-            continue
-
-        game_uri = make_uri(str(VG), game_label)
-        platform_uri = make_uri(str(VG) + "platform/", platform_label)
-
-        g.add((platform_uri, RDF.type, VG.Platform))
-        g.add(
-            (
-                platform_uri,
-                VG.platformName,
-                Literal(platform_label, datatype=XSD.string),
-            )
+    # --- Steps 2-7: entity links (genre, platform, character, franchise, engine, award)
+    for n, (key, tpl, var, sub, cls, name_prop, link_prop, rules) in enumerate(
+        _LINKS, start=2
+    ):
+        logger.info(f"STEP {n}: {key} data")
+        rows = run_per_year_month_queries(
+            sparql, tpl, key, f"{key.capitalize()} data", years, cache_dir
         )
-        g.add((game_uri, VG.availableOn, platform_uri))
-        platforms_added += 1
+        added = 0
+        for row in rows:
+            vals = _clean(row, "gameLabel", var)
+            if not vals or vals[0] not in games_seen:
+                continue
+            game_label, label = vals
+            game_uri = make_uri(str(VG), game_label)
+            uri = make_uri(str(VG) + sub, label)
+            g.add((uri, RDF.type, cls))
+            if rules:
+                sub_cls = _classify(label, rules)
+                if sub_cls:
+                    g.add((uri, RDF.type, sub_cls))
+            g.add((uri, name_prop, Literal(label, datatype=XSD.string)))
+            g.add((game_uri, link_prop, uri))
+            added += 1
+        logger.info(f"  {key} associations added: {added}")
 
-    logger.info(f"Platform associations added: {platforms_added}")
-    time.sleep(3)
-
-    # --- Step 4: Characters ---
-    logger.info("=" * 60)
-    logger.info("STEP 4: Fetching character data...")
-    bindings = run_per_year_month_queries(
-        sparql, GAMES_CHARACTER_QUERY, "Character data"
+    # --- Game modes: individuals typed with the GameMode subclasses ---
+    logger.info("STEP 8: game mode data")
+    rows = run_per_year_month_queries(
+        sparql, GAMES_MODE_QUERY, "mode", "Game mode data", years, cache_dir
     )
-
-    chars_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
-        char_label = get_val(row, "charLabel")
-        if not game_label or not char_label:
+    for row in rows:
+        vals = _clean(row, "gameLabel", "modeLabel")
+        if not vals or vals[0] not in games_seen:
             continue
-        if is_qid_label(game_label) or is_qid_label(char_label):
-            continue
-        if game_label not in games_seen:
-            continue
+        game_label, label = vals
+        mode_uri = make_uri(str(VG) + "mode/", label)
+        g.add((mode_uri, RDF.type, VG.GameMode))
+        mode_cls = _classify(label, _MODE_RULES)
+        if mode_cls:
+            g.add((mode_uri, RDF.type, mode_cls))
+        g.add((mode_uri, RDFS.label, Literal(label, datatype=XSD.string)))
+        g.add((make_uri(str(VG), game_label), VG.hasGameMode, mode_uri))
 
-        game_uri = make_uri(str(VG), game_label)
-        char_uri = make_uri(str(VG) + "char/", char_label)
-
-        g.add((char_uri, RDF.type, VG.Character))
-        g.add((char_uri, VG.characterName, Literal(char_label, datatype=XSD.string)))
-        g.add((game_uri, VG.hasCharacter, char_uri))
-        chars_added += 1
-
-    logger.info(f"Character associations added: {chars_added}")
-    time.sleep(3)
-
-    # --- Step 5: Franchise ---
-    logger.info("=" * 60)
-    logger.info("STEP 5: Fetching franchise/series data...")
-    bindings = run_per_year_month_queries(
-        sparql, GAMES_FRANCHISE_QUERY, "Franchise data"
+    # --- Metacritic scores ---
+    logger.info("STEP 9: Metacritic scores")
+    rows = run_per_year_month_queries(
+        sparql, GAMES_SCORE_QUERY, "score", "Metacritic scores", years, cache_dir
     )
-
-    franchises_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
-        series_label = get_val(row, "seriesLabel")
-        if not game_label or not series_label:
-            continue
-        if is_qid_label(game_label) or is_qid_label(series_label):
-            continue
-        if game_label not in games_seen:
-            continue
-
-        game_uri = make_uri(str(VG), game_label)
-        series_uri = make_uri(str(VG) + "franchise/", series_label)
-
-        g.add((series_uri, RDF.type, VG.Franchise))
-        g.add(
-            (
-                series_uri,
-                VG.franchiseName,
-                Literal(series_label, datatype=XSD.string),
-            )
-        )
-        g.add((game_uri, VG.belongsTo, series_uri))
-        franchises_added += 1
-
-    logger.info(f"Franchise associations added: {franchises_added}")
-    time.sleep(3)
-
-    # --- Step 6: Game modes ---
-    logger.info("=" * 60)
-    logger.info("STEP 6: Fetching game mode data...")
-    bindings = run_per_year_month_queries(sparql, GAMES_MODE_QUERY, "Game mode data")
-
-    modes_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
-        mode_label = get_val(row, "modeLabel")
-        if not game_label or not mode_label:
-            continue
-        if is_qid_label(game_label) or is_qid_label(mode_label):
-            continue
-        if game_label not in games_seen:
-            continue
-
-        game_uri = make_uri(str(VG), game_label)
-        g.add(
-            (
-                game_uri,
-                VG.hasGameMode,
-                Literal(mode_label, datatype=XSD.string),
-            )
-        )
-        modes_added += 1
-
-    logger.info(f"Game mode associations added: {modes_added}")
-    time.sleep(3)
-
-    # --- Step 7: Metacritic scores ---
-    logger.info("=" * 60)
-    logger.info("STEP 7: Fetching Metacritic score data...")
-    bindings = run_per_year_month_queries(
-        sparql, GAMES_SCORE_QUERY, "Metacritic scores"
-    )
-
-    scores_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
+    for row in rows:
+        vals = _clean(row, "gameLabel")
         score = get_val(row, "score")
-        if not game_label or not score:
+        if not vals or not score or vals[0] not in games_seen:
             continue
-        if is_qid_label(game_label):
-            continue
-        if game_label not in games_seen:
-            continue
-
-        game_uri = make_uri(str(VG), game_label)
-        # Metacritic scores are like "85/100", extract the number
         try:
             score_num = int(score.split("/")[0])
+        except ValueError:
+            continue
+        g.add(
+            (
+                make_uri(str(VG), vals[0]),
+                VG.metacriticScore,
+                Literal(score_num, datatype=XSD.integer),
+            )
+        )
+
+    # --- Country of origin ---
+    logger.info("STEP 10: country of origin")
+    rows = run_per_year_month_queries(
+        sparql, GAMES_COUNTRY_QUERY, "country", "Country data", years, cache_dir
+    )
+    for row in rows:
+        vals = _clean(row, "gameLabel", "countryLabel")
+        if not vals or vals[0] not in games_seen:
+            continue
+        g.add(
+            (
+                make_uri(str(VG), vals[0]),
+                VG.countryOfOrigin,
+                Literal(vals[1], datatype=XSD.string),
+            )
+        )
+
+    # --- Sequels (sequelOf) ---
+    logger.info("STEP 11: sequel relations")
+    rows = run_per_year_month_queries(
+        sparql, GAMES_SEQUEL_QUERY, "sequel", "Sequel data", years, cache_dir
+    )
+    for row in rows:
+        vals = _clean(row, "gameLabel", "prevLabel")
+        if not vals or vals[0] not in games_seen or vals[1] not in games_seen:
+            continue
+        if vals[0] != vals[1]:
             g.add(
                 (
-                    game_uri,
-                    VG.metacriticScore,
-                    Literal(score_num, datatype=XSD.integer),
+                    make_uri(str(VG), vals[0]),
+                    VG.sequelOf,
+                    make_uri(str(VG), vals[1]),
                 )
             )
-            scores_added += 1
-        except (ValueError, IndexError):
-            pass
-
-    logger.info(f"Metacritic scores added: {scores_added}")
-    time.sleep(3)
-
-    # --- Step 8: Game engines ---
-    logger.info("=" * 60)
-    logger.info("STEP 8: Fetching game engine data...")
-    bindings = run_per_year_month_queries(
-        sparql, GAMES_ENGINE_QUERY, "Game engine data"
-    )
-
-    engines_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
-        engine_label = get_val(row, "engineLabel")
-        if not game_label or not engine_label:
-            continue
-        if is_qid_label(game_label) or is_qid_label(engine_label):
-            continue
-        if game_label not in games_seen:
-            continue
-
-        game_uri = make_uri(str(VG), game_label)
-        engine_uri = make_uri(str(VG) + "engine/", engine_label)
-
-        g.add((engine_uri, RDF.type, VG.GameEngine))
-        g.add((engine_uri, VG.engineName, Literal(engine_label, datatype=XSD.string)))
-        g.add((game_uri, VG.madeWith, engine_uri))
-        engines_added += 1
-
-    logger.info(f"Game engine associations added: {engines_added}")
-    time.sleep(3)
-
-    # --- Step 9: Country of origin ---
-    logger.info("=" * 60)
-    logger.info("STEP 9: Fetching country of origin data...")
-    bindings = run_per_year_month_queries(sparql, GAMES_COUNTRY_QUERY, "Country data")
-
-    countries_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
-        country_label = get_val(row, "countryLabel")
-        if not game_label or not country_label:
-            continue
-        if is_qid_label(game_label) or is_qid_label(country_label):
-            continue
-        if game_label not in games_seen:
-            continue
-
-        game_uri = make_uri(str(VG), game_label)
-        g.add(
-            (game_uri, VG.countryOfOrigin, Literal(country_label, datatype=XSD.string))
-        )
-        countries_added += 1
-
-    logger.info(f"Country associations added: {countries_added}")
-    time.sleep(3)
-
-    # --- Step 10: Official website ---
-    logger.info("=" * 60)
-    logger.info("STEP 10: Fetching official website data...")
-    bindings = run_per_year_month_queries(sparql, GAMES_WEBSITE_QUERY, "Website data")
-
-    websites_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
-        website = get_val(row, "website")
-        if not game_label or not website:
-            continue
-        if is_qid_label(game_label):
-            continue
-        if game_label not in games_seen:
-            continue
-
-        game_uri = make_uri(str(VG), game_label)
-        g.add((game_uri, VG.officialWebsite, Literal(website, datatype=XSD.anyURI)))
-        websites_added += 1
-
-    logger.info(f"Websites added: {websites_added}")
-    time.sleep(3)
-
-    # --- Step 11: Awards ---
-    logger.info("=" * 60)
-    logger.info("STEP 11: Fetching award data...")
-    bindings = run_per_year_month_queries(sparql, GAMES_AWARD_QUERY, "Award data")
-
-    awards_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
-        award_label = get_val(row, "awardLabel")
-        if not game_label or not award_label:
-            continue
-        if is_qid_label(game_label) or is_qid_label(award_label):
-            continue
-        if game_label not in games_seen:
-            continue
-
-        game_uri = make_uri(str(VG), game_label)
-        award_uri = make_uri(str(VG) + "award/", award_label)
-
-        g.add((award_uri, RDF.type, VG.Award))
-        g.add((award_uri, VG.awardName, Literal(award_label, datatype=XSD.string)))
-        g.add((game_uri, VG.wonAward, award_uri))
-        awards_added += 1
-
-    logger.info(f"Award associations added: {awards_added}")
-    time.sleep(3)
-
-    # --- Step 12: Descriptions ---
-    logger.info("=" * 60)
-    logger.info("STEP 12: Fetching description data...")
-    bindings = run_per_year_month_queries(sparql, GAMES_DESC_QUERY, "Description data")
-
-    descs_added = 0
-    for row in bindings:
-        game_label = get_val(row, "gameLabel")
-        desc = get_val(row, "desc")
-        if not game_label or not desc:
-            continue
-        if is_qid_label(game_label):
-            continue
-        if game_label not in games_seen:
-            continue
-
-        game_uri = make_uri(str(VG), game_label)
-        g.add((game_uri, VG.gameDescription, Literal(desc, datatype=XSD.string)))
-        descs_added += 1
-
-    logger.info(f"Descriptions added: {descs_added}")
 
     # --- Deduplication pass ---
-    logger.info("=" * 60)
-    logger.info("DEDUP: Running deduplication pass...")
     removed = deduplicate_graph(g)
-    logger.info(
-        f"DEDUP: Removed {removed} duplicate entities, graph now has {len(g)} triples"
-    )
-
-    # --- OWL-RL Reasoning ---
-    # Materialises inverse properties (developerOf, publisherOf, appearsIn, includes)
-    # and subPropertyOf chains (gameName/developerName/... → name).
-    # Runs once here so queries against the saved OWL file get richer results.
-    logger.info("=" * 60)
-    logger.info("REASONING: Applying OWL-RL closure (may take a few minutes)...")
-    try:
-        import owlrl
-
-        owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
-        logger.info(f"REASONING: Done. Graph now has {len(g)} triples after closure.")
-    except Exception as e:
-        logger.warning(f"REASONING: owlrl not available or failed, skipping: {e}")
-
-    # --- Save ---
-    output_path = Path(__file__).parent / "videogames_wikidata.owl"
-    logger.info("=" * 60)
-    logger.info(f"Saving graph with {len(g)} triples to {output_path}")
-    g.serialize(str(output_path), format="xml")
-    logger.info("Done! Wikidata population complete.")
+    logger.info(f"DEDUP: removed {removed} duplicates, graph has {len(g)} triples")
     return g
-
-
-if __name__ == "__main__":
-    populate_from_wikidata()
