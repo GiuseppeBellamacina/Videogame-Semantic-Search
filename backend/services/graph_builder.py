@@ -16,6 +16,7 @@ NODE_COLORS = {
     "Franchise": "#8b5cf6",  # Violet
     "Award": "#f97316",  # Orange
     "GameEngine": "#14b8a6",  # Teal
+    "GameMode": "#06b6d4",  # Cyan
     "Unknown": "#6b7280",  # Gray
     # Defined subclasses — same colour as VideoGame
     "AwardWinningGame": "#6366f1",
@@ -32,6 +33,7 @@ NODE_SIZES = {
     "Franchise": 10,
     "Award": 7,
     "GameEngine": 7,
+    "GameMode": 6,
     "Unknown": 5,
     # Defined subclasses — same size as VideoGame
     "AwardWinningGame": 9,
@@ -266,7 +268,7 @@ def find_cross_links(
     new_set = set(new_uris)
     all_set = existing_set | new_set
 
-    _SKIP_PREDS = {"type", "label", "subClassOf", "sameAs", "equivalentClass"}
+    _SKIP_PREDS = {"type", "label", "subClassOf", "sameAs", "equivalentClass", "equivalentProperty"}
 
     links: list[dict] = []
     seen: set[tuple] = set()

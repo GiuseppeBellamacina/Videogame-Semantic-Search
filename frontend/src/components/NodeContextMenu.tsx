@@ -24,6 +24,7 @@ const NODE_COLORS: Record<string, string> = {
   Franchise: "#8b5cf6",
   Award: "#f97316",
   GameEngine: "#14b8a6",
+  GameMode: "#06b6d4",
   Unknown: "#6b7280",
 };
 

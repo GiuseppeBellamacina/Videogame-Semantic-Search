@@ -29,16 +29,16 @@ INSTRUCTIONS:
 8. Add LIMIT 50 unless the user explicitly asks for all results.
 9. For date filtering, use: FILTER(YEAR(?date) >= YYYY) or comparison operators on xsd:date.
 10. Return ONLY the SPARQL query, no explanations or markdown.
-11. The query runs on a LOCAL rdflib graph, NOT on a remote endpoint — do NOT use SERVICE clauses.
+11. The query runs on a LOCAL Oxigraph store, NOT on a remote endpoint — do NOT use SERVICE clauses.
 12. IMPORTANT: Always include ?game URI variable. For related entities (developer, publisher, genre, platform, etc.), include their URI variable too so the graph can show connections.
-13. INFERRED PROPERTIES (available after OWL-RL reasoning — use these when relevant):
-    - vg:sharedFranchiseWith — directly links two games in the same series (no franchise join needed)
-    - vg:sharesDeveloperWith — directly links two games made by the same studio
-    - vg:sharesPublisherWith — directly links two games from the same publisher
-    - rdf:type vg:AwardWinningGame — class containing all games that have won at least one award
-    - rdf:type vg:FranchiseGame — class containing all games that belong to a series
-    IMPORTANT: prefer these inferred classes/properties over manual joins when available.
-    When asked about "serie", "franchise", "stesso sviluppatore", "stesso publisher", "premi" → use them.
+13. INFERRED CLASSES/PROPERTIES (already materialised in the store — prefer them over manual joins):
+    - vg:sharedFranchiseWith / sharesDeveloperWith / sharesPublisherWith / sharedGenreWith / sharedEngineWith — link two games directly
+    - rdf:type vg:AwardWinningGame, FranchiseGame, SinglePlayerGame, MultiplayerGame, CoopGame,
+      PCGame, ConsoleGame, MobileGame, NintendoGame, PlayStationGame, XboxGame,
+      HighlyRatedGame (score >= 85), RecentGame (>= 2020), SequelGame, StandaloneGame
+    - vg:sequelOf is transitive; inverse vg:hasSequel; other inverses: developerOf, publisherOf, genreOf, platformFor, awardWonBy, engineUsedIn, modeInGame
+    - vg:hasGameMode points to GameMode individuals (typed vg:SinglePlayerMode, MultiplayerMode, CoopMode, MMOMode), never to strings.
+    When asked about "serie", "franchise", "stesso sviluppatore", "stesso publisher", "premi", "multiplayer", "single player", "sequel", "molto apprezzati" → use them.
 14. For multiplatform queries, use GROUP BY / HAVING COUNT(DISTINCT ?platform) >= 2.
 
 EXAMPLES:
@@ -237,4 +237,47 @@ SELECT ?franchise ?franchiseName (COUNT(DISTINCT ?game) AS ?awardedGames) WHERE 
 GROUP BY ?franchise ?franchiseName
 ORDER BY DESC(?awardedGames)
 LIMIT 20
+
+Q: "Giochi multiplayer per PlayStation con punteggio alto"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?score WHERE {{
+  ?game rdf:type vg:MultiplayerGame .
+  ?game rdf:type vg:PlayStationGame .
+  ?game rdf:type vg:HighlyRatedGame .
+  ?game vg:gameName ?gameName .
+  ?game vg:metacriticScore ?score .
+}}
+ORDER BY DESC(?score)
+LIMIT 50
+
+Q: "Tutti i seguiti di Dark Souls" / "Sequel di Mass Effect"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?sequel ?sequelName ?releaseDate WHERE {{
+  ?game rdf:type vg:VideoGame .
+  ?game vg:gameName ?gameName .
+  FILTER(CONTAINS(LCASE(str(?gameName)), "mass effect"))
+  ?game vg:hasSequel ?sequel .
+  ?sequel vg:gameName ?sequelName .
+  OPTIONAL {{ ?sequel vg:releaseDate ?releaseDate }}
+}}
+ORDER BY ?releaseDate
+LIMIT 50
+
+Q: "Giochi cooperativi su Nintendo usciti dal 2020"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?game ?gameName ?releaseDate WHERE {{
+  ?game rdf:type vg:CoopGame .
+  ?game rdf:type vg:NintendoGame .
+  ?game rdf:type vg:RecentGame .
+  ?game vg:gameName ?gameName .
+  OPTIONAL {{ ?game vg:releaseDate ?releaseDate }}
+}}
+ORDER BY DESC(?releaseDate)
+LIMIT 50
 """

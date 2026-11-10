@@ -34,6 +34,54 @@ class OntologyService:
         )
         cls._triple_count = len(cls._store)
         logger.info(f"Ontology loaded: {cls._triple_count} triples")
+        cls._build_class_map()
+
+    # Base types shown in the graph, in priority order (most specific entity first)
+    BASE_TYPES = [
+        "VideoGame",
+        "Developer",
+        "Publisher",
+        "Genre",
+        "Platform",
+        "Character",
+        "Franchise",
+        "Award",
+        "GameEngine",
+        "GameMode",
+        "Review",
+        "GameEvent",
+    ]
+    # Defined game classes (SinglePlayerGame, HighlyRatedGame...) are query
+    # shortcuts, not visual types: they always display as VideoGame.
+    _DEFINED_GAME_CLASSES = {
+        "AwardWinningGame", "FranchiseGame", "SinglePlayerGame", "MultiplayerGame",
+        "CoopGame", "PCGame", "ConsoleGame", "MobileGame", "NintendoGame",
+        "PlayStationGame", "XboxGame", "SequelGame", "StandaloneGame",
+        "HighlyRatedGame", "RecentGame", "GameWithSingleDeveloper",
+        "ExclusiveRelease",
+    }
+    _class_to_base: dict[str, str] = {}
+
+    @classmethod
+    def _build_class_map(cls) -> None:
+        """Map every subclass (transitively, via rdfs:subClassOf) to its base type."""
+        store = cls.get_store()
+        sub = ox.NamedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf")
+        mapping: dict[str, str] = {}
+        for base in reversed(cls.BASE_TYPES):  # higher priority overwrites
+            stack = [base]
+            while stack:
+                parent = stack.pop()
+                for quad in store.quads_for_pattern(None, sub, ox.NamedNode(VG_NS + parent)):
+                    if isinstance(quad.subject, ox.NamedNode):
+                        name = cls._get_local_name(quad.subject.value)
+                        if name not in mapping or mapping[name] != base:
+                            mapping[name] = base
+                            stack.append(name)
+            mapping[base] = base
+        for name in cls._DEFINED_GAME_CLASSES:
+            mapping[name] = "VideoGame"
+        cls._class_to_base = mapping
 
     @classmethod
     def get_store(cls) -> ox.Store:
@@ -192,6 +240,8 @@ class OntologyService:
             "characters": ox.NamedNode(VG_NS + "Character"),
             "franchises": ox.NamedNode(VG_NS + "Franchise"),
             "awards": ox.NamedNode(VG_NS + "Award"),
+            "engines": ox.NamedNode(VG_NS + "GameEngine"),
+            "game_modes": ox.NamedNode(VG_NS + "GameMode"),
         }
 
         for name, cls_uri in class_counts.items():
@@ -202,6 +252,10 @@ class OntologyService:
         inferred_counts = {
             "award_winning_games": ox.NamedNode(VG_NS + "AwardWinningGame"),
             "franchise_games": ox.NamedNode(VG_NS + "FranchiseGame"),
+            "highly_rated_games": ox.NamedNode(VG_NS + "HighlyRatedGame"),
+            "sequel_games": ox.NamedNode(VG_NS + "SequelGame"),
+            "multiplayer_games": ox.NamedNode(VG_NS + "MultiplayerGame"),
+            "single_player_games": ox.NamedNode(VG_NS + "SinglePlayerGame"),
         }
         for name, cls_uri in inferred_counts.items():
             count = sum(1 for _ in store.quads_for_pattern(None, rdf_type, cls_uri))
@@ -231,6 +285,7 @@ class OntologyService:
             "franchiseName",
             "awardName",
             "engineName",
+            "reviewerName",
         ]
         for prop_name in name_props:
             prop = ox.NamedNode(VG_NS + prop_name)
@@ -242,6 +297,13 @@ class OntologyService:
                 )
                 set_label(uri, label)
                 return label
+
+        # rdfs:label (GameMode individuals and schema classes)
+        rdfs_label = ox.NamedNode("http://www.w3.org/2000/01/rdf-schema#label")
+        for quad in store.quads_for_pattern(node, rdfs_label, None):
+            label = quad.object.value
+            set_label(uri, label)
+            return label
 
         # Fallback: extract from URI
         label = cls._get_local_name(uri)
@@ -258,23 +320,6 @@ class OntologyService:
         store = cls.get_store()
         node = ox.NamedNode(uri)
         rdf_type = ox.NamedNode(RDF_TYPE)
-
-        # Defined subclasses that should display as VideoGame in the graph.
-        # They are semantic shortcuts for querying, not distinct visual types.
-        _GAME_SUBCLASSES = {"AwardWinningGame", "FranchiseGame"}
-
-        # Priority order for non-game types
-        _TYPE_PRIORITY = [
-            "VideoGame",
-            "Developer",
-            "Publisher",
-            "Genre",
-            "Platform",
-            "Character",
-            "Franchise",
-            "Award",
-            "GameEngine",
-        ]
 
         found_types: list[str] = []
         for quad in store.quads_for_pattern(node, rdf_type, None):
@@ -299,16 +344,15 @@ class OntologyService:
             set_type(uri, "Unknown")
             return "Unknown"
 
-        # Collapse defined game subclasses to VideoGame for display purposes
-        normalised = ["VideoGame" if t in _GAME_SUBCLASSES else t for t in found_types]
-
-        # Pick by priority; if not in priority list, use first found
-        for t in _TYPE_PRIORITY:
-            if t in normalised:
+        # Collapse every subclass (platform families, genre kinds, defined game
+        # classes...) to its base type; pick the highest-priority base type.
+        bases = {cls._class_to_base.get(t, t) for t in found_types}
+        for t in cls.BASE_TYPES:
+            if t in bases:
                 set_type(uri, t)
                 return t
 
-        result = normalised[0]
+        result = found_types[0]
         set_type(uri, result)
         return result
 
@@ -320,21 +364,54 @@ class OntologyService:
         "availableOn": "Platform",
         "hasCharacter": "Character",
         "belongsTo": "Franchise",
+        "partOfFranchise": "Franchise",
         "wonAward": "Award",
         "madeWith": "GameEngine",
+        "hasGameMode": "GameMode",
         "sequelOf": "VideoGame",
+        "hasSequel": "VideoGame",
         "sharedFranchiseWith": "VideoGame",
         "sharesDeveloperWith": "VideoGame",
         "sharesPublisherWith": "VideoGame",
+        "sharedGenreWith": "VideoGame",
+        "sharedEngineWith": "VideoGame",
+        # inverse properties point back to games
+        "developerOf": "VideoGame",
+        "publisherOf": "VideoGame",
+        "appearsIn": "VideoGame",
+        "includes": "VideoGame",
+        "genreOf": "VideoGame",
+        "platformFor": "VideoGame",
+        "awardWonBy": "VideoGame",
+        "engineUsedIn": "VideoGame",
+        "modeInGame": "VideoGame",
     }
     _PRED_TO_SOURCE_TYPE = {
         "developerOf": "Developer",
         "publisherOf": "Publisher",
         "appearsIn": "Character",
         "includes": "Franchise",
+        "genreOf": "Genre",
+        "platformFor": "Platform",
+        "awardWonBy": "Award",
+        "engineUsedIn": "GameEngine",
+        "modeInGame": "GameMode",
+        "developedBy": "VideoGame",
+        "publishedBy": "VideoGame",
+        "hasGenre": "VideoGame",
+        "availableOn": "VideoGame",
+        "hasCharacter": "VideoGame",
+        "belongsTo": "VideoGame",
+        "wonAward": "VideoGame",
+        "madeWith": "VideoGame",
+        "hasGameMode": "VideoGame",
+        "sequelOf": "VideoGame",
+        "hasSequel": "VideoGame",
         "sharedFranchiseWith": "VideoGame",
         "sharesDeveloperWith": "VideoGame",
         "sharesPublisherWith": "VideoGame",
+        "sharedGenreWith": "VideoGame",
+        "sharedEngineWith": "VideoGame",
     }
 
     @classmethod
@@ -357,7 +434,7 @@ class OntologyService:
         return """
 ONTOLOGY SCHEMA (namespace prefix: vg = <http://www.videogame-ontology.org/ontology#>)
 
-CLASSES:
+BASE CLASSES:
 - vg:VideoGame — A video game
 - vg:Developer — A game development studio
 - vg:Publisher — A game publisher company
@@ -366,55 +443,68 @@ CLASSES:
 - vg:Character — A character in a game
 - vg:Franchise — A game series/franchise (e.g., Zelda, Dark Souls)
 - vg:Award — An award given to a game
-- vg:GameEngine — A game engine (e.g., Unreal Engine, Unity, GameMaker)
+- vg:GameEngine — A game engine (e.g., Unreal Engine, Unity)
+- vg:GameMode — A mode of play; individuals are typed with one of:
+  vg:SinglePlayerMode, vg:MultiplayerMode, vg:CoopMode, vg:MMOMode
 
-DEFINED / INFERRED CLASSES (materialised by OWL-RL reasoning):
-- vg:AwardWinningGame — subclass of VideoGame; every game that has won at least one award
-- vg:FranchiseGame    — subclass of VideoGame; every game that belongs to a franchise/series
+PLATFORM / GENRE SUBCLASSES (assigned to platform and genre individuals):
+- Platforms: vg:ConsolePlatform (vg:PlayStationPlatform, vg:XboxPlatform, vg:NintendoPlatform),
+  vg:PCPlatform (vg:WindowsPlatform, vg:MacOSPlatform, vg:LinuxPlatform),
+  vg:MobilePlatform (vg:IOSPlatform, vg:AndroidPlatform)
+- Genres: vg:ActionGenre, vg:RPGGenre, vg:StrategyGenre, vg:PuzzleGenre, vg:SimulationGenre,
+  vg:SportsGenre, vg:RacingGenre, vg:AdventureGenre, vg:HorrorGenre, vg:PlatformerGenre
 
-OBJECT PROPERTIES (domain → range):
+DEFINED / INFERRED GAME CLASSES (already materialised: query them with `?game a vg:Class`,
+they are subclasses of VideoGame and much faster than manual joins):
+- vg:AwardWinningGame — has won at least one award
+- vg:FranchiseGame — belongs to a franchise/series
+- vg:SinglePlayerGame / vg:MultiplayerGame / vg:CoopGame — has a game mode of that kind
+- vg:PCGame / vg:ConsoleGame / vg:MobileGame — available on that kind of platform
+- vg:NintendoGame / vg:PlayStationGame / vg:XboxGame — available on that platform family
+- vg:HighlyRatedGame — metacriticScore >= 85
+- vg:RecentGame — releaseDate >= 2020-01-01
+- vg:SequelGame — is a sequel of another game; vg:StandaloneGame — is not a sequel
+
+OBJECT PROPERTIES (domain → range) and their inverses:
 - vg:developedBy (VideoGame → Developer) — inverse: vg:developerOf
 - vg:publishedBy (VideoGame → Publisher) — inverse: vg:publisherOf
-- vg:hasGenre (VideoGame → Genre)
-- vg:availableOn (VideoGame → Platform)
+- vg:hasGenre (VideoGame → Genre) — inverse: vg:genreOf
+- vg:availableOn (VideoGame → Platform) — inverse: vg:platformFor
 - vg:hasCharacter (VideoGame → Character) — inverse: vg:appearsIn
 - vg:belongsTo (VideoGame → Franchise) — inverse: vg:includes
-- vg:wonAward (VideoGame → Award)
-- vg:sequelOf (VideoGame → VideoGame)
-- vg:madeWith (VideoGame → GameEngine)
-- vg:hasGameMode (VideoGame → literal string, e.g., "single-player", "multiplayer")
+- vg:wonAward (VideoGame → Award) — inverse: vg:awardWonBy
+- vg:madeWith (VideoGame → GameEngine) — inverse: vg:engineUsedIn
+- vg:hasGameMode (VideoGame → GameMode individual, NOT a string) — inverse: vg:modeInGame
+- vg:sequelOf (VideoGame → VideoGame) — transitive; inverse: vg:hasSequel
+  (sequelOf is transitive: a game is a sequelOf all its predecessors)
 
-INFERRED OBJECT PROPERTIES (materialised by OWL-RL via property chains):
-- vg:sharedFranchiseWith (VideoGame ↔ VideoGame) — symmetric; two games in the same franchise
-  chain: vg:belongsTo ∘ vg:includes
-- vg:sharesDeveloperWith (VideoGame ↔ VideoGame) — symmetric; two games by the same studio
-  chain: vg:developedBy ∘ vg:developerOf
-- vg:sharesPublisherWith (VideoGame ↔ VideoGame) — symmetric; two games from the same publisher
-  chain: vg:publishedBy ∘ vg:publisherOf
+INFERRED OBJECT PROPERTIES (materialised; symmetric links between two games):
+- vg:sharedFranchiseWith — same franchise (chain belongsTo ∘ includes)
+- vg:sharesDeveloperWith — same developer (chain developedBy ∘ developerOf)
+- vg:sharesPublisherWith — same publisher (chain publishedBy ∘ publisherOf)
+- vg:sharedGenreWith — same genre
+- vg:sharedEngineWith — same engine
+NOTE: very large groups are capped, so these may be incomplete for huge franchises/studios.
 
 DATA PROPERTIES:
-- vg:gameName (VideoGame → xsd:string) — the name of the game
+- vg:gameName (VideoGame → xsd:string)
 - vg:releaseDate (VideoGame → xsd:date) — format "YYYY-MM-DD"
 - vg:metacriticScore (VideoGame → xsd:integer) — 0-100
-- vg:countryOfOrigin (VideoGame → xsd:string) — country where the game was made
-- vg:developerName (Developer → xsd:string)
-- vg:publisherName (Publisher → xsd:string)
-- vg:genreName (Genre → xsd:string)
-- vg:platformName (Platform → xsd:string)
-- vg:characterName (Character → xsd:string)
-- vg:franchiseName (Franchise → xsd:string)
-- vg:awardName (Award → xsd:string)
-- vg:awardYear (Award → xsd:integer)
-- vg:engineName (GameEngine → xsd:string)
+- vg:countryOfOrigin (VideoGame → xsd:string)
+- vg:developerName, vg:publisherName, vg:genreName, vg:platformName, vg:characterName,
+  vg:franchiseName, vg:awardName, vg:engineName (→ xsd:string) — names of the respective entities
+- GameMode individuals have a human-readable name in rdfs:label (e.g., "single-player video game")
+- All the *Name properties are subproperties of vg:name
 
 IMPORTANT SPARQL NOTES:
 - Always use PREFIX vg: <http://www.videogame-ontology.org/ontology#>
 - Always use PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+- Always use PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> when using rdfs:label
 - Always use PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 - Use FILTER with CONTAINS or regex for text matching (names may vary)
 - releaseDate is xsd:date, use YEAR(?date), comparison operators
 - Use OPTIONAL for properties that may not exist for all games
 - Use DISTINCT to avoid duplicates
 - Add ORDER BY and LIMIT for manageable results
-- Inferred classes/properties are only available if OWL-RL reasoning was applied to the loaded graph
+- Reasoning is already materialised in the store: inferred classes/properties can be queried directly
 """
