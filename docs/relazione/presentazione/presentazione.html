@@ -119,7 +119,7 @@ code,pre,.dl{font-variant-ligatures:none}
 <section class="slide">
   <div class="kicker">Contesto</div>
   <h2>Semantic Web e ontologie</h2>
-  <p class="lead">Dati con semantica formale, che le macchine possono interpretare e su cui possono ragionare.</p>
+  <p class="lead">Dati con una semantica formale: un programma può interpretarli e ricavarne nuova conoscenza.</p>
   <div class="body">
     <div class="col stack">
       <div class="card"><h3>Ontologia</h3><p>«Una specifica esplicita e formale di una concettualizzazione condivisa» <span style="color:var(--muted)">— Gruber, 1993</span></p></div>
@@ -172,7 +172,7 @@ code,pre,.dl{font-variant-ligatures:none}
         <div class="stat"><div class="big">3</div><span>chiavi <code>owl:hasKey</code></span></div>
         <div class="stat"><div class="big">7</div><span>allineamenti (Wikidata, Dublin Core)</span></div>
       </div>
-      <p class="note" style="margin-top:22px">Più 2 classi con solo vincolo di cardinalità (condizioni necessarie). Schema: ~934 triple.</p>
+      <p class="note" style="margin-top:22px">Più 2 classi con solo vincolo di cardinalità (condizioni necessarie). Schema: ~1000 triple.</p>
     </div>
   </div>
   <div class="foot"><span>Videogame Semantic Search</span><span>3</span></div>
@@ -359,7 +359,7 @@ code,pre,.dl{font-variant-ligatures:none}
         <tr><td>AwardWinningGame</td><td class="dl">VideoGame ⊓ ∃wonAward.Award</td></tr>
         <tr><td>FranchiseGame</td><td class="dl">VideoGame ⊓ ∃belongsTo.Franchise</td></tr>
       </table>
-      <p class="note" style="margin-top:16px">12 classi con <code>intersectionOf</code> + <code>someValuesFrom</code> su object property. Altre 3 usano costrutti più espressivi → slide successiva. Totale: <b>15</b>.</p>
+      <p class="note" style="margin-top:16px">12 classi con <code>intersectionOf</code> + <code>someValuesFrom</code> su object property. Le altre 5 usano costrutti più espressivi (slide successiva). Totale: <b>17</b>.</p>
     </div>
     <div class="col stack">
       <div class="card"><h3>Due direzioni in un'equivalenza</h3><p><span class="dl">VideoGame ⊓ ∃p.C ⊑ X</span> — <b>sufficiente</b>: serve a classificare.<br><span class="dl">X ⊑ VideoGame ⊓ ∃p.C</span> — <b>necessaria</b>: ogni X ha almeno un valore.</p></div>
@@ -373,21 +373,23 @@ code,pre,.dl{font-variant-ligatures:none}
 <!-- 10 -->
 <section class="slide">
   <div class="kicker">TBox · Costrutti avanzati</div>
-  <h2>Negazione, datatype e cardinalità</h2>
-  <p class="lead">I costrutti più espressivi dello schema, e cosa implicano sotto l'Open World Assumption.</p>
+  <h2>Negazione, datatype, cardinalità e nominali</h2>
+  <p class="lead">I costrutti più espressivi dello schema e il loro significato con l'Open World Assumption.</p>
   <div class="body" style="flex-direction:column;gap:22px">
-    <table style="font-size:16px">
+    <table style="font-size:15px">
       <tr><th>Classe</th><th>Assioma</th><th>Costrutto</th></tr>
       <tr><td>StandaloneGame</td><td class="dl">≡ VideoGame ⊓ ¬∃sequelOf.VideoGame</td><td><code>owl:complementOf</code></td></tr>
       <tr><td>HighlyRatedGame</td><td class="dl">≡ VideoGame ⊓ ∃metacriticScore.integer[≥ 85]</td><td>datatype restriction, <code>xsd:minInclusive</code></td></tr>
       <tr><td>RecentGame</td><td class="dl">≡ VideoGame ⊓ ∃releaseDate.date[≥ 2020-01-01]</td><td>datatype restriction, <code>xsd:minInclusive</code></td></tr>
+      <tr><td>MultiConsoleGame</td><td class="dl">≡ VideoGame ⊓ ≥2 availableOn.ConsolePlatform</td><td><code>owl:minQualifiedCardinality</code></td></tr>
+      <tr><td>NintendoPublishedGame</td><td class="dl">≡ VideoGame ⊓ ∃publishedBy.{Nintendo}</td><td><code>owl:hasValue</code>, nominale</td></tr>
       <tr><td>GameWithSingleDeveloper</td><td class="dl">⊑ VideoGame ⊓ ≤1 developedBy</td><td><code>owl:maxCardinality</code>, solo necessaria</td></tr>
       <tr><td>ExclusiveRelease</td><td class="dl">⊑ VideoGame ⊓ ≤1 availableOn</td><td><code>owl:maxCardinality</code>, solo necessaria</td></tr>
     </table>
     <div class="grid3">
       <div class="card"><h3>Data range</h3><p>Il filler di <code>someValuesFrom</code> non è una classe ma un sottoinsieme di <code>xsd:integer</code> vincolato da un facet.</p></div>
       <div class="card"><h3>Open World</h3><p>Che un gioco abbia <b>≤1</b> sviluppatore si può dedurre solo con assiomi di chiusura: le due classi di cardinalità sono <b>vincoli di integrità</b>, non classificatori.</p></div>
-      <div class="card"><h3>Fuori da OWL 2 RL</h3><p>Complemento e datatype restriction non rientrano nel profilo RL: richiedono un secondo livello di reasoning.</p></div>
+      <div class="card"><h3>Fuori da OWL 2 RL</h3><p>Complemento, datatype restriction e cardinalità minima non rientrano nel profilo RL e richiedono un secondo livello di reasoning. Il nominale sì: lo classifica già owlrl.</p></div>
     </div>
   </div>
   <div class="foot"><span>Videogame Semantic Search</span><span>10</span></div>
@@ -495,19 +497,19 @@ code,pre,.dl{font-variant-ligatures:none}
 <section class="slide">
   <div class="kicker">Teoria</div>
   <h2>Espressività: come si legge 𝒮ℛ𝒪ℐ𝒬<sup style="font-size:.55em">(𝒟)</sup></h2>
-  <p class="lead">Le <b>Description Logic</b> sono la logica formale su cui si basa OWL. Il nome di una DL è una sigla: <b>ogni lettera aggiunge un tipo di costrutto</b>. Più lettere vuol dire più espressività, ma un ragionamento più costoso.</p>
+  <p class="lead">OWL si basa sulle <b>Description Logic</b>. Il nome di una DL è una sigla in cui <b>ogni lettera indica un tipo di costrutto</b>: più lettere significano più espressività e un ragionamento più costoso.</p>
   <div class="body" style="flex-direction:column;gap:18px">
     <div class="tiles">
       <div class="tile"><div class="L">𝒮</div><h4>Base + transitività</h4><p>La logica base 𝒜ℒ𝒞 (intersezione ⊓, esistenziale ∃, negazione ¬) più le proprietà transitive</p><p class="ex">VideoGame ⊓ ∃wonAward.Award<br>sequelOf transitiva</p></div>
-      <div class="tile"><div class="L">ℛ</div><h4>Catene di ruoli</h4><p>Proprietà composte da altre, più asimmetria e irriflessività</p><p class="ex">developedBy ∘ developerOf<br>⊑ sharesDeveloperWith</p></div>
-      <div class="tile"><div class="L">𝒪</div><h4>Nominali</h4><p>Un individuo nominato dentro una definizione</p><p class="ex">publishedBy value Nintendo</p></div>
-      <div class="tile"><div class="L">ℐ</div><h4>Inverse</h4><p>Una proprietà letta al contrario</p><p class="ex">developedBy ↔ developerOf</p></div>
-      <div class="tile"><div class="L">𝒬</div><h4>Cardinalità qualificate</h4><p>Quanti valori, di una classe precisa (include la 𝒩, senza classe)</p><p class="ex">≥2 availableOn.ConsolePlatform<br>≤1 developedBy</p></div>
-      <div class="tile"><div class="L">(𝒟)</div><h4>Datatype</h4><p>Valori letterali con vincoli (facet)</p><p class="ex">metacriticScore ≥ 85</p></div>
+      <div class="tile"><div class="L">ℛ</div><h4>Catene di ruoli</h4><p>Proprietà ottenute componendone altre; asimmetria e irriflessività</p><p class="ex">developedBy ∘ developerOf<br>⊑ sharesDeveloperWith</p></div>
+      <div class="tile"><div class="L">𝒪</div><h4>Nominali</h4><p>Individui nominati usati dentro una definizione</p><p class="ex">publishedBy value Nintendo</p></div>
+      <div class="tile"><div class="L">ℐ</div><h4>Inverse</h4><p>Proprietà lette nel verso opposto</p><p class="ex">developedBy ↔ developerOf</p></div>
+      <div class="tile"><div class="L">𝒬</div><h4>Cardinalità qualificate</h4><p>Quanti valori ci sono e di quale classe</p><p class="ex">≥2 availableOn.ConsolePlatform</p></div>
+      <div class="tile"><div class="L">(𝒟)</div><h4>Datatype</h4><p>Tipi di dato e restrizioni sui loro valori</p><p class="ex">metacriticScore ≥ 85</p></div>
     </div>
     <div class="grid2">
-      <div class="card"><h3>OWL 2 DL = 𝒮ℛ𝒪ℐ𝒬<sup>(𝒟)</sup></h3><p>Il massimo che OWL 2 DL permette restando <b>decidibile</b>.</p></div>
-      <div class="card"><h3>Lo schema = 𝒮ℛ𝒪ℐ𝒬<sup>(𝒟)</sup></h3><p>Tutte le componenti di OWL 2 DL. Le chiavi <code>hasKey</code> non aggiungono lettere: valgono solo sugli individui nominati.</p></div>
+      <div class="card"><h3>E la 𝒩?</h3><p>La 𝒩 conta i valori senza indicare la classe (<code>≤1 developedBy</code>). È un caso particolare della 𝒬, quindi quando c'è la 𝒬 non si scrive.</p></div>
+      <div class="card"><h3>Lo schema = OWL 2 DL = 𝒮ℛ𝒪ℐ𝒬<sup>(𝒟)</sup></h3><p>Usa tutte le componenti che OWL 2 DL permette restando decidibile. Le chiavi <code>hasKey</code> non aggiungono lettere: valgono solo per gli individui nominati.</p></div>
     </div>
   </div>
   <div class="foot"><span>Videogame Semantic Search</span><span>14</span></div>
@@ -522,7 +524,7 @@ code,pre,.dl{font-variant-ligatures:none}
     <div class="grid3">
       <div class="card"><h3>OWL 2 EL</h3><p>Esclude inverse, complemento e cardinalità: lo schema usa tutti e tre.</p></div>
       <div class="card"><h3>OWL 2 QL</h3><p>Esclude property chain e transitività: lo schema ha 3 catene e 3 transitive.</p></div>
-      <div class="card" style="border-color:var(--accent2)"><h3 style="color:var(--accent2)">OWL 2 RL</h3><p>Ammette <span class="dl">∃p.C</span> solo come condizione sufficiente; esclude datatype restriction e complemento (HighlyRated, Recent, Standalone).</p></div>
+      <div class="card" style="border-color:var(--accent2)"><h3 style="color:var(--accent2)">OWL 2 RL</h3><p>Ammette <span class="dl">∃p.C</span> solo come condizione sufficiente; esclude datatype restriction, complemento e cardinalità minime (HighlyRated, Recent, Standalone, MultiConsole).</p></div>
     </div>
     <div class="grid2">
       <div class="card"><h3>Vincoli globali DL (0 violazioni)</h3><p>Una proprietà è <b>non semplice</b> se è transitiva, inversa di una transitiva o super-proprietà di una catena (7 nello schema). Queste non compaiono mai in asimmetria, irriflessività, funzionalità, cardinalità o <code>hasKey</code>: è la condizione per la decidibilità. Catene regolari, nessuna IFP su datatype.</p></div>
@@ -543,7 +545,7 @@ code,pre,.dl{font-variant-ligatures:none}
   <div class="body">
     <div class="col stack" style="flex:.9">
       <div class="card"><h3>Livello 1 · OWL 2 RL</h3><p>subClassOf, <span class="dl">VideoGame ⊓ ∃p.C ⊑ X</span> (cls-int1, cls-svf1), inverse, simmetria, transitività, property chain (prp-spo2).</p></div>
-      <div class="card" style="border-color:var(--accent2)"><h3 style="color:var(--accent2)">Livello 2 · SPARQL CONSTRUCT</h3><p>Datatype restriction → <code>FILTER(?s &gt;= 85)</code>.<br>Complemento → <code>FILTER NOT EXISTS</code>: <b>negation-as-failure</b>, una Closed World Assumption locale su <code>sequelOf</code>.</p></div>
+      <div class="card" style="border-color:var(--accent2)"><h3 style="color:var(--accent2)">Livello 2 · SPARQL CONSTRUCT</h3><p>Datatype restriction → <code>FILTER(?s &gt;= 85)</code>.<br>Complemento → <code>FILTER NOT EXISTS</code>: <b>negation-as-failure</b>, una Closed World Assumption locale su <code>sequelOf</code>.<br>Cardinalità minima → conteggio di console distinte.</p></div>
       <p class="note">In OWL (Open World) l'assenza di <code>sequelOf</code> non prova nulla: StandaloneGame si legge «nessun predecessore <i>noto</i>».</p>
     </div>
     <div class="col" style="flex:1.1">
