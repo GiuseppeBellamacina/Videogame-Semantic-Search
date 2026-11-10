@@ -82,7 +82,7 @@ async def search_game_image(name: str):
     """
     Image search via Wikipedia REST summary API.
     Tries the exact title first, then with '(video game)' suffix.
-    Results are stored in Upstash Redis (cloud) with local in-memory fallback.
+    Results are stored in the local SQLite cache.
     """
     if not name.strip():
         raise HTTPException(status_code=400, detail="Name cannot be empty")
@@ -91,7 +91,7 @@ async def search_game_image(name: str):
     if re.fullmatch(r"Q\d+", name.strip()):
         return {"imageUrl": None, "source": None}
 
-    # 1. Check cache (Redis → local)
+    # 1. Check cache (SQLite)
     cached = await get_image(name)
     if cached is not None:
         logger.debug(f"[IMG] Cache hit for '{name}'")

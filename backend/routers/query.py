@@ -11,11 +11,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from backend.agents.sparql_agent import SPARQLAgent
-from backend.config import (
-    CACHE_TTL_QUERY,
-    UPSTASH_REDIS_REST_TOKEN,
-    UPSTASH_REDIS_REST_URL,
-)
+from backend.config import CACHE_TTL_QUERY, ONTOLOGY_FILE
+from backend.services import cache
 from backend.services.graph_builder import build_graph_from_results
 from backend.services.ontology_service import OntologyService
 
@@ -23,13 +20,11 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# Async Redis client — initialised at startup, None if env vars are not set
-_redis = None
+# Keys are namespaced by the ontology build time, so rebuilding the ontology
+# invalidates cached answers automatically.
+_PREFIX = f"vg:query:{int(ONTOLOGY_FILE.stat().st_mtime) if ONTOLOGY_FILE.exists() else 0}:"
 
-# In-memory fallback cache used when Redis is not configured
-_memory_cache: dict[str, dict] = {}
-
-# Track all cached keys for fuzzy matching
+# Normalised questions already cached, for fuzzy matching
 _cached_keys: set[str] = set()
 
 # Max Levenshtein distance for fuzzy matching (relative to query length)
@@ -83,91 +78,35 @@ def _find_fuzzy_match(key: str) -> str | None:
 
 
 async def init_cache() -> None:
-    """Initialise Upstash AsyncRedis client. Falls back to in-memory if env vars are not set."""
-    global _redis
-    if not UPSTASH_REDIS_REST_URL or not UPSTASH_REDIS_REST_TOKEN:
-        logger.info(
-            "[CACHE] UPSTASH_REDIS_REST_URL/TOKEN not set — using in-memory fallback cache"
-        )
-        return
-    try:
-        from upstash_redis.asyncio import Redis as AsyncRedis  # type: ignore[import]
-
-        _redis = AsyncRedis(url=UPSTASH_REDIS_REST_URL, token=UPSTASH_REDIS_REST_TOKEN)
-        await _redis.ping()
-        logger.info("[CACHE] Connected to Upstash AsyncRedis")
-
-        # Load existing cache keys for fuzzy matching
-        try:
-            cursor: int = 0
-            while True:
-                cursor, keys = await _redis.scan(cursor, match="vg:query:*", count=500)
-                for k in keys:
-                    # Strip prefix to get the normalised query
-                    _cached_keys.add(k.removeprefix("vg:query:"))
-                if cursor == 0:
-                    break
-            logger.info(
-                f"[CACHE] Loaded {len(_cached_keys)} cached keys for fuzzy matching"
-            )
-        except Exception as e:
-            logger.warning(f"[CACHE] Failed to load cached keys: {e}")
-
-    except Exception as e:
-        logger.warning(
-            f"[CACHE] Upstash Redis connection failed, falling back to in-memory: {e}"
-        )
-        _redis = None
+    """Load the cached questions (for fuzzy matching) from the SQLite cache."""
+    keys = await cache.akeys(_PREFIX)
+    _cached_keys.update(k.removeprefix(_PREFIX) for k in keys)
+    logger.info(f"[CACHE] Loaded {len(_cached_keys)} cached queries for fuzzy matching")
 
 
 def close_cache() -> None:
-    """No-op for Upstash (HTTP-based, no persistent connection)."""
-    if _redis:
-        logger.info("[CACHE] Upstash Redis client released")
+    cache.close()
 
 
 async def _cache_get(key: str) -> dict | None:
-    # Exact match first
-    if _redis:
-        try:
-            value = await _redis.get(f"vg:query:{key}")
-            if value:
-                return json.loads(value)
-        except Exception as e:
-            logger.warning(f"[CACHE] Redis get error: {e}")
+    value = await cache.aget(_PREFIX + key)
+    if value:
+        return json.loads(value)
 
-    if key in _memory_cache:
-        return _memory_cache[key]
-
-    # Fuzzy match — find similar cached key
     fuzzy_key = _find_fuzzy_match(key)
     if fuzzy_key:
         logger.info(f"[CACHE] Fuzzy hit: '{key}' → '{fuzzy_key}'")
-        if _redis:
-            try:
-                value = await _redis.get(f"vg:query:{fuzzy_key}")
-                if value:
-                    return json.loads(value)
-            except Exception as e:
-                logger.warning(f"[CACHE] Redis fuzzy get error: {e}")
-        return _memory_cache.get(fuzzy_key)
-
+        value = await cache.aget(_PREFIX + fuzzy_key)
+        if value:
+            return json.loads(value)
     return None
 
 
 async def _cache_set(key: str, value: dict) -> None:
     _cached_keys.add(key)
-    if _redis:
-        try:
-            await _redis.set(
-                f"vg:query:{key}",
-                json.dumps(value, ensure_ascii=False),
-                ex=CACHE_TTL_QUERY,
-            )
-            return
-        except Exception as e:
-            logger.warning(f"[CACHE] Redis set error: {e}")
-    _memory_cache[key] = value
+    await cache.aset(
+        _PREFIX + key, json.dumps(value, ensure_ascii=False), CACHE_TTL_QUERY
+    )
 
 
 class QueryRequest(BaseModel):
@@ -186,7 +125,7 @@ class QueryResponse(BaseModel):
 async def query_ontology(request: QueryRequest):
     """
     Process a natural language question:
-    1. Check cache (Redis or in-memory fallback)
+    1. Check cache (SQLite)
     2. Use SPARQL agent to convert NL → SPARQL (run in thread — blocking I/O + CPU)
     3. Execute query on local ontology
     4. Build knowledge graph from results
@@ -201,7 +140,7 @@ async def query_ontology(request: QueryRequest):
         return cached
 
     try:
-        # Run blocking agent (OpenAI HTTP + rdflib CPU) off the event loop
+        # Run blocking agent (LLM HTTP + store CPU) off the event loop
         def _run_agent():
             agent = SPARQLAgent()
             state = agent.run(request.question)
