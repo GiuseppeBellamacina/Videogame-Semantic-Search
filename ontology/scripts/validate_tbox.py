@@ -189,9 +189,10 @@ def _collect_declared_entities(g: Graph) -> tuple[_EntitySet, _EntitySet]:
 
 
 def _collect_all_declared(g: Graph) -> _EntitySet:
-    """Return the union of all declared classes + properties in VG namespace."""
+    """Return the union of all declared classes, properties and named individuals."""
     classes, props = _collect_declared_entities(g)
-    return classes | props
+    individuals = {s for s in g.subjects(RDF.type, OWL.NamedIndividual) if isinstance(s, URIRef)}
+    return classes | props | individuals
 
 
 # ---------------------------------------------------------------------------
@@ -251,7 +252,7 @@ def check_dangling_references(g: Graph) -> list[Finding]:
                     message=(
                         f"{_short(p)} points to {_short(o)} "
                         f"which is not declared as owl:Class, "
-                        f"owl:ObjectProperty, or owl:DatatypeProperty"
+                        f"owl:ObjectProperty, owl:DatatypeProperty or owl:NamedIndividual"
                     ),
                     subjects=[_short(s), _short(p), _short(o)],
                 )

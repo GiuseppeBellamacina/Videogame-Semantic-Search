@@ -48,7 +48,7 @@ SANITY_CLASSES = [
     "VideoGame", "Developer", "Publisher", "Genre", "Platform", "GameMode",
     "AwardWinningGame", "FranchiseGame", "SinglePlayerGame", "MultiplayerGame",
     "PCGame", "ConsoleGame", "PlayStationGame", "HighlyRatedGame", "RecentGame",
-    "SequelGame", "StandaloneGame",
+    "SequelGame", "StandaloneGame", "MultiConsoleGame", "NintendoPublishedGame",
 ]
 
 

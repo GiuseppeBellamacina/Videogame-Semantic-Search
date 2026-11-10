@@ -59,7 +59,8 @@ class OntologyService:
         "AwardWinningGame", "FranchiseGame", "SinglePlayerGame", "MultiplayerGame",
         "CoopGame", "PCGame", "ConsoleGame", "MobileGame", "NintendoGame",
         "PlayStationGame", "XboxGame", "SequelGame", "StandaloneGame",
-        "HighlyRatedGame", "RecentGame", "GameWithSingleDeveloper",
+        "HighlyRatedGame", "RecentGame", "MultiConsoleGame", "NintendoPublishedGame",
+        "GameWithSingleDeveloper",
         "ExclusiveRelease",
     }
     _class_to_base: dict[str, str] = {}
@@ -466,6 +467,8 @@ they are subclasses of VideoGame and much faster than manual joins):
 - vg:HighlyRatedGame — metacriticScore >= 85
 - vg:RecentGame — releaseDate >= 2020-01-01
 - vg:SequelGame — is a sequel of another game; vg:StandaloneGame — is not a sequel
+- vg:MultiConsoleGame — available on at least two different console platforms
+- vg:NintendoPublishedGame — published by Nintendo
 
 OBJECT PROPERTIES (domain → range) and their inverses:
 - vg:developedBy (VideoGame → Developer) — inverse: vg:developerOf

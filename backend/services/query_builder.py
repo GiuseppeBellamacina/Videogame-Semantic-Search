@@ -37,7 +37,7 @@ FIELDS: dict[str, dict] = {
             "AwardWinningGame", "FranchiseGame", "SinglePlayerGame", "MultiplayerGame",
             "CoopGame", "PCGame", "ConsoleGame", "MobileGame", "NintendoGame",
             "PlayStationGame", "XboxGame", "HighlyRatedGame", "RecentGame",
-            "SequelGame", "StandaloneGame",
+            "SequelGame", "StandaloneGame", "MultiConsoleGame", "NintendoPublishedGame",
         ],
     },
 }

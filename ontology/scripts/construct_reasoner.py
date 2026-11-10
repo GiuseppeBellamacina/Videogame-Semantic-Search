@@ -91,6 +91,20 @@ WHERE {
 }"""
         ),
     ),
+    # ── MultiConsoleGame : >= 2 distinct console platforms ────────────────
+    Rule(
+        name="classify_multi_console_game",
+        description="Classify games available on at least two console platforms as MultiConsoleGame",
+        query=_q(
+            """CONSTRUCT { ?g a vg:MultiConsoleGame . }
+WHERE {
+    ?g vg:availableOn ?p1 , ?p2 .
+    ?p1 a vg:ConsolePlatform .
+    ?p2 a vg:ConsolePlatform .
+    FILTER(?p1 != ?p2)
+}"""
+        ),
+    ),
     # ── R3 : StandaloneGame ───────────────────────────────────────────────
     Rule(
         name="classify_standalone",

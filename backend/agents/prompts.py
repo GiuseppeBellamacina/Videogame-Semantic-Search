@@ -35,7 +35,8 @@ INSTRUCTIONS:
     - vg:sharedFranchiseWith / sharesDeveloperWith / sharesPublisherWith / sharedGenreWith / sharedEngineWith — link two games directly
     - rdf:type vg:AwardWinningGame, FranchiseGame, SinglePlayerGame, MultiplayerGame, CoopGame,
       PCGame, ConsoleGame, MobileGame, NintendoGame, PlayStationGame, XboxGame,
-      HighlyRatedGame (score >= 85), RecentGame (>= 2020), SequelGame, StandaloneGame
+      HighlyRatedGame (score >= 85), RecentGame (>= 2020), SequelGame, StandaloneGame,
+      MultiConsoleGame (>= 2 console platforms), NintendoPublishedGame
     - vg:sequelOf is transitive; inverse vg:hasSequel; other inverses: developerOf, publisherOf, genreOf, platformFor, awardWonBy, engineUsedIn, modeInGame
     - vg:hasGameMode points to GameMode individuals (typed vg:SinglePlayerMode, MultiplayerMode, CoopMode, MMOMode), never to strings.
     When asked about "serie", "franchise", "stesso sviluppatore", "stesso publisher", "premi", "multiplayer", "single player", "sequel", "molto apprezzati" → use them.
