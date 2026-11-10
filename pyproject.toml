@@ -18,6 +18,7 @@ dependencies = [
     "owlrl>=6.0.2",
     "tqdm>=4.66.0",
     "pyoxigraph>=0.5.8",
+    "anthropic>=2.7.0",
 ]
 
 [project.optional-dependencies]

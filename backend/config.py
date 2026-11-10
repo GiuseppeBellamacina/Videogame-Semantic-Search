@@ -13,20 +13,13 @@ load_dotenv(Path(__file__).parent.parent / ".env")
 # Paths
 BASE_DIR = Path(__file__).parent.parent
 ONTOLOGY_DIR = BASE_DIR / "ontology"
-if os.getenv("LOCAL_BUILD", "false").lower() == "true":
-    ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames_pruned.owl"
-else:
-    ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames_pruned_2020.owl"
+# Produced by ontology/build_ontology.py (the .ttl copy is the readable version)
+ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames_full.owl"
 
-# Fallback chain
-if not ONTOLOGY_FILE.exists():
-    ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames_wikidata.owl"
-if not ONTOLOGY_FILE.exists():
-    ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames.owl"
-
-# OpenAI
+# LLM: "<provider>:<model>", e.g. openai:gpt-4.1-mini or anthropic:haiku5.5
+LLM_MODEL = os.getenv("LLM_MODEL", "openai:gpt-4.1-mini")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
 # Ontology namespace
 ONTOLOGY_NS = "http://www.videogame-ontology.org/ontology#"
@@ -34,9 +27,8 @@ ONTOLOGY_NS = "http://www.videogame-ontology.org/ontology#"
 # Agent settings
 MAX_SPARQL_RETRIES = 3
 
-# Upstash Redis (optional — fallback to in-memory if not set)
-UPSTASH_REDIS_REST_URL = os.getenv("UPSTASH_REDIS_REST_URL", "")
-UPSTASH_REDIS_REST_TOKEN = os.getenv("UPSTASH_REDIS_REST_TOKEN", "")
+# Local SQLite cache (images + query results)
+CACHE_DB_PATH = Path(os.getenv("CACHE_DB_PATH", BASE_DIR / "backend" / "cache.db"))
 
 # Cache TTL in seconds
 CACHE_TTL_QUERY = 60 * 60 * 24 * 14  # 14 days

@@ -9,10 +9,9 @@ with automatic retry on errors.
 import logging
 from dataclasses import dataclass, field
 
-from openai import OpenAI
-
 from backend.agents.prompts import SPARQL_GENERATOR_PROMPT
-from backend.config import MAX_SPARQL_RETRIES, OPENAI_API_KEY, OPENAI_MODEL
+from backend.agents.llm import LLM
+from backend.config import MAX_SPARQL_RETRIES
 from backend.services.ontology_service import OntologyService
 from backend.utils.result_formatter import format_results_summary
 from backend.utils.sparql_validator import clean_sparql_response, validate_sparql
@@ -41,13 +40,7 @@ class SPARQLAgent:
     """
 
     def __init__(self):
-        if not OPENAI_API_KEY:
-            raise ValueError(
-                "OPENAI_API_KEY environment variable is required. "
-                "Set it before starting the server."
-            )
-        self.client = OpenAI(api_key=OPENAI_API_KEY)
-        self.model = OPENAI_MODEL
+        self.llm = LLM()
         self.max_retries = MAX_SPARQL_RETRIES
         self.ontology_schema = OntologyService.get_ontology_schema()
 
@@ -137,20 +130,10 @@ class SPARQLAgent:
         )
 
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a SPARQL query expert. Return ONLY valid SPARQL queries, nothing else.",
-                    },
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=0.1,
-                max_tokens=1000,
+            raw = self.llm.generate(
+                "You are a SPARQL query expert. Return ONLY valid SPARQL queries, nothing else.",
+                prompt,
             )
-
-            raw = response.choices[0].message.content or ""
             state.sparql_query = clean_sparql_response(raw)
             logger.info(f"Generated SPARQL:\n{state.sparql_query}")
 
