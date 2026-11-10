@@ -1,7 +1,0 @@
-{
-  "framework": "vite",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
-  "ignoreCommand": "! git diff --name-only HEAD~1 HEAD | grep -qvE '^(README\\.md|docs/|backend/|ontology/)'"
-}

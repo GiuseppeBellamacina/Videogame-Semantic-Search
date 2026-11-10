@@ -7,7 +7,6 @@ import { KnowledgeGraph } from "@/components/KnowledgeGraph";
 import { NodeDetail } from "@/components/NodeDetail";
 import { NodeContextMenu } from "@/components/NodeContextMenu";
 import { SparqlViewer } from "@/components/SparqlViewer";
-import { Analytics } from "@vercel/analytics/react";
 import { useQuery } from "@/hooks/useQuery";
 import { getCrossLinks } from "@/lib/api";
 import type {
@@ -400,7 +399,6 @@ export default function App() {
         />
       )}
 
-      <Analytics />
     </div>
   );
 }

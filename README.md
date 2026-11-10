@@ -1,26 +1,14 @@
 # Videogame Semantic Search
 
-**[🎮 Demo live](https://videogame-semantic-search.vercel.app)**
-
 ![Videogame Semantic Search](assets/videogame-semantic.webp)
 
 Un progetto di Semantic Web che costruisce e interroga un'ontologia OWL sui videogiochi (dal 2010 ad oggi) tramite un'interfaccia web moderna con grafo di conoscenza interattivo.
 
-## Ontologia — Statistiche
+## Ontologia
 
-| Metrica                | Valore completo | Valore demo (2020–2026) |
-| ---------------------- | --------------- | ----------------------- |
-| Periodo coperto        | 2010 – 2026     | 2020 – 2026             |
-| Triple totali (grezzo) | ~1.019.589      | —                       |
-| Triple dopo reasoning  | ~1.427.081      | —                       |
-| Triple dopo pruning    | ~1.173.959      | **~745.400**            |
-| Giochi                 | ~104.000        | ~68.700                 |
-| Entità deduplicate     | 4.420 rimosse   | —                       |
-| Fonte                  | Wikidata SPARQL | Wikidata SPARQL         |
+L'ontologia (TBox in `ontology/videogames.owl`, descritta nella relazione in `docs/relazione`) viene popolata con i dati di Wikidata dal 2010 ad oggi e arricchita da una pipeline di reasoning in un unico script: `ontology/build_ontology.py`. L'output è `ontology/videogames_full.owl` (caricato dal backend) e `ontology/videogames_full.ttl` (stessa ontologia in Turtle, più leggibile).
 
-L'ontologia viene generata in circa **5 ore** di computazione (query per anno × mese per evitare i timeout di Wikidata), poi viene applicata la chiusura deduttiva OWL-RL tramite `owlrl` per materializzare le proprietà inverse e le catene `subPropertyOf`. Infine viene eseguito un pruning che rimuove triple non utilizzate (owl:sameAs riflessivi, gameDescription, officialWebsite) per ridurre il consumo di memoria a runtime.
-
-> **Demo live:** per rientrare nei limiti di RAM di Render (512 MB), la demo usa un sottoinsieme dell'ontologia limitato ai giochi dal **2020 in poi** (~745k triple, ~68.700 giochi). Il dataset completo (2010–2026, ~1.17M triple) è generabile localmente.
+Il fetch interroga Wikidata per anno × mese (per evitare i timeout) con checkpoint su disco: se si interrompe, rilanciando lo script riparte dai mesi già scaricati. Non vengono scaricati `gameDescription` e `officialWebsite`, che il sistema non usa.
 
 ## Architettura
 
@@ -35,7 +23,7 @@ L'ontologia viene generata in circa **5 ore** di computazione (query per anno ×
 ┌──────────────────────────────▼──────────────────────────────────┐
 │                        Backend (FastAPI)                        │
 │  ┌────────────────────────────────────────────────────────────┐ │
-│  │                 SPARQL Agent (GPT-4.1 mini)                │ │
+│  │                 SPARQL Agent (OpenAI / Anthropic)                │ │
 │  │              NL → SPARQL → Validate → Execute              │ │
 │  │        (retry automatico su errore, max 3 tentativi)       │ │
 │  └────────────────────────────────────────────────────────────┘ │
@@ -44,14 +32,14 @@ L'ontologia viene generata in circa **5 ore** di computazione (query per anno ×
 │  │    (pyoxigraph)     │  │    (nodi + archi per frontend)    │ │
 │  └─────────────────────┘  └───────────────────────────────────┘ │
 │  ┌─────────────────────┐  ┌───────────────────────────────────┐ │
-│  │  Upstash Redis      │  │     Wikipedia Image API           │ │
-│  │  (cache asincrona)  │  │     (fallback cover art)          │ │
+│  │  SQLite (locale)    │  │     Wikipedia Image API           │ │
+│  │  (cache persistente)│  │     (fallback cover art)          │ │
 │  └─────────────────────┘  └───────────────────────────────────┘ │
 └──────────────────────────────┬──────────────────────────────────┘
                                │
 ┌──────────────────────────────▼──────────────────────────────────┐
-│  Ontologia (videogames_pruned_2020.owl)                         │
-│  Store: pyoxigraph (Rust) · ~745k triple · ~250 MB RAM (demo)   │
+│  Ontologia (videogames_full.owl / .ttl)                         │
+│  Store: pyoxigraph (Rust) · reasoning materializzato            │
 │  Classi: VideoGame, Developer, Publisher, Genre, Platform,      │
 │          Character, Franchise, Award, GameEngine                │
 └─────────────────────────────────────────────────────────────────┘
@@ -62,8 +50,7 @@ L'ontologia viene generata in circa **5 ore** di computazione (query per anno ×
 - Python 3.12+ (gestito da uv)
 - [uv](https://docs.astral.sh/uv/) (package manager Python)
 - Node.js 18+ / [Bun](https://bun.sh)
-- Chiave API OpenAI (per GPT-4.1 mini)
-- Upstash Redis (opzionale, per cache immagini)
+- Chiave API OpenAI e/o Anthropic (a seconda di `LLM_MODEL`)
 
 ## Setup
 
@@ -79,41 +66,33 @@ cd Videogame-Semantic-Search
 uv sync
 ```
 
-### 3. Popola l'ontologia
+### 3. Costruisci l'ontologia (una volta sola)
 
 ```bash
-cd ontology
-uv run python populate_wikidata.py
+uv run python ontology/build_ontology.py
 ```
 
-> **Attenzione**: la popolazione richiede circa **5 ore** (query per anno × mese verso Wikidata + OWL-RL reasoning finale). Richiede connessione internet. Il file risultante `videogames_wikidata.owl` non è incluso nel repository per via delle dimensioni.
+Esegue in sequenza, con barre di avanzamento: fetch da Wikidata (checkpoint per mese in `ontology/.cache/`), assiomi V2, chiusura OWL-RL, materializzazione, regole CONSTRUCT, validazione e scrittura di `videogames_full.owl` e `videogames_full.ttl`. Il fetch richiede alcune ore. Opzioni utili: `--years 2020-2026` (sottoinsieme), `--from-stage reason` (riusa il fetch già fatto).
 
-### 4. Pruna l'ontologia (opzionale, consigliato)
+> Wikidata può rispondere con HTTP 429 (rate limit): lo script attende il tempo indicato e riprova da solo.
 
-```bash
-uv run python ontology/prune_owl.py
-```
-
-Genera `videogames_pruned.owl` rimuovendo ~253k triple inutili a runtime (sameAs riflessivi, descrizioni, siti web). Riduce la RAM da ~1.5 GB a ~389 MB.
-
-### 5. Configura variabili d'ambiente
+### 4. Configura variabili d'ambiente
 
 Crea un file `.env` nella root del progetto:
 
 ```env
-OPENAI_API_KEY=sk-your-api-key-here
-OPENAI_MODEL=gpt-4.1-mini
-UPSTASH_REDIS_REST_URL=https://...   # opzionale
-UPSTASH_REDIS_REST_TOKEN=...         # opzionale
+LLM_MODEL=openai:gpt-4.1-mini        # oppure anthropic:haiku5.5
+OPENAI_API_KEY=sk-...                # se usi openai:
+ANTHROPIC_API_KEY=sk-ant-...         # se usi anthropic:
 ```
 
-### 6. Avvia il backend
+### 5. Avvia il backend
 
 ```bash
 uv run uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 7. Frontend
+### 6. Frontend
 
 ```bash
 cd frontend
@@ -147,6 +126,11 @@ Scrivi domande come:
 - **Recentra** button per zoom-to-fit
 - **Sidebar** → click su relazione espande il nodo nel grafo
 
+### Autosuggest e query builder
+
+- **Autosuggest** mentre scrivi: giochi, sviluppatori, publisher, generi, piattaforme, serie, personaggi, premi, engine e modalità di gioco, sulle ultime parole digitate (tasti ↑ ↓ Invio/Tab).
+- **Query builder assistito**: componi filtri (sviluppatore, genere, piattaforma, modalità, anno, Metacritic, categorie inferite come `HighlyRatedGame`...) con autocomplete sui valori; il backend genera il SPARQL (mostrato nel pannello) senza usare l'LLM.
+
 ### Agente SPARQL intelligente
 
 - Converte NL → SPARQL automaticamente
@@ -156,7 +140,7 @@ Scrivi domande come:
 
 ### Cache a due livelli
 
-- **Upstash Redis** (cloud, persistente, TTL 7 giorni) per immagini e risultati query
+- **SQLite locale** (`backend/cache.db`, persistente) per immagini e risultati query
 - **In-memory** (Python dict) per label e tipi derivati dal grafo RDF
 - Risultati null non vengono cachati (permettono retry su Wikipedia)
 
@@ -194,10 +178,9 @@ Scrivi domande come:
 
 ### Processo di popolamento
 
-1. **Query per anno × mese** (2010–2026) verso Wikidata per 12 tipologie di dati (core, generi, piattaforme, personaggi, franchise, game mode, Metacritic, engine, paese, sito web, premi, descrizioni)
+1. **Query per anno × mese** (2010–2026) verso Wikidata per 11 tipologie di dati (core, generi, piattaforme, personaggi, franchise, game mode, Metacritic, engine, paese, premi, sequel)
 2. **Deduplicazione** degli URI con stesso nome (normalizzato): 4.420 entità duplicate rimosse
 3. **OWL-RL reasoning** con `owlrl`: materializzazione di proprietà inverse e catene subPropertyOf → da ~1M a ~1.4M triple
-4. **Pruning** (opzionale): rimozione di `owl:sameAs` (tutti riflessivi), `gameDescription`, `officialWebsite` → da ~1.4M a ~1.17M triple
 
 ### Fonti dati
 
@@ -211,10 +194,9 @@ Scrivi domande come:
 | Grafo     | react-force-graph-2d                     |
 | Backend   | FastAPI, Python 3.12+, async             |
 | Ontologia | pyoxigraph (Rust), OWL 2, owlrl          |
-| LLM       | OpenAI GPT-4.1 mini                      |
-| Cache     | Upstash Redis (async) + in-memory        |
+| LLM       | OpenAI o Anthropic (`LLM_MODEL`)         |
+| Cache     | SQLite (locale) + in-memory              |
 | Dati      | Wikidata SPARQL                          |
-| Deploy    | Render (backend) + Vercel (frontend)     |
 
 ## API Endpoints
 
@@ -224,13 +206,7 @@ Scrivi domande come:
 | GET    | `/api/node/{uri}`   | Dettaglio nodo + sottografo    |
 | GET    | `/api/image-search` | Cerca cover art da Wikipedia   |
 | GET    | `/api/stats`        | Statistiche ontologia          |
+| GET    | `/api/suggest`      | Autosuggest su nomi ed entità  |
+| GET    | `/api/builder/schema` | Campi e operatori del builder |
+| POST   | `/api/builder/query` | Query builder → SPARQL → grafo |
 | GET    | `/api/health`       | Health check                   |
-
-## Performance
-
-| Metrica              | rdflib (prima) | pyoxigraph (completo) | pyoxigraph (demo 2020+) |
-| -------------------- | -------------- | --------------------- | ----------------------- |
-| RAM a runtime        | ~1.550 MB      | ~389 MB               | ~250 MB                 |
-| Tempo di caricamento | ~41s           | ~2.2s                 | ~1.5s                   |
-| Query SPARQL tipica  | 1–23s          | 0.08–0.37s            | 0.05–0.25s              |
-| Speedup query        | —              | 5–62×                 | —                       |
