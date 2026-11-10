@@ -28,8 +28,8 @@ seguente illustra il flusso dati:
 |  |  (pyoxigraph)    |  | (nodi + archi grafo)  |  |
 |  +------------------+  +-----------------------+  |
 |  +------------------+  +-----------------------+  |
-|  | Upstash Redis    |  | Wikipedia Image API   |  |
-|  | (cache asincr.)  |  | (fallback cover art)  |  |
+|  | SQLite (locale)  |  | Wikipedia Image API   |  |
+|  | (cache persist.) |  | (fallback cover art)  |  |
 |  +------------------+  +-----------------------+  |
 +--------------------------+-------------------------+
                            |
@@ -59,7 +59,7 @@ Backend             & FastAPI (Python 3.12+, async)               \\
 Ontologia (runtime) & pyoxigraph (Rust), OWL 2                    \\
 Ontologia (offline) & rdflib + owlrl (reasoning, validazione)     \\
 LLM / Agente        & OpenAI GPT-4.1-mini                         \\
-Cache               & Upstash Redis (async) + cache in-memory      \\
+Cache               & SQLite (locale) + cache in-memory            \\
 Fonte dati          & Wikidata SPARQL                             \\
 Deploy              & Render (backend) + Vercel (frontend)         \\
 \bottomrule
@@ -83,8 +83,8 @@ Il flusso di una tipica interrogazione \`e il seguente:
 
 Per ottimizzare le performance, il sistema adotta una cache a due livelli:
 \begin{itemize}[nosep]
-  \item \textbf{Upstash Redis} (cloud, persistente): memorizza i risultati delle query (TTL 14 giorni) e le immagini (cover art) recuperate da Wikipedia (TTL 6 mesi). I risultati vuoti non vengono cachati per consentire retry successivi;
-  \item \textbf{Cache in-memory} (Python dict): mantiene in RAM label e tipi dei nodi, popolati al primo accesso, e funge da fallback per risultati e immagini quando Redis non \`e disponibile.
+  \item \textbf{SQLite} (locale, persistente): memorizza i risultati delle query (TTL 14 giorni) e le immagini (cover art) recuperate da Wikipedia (TTL 6 mesi). I risultati vuoti non vengono cachati per consentire retry successivi;
+  \item \textbf{Cache in-memory} (Python dict): mantiene in RAM label e tipi dei nodi, popolati al primo accesso, e funge da fallback per risultati e immagini quando il database SQLite non \`e disponibile.
 \end{itemize}
 
 \subsection{Tabella dei Componenti}

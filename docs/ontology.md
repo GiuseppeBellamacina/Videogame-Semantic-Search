@@ -293,7 +293,7 @@ Nel frontend, `AwardWinningGame` e `FranchiseGame` vengono normalizzati a `Video
 
 ### 12. Cache a due livelli
 
-- **Upstash Redis** (cloud, persistente):
+- **SQLite locale** (`backend/cache.db`, persistente):
   - TTL **14 giorni** per i risultati delle query SPARQL (`vg:query:*`)
   - TTL **6 mesi** per le immagini cercate via Wikipedia API (`img:*`)
 - **In-memory** (Python dict): per label e tipi RDF derivati dallo store (derivati dal grafo caricato, non persistono al riavvio)

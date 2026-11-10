@@ -33,7 +33,7 @@ async def set_image(name: str, result: dict) -> None:
 
 # ── Label cache (sync, in-memory only) ───────────────────────────────────────
 # Labels are derived from the in-memory RDF graph on first access and cached locally.
-# No Redis needed: the data is already available in-memory and labels are static.
+# Not persisted: the data is already available in-memory and labels are static.
 
 
 def get_label(uri: str) -> str | None:
