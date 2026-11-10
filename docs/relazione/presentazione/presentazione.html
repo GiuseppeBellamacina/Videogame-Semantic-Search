@@ -5,92 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Videogame Semantic Search</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f7f5f0; --ink:#1b2133; --muted:#5d6475; --line:#e1ddd2;
-  --accent:#3b4cca; --accent2:#c2410c; --ok:#15803d; --card:#ffffff; --code:#161a2b; --codeink:#e6e8ef;
-  --tint:#eceefc; --tint2:#fdeee5;
-  --shadow:0 1px 2px rgba(27,33,51,.05),0 10px 28px -14px rgba(27,33,51,.22);
-  --head:"Plus Jakarta Sans",Inter,system-ui,sans-serif;
+  --paper:#f3f0e8; --ink:#1a1a1c; --muted:#6b675e; --rule:#cfc9bb;
+  --accent:#26565c; --accent2:#b8391f; --soft:#dce6e4; --soft2:#f1ddd5;
+  --code:#1c1d21; --codeink:#e9e6dd;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#11141f;font-family:Inter,system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+html,body{height:100%;background:#0f0f10;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
 #deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.slide{position:absolute;width:1280px;height:720px;padding:48px 76px 54px;display:none;flex-direction:column;
-  transform-origin:center center;overflow:hidden;
-  background:
-    radial-gradient(900px 420px at 105% -10%,rgba(59,76,202,.08),transparent 60%),
-    radial-gradient(700px 360px at -10% 110%,rgba(194,65,12,.06),transparent 60%),
-    var(--bg)}
-.slide::before{content:"";position:absolute;left:0;top:0;right:0;height:6px;background:linear-gradient(90deg,var(--accent),#7b87e0 55%,var(--accent2))}
-.slide.active{display:flex;animation:in .38s cubic-bezier(.2,.7,.2,1)}
-@keyframes in{from{opacity:0;transform:translateY(10px) scale(var(--s,1))}to{opacity:1}}
-.slide h2{font-family:var(--head);font-size:38px;font-weight:800;letter-spacing:-.8px;line-height:1.1;margin-bottom:8px}
-.slide .kicker{display:inline-flex;align-items:center;gap:12px;font-size:13px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-.slide .kicker::before{content:"";width:28px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
-.slide .lead{font-size:19px;color:var(--muted);margin-bottom:18px;max-width:1020px;line-height:1.45}
-.slide .foot{position:absolute;left:76px;right:76px;bottom:18px;display:flex;justify-content:space-between;align-items:center;
-  font-size:12.5px;letter-spacing:.3px;color:var(--muted);padding-top:10px;border-top:1px solid var(--line)}
-.slide .foot span:last-child{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
-.body{flex:1;display:flex;gap:40px;min-height:0}
+.slide{position:absolute;width:1280px;height:720px;padding:50px 72px 58px;display:none;flex-direction:column;
+  transform-origin:center center;overflow:hidden;background:var(--paper)}
+.slide.active{display:flex;animation:in .25s ease-out}
+@keyframes in{from{opacity:0}to{opacity:1}}
+.slide .kicker{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent2);margin-bottom:12px}
+.slide .kicker::before{content:attr(data-n) "\00a0\00a0/\00a0\00a0"}
+.slide h2{font-family:var(--serif);font-size:46px;font-weight:500;letter-spacing:-1px;line-height:1.04;margin-bottom:10px}
+.slide .lead{font-size:17.5px;color:var(--muted);margin-bottom:20px;max-width:860px;line-height:1.5}
+.slide .foot{position:absolute;left:72px;right:72px;bottom:20px;display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding-top:9px;border-top:1px solid var(--rule)}
+.slide .foot span:last-child{color:var(--ink)}
+.body{flex:1;display:flex;gap:48px;min-height:0;border-top:2px solid var(--ink);padding-top:22px}
 .col{flex:1;min-width:0}
-ul.b{list-style:none;font-size:20px;line-height:1.45}
-ul.b li{position:relative;padding-left:26px;margin-bottom:13px}
-ul.b li::before{content:"";position:absolute;left:0;top:10px;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7b87e0)}
-ul.b.sm{font-size:17px}
-ul.b.sm li{margin-bottom:10px}
-ul.b.sm li::before{top:8px;width:9px;height:9px}
-b,strong{font-weight:650}
-code,.m{font-family:"JetBrains Mono",monospace;font-size:.86em;background:var(--tint);color:#2c378f;padding:2px 7px;border-radius:6px}
-.dl{font-family:"JetBrains Mono",monospace;font-size:.92em}
-.card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;padding:15px 20px;box-shadow:var(--shadow)}
-.card h3{font-family:var(--head);font-size:17px;font-weight:700;margin-bottom:8px;color:var(--accent)}
-.card p{font-size:16px;line-height:1.5;color:var(--ink)}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.stack>*+*{margin-top:14px}
-table{border-collapse:separate;border-spacing:0;width:100%;font-size:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
-th{text-align:left;font-weight:700;color:var(--accent);background:var(--tint);font-size:12.5px;text-transform:uppercase;letter-spacing:1.2px;border-bottom:1px solid var(--line);padding:7px 12px}
-td{padding:5px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-tr:last-child td{border-bottom:none}
+ul.b{list-style:none;font-size:19px;line-height:1.45}
+ul.b li{position:relative;padding-left:26px;margin-bottom:12px}
+ul.b li::before{content:"";position:absolute;left:0;top:.62em;width:12px;height:2px;background:var(--accent2)}
+ul.b.sm{font-size:16.5px}
+ul.b.sm li{margin-bottom:9px}
+b,strong{font-weight:600}
+code,.m{font-family:var(--mono);font-size:.84em;background:var(--soft);color:#1d4448;padding:1px 5px;border-radius:2px}
+.dl{font-family:var(--mono);font-size:.9em}
+.card{border-top:1px solid var(--ink);padding:9px 0 2px}
+.card h3{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:8px;color:var(--accent)}
+.card p{font-size:15.5px;line-height:1.5}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+.stack>*+*{margin-top:20px}
+table{border-collapse:collapse;width:100%;font-size:15.5px}
+th{text-align:left;font-family:var(--mono);font-weight:500;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1.3px;border-bottom:1.5px solid var(--ink);padding:5px 10px 6px 0}
+td{padding:6px 12px 6px 0;border-bottom:1px solid var(--rule);vertical-align:top}
 td.n{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
-pre{background:linear-gradient(160deg,#1b2036,var(--code));color:var(--codeink);border-radius:14px;padding:20px 22px;font-family:"JetBrains Mono",monospace;font-size:14.5px;line-height:1.55;overflow:hidden;white-space:pre;
-  border:1px solid #2a3050;box-shadow:0 14px 30px -16px rgba(11,14,30,.6)}
-pre .k{color:#8fb3ff} pre .p{color:#f5b971} pre .s{color:#9fe0a8} pre .c{color:#7d8597;font-style:italic}
-.note{font-size:16px;color:#4a5164;background:var(--tint2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:8px 14px;line-height:1.45}
-.pill{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--tint);color:var(--accent);margin:0 4px 6px 0}
-.pill.o{background:var(--tint2);color:var(--accent2)}
-.big{font-family:var(--head);font-size:46px;font-weight:800;line-height:1;background:linear-gradient(135deg,var(--accent),#7b87e0);-webkit-background-clip:text;background-clip:text;color:transparent}
-.stat{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;box-shadow:var(--shadow)}
+pre{background:var(--code);color:var(--codeink);padding:18px 22px;font-family:var(--mono);font-size:14px;line-height:1.55;overflow:hidden;white-space:pre}
+pre .k{color:#9cc7cb} pre .p{color:#e8a87c} pre .s{color:#b9d79b} pre .c{color:#8b8a84;font-style:italic}
+.note{font-family:var(--serif);font-style:italic;font-size:17.5px;color:#3a3935;border-left:2px solid var(--accent2);padding:2px 0 2px 16px;line-height:1.45}
+.note code{font-style:normal}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.6px;padding:0 6px;border:1px solid var(--accent);border-radius:2px;color:var(--accent);margin:0 4px 6px 0;vertical-align:1px}
+.pill.o{border-color:var(--accent2);color:var(--accent2)}
+.big{font-family:var(--serif);font-size:58px;font-weight:400;line-height:.95;color:var(--ink);letter-spacing:-1.5px}
+.stat{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--ink);padding-top:8px}
 .stat span{font-size:13.5px;color:var(--muted);line-height:1.3}
-.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
-.tile{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:12px;padding:10px 11px;box-shadow:var(--shadow)}
-.tile .L{font-family:var(--head);font-size:34px;font-weight:800;color:var(--accent);line-height:1.1}
-.tile h4{font-size:14px;font-weight:650;margin:4px 0}
-.tile p{font-size:12.5px;line-height:1.35;color:var(--muted)}
-.tile .ex{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink);margin-top:6px;font-variant-ligatures:none}
-.tile.off{opacity:.55;border-top-color:var(--muted)}.tile.off .L{color:var(--muted)}
-svg text{font-family:Inter,sans-serif}
-svg{filter:drop-shadow(0 8px 14px rgba(27,33,51,.10))}
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:0}
+.tile{border-top:1px solid var(--ink);border-left:1px solid var(--rule);padding:10px 14px 4px}
+.tile:first-child{border-left:0;padding-left:0}
+.tile .L{font-family:var(--serif);font-size:48px;font-weight:400;color:var(--accent2);line-height:1}
+.tile h4{font-size:14.5px;font-weight:600;margin:8px 0 4px}
+.tile p{font-size:12.5px;line-height:1.4;color:var(--muted)}
+.tile .ex{font-family:var(--mono);font-size:11px;color:var(--ink);margin-top:8px;font-variant-ligatures:none}
+svg text{font-family:var(--sans)}
+.summary ul.b{font-family:var(--serif);font-size:25px;line-height:1.3}
+.summary ul.b li{margin-bottom:18px}
 /* title slides */
-.title{color:#f6f4ef;justify-content:center;
-  background:
-    radial-gradient(620px 420px at 88% 12%,rgba(123,135,224,.35),transparent 65%),
-    radial-gradient(520px 380px at 8% 100%,rgba(194,65,12,.30),transparent 65%),
-    linear-gradient(135deg,#11152a,#1b2250 62%,#2b1f55)}
-.title::before{height:6px;background:linear-gradient(90deg,#8fb3ff,#c084fc,#fb923c)}
-.title::after{content:"";position:absolute;right:-120px;bottom:-120px;width:420px;height:420px;border-radius:50%;
-  border:2px solid rgba(143,179,255,.18);box-shadow:0 0 0 60px rgba(143,179,255,.05),0 0 0 120px rgba(143,179,255,.03)}
-.title h1{font-family:var(--head);font-size:70px;font-weight:800;letter-spacing:-2px;line-height:1.03;
-  background:linear-gradient(120deg,#ffffff,#c9d4ff 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.title .sub{font-size:26px;color:#b7bdd0;margin-top:22px;max-width:900px;line-height:1.4}
-.title .tags{margin-top:44px;font-family:"JetBrains Mono",monospace;font-size:15px;color:#9fb8ff;
-  display:inline-block;align-self:flex-start;padding:10px 18px;border:1px solid rgba(143,179,255,.35);border-radius:999px;background:rgba(143,179,255,.08)}
-.title[style*="text-align:center"] .tags{align-self:center}
-.title .foot{color:#8a90a3;border-top-color:rgba(255,255,255,.12)}
-.title .foot span:last-child{color:#8a90a3;font-weight:500}
-#bar{position:fixed;left:0;bottom:0;height:3px;width:0;background:linear-gradient(90deg,#8fb3ff,#fb923c);transition:width .35s ease;z-index:5}
+.title{background:var(--ink);color:#f3f0e8;justify-content:center}
+.title .kicker{color:#e07a5f;margin-bottom:22px}
+.title .kicker::before{content:none}
+.title h1{font-family:var(--serif);font-size:84px;font-weight:400;letter-spacing:-2.5px;line-height:1;max-width:1000px}
+.title .sub{font-size:23px;color:#b9b5a9;margin-top:28px;max-width:780px;line-height:1.4}
+.title .tags{margin-top:46px;font-family:var(--mono);font-size:13px;letter-spacing:.8px;color:#b9b5a9;padding-top:14px;border-top:1px solid #4a4a46;max-width:760px}
+.title .foot{color:#8c8a82;border-top-color:#3a3a37}
+.title .foot span:last-child{color:#8c8a82}
+#bar{position:fixed;left:0;bottom:0;height:3px;width:0;background:var(--accent2);transition:width .3s ease;z-index:5}
 code,pre,.dl{font-variant-ligatures:none}
 @media print{
   @page{size:1280px 720px;margin:0}
@@ -108,7 +95,7 @@ code,pre,.dl{font-variant-ligatures:none}
 
 <!-- 1 -->
 <section class="slide title">
-  <div class="kicker" style="color:#8fb3ff">Semantic Web · Progetto</div>
+  <div class="kicker" style="color:#e07a5f">Semantic Web · Progetto</div>
   <h1>Videogame Semantic Search</h1>
   <p class="sub">Un'ontologia OWL 2 DL per il dominio dei videogiochi:<br>modellazione, reasoning e interrogazione SPARQL</p>
   <div class="tags">RDF · RDFS · OWL 2 · Description Logic · SPARQL · Linked Data</div>
@@ -133,13 +120,13 @@ code,pre,.dl{font-variant-ligatures:none}
     <div class="col">
       <svg viewBox="0 0 520 400" width="100%" height="400">
         <g font-size="16" font-weight="600">
-          <rect x="60" y="10"  width="400" height="58" rx="10" fill="#c2410c"/><text x="260" y="45" fill="#fff" text-anchor="middle">SPARQL — interrogazione</text>
-          <rect x="60" y="80"  width="400" height="58" rx="10" fill="#3b4cca"/><text x="260" y="115" fill="#fff" text-anchor="middle">OWL 2 — assiomi, reasoning</text>
-          <rect x="60" y="150" width="400" height="58" rx="10" fill="#5a68d6"/><text x="260" y="185" fill="#fff" text-anchor="middle">RDFS — classi, gerarchie, domain/range</text>
-          <rect x="60" y="220" width="400" height="58" rx="10" fill="#7b87e0"/><text x="260" y="255" fill="#fff" text-anchor="middle">RDF — triple soggetto · predicato · oggetto</text>
-          <rect x="60" y="290" width="400" height="58" rx="10" fill="#1d2330"/><text x="260" y="325" fill="#fff" text-anchor="middle">URI / IRI — identificatori globali</text>
+          <rect x="60" y="10"  width="400" height="58" rx="2" fill="#b8391f"/><text x="260" y="45" fill="#fff" text-anchor="middle">SPARQL — interrogazione</text>
+          <rect x="60" y="80"  width="400" height="58" rx="2" fill="#26565c"/><text x="260" y="115" fill="#fff" text-anchor="middle">OWL 2 — assiomi, reasoning</text>
+          <rect x="60" y="150" width="400" height="58" rx="2" fill="#4a7d83"/><text x="260" y="185" fill="#fff" text-anchor="middle">RDFS — classi, gerarchie, domain/range</text>
+          <rect x="60" y="220" width="400" height="58" rx="2" fill="#7fa6aa"/><text x="260" y="255" fill="#fff" text-anchor="middle">RDF — triple soggetto · predicato · oggetto</text>
+          <rect x="60" y="290" width="400" height="58" rx="2" fill="#1a1a1c"/><text x="260" y="325" fill="#fff" text-anchor="middle">URI / IRI — identificatori globali</text>
         </g>
-        <text x="260" y="385" font-size="14" fill="#5d6475" text-anchor="middle">Lo stack usato nel progetto</text>
+        <text x="260" y="385" font-size="14" fill="#6b675e" text-anchor="middle">Lo stack usato nel progetto</text>
       </svg>
     </div>
   </div>
@@ -186,31 +173,31 @@ code,pre,.dl{font-variant-ligatures:none}
   <div class="body">
     <div class="col" style="flex:1.5">
       <svg viewBox="0 0 700 380" width="100%" height="380">
-        <defs><marker id="ar" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#5d6475"/></marker></defs>
-        <g stroke="#5d6475" stroke-width="1.5" fill="none" marker-end="url(#ar)">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#6b675e"/></marker></defs>
+        <g stroke="#6b675e" stroke-width="1.5" fill="none" marker-end="url(#ar)">
           <path d="M120,100 L330,42"/><path d="M350,100 L350,42"/><path d="M580,100 L370,42"/>
           <path d="M50,230 L105,138"/><path d="M190,230 L135,138"/>
           <path d="M280,230 L335,138"/><path d="M420,230 L365,138"/>
           <path d="M535,230 L570,138"/><path d="M630,230 L590,138"/>
         </g>
         <g font-size="14" font-weight="600" text-anchor="middle">
-          <rect x="280" y="10" width="140" height="32" rx="8" fill="#1d2330"/><text x="350" y="31" fill="#fff">Platform</text>
-          <rect x="45"  y="104" width="150" height="34" rx="8" fill="#3b4cca"/><text x="120" y="126" fill="#fff">ConsolePlatform</text>
-          <rect x="285" y="104" width="130" height="34" rx="8" fill="#3b4cca"/><text x="350" y="126" fill="#fff">PCPlatform</text>
-          <rect x="505" y="104" width="150" height="34" rx="8" fill="#3b4cca"/><text x="580" y="126" fill="#fff">MobilePlatform</text>
+          <rect x="280" y="10" width="140" height="32" rx="2" fill="#1a1a1c"/><text x="350" y="31" fill="#fff">Platform</text>
+          <rect x="45"  y="104" width="150" height="34" rx="2" fill="#26565c"/><text x="120" y="126" fill="#fff">ConsolePlatform</text>
+          <rect x="285" y="104" width="130" height="34" rx="2" fill="#26565c"/><text x="350" y="126" fill="#fff">PCPlatform</text>
+          <rect x="505" y="104" width="150" height="34" rx="2" fill="#26565c"/><text x="580" y="126" fill="#fff">MobilePlatform</text>
         </g>
-        <g font-size="12.5" text-anchor="middle" fill="#1d2330">
-          <rect x="5"   y="234" width="90" height="56" rx="7" fill="#e3e6fb"/><text x="50" y="258">PlayStation</text><text x="50" y="276">Platform</text>
-          <rect x="85"  y="300" width="70" height="56" rx="7" fill="#e3e6fb"/><text x="120" y="324">Xbox</text><text x="120" y="342">Platform</text>
-          <rect x="145" y="234" width="90" height="56" rx="7" fill="#e3e6fb"/><text x="190" y="258">Nintendo</text><text x="190" y="276">Platform</text>
-          <rect x="240" y="234" width="80" height="56" rx="7" fill="#e3e6fb"/><text x="280" y="258">Windows</text><text x="280" y="276">Platform</text>
-          <rect x="315" y="300" width="70" height="56" rx="7" fill="#e3e6fb"/><text x="350" y="324">MacOS</text><text x="350" y="342">Platform</text>
-          <rect x="380" y="234" width="80" height="56" rx="7" fill="#e3e6fb"/><text x="420" y="258">Linux</text><text x="420" y="276">Platform</text>
-          <rect x="495" y="234" width="80" height="56" rx="7" fill="#e3e6fb"/><text x="535" y="258">iOS</text><text x="535" y="276">Platform</text>
-          <rect x="590" y="234" width="80" height="56" rx="7" fill="#e3e6fb"/><text x="630" y="258">Android</text><text x="630" y="276">Platform</text>
+        <g font-size="12.5" text-anchor="middle" fill="#1a1a1c">
+          <rect x="5"   y="234" width="90" height="56" rx="2" fill="#dce6e4"/><text x="50" y="258">PlayStation</text><text x="50" y="276">Platform</text>
+          <rect x="85"  y="300" width="70" height="56" rx="2" fill="#dce6e4"/><text x="120" y="324">Xbox</text><text x="120" y="342">Platform</text>
+          <rect x="145" y="234" width="90" height="56" rx="2" fill="#dce6e4"/><text x="190" y="258">Nintendo</text><text x="190" y="276">Platform</text>
+          <rect x="240" y="234" width="80" height="56" rx="2" fill="#dce6e4"/><text x="280" y="258">Windows</text><text x="280" y="276">Platform</text>
+          <rect x="315" y="300" width="70" height="56" rx="2" fill="#dce6e4"/><text x="350" y="324">MacOS</text><text x="350" y="342">Platform</text>
+          <rect x="380" y="234" width="80" height="56" rx="2" fill="#dce6e4"/><text x="420" y="258">Linux</text><text x="420" y="276">Platform</text>
+          <rect x="495" y="234" width="80" height="56" rx="2" fill="#dce6e4"/><text x="535" y="258">iOS</text><text x="535" y="276">Platform</text>
+          <rect x="590" y="234" width="80" height="56" rx="2" fill="#dce6e4"/><text x="630" y="258">Android</text><text x="630" y="276">Platform</text>
         </g>
-        <g stroke="#5d6475" stroke-width="1.5" fill="none" marker-end="url(#ar)"><path d="M120,300 L120,138"/><path d="M350,300 L350,138"/></g>
-        <text x="350" y="376" font-size="13" fill="#5d6475" text-anchor="middle">ogni livello è chiuso da un blocco AllDisjointClasses</text>
+        <g stroke="#6b675e" stroke-width="1.5" fill="none" marker-end="url(#ar)"><path d="M120,300 L120,138"/><path d="M350,300 L350,138"/></g>
+        <text x="350" y="376" font-size="13" fill="#6b675e" text-anchor="middle">ogni livello è chiuso da un blocco AllDisjointClasses</text>
       </svg>
     </div>
     <div class="col stack">
@@ -236,15 +223,15 @@ code,pre,.dl{font-variant-ligatures:none}
         <p style="margin-top:10px"><span class="pill">SinglePlayer</span><span class="pill">Multiplayer</span><span class="pill">Coop</span><span class="pill">MMO</span></p></div>
     </div>
     <svg viewBox="0 0 1136 150" width="100%" height="150">
-      <defs><marker id="ar2" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#3b4cca"/></marker></defs>
+      <defs><marker id="ar2" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#26565c"/></marker></defs>
       <g font-size="14" text-anchor="middle">
-        <rect x="470" y="50" width="196" height="48" rx="24" fill="#3b4cca"/><text x="568" y="79" fill="#fff" font-weight="600">:review_42 a vg:Review</text>
-        <rect x="120" y="50" width="200" height="48" rx="8" fill="#fff" stroke="#d9d5cb"/><text x="220" y="79">vg:EldenRing</text>
-        <rect x="820" y="10" width="200" height="40" rx="8" fill="#fff" stroke="#d9d5cb"/><text x="920" y="35">"IGN"</text>
-        <rect x="820" y="100" width="200" height="40" rx="8" fill="#fff" stroke="#d9d5cb"/><text x="920" y="125">10</text>
+        <rect x="470" y="50" width="196" height="48" rx="2" fill="#26565c"/><text x="568" y="79" fill="#fff" font-weight="600">:review_42 a vg:Review</text>
+        <rect x="120" y="50" width="200" height="48" rx="2" fill="#fff" stroke="#cfc9bb"/><text x="220" y="79">vg:EldenRing</text>
+        <rect x="820" y="10" width="200" height="40" rx="2" fill="#fff" stroke="#cfc9bb"/><text x="920" y="35">"IGN"</text>
+        <rect x="820" y="100" width="200" height="40" rx="2" fill="#fff" stroke="#cfc9bb"/><text x="920" y="125">10</text>
       </g>
-      <g stroke="#3b4cca" stroke-width="1.6" fill="none" marker-end="url(#ar2)"><path d="M470,74 L320,74"/><path d="M666,66 L820,30"/><path d="M666,84 L820,120"/></g>
-      <g font-size="13" fill="#3b4cca" font-family="JetBrains Mono,monospace"><text x="395" y="66" text-anchor="middle">reviewedGame</text><text x="742" y="36" text-anchor="middle">reviewerName</text><text x="742" y="124" text-anchor="middle">reviewScore</text></g>
+      <g stroke="#26565c" stroke-width="1.6" fill="none" marker-end="url(#ar2)"><path d="M470,74 L320,74"/><path d="M666,66 L820,30"/><path d="M666,84 L820,120"/></g>
+      <g font-size="13" fill="#26565c" font-family="JetBrains Mono,monospace"><text x="395" y="66" text-anchor="middle">reviewedGame</text><text x="742" y="36" text-anchor="middle">reviewerName</text><text x="742" y="124" text-anchor="middle">reviewScore</text></g>
     </svg>
   </div>
   <div class="foot"><span>Videogame Semantic Search</span><span>5</span></div>
@@ -286,20 +273,20 @@ code,pre,.dl{font-variant-ligatures:none}
     <div class="col" style="flex:1.3">
       <svg viewBox="0 0 640 300" width="100%" height="300">
         <defs>
-          <marker id="a1" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#3b4cca"/></marker>
-          <marker id="a2" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#c2410c"/></marker>
+          <marker id="a1" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#26565c"/></marker>
+          <marker id="a2" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#b8391f"/></marker>
         </defs>
         <g font-size="15" font-weight="600" text-anchor="middle">
-          <rect x="10" y="190" width="160" height="50" rx="10" fill="#fff" stroke="#1d2330" stroke-width="1.5"/><text x="90" y="220">Elden Ring</text>
-          <rect x="240" y="40" width="160" height="50" rx="10" fill="#1d2330"/><text x="320" y="70" fill="#fff">FromSoftware</text>
-          <rect x="470" y="190" width="160" height="50" rx="10" fill="#fff" stroke="#1d2330" stroke-width="1.5"/><text x="550" y="220">Dark Souls III</text>
+          <rect x="10" y="190" width="160" height="50" rx="2" fill="#fff" stroke="#1a1a1c" stroke-width="1.5"/><text x="90" y="220">Elden Ring</text>
+          <rect x="240" y="40" width="160" height="50" rx="2" fill="#1a1a1c"/><text x="320" y="70" fill="#fff">FromSoftware</text>
+          <rect x="470" y="190" width="160" height="50" rx="2" fill="#fff" stroke="#1a1a1c" stroke-width="1.5"/><text x="550" y="220">Dark Souls III</text>
         </g>
-        <g stroke="#3b4cca" stroke-width="2" fill="none" marker-end="url(#a1)"><path d="M110,190 L265,90"/><path d="M375,90 L530,190"/></g>
-        <path d="M170,226 L470,226" stroke="#c2410c" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#a2)"/>
+        <g stroke="#26565c" stroke-width="2" fill="none" marker-end="url(#a1)"><path d="M110,190 L265,90"/><path d="M375,90 L530,190"/></g>
+        <path d="M170,226 L470,226" stroke="#b8391f" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#a2)"/>
         <g font-family="JetBrains Mono,monospace" font-size="14">
-          <text x="150" y="130" fill="#3b4cca" text-anchor="middle">developedBy</text>
-          <text x="490" y="130" fill="#3b4cca" text-anchor="middle">developerOf</text>
-          <text x="320" y="262" fill="#c2410c" text-anchor="middle">sharesDeveloperWith (inferita)</text>
+          <text x="150" y="130" fill="#26565c" text-anchor="middle">developedBy</text>
+          <text x="490" y="130" fill="#26565c" text-anchor="middle">developerOf</text>
+          <text x="320" y="262" fill="#b8391f" text-anchor="middle">sharesDeveloperWith (inferita)</text>
         </g>
       </svg>
       <div class="card dl" style="font-size:17px;line-height:1.8">
@@ -602,7 +589,7 @@ code,pre,.dl{font-variant-ligatures:none}
 </section>
 
 <!-- 17 -->
-<section class="slide">
+<section class="slide summary">
   <div class="kicker">Conclusioni</div>
   <h2>Risultati</h2>
   <p class="lead">Un'ontologia OWL 2 DL espressiva, conforme ai vincoli globali, allineata a Wikidata e Dublin Core e interrogabile sulla conoscenza inferita.</p>
@@ -635,6 +622,7 @@ code,pre,.dl{font-variant-ligatures:none}
 </div>
 <script>
 const slides=[...document.querySelectorAll('.slide')];
+slides.forEach((el,k)=>{const q=el.querySelector('.kicker');if(q)q.dataset.n=String(k+1).padStart(2,'0')});
 let i=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1))||1)-1));
 function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);slides.forEach(el=>{el.style.transform=`scale(${s})`;el.style.setProperty('--s',s)})}
 function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((el,k)=>el.classList.toggle('active',k===i));history.replaceState(null,'','#'+(i+1));document.getElementById('bar').style.width=((i+1)/slides.length*100)+'%'}
