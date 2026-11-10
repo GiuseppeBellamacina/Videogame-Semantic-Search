@@ -12,7 +12,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from rdflib import RDF, RDFS, XSD, Graph, Literal, Namespace, URIRef
-from SPARQLWrapper import JSON, SPARQLWrapper
+from SPARQLWrapper import JSON, POST, SPARQLWrapper
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
@@ -432,6 +432,8 @@ def populate_from_wikidata(
     """
     years = years or YEARS
     sparql = SPARQLWrapper(WIKIDATA_ENDPOINT)
+    # POST: during WDQS outages GET requests are throttled to 1 req/min at the edge
+    sparql.setMethod(POST)
     sparql.addCustomHttpHeader(
         "User-Agent",
         "VideogameSemanticSearch/1.0 (university project; semantic web course)",
