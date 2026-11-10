@@ -8,6 +8,7 @@ from typing import Optional
 import pyoxigraph as ox
 
 from backend.config import ONTOLOGY_FILE, ONTOLOGY_NS
+from backend.services import search_index
 from backend.services.image_cache import get_label, get_type, set_label, set_type
 
 logger = logging.getLogger(__name__)
@@ -35,6 +36,7 @@ class OntologyService:
         cls._triple_count = len(cls._store)
         logger.info(f"Ontology loaded: {cls._triple_count} triples")
         cls._build_class_map()
+        search_index.build(cls._store)
 
     # Base types shown in the graph, in priority order (most specific entity first)
     BASE_TYPES = [
