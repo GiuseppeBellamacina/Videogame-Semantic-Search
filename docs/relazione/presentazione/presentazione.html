@@ -5,76 +5,106 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Videogame Semantic Search</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f6f4ef; --ink:#1d2330; --muted:#5d6475; --line:#d9d5cb;
-  --accent:#3b4cca; --accent2:#c2410c; --ok:#15803d; --card:#ffffff; --code:#1f2433; --codeink:#e6e8ef;
+  --bg:#f7f5f0; --ink:#1b2133; --muted:#5d6475; --line:#e1ddd2;
+  --accent:#3b4cca; --accent2:#c2410c; --ok:#15803d; --card:#ffffff; --code:#161a2b; --codeink:#e6e8ef;
+  --tint:#eceefc; --tint2:#fdeee5;
+  --shadow:0 1px 2px rgba(27,33,51,.05),0 10px 28px -14px rgba(27,33,51,.22);
+  --head:"Plus Jakarta Sans",Inter,system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#20232b;font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+html,body{height:100%;background:#11141f;font-family:Inter,system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
 #deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.slide{position:absolute;width:1280px;height:720px;background:var(--bg);padding:56px 72px 48px;
-  display:none;flex-direction:column;transform-origin:center center}
-.slide.active{display:flex}
-.slide h2{font-size:38px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
-.slide .kicker{font-size:14px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-.slide .lead{font-size:20px;color:var(--muted);margin-bottom:26px;max-width:1000px;line-height:1.4}
-.slide .foot{position:absolute;left:72px;right:72px;bottom:20px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.slide{position:absolute;width:1280px;height:720px;padding:48px 76px 54px;display:none;flex-direction:column;
+  transform-origin:center center;overflow:hidden;
+  background:
+    radial-gradient(900px 420px at 105% -10%,rgba(59,76,202,.08),transparent 60%),
+    radial-gradient(700px 360px at -10% 110%,rgba(194,65,12,.06),transparent 60%),
+    var(--bg)}
+.slide::before{content:"";position:absolute;left:0;top:0;right:0;height:6px;background:linear-gradient(90deg,var(--accent),#7b87e0 55%,var(--accent2))}
+.slide.active{display:flex;animation:in .38s cubic-bezier(.2,.7,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(10px) scale(var(--s,1))}to{opacity:1}}
+.slide h2{font-family:var(--head);font-size:38px;font-weight:800;letter-spacing:-.8px;line-height:1.1;margin-bottom:8px}
+.slide .kicker{display:inline-flex;align-items:center;gap:12px;font-size:13px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.slide .kicker::before{content:"";width:28px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.slide .lead{font-size:19px;color:var(--muted);margin-bottom:18px;max-width:1020px;line-height:1.45}
+.slide .foot{position:absolute;left:76px;right:76px;bottom:18px;display:flex;justify-content:space-between;align-items:center;
+  font-size:12.5px;letter-spacing:.3px;color:var(--muted);padding-top:10px;border-top:1px solid var(--line)}
+.slide .foot span:last-child{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
 .body{flex:1;display:flex;gap:40px;min-height:0}
 .col{flex:1;min-width:0}
 ul.b{list-style:none;font-size:20px;line-height:1.45}
-ul.b li{position:relative;padding-left:22px;margin-bottom:12px}
-ul.b li::before{content:"";position:absolute;left:0;top:11px;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+ul.b li{position:relative;padding-left:26px;margin-bottom:13px}
+ul.b li::before{content:"";position:absolute;left:0;top:10px;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7b87e0)}
 ul.b.sm{font-size:17px}
-ul.b.sm li{margin-bottom:9px}
-ul.b.sm li::before{top:9px}
-b,strong{font-weight:600}
-code,.m{font-family:"JetBrains Mono",monospace;font-size:.88em;background:#e9e5da;padding:1px 6px;border-radius:4px}
+ul.b.sm li{margin-bottom:10px}
+ul.b.sm li::before{top:8px;width:9px;height:9px}
+b,strong{font-weight:650}
+code,.m{font-family:"JetBrains Mono",monospace;font-size:.86em;background:var(--tint);color:#2c378f;padding:2px 7px;border-radius:6px}
 .dl{font-family:"JetBrains Mono",monospace;font-size:.92em}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px}
-.card h3{font-size:17px;font-weight:600;margin-bottom:8px;color:var(--accent)}
-.card p{font-size:16px;line-height:1.45;color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;padding:15px 20px;box-shadow:var(--shadow)}
+.card h3{font-family:var(--head);font-size:17px;font-weight:700;margin-bottom:8px;color:var(--accent)}
+.card p{font-size:16px;line-height:1.5;color:var(--ink)}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.stack>*+*{margin-top:16px}
-table{border-collapse:collapse;width:100%;font-size:16px}
-th{text-align:left;font-weight:600;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--ink);padding:6px 10px}
-td{padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.stack>*+*{margin-top:14px}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+th{text-align:left;font-weight:700;color:var(--accent);background:var(--tint);font-size:12.5px;text-transform:uppercase;letter-spacing:1.2px;border-bottom:1px solid var(--line);padding:7px 12px}
+td{padding:5px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
 td.n{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
-pre{background:var(--code);color:var(--codeink);border-radius:12px;padding:18px 20px;font-family:"JetBrains Mono",monospace;font-size:14.5px;line-height:1.5;overflow:hidden;white-space:pre}
+pre{background:linear-gradient(160deg,#1b2036,var(--code));color:var(--codeink);border-radius:14px;padding:20px 22px;font-family:"JetBrains Mono",monospace;font-size:14.5px;line-height:1.55;overflow:hidden;white-space:pre;
+  border:1px solid #2a3050;box-shadow:0 14px 30px -16px rgba(11,14,30,.6)}
 pre .k{color:#8fb3ff} pre .p{color:#f5b971} pre .s{color:#9fe0a8} pre .c{color:#7d8597;font-style:italic}
-.note{font-size:16px;color:var(--muted);border-left:3px solid var(--accent2);padding:6px 0 6px 14px;line-height:1.45}
-.pill{display:inline-block;font-size:13px;font-weight:600;padding:2px 10px;border-radius:999px;background:#e3e6fb;color:var(--accent);margin:0 4px 6px 0}
-.pill.o{background:#fde7dc;color:var(--accent2)}
-.big{font-size:44px;font-weight:700;color:var(--accent);line-height:1}
-.stat{display:flex;flex-direction:column;gap:4px}
-.stat span{font-size:14px;color:var(--muted)}
+.note{font-size:16px;color:#4a5164;background:var(--tint2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:8px 14px;line-height:1.45}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--tint);color:var(--accent);margin:0 4px 6px 0}
+.pill.o{background:var(--tint2);color:var(--accent2)}
+.big{font-family:var(--head);font-size:46px;font-weight:800;line-height:1;background:linear-gradient(135deg,var(--accent),#7b87e0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;box-shadow:var(--shadow)}
+.stat span{font-size:13.5px;color:var(--muted);line-height:1.3}
 .tiles{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
-.tile{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:10px 11px}
-.tile .L{font-size:34px;font-weight:700;color:var(--accent);line-height:1.1}
-.tile h4{font-size:14px;font-weight:600;margin:4px 0}
+.tile{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:12px;padding:10px 11px;box-shadow:var(--shadow)}
+.tile .L{font-family:var(--head);font-size:34px;font-weight:800;color:var(--accent);line-height:1.1}
+.tile h4{font-size:14px;font-weight:650;margin:4px 0}
 .tile p{font-size:12.5px;line-height:1.35;color:var(--muted)}
 .tile .ex{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink);margin-top:6px;font-variant-ligatures:none}
 .tile.off{opacity:.55;border-top-color:var(--muted)}.tile.off .L{color:var(--muted)}
 svg text{font-family:Inter,sans-serif}
-/* title slide */
-.title{background:var(--ink);color:#f6f4ef;justify-content:center}
-.title h1{font-size:68px;font-weight:700;letter-spacing:-1.5px;line-height:1.05}
-.title .sub{font-size:26px;color:#b7bdd0;margin-top:20px;max-width:900px;line-height:1.35}
-.title .tags{margin-top:44px;font-family:"JetBrains Mono",monospace;font-size:16px;color:#8fb3ff}
-.title .foot{color:#8a90a3}
+svg{filter:drop-shadow(0 8px 14px rgba(27,33,51,.10))}
+/* title slides */
+.title{color:#f6f4ef;justify-content:center;
+  background:
+    radial-gradient(620px 420px at 88% 12%,rgba(123,135,224,.35),transparent 65%),
+    radial-gradient(520px 380px at 8% 100%,rgba(194,65,12,.30),transparent 65%),
+    linear-gradient(135deg,#11152a,#1b2250 62%,#2b1f55)}
+.title::before{height:6px;background:linear-gradient(90deg,#8fb3ff,#c084fc,#fb923c)}
+.title::after{content:"";position:absolute;right:-120px;bottom:-120px;width:420px;height:420px;border-radius:50%;
+  border:2px solid rgba(143,179,255,.18);box-shadow:0 0 0 60px rgba(143,179,255,.05),0 0 0 120px rgba(143,179,255,.03)}
+.title h1{font-family:var(--head);font-size:70px;font-weight:800;letter-spacing:-2px;line-height:1.03;
+  background:linear-gradient(120deg,#ffffff,#c9d4ff 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.title .sub{font-size:26px;color:#b7bdd0;margin-top:22px;max-width:900px;line-height:1.4}
+.title .tags{margin-top:44px;font-family:"JetBrains Mono",monospace;font-size:15px;color:#9fb8ff;
+  display:inline-block;align-self:flex-start;padding:10px 18px;border:1px solid rgba(143,179,255,.35);border-radius:999px;background:rgba(143,179,255,.08)}
+.title[style*="text-align:center"] .tags{align-self:center}
+.title .foot{color:#8a90a3;border-top-color:rgba(255,255,255,.12)}
+.title .foot span:last-child{color:#8a90a3;font-weight:500}
+#bar{position:fixed;left:0;bottom:0;height:3px;width:0;background:linear-gradient(90deg,#8fb3ff,#fb923c);transition:width .35s ease;z-index:5}
 code,pre,.dl{font-variant-ligatures:none}
 @media print{
   @page{size:1280px 720px;margin:0}
   html,body{background:none}
   #deck{position:static;display:block}
-  .slide{display:flex!important;position:relative;transform:none!important;page-break-after:always;break-after:page}
+  #bar{display:none}
+  .slide{display:flex!important;position:relative;transform:none!important;page-break-after:always;break-after:page;animation:none!important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 </head>
 <body>
 <div id="deck">
+<div id="bar"></div>
 
 <!-- 1 -->
 <section class="slide title">
@@ -605,8 +635,8 @@ code,pre,.dl{font-variant-ligatures:none}
 <script>
 const slides=[...document.querySelectorAll('.slide')];
 let i=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1))||1)-1));
-function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);slides.forEach(el=>el.style.transform=`scale(${s})`)}
-function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((el,k)=>el.classList.toggle('active',k===i));history.replaceState(null,'','#'+(i+1))}
+function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);slides.forEach(el=>{el.style.transform=`scale(${s})`;el.style.setProperty('--s',s)})}
+function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((el,k)=>el.classList.toggle('active',k===i));history.replaceState(null,'','#'+(i+1));document.getElementById('bar').style.width=((i+1)/slides.length*100)+'%'}
 addEventListener('keydown',e=>{
   if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1)}
   else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(i-1)}
