@@ -198,7 +198,8 @@ def run_query(
     sparql.setReturnFormat(JSON)
 
     last_error: Exception | None = None
-    for attempt in range(4):
+    failures = throttled = 0
+    while failures < 4 and throttled < 60:
         try:
             raw = sparql.query().convert()
             results: dict = raw  # type: ignore[assignment]
@@ -211,9 +212,18 @@ def run_query(
             return bindings
         except Exception as e:
             last_error = e
-            logger.warning(f"{description}: attempt {attempt + 1} failed: {e}")
-            if attempt < 3:
-                time.sleep(15 * (attempt + 1))
+            if getattr(e, "code", None) == 429:
+                # Wikidata rate limit: wait as long as it asks (default 65s), retry
+                # without consuming a normal attempt.
+                throttled += 1
+                retry_after = getattr(e, "headers", {}).get("Retry-After", "")
+                wait = int(retry_after) + 1 if retry_after.isdigit() else 65
+                tqdm.write(f"  rate-limited (429) on {description}: waiting {wait}s")
+                time.sleep(wait)
+                continue
+            failures += 1
+            logger.warning(f"{description}: attempt {failures} failed: {e}")
+            time.sleep(15 * failures)
     raise RuntimeError(f"All attempts failed for: {description}") from last_error
 
 
