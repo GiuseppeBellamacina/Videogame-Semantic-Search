@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect, useState, useMemo } from "react";
 import ForceGraph2D from "react-force-graph-2d";
-import { Crosshair, Focus, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
+import { Crosshair, Eraser, Focus, Link2, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
 import type { GraphData, GraphNode } from "@/types";
 import { GAME_TYPES, IMAGE_TYPES, typeColor, typeLabel } from "@/lib/theme";
 import { peekImage, requestImage } from "@/lib/imageQueue";
@@ -17,6 +17,8 @@ interface KnowledgeGraphProps {
   /** Keep only these nodes on the canvas / hide these nodes. */
   onKeepOnly?: (ids: string[]) => void;
   onHideMany?: (ids: string[]) => void;
+  /** Empty the whole canvas (results, extra nodes, hidden nodes). */
+  onClear?: () => void;
 }
 
 const BG = "#14130f";
@@ -27,6 +29,10 @@ const FONT = '"IBM Plex Sans", system-ui, sans-serif';
 const BIG_GRAPH = 150;
 
 const endId = (e: string | GraphNode) => (typeof e === "string" ? e : e.id);
+/** Relations the reasoner derives (sharesDeveloperWith...): drawn dashed, never labelled. */
+const isDerived = (label?: string) => /^shar(e|ed)/.test(label ?? "");
+/** zoomToFit would blow a single node up to the whole screen. */
+const MAX_FIT_ZOOM = 1.8;
 
 // Decoded images, shared by every node that uses the same url
 const decoded = new Map<string, HTMLImageElement | null>();
@@ -73,6 +79,7 @@ export function KnowledgeGraph({
   onRestoreHidden,
   onKeepOnly,
   onHideMany,
+  onClear,
 }: KnowledgeGraphProps) {
   const graphRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -81,21 +88,35 @@ export function KnowledgeGraph({
   const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
   const [frozen, setFrozen] = useState(false);
   const [find, setFind] = useState("");
+  const [showDerived, setShowDerived] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(new Set()); // multi-selection (shift+click)
   const labelBoxes = useRef<number[][]>([]); // edge labels drawn this frame, to avoid overlaps
   const [, setTick] = useState(0);
   const repaint = useCallback(() => setTick((t) => t + 1), []);
   const longPressFired = useRef(false);
+  const fit = useCallback((ms: number) => {
+    const g = graphRef.current;
+    if (!g) return;
+    g.zoomToFit(ms, 60);
+    setTimeout(() => {
+      if (g.zoom() > MAX_FIT_ZOOM) g.zoom(MAX_FIT_ZOOM, 200);
+    }, ms + 40);
+  }, []);
 
   // ── data filtered by the legend ──────────────────────────────────────────
   const filtered = useMemo<GraphData>(() => {
-    if (!hiddenTypes.size) return data;
+    if (!hiddenTypes.size && showDerived) return data;
     const ids = new Set(data.nodes.filter((n) => !hiddenTypes.has(n.type)).map((n) => n.id));
     return {
       nodes: data.nodes.filter((n) => ids.has(n.id)),
-      links: data.links.filter((l) => ids.has(endId(l.source)) && ids.has(endId(l.target))),
+      links: data.links.filter(
+        (l) =>
+          ids.has(endId(l.source)) &&
+          ids.has(endId(l.target)) &&
+          (showDerived || !isDerived(l.label)),
+      ),
     };
-  }, [data, hiddenTypes]);
+  }, [data, hiddenTypes, showDerived]);
 
   const typeCounts = useMemo(() => {
     const m = new Map<string, number>();
@@ -149,13 +170,13 @@ export function KnowledgeGraph({
       const { width, height } = e.contentRect;
       setSize({ width, height });
       if (prev === 0 && width > 0 && data.nodes.length)
-        setTimeout(() => graphRef.current?.zoomToFit(300, 60), 120);
-        setTimeout(() => graphRef.current?.zoomToFit(300, 60), 600);
+        setTimeout(() => fit(300), 120);
+        setTimeout(() => fit(300), 600);
       prev = width;
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [data.nodes.length]);
+  }, [data.nodes.length, fit]);
 
   useEffect(() => {
     const fg = graphRef.current;
@@ -218,7 +239,7 @@ export function KnowledgeGraph({
   useEffect(() => {
     if (data !== prevData.current && data.nodes.length) {
       prevData.current = data;
-      const t = setTimeout(() => graphRef.current?.zoomToFit(400, 60), 450);
+      const t = setTimeout(() => fit(400), 450);
       return () => clearTimeout(t);
     }
   }, [data]);
@@ -346,7 +367,7 @@ export function KnowledgeGraph({
       if (a?.x === undefined || b?.x === undefined) return;
       const on = neighbours && (a.id === focusId || b.id === focusId);
       // relations derived by the reasoner (sharesDeveloperWith...) are many: dashed, never labelled
-      const derived = /^shar(e|ed)/.test(link.label ?? "");
+      const derived = isDerived(link.label);
       ctx.globalAlpha = neighbours && !on ? 0.06 : derived && !on ? 0.5 : 1;
       ctx.beginPath();
       if (derived) ctx.setLineDash([4 / k, 3 / k]);
@@ -592,7 +613,7 @@ export function KnowledgeGraph({
             const withNeighbours = () => {
               const keep = new Set(ids);
               for (const l of filtered.links) {
-                if (/^shar(e|ed)/.test(l.label ?? "")) continue; // derived links tie every game together
+                if (isDerived(l.label)) continue; // derived links tie every game together
                 const a = endId(l.source);
                 const b = endId(l.target);
                 if (ids.includes(a)) keep.add(b);
@@ -705,8 +726,21 @@ export function KnowledgeGraph({
         <span className="mr-2 font-mono text-[11px] text-mute">
           {filtered.nodes.length} nodi · {filtered.links.length} relazioni
         </span>
+        {onClear && (data.nodes.length > 0 || hiddenCount > 0) && (
+          <button onClick={onClear} className="btn !px-2.5 !py-1.5" title="Svuota il grafo e i risultati">
+            <Eraser className="h-3.5 w-3.5" /> Svuota
+          </button>
+        )}
         <button
-          onClick={() => graphRef.current?.zoomToFit(400, 60)}
+          onClick={() => setShowDerived((v) => !v)}
+          className={`btn !px-2.5 !py-1.5 ${showDerived ? "" : "opacity-60"}`}
+          title="Relazioni derivate dal reasoner (stesso sviluppatore, publisher o serie)"
+          aria-pressed={showDerived}
+        >
+          <Link2 className="h-3.5 w-3.5" /> Derivate
+        </button>
+        <button
+          onClick={() => fit(400)}
           className="btn !px-2 !py-1.5"
           title="Adatta alla vista"
           aria-label="Adatta alla vista"

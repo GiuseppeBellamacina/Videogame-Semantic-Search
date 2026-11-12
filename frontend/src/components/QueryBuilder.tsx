@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Plus, X, ArrowRight, Loader2, Network, List } from "lucide-react";
+import { Plus, X, ArrowRight, Loader2, Network, List, SlidersHorizontal } from "lucide-react";
 import { countBuilder, getBuilderSchema } from "@/lib/api";
 import { SuggestInput } from "@/components/SuggestInput";
 import { Dropdown } from "@/components/Dropdown";
@@ -155,6 +155,7 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
   const [limit, setLimit] = useState(50);
   const [output, setOutput] = useState<"table" | "graph">("table");
   const [count, setCount] = useState<number | null>(null);
+  const [collapsed, setCollapsed] = useState(false); // after a run the panel shrinks to one line
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -219,7 +220,10 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
     return <p className="text-sm text-brick">Impossibile caricare i filtri. Il backend è attivo?</p>;
   if (!schema) return <Loader2 className="h-4 w-4 animate-spin text-mute" />;
 
-  const run = () => onRun({ filters, order_by: orderBy, limit, output });
+  const run = () => {
+    onRun({ filters, order_by: orderBy, limit, output });
+    setCollapsed(true);
+  };
   const noMatch = count === 0;
   const fieldOptions = schema.fields.map((f) => ({ value: f.field, label: nameOf(f) }));
   const has = (field: string, value: string) => conds.some((c) => c.field === field && c.value === value);
@@ -260,6 +264,44 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
       />
     );
   };
+
+  if (collapsed) {
+    const summary = conds
+      .filter((c) => c.value.trim() !== "")
+      .map((c) => {
+        const f = field(c.field)!;
+        const what = f.kind === "class" ? (CLASS_LABELS[c.value] ?? c.value) : c.display || c.value;
+        return { id: c.id, text: `${nameOf(f)} ${OP_LABELS[c.op] ?? c.op} ${what}` };
+      });
+    return (
+      <div className="flex min-h-11 flex-wrap items-center gap-2 rounded-sm border border-rule bg-panel/60 px-3 py-1.5">
+        <span className="label mr-1">Filtri</span>
+        {summary.length === 0 ? (
+          <span className="text-sm text-mute">nessuno: tutti i giochi</span>
+        ) : (
+          summary.map((c) => (
+            <span key={c.id} className="chip !py-1 !text-[13px]">
+              {c.text}
+            </span>
+          ))
+        )}
+        <span className="ml-auto flex items-center gap-3">
+          <span className="font-mono text-xs text-mute">
+            {count === null ? "…" : `${count.toLocaleString("it-IT")} giochi`}
+          </span>
+          {loading ? (
+            <button onClick={onCancel} className="btn h-8 !py-0">
+              <X className="h-4 w-4" /> Annulla
+            </button>
+          ) : (
+            <button onClick={() => setCollapsed(false)} className="btn h-8 !py-0">
+              <SlidersHorizontal className="h-3.5 w-3.5" /> Modifica filtri
+            </button>
+          )}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-sm border border-rule bg-panel/60">

@@ -24,7 +24,7 @@ const linkKey = (l: GraphLink) => `${endId(l.source)}__${endId(l.target)}__${l.l
 const reverseKey = (l: GraphLink) => `${endId(l.target)}__${endId(l.source)}__${l.label}`;
 
 export default function App() {
-  const { data, loading, error, progress, search, searchBuilder, cancel } =
+  const { data, loading, error, progress, search, searchBuilder, cancel, reset } =
     useQuery();
   const [mode, setMode] = useState<Mode>("nl");
   const [seed, setSeed] = useState("");
@@ -159,6 +159,12 @@ export default function App() {
   }, [data, extraGraph, hiddenNodeIds]);
 
   // Isolate: keep only the given nodes (the rest is hidden; "Mostra tutto" brings it back)
+  const handleClear = useCallback(() => {
+    cancel();
+    reset();
+    resetCanvas();
+  }, [cancel, reset, resetCanvas]);
+
   const handleKeepOnly = useCallback(
     (ids: string[]) => {
       const keep = new Set(ids);
@@ -190,7 +196,7 @@ export default function App() {
     <div className="flex h-full flex-col overflow-hidden">
       <header className="relative z-40 flex-shrink-0 border-b border-rule">
         <div className="mx-auto max-w-[1920px] px-4 py-4 sm:px-8">
-          <div className="mb-3 flex items-end justify-between gap-6">
+          <div className="mb-3 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
             <div>
               <h1 className="font-serif text-[26px] leading-none tracking-tight">
                 Videogame Semantic Search
@@ -199,12 +205,10 @@ export default function App() {
                 Grafo di conoscenza · OWL 2 · SPARQL
               </p>
             </div>
-          </div>
-          <div className="max-w-4xl">
             <div
               role="tablist"
               aria-label="Modalità di ricerca"
-              className="mb-3 inline-flex rounded-sm border border-rule bg-panel p-0.5"
+              className="inline-flex rounded-sm border border-rule bg-panel p-0.5"
             >
               {modes.map(([m, label, Icon]) => (
                 <button
@@ -221,7 +225,10 @@ export default function App() {
                 </button>
               ))}
             </div>
-            {mode === "nl" ? (
+          </div>
+          {/* both stay mounted: switching mode keeps the filters you built */}
+          <div className="max-w-5xl">
+            <div className={mode === "nl" ? "" : "hidden"}>
               <SearchBar
                 onSearch={handleSearch}
                 onCancel={cancel}
@@ -229,13 +236,10 @@ export default function App() {
                 progress={progress}
                 seed={seed}
               />
-            ) : (
-              <QueryBuilder
-                onRun={handleBuilderRun}
-                onCancel={cancel}
-                loading={loading}
-              />
-            )}
+            </div>
+            <div className={mode === "builder" ? "" : "hidden"}>
+              <QueryBuilder onRun={handleBuilderRun} onCancel={cancel} loading={loading} />
+            </div>
           </div>
         </div>
       </header>
@@ -342,6 +346,7 @@ export default function App() {
             hiddenCount={hiddenNodeIds.size}
             onRestoreHidden={() => setHiddenNodeIds(new Set())}
             onKeepOnly={handleKeepOnly}
+            onClear={handleClear}
             onHideMany={handleHideMany}
           />
         </section>
