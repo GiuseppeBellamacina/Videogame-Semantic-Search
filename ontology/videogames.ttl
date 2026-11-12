@@ -1250,38 +1250,38 @@ vg:ExclusiveRelease a owl:Class ;
     vg:publisherName "Capcom"^^xsd:string .
 
 [] a owl:AllDisjointClasses ;
+    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
+
+[] a owl:AllDisjointClasses ;
     owl:members ( vg:VideoGame vg:Developer vg:Publisher vg:Genre vg:Platform vg:Character vg:Franchise vg:Award vg:GameEngine vg:GameMode vg:Review vg:GameEvent ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:IndieGame vg:AAAGame ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:SinglePlayerMode vg:MultiplayerMode vg:CoopMode vg:MMOMode ) .
+    owl:members ( vg:IndieGame vg:AAAGame ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:PlayerCharacter vg:NonPlayerCharacter ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
+    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:ReleasedGame vg:EarlyAccessGame vg:CancelledGame vg:DelistedGame ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
+    owl:members ( vg:SinglePlayerMode vg:MultiplayerMode vg:CoopMode vg:MMOMode ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
+    owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
 
