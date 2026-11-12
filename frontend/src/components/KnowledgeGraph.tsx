@@ -4,6 +4,7 @@ import { Crosshair, Eraser, Eye, EyeOff, Focus, Link2, Lock, Network, Search, Tr
 import type { GraphData, GraphNode } from "@/types";
 import { GAME_TYPES, IMAGE_TYPES, typeColor, typeLabel } from "@/lib/theme";
 import { peekImage, requestImage } from "@/lib/imageQueue";
+import { getRelation, type RelationInfo } from "@/lib/api";
 
 interface KnowledgeGraphProps {
   data: GraphData;
@@ -35,8 +36,38 @@ const BIG_GRAPH = 150;
 const endId = (e: string | GraphNode) => (typeof e === "string" ? e : e.id);
 /** Relations the reasoner derives (sharesDeveloperWith...): drawn dashed, never labelled. */
 const isDerived = (label?: string) => /^shar(e|ed)/.test(label ?? "");
-/** zoomToFit would blow a single node up to the whole screen. */
+/** Fitting a single node would otherwise zoom it to the whole screen. */
 const MAX_FIT_ZOOM = 1.8;
+
+const REL_VERB: Record<string, string> = {
+  developedBy: "è sviluppato da",
+  developerOf: "ha sviluppato",
+  publishedBy: "è pubblicato da",
+  publisherOf: "ha pubblicato",
+  hasGenre: "ha come genere",
+  genreOf: "è il genere di",
+  availableOn: "è disponibile su",
+  platformFor: "è la piattaforma di",
+  belongsTo: "fa parte della serie",
+  includes: "comprende",
+  hasCharacter: "ha il personaggio",
+  appearsIn: "appare in",
+  wonAward: "ha vinto",
+  awardWonBy: "è stato vinto da",
+  sequelOf: "è il seguito di",
+  hasSequel: "ha come seguito",
+  madeWith: "è fatto con",
+  engineUsedIn: "è usato in",
+  hasGameMode: "ha la modalità",
+  modeInGame: "è una modalità di",
+};
+const SHARED_TEXT: Record<string, string> = {
+  sharesDeveloperWith: "Lo stesso sviluppatore",
+  sharesPublisherWith: "Lo stesso publisher",
+  sharedFranchiseWith: "La stessa serie",
+  sharedGenreWith: "Lo stesso genere",
+  sharedEngineWith: "Lo stesso motore",
+};
 
 // Decoded images, shared by every node that uses the same url
 const decoded = new Map<string, HTMLImageElement | null>();
@@ -98,18 +129,40 @@ export function KnowledgeGraph({
   // a second node clicked while another one is in focus: we show how the two are related
   const [secondary, setSecondary] = useState<string | null>(null);
   const [alertOff, setAlertOff] = useState(false);
+  const [hoverLink, setHoverLink] = useState<any>(null);
+  // the relation clicked: where, which, and what the two nodes have in common
+  const [linkInfo, setLinkInfo] = useState<{
+    link: any;
+    x: number;
+    y: number;
+    info: RelationInfo | null | "loading";
+  } | null>(null);
+  const sizeRef = useRef(size);
+  sizeRef.current = size;
   const [selected, setSelected] = useState<Set<string>>(new Set()); // multi-selection (shift+click)
   const labelBoxes = useRef<number[][]>([]); // edge labels drawn this frame, to avoid overlaps
   const [, setTick] = useState(0);
   const repaint = useCallback(() => setTick((t) => t + 1), []);
   const longPressFired = useRef(false);
+  // fit the graph in one smooth move, never past MAX_FIT_ZOOM (no zoom-in-then-back jump)
   const fit = useCallback((ms: number) => {
     const g = graphRef.current;
     if (!g) return;
-    g.zoomToFit(ms, 60);
-    setTimeout(() => {
-      if (g.zoom() > MAX_FIT_ZOOM) g.zoom(MAX_FIT_ZOOM, 200);
-    }, ms + 40);
+    const bb = g.getGraphBbox?.();
+    if (!bb) {
+      g.zoomToFit(ms, 60);
+      return;
+    }
+    const pad = 90;
+    const w = Math.max(bb.x[1] - bb.x[0], 1);
+    const h = Math.max(bb.y[1] - bb.y[0], 1);
+    const z = Math.min(
+      MAX_FIT_ZOOM,
+      (sizeRef.current.width - 2 * pad) / w,
+      (sizeRef.current.height - 2 * pad) / h,
+    );
+    g.centerAt((bb.x[0] + bb.x[1]) / 2, (bb.y[0] + bb.y[1]) / 2, ms);
+    g.zoom(Math.max(z, 0.05), ms);
   }, []);
 
   // ── data filtered by the legend ──────────────────────────────────────────
@@ -386,16 +439,17 @@ export function KnowledgeGraph({
         ((a.id === highlightNode && b.id === secondary) || (b.id === highlightNode && a.id === secondary));
       // relations derived by the reasoner (sharesDeveloperWith...) are many: dashed, labelled only for a pair
       const derived = isDerived(link.label);
-      ctx.globalAlpha = pair ? 1 : neighbours && !on ? 0.06 : derived && !on ? 0.5 : 1;
+      const hov = link === hoverLink;
+      ctx.globalAlpha = pair || hov ? 1 : neighbours && !on ? 0.06 : derived && !on ? 0.5 : 1;
       ctx.beginPath();
       if (derived) ctx.setLineDash([4 / k, 3 / k]);
       ctx.moveTo(a.x, a.y);
       ctx.lineTo(b.x, b.y);
-      ctx.lineWidth = (pair ? 2.2 : on ? 1.6 : 0.8) / Math.min(k, 2);
-      ctx.strokeStyle = pair || on ? BRICK : "rgba(236,232,221,0.22)";
+      ctx.lineWidth = (pair || hov ? 2.2 : on ? 1.6 : 0.8) / Math.min(k, 2);
+      ctx.strokeStyle = pair || on || hov ? BRICK : "rgba(236,232,221,0.22)";
       ctx.stroke();
       ctx.setLineDash([]);
-      if (pair || (on && !derived && k > 0.7)) {
+      if (pair || hov || (on && !derived && k > 0.7)) {
         // fixed 11px on screen, on a dark pill; skipped when it would cover another label
         // (the pair's labels are never skipped: they are moved down instead)
         const fs = 11 / k;
@@ -406,20 +460,20 @@ export function KnowledgeGraph({
         let my = (a.y + b.y) / 2;
         const hit = (y: number) =>
           labelBoxes.current.some((o) => mx - w / 2 < o[2] && mx + w / 2 > o[0] && y - h / 2 < o[3] && y + h / 2 > o[1]);
-        if (pair) for (let i = 0; i < 6 && hit(my); i++) my += h;
-        if (pair || !hit(my)) {
+        if (pair || hov) for (let i = 0; i < 6 && hit(my); i++) my += h;
+        if (pair || hov || !hit(my)) {
           labelBoxes.current.push([mx - w / 2, my - h / 2, mx + w / 2, my + h / 2]);
           ctx.fillStyle = "rgba(20,19,15,0.95)";
           ctx.fillRect(mx - w / 2, my - h / 2, w, h);
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillStyle = pair ? INK : "#d9d4c6";
+          ctx.fillStyle = pair || hov ? INK : "#d9d4c6";
           ctx.fillText(link.label, mx, my + 0.5 / k);
         }
       }
       ctx.globalAlpha = 1;
     },
-    [neighbours, focusId, secondary, highlightNode],
+    [neighbours, focusId, secondary, highlightNode, hoverLink],
   );
 
   // ── interaction ──────────────────────────────────────────────────────────
@@ -594,7 +648,38 @@ export function KnowledgeGraph({
         linkCanvasObject={paintLink}
         linkCanvasObjectMode={() => "replace"}
         onNodeClick={handleClick}
-        onBackgroundClick={() => setSelected(new Set())}
+        onBackgroundClick={() => {
+          setSelected(new Set());
+          setLinkInfo(null);
+        }}
+        onLinkHover={(l: any) => setHoverLink(l ?? null)}
+        linkHoverPrecision={8}
+        onLinkClick={(link: any, ev: MouseEvent) => {
+          const r = containerRef.current!.getBoundingClientRect();
+          const a = link.source;
+          const b = link.target;
+          setLinkInfo({
+            link,
+            // stay clear of the detail panel (about 420px) that may be open on the right
+            x: Math.min(ev.clientX - r.left + 12, Math.min(r.width, window.innerWidth - 430 - r.left) - 310),
+            y: Math.min(ev.clientY - r.top + 12, r.height - 190),
+            info: "loading",
+          });
+          getRelation(a.id, b.id, link.label).then((info) =>
+            setLinkInfo((cur) => (cur && cur.link === link ? { ...cur, info } : cur)),
+          );
+        }}
+        linkPointerAreaPaint={(link: any, color: string, ctx: CanvasRenderingContext2D, k: number) => {
+          const a = link.source;
+          const b = link.target;
+          if (a?.x === undefined || b?.x === undefined) return;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.lineWidth = 10 / k; // generous hit area: the visible line is thin
+          ctx.strokeStyle = color;
+          ctx.stroke();
+        }}
         onRenderFramePre={() => {
           labelBoxes.current = [];
         }}
@@ -636,6 +721,63 @@ export function KnowledgeGraph({
             </li>
           ))}
         </ul>
+      )}
+
+      {/* what the two nodes of a clicked relation have in common */}
+      {linkInfo && (
+        <div
+          className="absolute z-30 w-[300px] rounded-sm border border-rule bg-panel p-3.5 text-sm shadow-[0_16px_40px_-8px_rgba(0,0,0,0.7)] animate-fade-in"
+          style={{ left: Math.max(8, linkInfo.x), top: Math.max(8, linkInfo.y) }}
+        >
+          {(() => {
+            const a = linkInfo.link.source;
+            const b = linkInfo.link.target;
+            const label = linkInfo.link.label as string;
+            const derived = isDerived(label);
+            const info = linkInfo.info;
+            return (
+              <>
+                <div className="mb-2 flex items-start justify-between gap-2">
+                  <span className="label !text-brick">{label}</span>
+                  <button onClick={() => setLinkInfo(null)} aria-label="Chiudi" className="text-mute hover:text-ink">
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <p className="font-serif text-[17px] leading-snug">
+                  {a.label}
+                  <span className="text-mute">{derived ? " e " : ` ${REL_VERB[label] ?? label} `}</span>
+                  {b.label}
+                </p>
+                {derived && (
+                  <div className="mt-3 border-t border-rule pt-2.5">
+                    <p className="label mb-1.5">{SHARED_TEXT[label] ?? "In comune"}</p>
+                    {info === "loading" || info === null ? (
+                      <p className="text-mute">{info === null ? "Non riesco a recuperarlo." : "Cerco…"}</p>
+                    ) : info.shared.length === 0 ? (
+                      <p className="text-mute">Nessun elemento condiviso trovato.</p>
+                    ) : (
+                      <ul className="flex flex-wrap gap-1.5">
+                        {info.shared.map((s) => (
+                          <li key={s.uri}>
+                            <button
+                              onClick={() => onNodeClick(s.uri)}
+                              className="inline-flex items-center gap-1.5 rounded-sm border border-rule px-2 py-1 text-[13px] hover:border-brick hover:text-brick"
+                              title="Apri la scheda"
+                            >
+                              <span className="h-2 w-2 rounded-full" style={{ background: typeColor(s.type) }} />
+                              {s.label}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <p className="mt-2 text-[12px] text-mute">Relazione dedotta dal reasoner (property chain).</p>
+                  </div>
+                )}
+              </>
+            );
+          })()}
+        </div>
       )}
 
       {/* act on the selection (shift+click) or on the node in focus */}

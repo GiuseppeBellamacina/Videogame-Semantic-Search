@@ -3,12 +3,14 @@ Graph router — handles knowledge graph visualization and node detail requests.
 """
 
 import logging
+import re
 from urllib.parse import unquote
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
+from backend.config import ONTOLOGY_NS
 from backend.services import image_store
 from backend.services.graph_builder import build_graph_from_node, find_cross_links
 from backend.services.ontology_service import OntologyService
@@ -43,6 +45,42 @@ async def get_cross_links(body: CrossLinksRequest):
     except Exception as e:
         logger.exception("Failed to compute cross-links")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# relations derived by a property chain -> the property both games have in common
+_DERIVED_VIA = {
+    "sharesDeveloperWith": "developedBy",
+    "sharesPublisherWith": "publishedBy",
+    "sharedFranchiseWith": "belongsTo",
+    "sharedGenreWith": "hasGenre",
+    "sharedEngineWith": "madeWith",
+}
+_URI_RE = re.compile(r"^https?://[^\s<>\"{}|\\^`]+$")
+
+
+@router.get("/relation")
+async def get_relation(source: str, target: str, label: str):
+    """What two nodes linked by `label` have in common: for the derived relations
+    (sharesDeveloperWith...) the shared developer / publisher / series / genre / engine."""
+    if not (_URI_RE.match(source) and _URI_RE.match(target)):
+        raise HTTPException(status_code=400, detail="Invalid URI")
+    via = _DERIVED_VIA.get(label)
+    if via is None:
+        return {"kind": "direct", "shared": []}
+    query = (
+        f"PREFIX vg: <{ONTOLOGY_NS}>\n"
+        f"SELECT DISTINCT ?x WHERE {{ <{source}> vg:{via} ?x . <{target}> vg:{via} ?x }} LIMIT 30"
+    )
+    store = OntologyService.get_store()
+    shared = [
+        {
+            "uri": str(sol["x"].value),
+            "label": OntologyService._get_node_label(str(sol["x"].value)),
+            "type": OntologyService._get_node_type(str(sol["x"].value)),
+        }
+        for sol in store.query(query)
+    ]
+    return {"kind": "derived", "via": via, "shared": shared}
 
 
 @router.get("/node/{uri:path}")

@@ -70,6 +70,23 @@ export async function searchGameImage(
   return res.json();
 }
 
+export interface RelationInfo {
+  kind: "derived" | "direct";
+  via?: string;
+  shared: { uri: string; label: string; type: string }[];
+}
+
+/** What two nodes joined by a relation have in common (derived relations only). */
+export async function getRelation(
+  source: string,
+  target: string,
+  label: string,
+): Promise<RelationInfo | null> {
+  const q = new URLSearchParams({ source, target, label });
+  const res = await fetch(`${API_BASE}/relation?${q}`);
+  return res.ok ? res.json() : null;
+}
+
 export async function getCrossLinks(
   existingUris: string[],
   newUris: string[],
