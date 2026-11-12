@@ -1,38 +1,53 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Code } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 
 interface SparqlViewerProps {
   sparql: string;
-  success: boolean;
+  /** Still being generated or run. */
+  live?: boolean;
+  success?: boolean;
 }
 
-export function SparqlViewer({ sparql, success }: SparqlViewerProps) {
-  const [showSparql, setShowSparql] = useState(false);
-
+export function SparqlViewer({ sparql, live, success = true }: SparqlViewerProps) {
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   if (!sparql) return null;
 
-  return (
-    <div className="bg-gray-900/80 border border-gray-800 rounded-xl p-4 animate-fade-in">
-      <button
-        onClick={() => setShowSparql(!showSparql)}
-        className="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-300 transition-colors"
-      >
-        <Code className="w-3.5 h-3.5" />
-        <span>Query SPARQL generata</span>
-        <span
-          className={`ml-2 w-2 h-2 rounded-full ${
-            success ? "bg-emerald-400" : "bg-amber-400"
-          }`}
-        />
-        {showSparql ? (
-          <ChevronUp className="w-3.5 h-3.5" />
-        ) : (
-          <ChevronDown className="w-3.5 h-3.5" />
-        )}
-      </button>
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(sparql);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard unavailable */
+    }
+  };
 
-      {showSparql && (
-        <pre className="mt-2 p-3 bg-gray-950 border border-gray-800 rounded-lg text-xs text-gray-400 overflow-x-auto font-mono leading-relaxed">
+  const kind = /^\s*(?:PREFIX[^\n]*\n)*\s*CONSTRUCT/i.test(sparql) ? "CONSTRUCT" : "SELECT";
+
+  return (
+    <div className="animate-fade-in">
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => setOpen(!open)}
+          className="label flex items-center gap-2 hover:text-ink"
+          aria-expanded={open}
+        >
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${live ? "animate-shimmer bg-petrol" : success ? "bg-petrol" : "bg-brick"}`}
+          />
+          Query SPARQL · {kind}
+          <span className="text-brick">{open ? "nascondi" : "mostra"}</span>
+        </button>
+        {open && (
+          <button onClick={copy} className="flex items-center gap-1 text-xs text-mute hover:text-ink">
+            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            {copied ? "Copiata" : "Copia"}
+          </button>
+        )}
+      </div>
+      {open && (
+        <pre className="mt-2 max-h-72 overflow-auto bg-black/40 p-3 font-mono text-[11.5px] leading-relaxed text-mute">
           {sparql}
         </pre>
       )}

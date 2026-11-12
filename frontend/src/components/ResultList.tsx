@@ -1,97 +1,133 @@
-import { ExternalLink } from "lucide-react";
-import type { QueryResult } from "@/types";
+import { useMemo, useState } from "react";
+import type { GraphNode, QueryResult } from "@/types";
+import { Thumb } from "@/components/Thumb";
+import { typeLabel } from "@/lib/theme";
 
 interface ResultListProps {
   results: QueryResult[];
   totalRows: number;
+  nodes: GraphNode[];
   onNodeClick: (uri: string) => void;
 }
 
-const TYPE_COLORS: Record<string, string> = {
-  VideoGame: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
-  Developer: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-  Publisher: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-  Genre: "bg-red-500/20 text-red-300 border-red-500/30",
-  Platform: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-  Character: "bg-pink-500/20 text-pink-300 border-pink-500/30",
-  Franchise: "bg-violet-500/20 text-violet-300 border-violet-500/30",
-  Award: "bg-orange-500/20 text-orange-300 border-orange-500/30",
-};
+const VG = "http://www.videogame-ontology.org/";
+const PAGE = 60;
 
-function extractLabel(uri: string): string {
-  if (!uri || !uri.startsWith("http")) return uri || "—";
-  const fragment = uri.split("#").pop() || uri.split("/").pop() || uri;
-  return decodeURIComponent(fragment).replace(/_/g, " ");
+const isUri = (v: string | null): v is string => !!v && v.startsWith(VG);
+
+function localName(uri: string): string {
+  const frag = uri.split("#").pop() || uri;
+  return decodeURIComponent(frag.split("/").pop() || frag).replace(/_/g, " ");
 }
 
-function isUri(value: string | null): boolean {
-  return !!value && value.startsWith("http://www.videogame-ontology.org/");
-}
+export function ResultList({ results, totalRows, nodes, onNodeClick }: ResultListProps) {
+  const [shown, setShown] = useState(PAGE);
+  const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
 
-export function ResultList({
-  results,
-  totalRows,
-  onNodeClick,
-}: ResultListProps) {
   if (!results.length) {
     return (
-      <div className="text-center py-12 text-gray-500">
-        <p className="text-lg">Nessun risultato trovato</p>
-        <p className="text-sm mt-1">Prova a riformulare la domanda</p>
+      <div className="py-10">
+        <p className="font-serif text-xl">Nessun risultato</p>
+        <p className="mt-1 text-sm text-mute">
+          Prova a riformulare la domanda o ad allargare i filtri.
+        </p>
       </div>
     );
   }
 
-  const columns = Object.keys(results[0]);
+  const info = (uri: string) => {
+    const n = byId.get(uri);
+    return { label: n?.label ?? localName(uri), type: n?.type ?? "Unknown" };
+  };
+  const isTriples = ["subject", "predicate", "object"].every((k) => k in results[0]);
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between px-1">
-        <h3 className="text-sm font-medium text-gray-400">
-          {totalRows} risultat{totalRows === 1 ? "o" : "i"} trovati
-        </h3>
+    <div>
+      <div className="mb-1 flex items-baseline justify-between">
+        <h3 className="label">Risultati</h3>
+        <span className="font-mono text-xs text-mute">{totalRows}</span>
       </div>
+      <ul className="rule-y">
+        {results.slice(0, shown).map((row, i) => {
+          const uris = Object.entries(row).filter(([, v]) => isUri(v)) as [string, string][];
+          if (isTriples) {
+            const s = info(row.subject as string);
+            const o = isUri(row.object) ? info(row.object) : null;
+            return (
+              <li key={i} className="flex items-center gap-3 py-2.5">
+                <Thumb type={s.type} name={s.label} size={34} />
+                <div className="min-w-0 text-sm leading-snug">
+                  <button
+                    className="text-left hover:text-brick"
+                    onClick={() => onNodeClick(row.subject as string)}
+                  >
+                    {s.label}
+                  </button>
+                  <span className="mx-1.5 font-mono text-[11px] text-mute">{row.predicate}</span>
+                  {o ? (
+                    <button
+                      className="text-left hover:text-brick"
+                      onClick={() => onNodeClick(row.object as string)}
+                    >
+                      {o.label}
+                    </button>
+                  ) : (
+                    <span className="text-mute">{row.object}</span>
+                  )}
+                </div>
+              </li>
+            );
+          }
 
-      <div className="space-y-2 max-h-[calc(100vh-320px)] overflow-y-auto pr-1">
-        {results.map((row, i) => (
-          <div
-            key={i}
-            className="bg-gray-900/80 border border-gray-800 rounded-xl p-4 hover:border-gray-600 transition-all animate-fade-in"
-            style={{ animationDelay: `${i * 50}ms` }}
-          >
-            <div className="grid grid-cols-1 gap-2">
-              {columns.map((col) => {
-                const value = row[col];
-                if (!value) return null;
-
-                const isLink = isUri(value);
-                const displayValue = isLink ? extractLabel(value) : value;
-
-                return (
-                  <div key={col} className="flex items-start gap-2">
-                    <span className="text-xs text-gray-500 uppercase tracking-wide min-w-[100px] pt-0.5">
-                      {col}
-                    </span>
-                    {isLink ? (
-                      <button
-                        onClick={() => onNodeClick(value)}
-                        className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1 text-left"
-                      >
-                        {displayValue}
-                        <ExternalLink className="w-3 h-3 flex-shrink-0" />
+          // main entity: prefer a video game, else the first entity in the row
+          const main =
+            uris.find(([, u]) => info(u).type === "VideoGame") ?? uris[0];
+          const mainInfo = main ? info(main[1]) : null;
+          const others = uris.filter(([k]) => k !== main?.[0]);
+          const meta = Object.entries(row).filter(
+            ([, v]) => v && !isUri(v) && v !== mainInfo?.label,
+          );
+          return (
+            <li key={i} className="flex gap-3 py-3">
+              {mainInfo && <Thumb type={mainInfo.type} name={mainInfo.label} size={52} />}
+              <div className="min-w-0 flex-1">
+                {main ? (
+                  <button
+                    className="text-left font-serif text-[17px] leading-tight hover:text-brick"
+                    onClick={() => onNodeClick(main[1])}
+                  >
+                    {mainInfo!.label}
+                  </button>
+                ) : (
+                  <span className="font-serif text-[17px]">{Object.values(row)[0]}</span>
+                )}
+                {mainInfo && (
+                  <span className="label ml-2 align-middle">{typeLabel(mainInfo.type)}</span>
+                )}
+                {others.length > 0 && (
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {others.map(([k, u]) => (
+                      <button key={k} className="chip hover:border-mute" onClick={() => onNodeClick(u)}>
+                        {info(u).label}
                       </button>
-                    ) : (
-                      <span className="text-sm text-gray-200 text-left">
-                        {displayValue}
-                      </span>
-                    )}
+                    ))}
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
+                )}
+                {meta.length > 0 && (
+                  <p className="mt-1 font-mono text-[11px] text-mute">
+                    {meta.map(([k, v]) => `${k.replace(/Name$/, "")} ${v}`).join(" · ")}
+                  </p>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+      {shown < results.length && (
+        <button className="btn mt-3 w-full" onClick={() => setShown((s) => s + PAGE)}>
+          Mostra altri {Math.min(PAGE, results.length - shown)}
+        </button>
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { Gamepad2, BarChart3, Github, List, Network } from "lucide-react";
+import { List, Network } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
 import { QueryBuilder } from "@/components/QueryBuilder";
 import { ResultList } from "@/components/ResultList";
@@ -9,6 +9,7 @@ import { NodeContextMenu } from "@/components/NodeContextMenu";
 import { SparqlViewer } from "@/components/SparqlViewer";
 import { useQuery } from "@/hooks/useQuery";
 import { getCrossLinks } from "@/lib/api";
+import { SUGGESTIONS } from "@/lib/queryCache";
 import type {
   BuilderRequest,
   GraphData,
@@ -16,11 +17,16 @@ import type {
   GraphNode,
 } from "@/types";
 
-const GAME_TYPES = new Set(["VideoGame", "AwardWinningGame", "FranchiseGame"]);
+type Mode = "nl" | "builder";
+
+const endId = (e: string | GraphNode) => (typeof e === "string" ? e : e.id);
+const linkKey = (l: GraphLink) => `${endId(l.source)}__${endId(l.target)}__${l.label}`;
+const reverseKey = (l: GraphLink) => `${endId(l.target)}__${endId(l.source)}__${l.label}`;
 
 export default function App() {
-  const { data, loading, error, search, searchBuilder, cancel } = useQuery();
-  const [searchMode, setSearchMode] = useState<"nl" | "builder">("nl");
+  const { data, loading, error, progress, search, searchBuilder, cancel } =
+    useQuery();
+  const [mode, setMode] = useState<Mode>("nl");
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [highlightNode, setHighlightNode] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<"results" | "graph">("results");
@@ -29,32 +35,30 @@ export default function App() {
     x: number;
     y: number;
   } | null>(null);
-  const [extraGraph, setExtraGraph] = useState<GraphData>({
-    nodes: [],
-    links: [],
-  });
+  const [extraGraph, setExtraGraph] = useState<GraphData>({ nodes: [], links: [] });
   const [hiddenNodeIds, setHiddenNodeIds] = useState<Set<string>>(new Set());
+
+  const resetCanvas = useCallback(() => {
+    setExtraGraph({ nodes: [], links: [] });
+    setHiddenNodeIds(new Set());
+    setSelectedNode(null);
+    setHighlightNode(null);
+  }, []);
 
   const handleSearch = useCallback(
     (query: string) => {
-      setExtraGraph({ nodes: [], links: [] });
-      setHiddenNodeIds(new Set());
-      setSelectedNode(null);
-      setHighlightNode(null);
+      resetCanvas();
       search(query);
     },
-    [search],
+    [resetCanvas, search],
   );
 
   const handleBuilderRun = useCallback(
     (body: BuilderRequest) => {
-      setExtraGraph({ nodes: [], links: [] });
-      setHiddenNodeIds(new Set());
-      setSelectedNode(null);
-      setHighlightNode(null);
+      resetCanvas();
       searchBuilder(body);
     },
-    [searchBuilder],
+    [resetCanvas, searchBuilder],
   );
 
   const handleRemoveNode = useCallback(
@@ -77,72 +81,42 @@ export default function App() {
       return next.size === prev.size ? prev : next;
     });
 
-    const taggedNodes = newGraph.nodes.map((n) =>
-      GAME_TYPES.has(n.type) ? { ...n, autoFetchImage: true } : n,
-    );
-
-    // Determine which nodes are truly new before updating state
     let existingNodeIds: string[] = [];
     let addedNodeIds: string[] = [];
 
     setExtraGraph((prev) => {
       const existingIds = new Set(prev.nodes.map((n) => n.id));
       existingNodeIds = [...existingIds];
-      const existingLinkKeys = new Set(
-        prev.links.map(
-          (l) =>
-            `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`,
-        ),
-      );
-      const addedNodes = taggedNodes.filter((n) => !existingIds.has(n.id));
+      const existingLinkKeys = new Set(prev.links.map(linkKey));
+      const addedNodes = newGraph.nodes.filter((n) => !existingIds.has(n.id));
       addedNodeIds = addedNodes.map((n) => n.id);
-      const addedLinks = newGraph.links.filter((l) => {
-        const key = `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`;
-        return !existingLinkKeys.has(key);
-      });
+      const addedLinks = newGraph.links.filter((l) => !existingLinkKeys.has(linkKey(l)));
       return {
         nodes: [...prev.nodes, ...addedNodes],
         links: [...prev.links, ...addedLinks],
       };
     });
 
-    // After merging, discover cross-links between new nodes and existing canvas
+    // Discover links between the new nodes and what is already on the canvas
     if (addedNodeIds.length === 0) return;
     try {
-      const crossLinks: GraphLink[] = await getCrossLinks(
-        existingNodeIds,
-        addedNodeIds,
-      );
+      const crossLinks = await getCrossLinks(existingNodeIds, addedNodeIds);
       if (crossLinks.length === 0) return;
       setExtraGraph((prev) => {
-        const existingLinkKeys = new Set(
-          prev.links.map(
-            (l) =>
-              `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`,
-          ),
+        const keys = new Set(prev.links.map(linkKey));
+        const fresh = crossLinks.filter(
+          (l) => !keys.has(linkKey(l)) && !keys.has(reverseKey(l)),
         );
-        const genuinelyNew = crossLinks.filter((l) => {
-          const src = typeof l.source === "string" ? l.source : l.source.id;
-          const tgt = typeof l.target === "string" ? l.target : l.target.id;
-          const key = `${src}__${tgt}__${l.label}`;
-          const revKey = `${tgt}__${src}__${l.label}`;
-          return !existingLinkKeys.has(key) && !existingLinkKeys.has(revKey);
-        });
-        if (genuinelyNew.length === 0) return prev;
-        return { ...prev, links: [...prev.links, ...genuinelyNew] };
+        return fresh.length ? { ...prev, links: [...prev.links, ...fresh] } : prev;
       });
     } catch {
-      // Non-critical: cross-link discovery is best-effort
+      // best-effort
     }
   }, []);
 
   const handleNodeClick = useCallback((uri: string) => {
     setHighlightNode(uri);
-    // On mobile, don't auto-open sidebar (it covers the graph)
-    // User can open it via context menu "Apri nella sidebar"
-    if (window.innerWidth >= 640) {
-      setSelectedNode(uri);
-    }
+    if (window.innerWidth >= 640) setSelectedNode(uri);
     setMobileTab("graph");
   }, []);
 
@@ -156,228 +130,182 @@ export default function App() {
     setHighlightNode(null);
   }, []);
 
-  const handleNodeRightClick = useCallback(
-    (node: GraphNode, x: number, y: number) => {
-      setContextMenu({ node, x, y });
-    },
-    [],
-  );
-
-  const graphData: GraphData = useMemo(() => {
-    const raw = data?.graph || { nodes: [], links: [] };
-    return {
-      ...raw,
-      nodes: raw.nodes.map((n) =>
-        GAME_TYPES.has(n.type) ? { ...n, autoFetchImage: true } : n,
-      ),
-    };
-  }, [data]);
+  const handleNodeRightClick = useCallback((node: GraphNode, x: number, y: number) => {
+    setContextMenu({ node, x, y });
+  }, []);
 
   const mergedGraph = useMemo<GraphData>(() => {
-    const existingNodeIds = new Set(graphData.nodes.map((n) => n.id));
-    const existingLinkKeys = new Set(
-      graphData.links.map(
-        (l) =>
-          `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`,
-      ),
-    );
-    const addedNodes = extraGraph.nodes.filter(
-      (n) => !existingNodeIds.has(n.id),
-    );
-    const addedLinks = extraGraph.links.filter((l) => {
-      const key = `${typeof l.source === "string" ? l.source : l.source.id}__${typeof l.target === "string" ? l.target : l.target.id}__${l.label}`;
-      return !existingLinkKeys.has(key);
-    });
-    const allNodes = [...graphData.nodes, ...addedNodes].filter(
-      (n) => !hiddenNodeIds.has(n.id),
-    );
-    const visibleIds = new Set(allNodes.map((n) => n.id));
-    const allLinks = [...graphData.links, ...addedLinks].filter((l) => {
-      const src = typeof l.source === "string" ? l.source : l.source.id;
-      const tgt = typeof l.target === "string" ? l.target : l.target.id;
-      return visibleIds.has(src) && visibleIds.has(tgt);
-    });
-    return { nodes: allNodes, links: allLinks };
-  }, [graphData, extraGraph, hiddenNodeIds]);
+    const base = data?.graph ?? { nodes: [], links: [] };
+    const baseIds = new Set(base.nodes.map((n) => n.id));
+    const baseKeys = new Set(base.links.map(linkKey));
+    const nodes = [
+      ...base.nodes,
+      ...extraGraph.nodes.filter((n) => !baseIds.has(n.id)),
+    ].filter((n) => !hiddenNodeIds.has(n.id));
+    const visible = new Set(nodes.map((n) => n.id));
+    const links = [
+      ...base.links,
+      ...extraGraph.links.filter((l) => !baseKeys.has(linkKey(l))),
+    ].filter((l) => visible.has(endId(l.source)) && visible.has(endId(l.target)));
+    return { nodes, links };
+  }, [data, extraGraph, hiddenNodeIds]);
 
   const graphNodeIds = useMemo(
     () => new Set(mergedGraph.nodes.map((n) => n.id)),
     [mergedGraph],
   );
 
+  const tabBtn = (m: Mode, label: string) => (
+    <button
+      key={m}
+      onClick={() => setMode(m)}
+      className={`border-b py-1 text-sm transition-colors ${
+        mode === m ? "border-brick text-ink" : "border-transparent text-mute hover:text-ink"
+      }`}
+    >
+      {label}
+    </button>
+  );
+
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      {/* Header */}
-      <header className="flex-shrink-0 border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm relative z-50">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between gap-4 mb-3 sm:mb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-indigo-600/20 rounded-xl">
-                <Gamepad2 className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-400" />
-              </div>
-              <div>
-                <h1 className="text-base sm:text-xl font-bold text-white leading-tight">
-                  Videogame Semantic Search
-                </h1>
-                <p className="text-xs text-gray-500 hidden sm:block">
-                  Knowledge Graph Explorer · Powered by OWL + SPARQL + LLM
-                </p>
-              </div>
+    <div className="flex h-full flex-col overflow-hidden">
+      <header className="relative z-40 flex-shrink-0 border-b border-rule">
+        <div className="mx-auto max-w-[1920px] px-4 py-4 sm:px-8">
+          <div className="mb-3 flex items-end justify-between gap-6">
+            <div>
+              <h1 className="font-serif text-[26px] leading-none tracking-tight">
+                Videogame Semantic Search
+              </h1>
+              <p className="label mt-1.5 hidden sm:block">
+                Grafo di conoscenza · OWL 2 · SPARQL
+              </p>
             </div>
-            <a
-              href="https://github.com/GiuseppeBellamacina"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
-            >
-              <Github className="w-5 h-5" />
-              <span className="hidden sm:inline">GiuseppeBellamacina</span>
-            </a>
+            <nav className="flex gap-5" aria-label="Modalità di ricerca">
+              {tabBtn("nl", "Domanda")}
+              {tabBtn("builder", "Filtri")}
+            </nav>
           </div>
-          <div className="flex gap-1 mb-3">
-            {(
-              [
-                ["nl", "Ricerca libera"],
-                ["builder", "Query builder"],
-              ] as const
-            ).map(([mode, label]) => (
-              <button
-                key={mode}
-                onClick={() => setSearchMode(mode)}
-                className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                  searchMode === mode
-                    ? "bg-indigo-600/20 text-indigo-300"
-                    : "text-gray-500 hover:text-gray-300"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+          <div className="max-w-4xl">
+            {mode === "nl" ? (
+              <SearchBar
+                onSearch={handleSearch}
+                onCancel={cancel}
+                loading={loading}
+                progress={progress}
+              />
+            ) : (
+              <QueryBuilder
+                onRun={handleBuilderRun}
+                onCancel={cancel}
+                loading={loading}
+              />
+            )}
           </div>
-          {searchMode === "nl" ? (
-            <SearchBar
-              onSearch={handleSearch}
-              onCancel={cancel}
-              loading={loading}
-            />
-          ) : (
-            <QueryBuilder
-              onRun={handleBuilderRun}
-              onCancel={cancel}
-              loading={loading}
-            />
-          )}
         </div>
       </header>
 
-      {/* Mobile tab bar */}
-      <div className="md:hidden flex-shrink-0 flex border-b border-gray-800 bg-gray-950">
-        <button
-          onClick={() => setMobileTab("results")}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors ${
-            mobileTab === "results"
-              ? "text-indigo-400 border-b-2 border-indigo-400"
-              : "text-gray-500 hover:text-gray-300"
-          }`}
-        >
-          <List className="w-4 h-4" />
-          Risultati
-        </button>
-        <button
-          onClick={() => setMobileTab("graph")}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors ${
-            mobileTab === "graph"
-              ? "text-indigo-400 border-b-2 border-indigo-400"
-              : "text-gray-500 hover:text-gray-300"
-          }`}
-        >
-          <Network className="w-4 h-4" />
-          Grafo
-        </button>
+      <div className="flex flex-shrink-0 border-b border-rule md:hidden">
+        {(
+          [
+            ["results", "Risultati", List],
+            ["graph", "Grafo", Network],
+          ] as const
+        ).map(([id, label, Icon]) => (
+          <button
+            key={id}
+            onClick={() => setMobileTab(id)}
+            className={`flex flex-1 items-center justify-center gap-2 py-2.5 text-sm ${
+              mobileTab === id ? "border-b border-brick text-ink" : "text-mute"
+            }`}
+          >
+            <Icon className="h-4 w-4" />
+            {label}
+          </button>
+        ))}
       </div>
 
-      {/* Main content */}
-      <main className="flex-1 flex overflow-hidden min-h-0">
-        {/* Results panel */}
-        <div
-          className={`${
-            mobileTab === "results" ? "flex" : "hidden"
-          } md:flex w-full md:w-[420px] flex-shrink-0 md:border-r border-gray-800 flex-col overflow-hidden`}
+      <main className="flex min-h-0 flex-1 overflow-hidden">
+        <section
+          className={`${mobileTab === "results" ? "flex" : "hidden"} w-full flex-shrink-0 flex-col overflow-hidden border-rule md:flex md:w-[400px] md:border-r`}
         >
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {/* Error */}
+          <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-300 text-sm animate-fade-in">
-                <p className="font-medium">Errore</p>
-                <p className="mt-1 text-red-400">{error}</p>
+              <div className="border-l-2 border-brick pl-3 text-sm animate-fade-in">
+                <p className="label text-brick">Errore</p>
+                <p className="mt-1 text-ink">{error}</p>
               </div>
             )}
 
-            {/* SPARQL Query */}
-            {data && (
-              <SparqlViewer sparql={data.sparql} success={data.success} />
-            )}
+            {loading && progress?.sparql && <SparqlViewer sparql={progress.sparql} live />}
 
-            {/* Results */}
-            {data && (
-              <ResultList
-                results={data.results}
-                totalRows={data.total_rows}
-                onNodeClick={handleNodeClick}
-              />
-            )}
-
-            {/* Empty state */}
-            {!data && !error && !loading && (
-              <div className="flex flex-col items-center justify-center h-full text-center py-20">
-                <div className="p-4 bg-gray-800/50 rounded-2xl mb-4">
-                  <BarChart3 className="w-10 h-10 text-gray-600" />
-                </div>
-                <h3 className="text-lg font-medium text-gray-400 mb-2">
-                  Esplora il Knowledge Graph
-                </h3>
-                <p className="text-sm text-gray-600 max-w-[280px]">
-                  Scrivi una domanda in linguaggio naturale per esplorare
-                  l'ontologia dei videogiochi
-                </p>
-              </div>
-            )}
-
-            {/* Loading state */}
             {loading && (
-              <div className="space-y-3">
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="bg-gray-900/80 border border-gray-800 rounded-xl p-4 animate-pulse"
-                  >
-                    <div className="h-4 bg-gray-800 rounded w-3/4 mb-2" />
-                    <div className="h-3 bg-gray-800 rounded w-1/2" />
-                  </div>
+              <ul className="rule-y" aria-hidden>
+                {[0, 1, 2, 3].map((i) => (
+                  <li key={i} className="flex gap-3 py-3">
+                    <div className="h-[52px] w-[39px] animate-shimmer rounded-[3px] bg-raised" />
+                    <div className="flex-1 space-y-2 pt-1">
+                      <div className="h-3.5 w-2/3 animate-shimmer rounded-sm bg-raised" />
+                      <div className="h-2.5 w-1/3 animate-shimmer rounded-sm bg-raised" />
+                    </div>
+                  </li>
                 ))}
+              </ul>
+            )}
+
+            {!loading && data && (
+              <>
+                <SparqlViewer sparql={data.sparql} success={data.success} />
+                <ResultList
+                  results={data.results}
+                  totalRows={data.total_rows}
+                  nodes={mergedGraph.nodes}
+                  onNodeClick={handleNodeClick}
+                />
+              </>
+            )}
+
+            {!loading && !data && !error && (
+              <div className="pt-6 animate-fade-in">
+                <h2 className="font-serif text-3xl leading-tight">
+                  Esplora il grafo dei videogiochi
+                </h2>
+                <p className="mt-3 text-[15px] leading-relaxed text-mute">
+                  Fai una domanda in italiano oppure usa i filtri. Ogni risultato
+                  diventa un grafo che puoi espandere nodo per nodo.
+                </p>
+                <ul className="rule-y mt-6">
+                  {SUGGESTIONS.slice(0, 5).map((q) => (
+                    <li key={q}>
+                      <button
+                        onClick={() => {
+                          setMode("nl");
+                          handleSearch(q);
+                        }}
+                        className="w-full py-2.5 text-left text-sm hover:text-brick"
+                      >
+                        {q}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
-        </div>
+        </section>
 
-        {/* Graph panel */}
-        <div
-          className={`${
-            mobileTab === "graph" ? "flex" : "hidden"
-          } md:flex flex-1 relative bg-gray-950 w-full h-full min-h-0`}
+        <section
+          className={`${mobileTab === "graph" ? "flex" : "hidden"} relative h-full min-h-0 w-full flex-1 md:flex`}
         >
-          <div className="flex-1 h-full w-full min-h-0">
-            <KnowledgeGraph
-              data={mergedGraph}
-              onNodeClick={handleNodeClick}
-              highlightNode={highlightNode}
-              onNodeRightClick={handleNodeRightClick}
-            />
-          </div>
-        </div>
+          <KnowledgeGraph
+            data={mergedGraph}
+            loading={loading}
+            onNodeClick={handleNodeClick}
+            highlightNode={highlightNode}
+            onNodeRightClick={handleNodeRightClick}
+          />
+        </section>
       </main>
 
-      {/* Node Detail Panel */}
       <NodeDetail
         uri={selectedNode}
         onClose={handleCloseDetail}
@@ -385,7 +313,6 @@ export default function App() {
         onGraphExpand={handleGraphExpand}
       />
 
-      {/* Node Context Menu (right-click) */}
       {contextMenu && (
         <NodeContextMenu
           node={contextMenu.node}
@@ -398,7 +325,6 @@ export default function App() {
           onClose={() => setContextMenu(null)}
         />
       )}
-
     </div>
   );
 }

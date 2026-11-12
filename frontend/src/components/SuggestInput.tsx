@@ -127,10 +127,10 @@ export function SuggestInput({
         className={className}
       />
       {open && !disabled && (list.length > 0 || showExamples) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-y-auto max-h-72 z-50 animate-fade-in">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 min-w-[16rem] overflow-y-auto rounded-sm border border-rule bg-panel shadow-[0_12px_32px_-8px_rgba(0,0,0,0.6)] animate-fade-in">
           {showExamples ? (
             <>
-              <div className="px-4 py-2 text-xs text-gray-500 uppercase tracking-wide border-b border-gray-800">
+              <div className="label border-b border-rule px-3 py-2">
                 Suggerimenti
               </div>
               {examples!.map((ex) => (
@@ -143,7 +143,7 @@ export function SuggestInput({
                     setOpen(false);
                     onSubmit?.();
                   }}
-                  className="w-full px-4 py-3 text-left text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                  className="w-full px-3 py-2.5 text-left text-sm text-ink transition-colors hover:bg-raised"
                 >
                   {ex}
                 </button>
@@ -156,12 +156,12 @@ export function SuggestInput({
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => pick(s)}
-                className={`w-full px-4 py-2.5 text-left flex items-center justify-between gap-3 transition-colors ${
-                  i === active ? "bg-gray-800 text-white" : "text-gray-300 hover:bg-gray-800"
+                className={`w-full px-3 py-2 text-left flex items-center justify-between gap-3 transition-colors ${
+                  i === active ? "bg-raised text-ink" : "text-ink hover:bg-raised"
                 }`}
               >
                 <span className="text-sm truncate">{s.label}</span>
-                <span className="text-xs text-gray-500 flex-shrink-0">
+                <span className="label flex-shrink-0">
                   {TYPE_LABELS[s.type] ?? s.type}
                 </span>
               </button>
