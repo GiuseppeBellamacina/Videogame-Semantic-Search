@@ -3,15 +3,14 @@ Graph router — handles knowledge graph visualization and node detail requests.
 """
 
 import logging
-import re
-from urllib.parse import quote, unquote
+from urllib.parse import unquote
 
-import httpx
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
 
 from backend.services.graph_builder import build_graph_from_node, find_cross_links
-from backend.services.image_cache import get_image, set_image
+from backend.services import image_store
 from backend.services.ontology_service import OntologyService
 
 logger = logging.getLogger(__name__)
@@ -74,55 +73,40 @@ async def get_node_details(uri: str):
         )
 
 
-# In-memory cache kept for backward compatibility (image_cache.py is the source of truth)
-
-
 @router.get("/image-search")
-async def search_game_image(name: str):
-    """
-    Image search via Wikipedia REST summary API.
-    Tries the exact title first, then with '(video game)' suffix.
-    Results are stored in the local SQLite cache.
-    """
+async def search_game_image(name: str, type: str = "VideoGame"):
+    """Image for one entity (local file, stored URL or Wikipedia search, see image_store)."""
     if not name.strip():
         raise HTTPException(status_code=400, detail="Name cannot be empty")
+    return await image_store.resolve(name, type)
 
-    # Skip Wikidata QIDs — no useful image can be found
-    if re.fullmatch(r"Q\d+", name.strip()):
-        return {"imageUrl": None, "source": None}
 
-    # 1. Check cache (SQLite)
-    cached = await get_image(name)
-    if cached is not None:
-        logger.debug(f"[IMG] Cache hit for '{name}'")
-        return cached
+class ImageItem(BaseModel):
+    name: str
+    type: str = "VideoGame"
 
-    # 2. Fetch from Wikipedia
-    headers = {
-        "User-Agent": "VideogameSemanticSearch/1.0 (https://github.com/GiuseppeBellamacina/Videogame-Semantic-Search; educational project)"
+
+class ImagesRequest(BaseModel):
+    items: list[ImageItem] = Field(max_length=60)
+
+
+@router.post("/images")
+async def images(body: ImagesRequest):
+    """Batch lookup, resolved concurrently. Keys are "<type>|<name>"."""
+    found = await image_store.resolve_many([(i.name, i.type) for i in body.items])
+    return {
+        "images": {f"{i.type}|{i.name}": r["imageUrl"] for i, r in zip(body.items, found)}
     }
 
-    try:
-        async with httpx.AsyncClient(timeout=10.0, headers=headers) as client:
-            for title in [name, f"{name} (video game)"]:
-                encoded_title = quote(title, safe="")
-                resp = await client.get(
-                    f"https://en.wikipedia.org/api/rest_v1/page/summary/{encoded_title}",
-                )
-                if resp.status_code == 200:
-                    thumb = resp.json().get("thumbnail", {}).get("source")
-                    if thumb:
-                        logger.info(f"[IMG] Found for '{name}': {thumb}")
-                        result = {"imageUrl": thumb, "source": "wikipedia"}
-                        await set_image(name, result)
-                        return result
 
-        logger.info(f"[IMG] Not found for '{name}'")
-        return {"imageUrl": None, "source": None}
-
-    except Exception as e:
-        logger.warning(f"[IMG] Error for '{name}': {e}")
-        return {"imageUrl": None, "source": None}
+@router.get("/image-file/{file}")
+async def image_file(file: str):
+    path = image_store.image_path(file)
+    if path is None or not path.exists():
+        raise HTTPException(status_code=404)
+    return FileResponse(
+        path, headers={"Cache-Control": "public, max-age=31536000, immutable"}
+    )
 
 
 @router.get("/stats")

@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.config import CORS_ORIGINS
 from backend.routers import graph, query, search
+from backend.services import image_store
 from backend.services.ontology_service import OntologyService
 
 
@@ -21,6 +22,7 @@ async def lifespan(app: FastAPI):
     await query.init_cache()
     yield
     query.close_cache()
+    await image_store.close()
 
 
 app = FastAPI(

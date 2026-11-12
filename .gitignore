@@ -45,3 +45,4 @@ reference/
 # Pipeline cache and local DB
 ontology/.cache/
 backend/cache.db
+backend/cache/

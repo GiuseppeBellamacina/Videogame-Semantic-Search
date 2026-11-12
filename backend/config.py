@@ -33,6 +33,8 @@ CACHE_DB_PATH = Path(os.getenv("CACHE_DB_PATH", BASE_DIR / "backend" / "cache.db
 # Cache TTL in seconds
 CACHE_TTL_QUERY = 60 * 60 * 24 * 14  # 14 days
 CACHE_TTL_IMAGE = 60 * 60 * 24 * 30 * 6  # 6 months
+IMAGE_MISS_TTL = 60 * 60 * 24 * 7  # "no image found" is remembered for a week
+IMAGE_DIR = Path(os.getenv("IMAGE_DIR", BASE_DIR / "backend" / "cache" / "images"))
 
 # CORS
 CORS_ORIGINS = [

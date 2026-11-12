@@ -69,6 +69,25 @@ def keys(prefix: str) -> list[str]:
     return [r[0] for r in rows]
 
 
+def items(prefix: str) -> list[tuple[str, str]]:
+    with _lock:
+        return (
+            _db()
+            .execute(
+                "SELECT key, value FROM cache WHERE substr(key,1,?)=?",
+                (len(prefix), prefix),
+            )
+            .fetchall()
+        )
+
+
+def delete(keys: list[str]) -> None:
+    with _lock:
+        db = _db()
+        db.executemany("DELETE FROM cache WHERE key=?", [(k,) for k in keys])
+        db.commit()
+
+
 def close() -> None:
     global _conn
     with _lock:

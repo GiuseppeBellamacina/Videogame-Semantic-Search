@@ -2,32 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family:
-    "Inter",
-    system-ui,
-    -apple-system,
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+  }
+  ::selection {
+    background: rgba(212, 87, 59, 0.35);
+  }
+  :focus-visible {
+    outline: 2px solid #d4573b;
+    outline-offset: 2px;
+  }
 }
 
-/* Custom scrollbar */
+@layer components {
+  .label {
+    @apply font-mono text-[11px] uppercase tracking-[0.14em] text-mute;
+  }
+  .rule-y > * + * {
+    @apply border-t border-rule;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-rule px-3.5 py-2 text-sm text-ink transition-colors hover:border-mute hover:bg-raised active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply border-brick bg-brick text-paper hover:border-brick hover:bg-[#e0664a];
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-sm border border-rule bg-panel px-2 py-0.5 text-xs text-ink;
+  }
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #4b5563;
-  border-radius: 3px;
+  background: #34322a;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
-}
-
-/* Force graph canvas */
-.force-graph-container canvas {
-  border-radius: 0.75rem;
+  background: #4a4739;
 }
