@@ -17,15 +17,60 @@ PREFIXES = (
 
 # field -> definition. kind: entity | number | year | text | class
 FIELDS: dict[str, dict] = {
-    "developedBy": {"label": "Developer", "kind": "entity", "target": "Developer", "name": "developerName"},
-    "publishedBy": {"label": "Publisher", "kind": "entity", "target": "Publisher", "name": "publisherName"},
-    "hasGenre": {"label": "Genre", "kind": "entity", "target": "Genre", "name": "genreName"},
-    "availableOn": {"label": "Platform", "kind": "entity", "target": "Platform", "name": "platformName"},
-    "belongsTo": {"label": "Franchise", "kind": "entity", "target": "Franchise", "name": "franchiseName"},
-    "hasCharacter": {"label": "Character", "kind": "entity", "target": "Character", "name": "characterName"},
-    "wonAward": {"label": "Award", "kind": "entity", "target": "Award", "name": "awardName"},
-    "madeWith": {"label": "Game engine", "kind": "entity", "target": "GameEngine", "name": "engineName"},
-    "hasGameMode": {"label": "Game mode", "kind": "entity", "target": "GameMode", "name": None},
+    "developedBy": {
+        "label": "Developer",
+        "kind": "entity",
+        "target": "Developer",
+        "name": "developerName",
+    },
+    "publishedBy": {
+        "label": "Publisher",
+        "kind": "entity",
+        "target": "Publisher",
+        "name": "publisherName",
+    },
+    "hasGenre": {
+        "label": "Genre",
+        "kind": "entity",
+        "target": "Genre",
+        "name": "genreName",
+    },
+    "availableOn": {
+        "label": "Platform",
+        "kind": "entity",
+        "target": "Platform",
+        "name": "platformName",
+    },
+    "belongsTo": {
+        "label": "Franchise",
+        "kind": "entity",
+        "target": "Franchise",
+        "name": "franchiseName",
+    },
+    "hasCharacter": {
+        "label": "Character",
+        "kind": "entity",
+        "target": "Character",
+        "name": "characterName",
+    },
+    "wonAward": {
+        "label": "Award",
+        "kind": "entity",
+        "target": "Award",
+        "name": "awardName",
+    },
+    "madeWith": {
+        "label": "Game engine",
+        "kind": "entity",
+        "target": "GameEngine",
+        "name": "engineName",
+    },
+    "hasGameMode": {
+        "label": "Game mode",
+        "kind": "entity",
+        "target": "GameMode",
+        "name": None,
+    },
     "metacriticScore": {"label": "Metacritic score", "kind": "number"},
     "releaseYear": {"label": "Release year", "kind": "year"},
     "gameName": {"label": "Title", "kind": "text"},
@@ -34,10 +79,23 @@ FIELDS: dict[str, dict] = {
         "label": "Category",
         "kind": "class",
         "options": [
-            "AwardWinningGame", "FranchiseGame", "SinglePlayerGame", "MultiplayerGame",
-            "CoopGame", "PCGame", "ConsoleGame", "MobileGame", "NintendoGame",
-            "PlayStationGame", "XboxGame", "HighlyRatedGame", "RecentGame",
-            "SequelGame", "StandaloneGame", "MultiConsoleGame", "NintendoPublishedGame",
+            "AwardWinningGame",
+            "FranchiseGame",
+            "SinglePlayerGame",
+            "MultiplayerGame",
+            "CoopGame",
+            "PCGame",
+            "ConsoleGame",
+            "MobileGame",
+            "NintendoGame",
+            "PlayStationGame",
+            "XboxGame",
+            "HighlyRatedGame",
+            "RecentGame",
+            "SequelGame",
+            "StandaloneGame",
+            "MultiConsoleGame",
+            "NintendoPublishedGame",
         ],
     },
 }
@@ -55,7 +113,9 @@ ORDERS = {
     "date_desc": "DESC(?releaseDate)",
     "date_asc": "?releaseDate",
 }
-_URI_RE = re.compile(r"^" + re.escape(ONTOLOGY_NS.rsplit("/", 1)[0]) + r"/[^\s<>\"{}|\\^`]+$")
+_URI_RE = re.compile(
+    r"^" + re.escape(ONTOLOGY_NS.rsplit("/", 1)[0]) + r"/[^\s<>\"{}|\\^`]+$"
+)
 
 
 class BuilderError(ValueError):
@@ -70,14 +130,27 @@ def schema() -> dict:
 
 
 def _lit(value: str) -> str:
-    esc = value.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ").replace("\r", " ")
+    esc = (
+        value.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("\n", " ")
+        .replace("\r", " ")
+    )
     return f'"{esc}"'
 
 
 # relations shown when the builder returns a graph
 GRAPH_RELATIONS = [
-    "developedBy", "publishedBy", "hasGenre", "availableOn", "belongsTo",
-    "madeWith", "hasGameMode", "hasCharacter", "wonAward", "sequelOf",
+    "developedBy",
+    "publishedBy",
+    "hasGenre",
+    "availableOn",
+    "belongsTo",
+    "madeWith",
+    "hasGameMode",
+    "hasCharacter",
+    "wonAward",
+    "sequelOf",
 ]
 
 
@@ -116,7 +189,9 @@ def build(
             else:
                 # free text: match the entity by name
                 name_pat = (
-                    f"{v} rdfs:label {n}" if d["name"] is None else f"{v} vg:{d['name']} {n}"
+                    f"{v} rdfs:label {n}"
+                    if d["name"] is None
+                    else f"{v} vg:{d['name']} {n}"
                 )
                 match = (
                     f"?game vg:{field} {v} . {name_pat} . "
@@ -132,7 +207,9 @@ def build(
         elif kind == "number":
             body.append(f"?game vg:metacriticScore {v} . FILTER({v} {op} {int(value)})")
         elif kind == "year":
-            body.append(f"?game vg:releaseDate {v} . FILTER(YEAR({v}) {op} {int(value)})")
+            body.append(
+                f"?game vg:releaseDate {v} . FILTER(YEAR({v}) {op} {int(value)})"
+            )
         elif kind == "text":
             expr = (
                 f"CONTAINS(LCASE(STR({v})), {_lit(str(value).lower())})"

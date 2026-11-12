@@ -22,7 +22,9 @@ router = APIRouter()
 
 # Keys are namespaced by the ontology build time, so rebuilding the ontology
 # invalidates cached answers automatically.
-_PREFIX = f"vg:query:{int(ONTOLOGY_FILE.stat().st_mtime) if ONTOLOGY_FILE.exists() else 0}:"
+_PREFIX = (
+    f"vg:query:{int(ONTOLOGY_FILE.stat().st_mtime) if ONTOLOGY_FILE.exists() else 0}:"
+)
 
 # Normalised questions already cached, for fuzzy matching
 _cached_keys: set[str] = set()

@@ -36,7 +36,9 @@ def build(store: ox.Store) -> None:
     for etype, prop in NAME_PROPS.items():
         entries = {
             (q.object.value.lower(), q.object.value, q.subject.value)
-            for q in store.quads_for_pattern(None, ox.NamedNode(ONTOLOGY_NS + prop), None)
+            for q in store.quads_for_pattern(
+                None, ox.NamedNode(ONTOLOGY_NS + prop), None
+            )
             if isinstance(q.subject, ox.NamedNode)
         }
         _index[etype] = sorted(entries)

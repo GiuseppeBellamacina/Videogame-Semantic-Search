@@ -52,9 +52,9 @@ import sys
 from collections import defaultdict
 from datetime import date
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 
-from rdflib import BNode, Literal, OWL, RDF, RDFS, Graph, Namespace, URIRef
+from rdflib import OWL, RDF, RDFS, BNode, Graph, Literal, Namespace, URIRef
 from rdflib.namespace import XSD
 from tqdm import tqdm
 
@@ -358,8 +358,13 @@ def _dataprop(
 
 
 def _defined_class_svf(
-    g: Graph, uri: URIRef, parent: URIRef, label: str, comment: str,
-    on_prop: URIRef, value: URIRef,
+    g: Graph,
+    uri: URIRef,
+    parent: URIRef,
+    label: str,
+    comment: str,
+    on_prop: URIRef,
+    value: URIRef,
 ) -> None:
     """Declare a defined class via equivalentClass: parent ∩ (on_prop some value)."""
     if (uri, RDF.type, OWL.Class) in g:
@@ -399,9 +404,24 @@ def _add_v2_classes(g: Graph) -> None:
 
     # New top-level
     for uri, parent, label, comment in [
-        (VG.GameMode, OWL.Thing, "Game Mode", "A mode of play available in a video game"),
-        (VG.Review, OWL.Thing, "Review", "A review or critical assessment of a video game"),
-        (VG.GameEvent, OWL.Thing, "Game Event", "A lifecycle event pertaining to a video game"),
+        (
+            VG.GameMode,
+            OWL.Thing,
+            "Game Mode",
+            "A mode of play available in a video game",
+        ),
+        (
+            VG.Review,
+            OWL.Thing,
+            "Review",
+            "A review or critical assessment of a video game",
+        ),
+        (
+            VG.GameEvent,
+            OWL.Thing,
+            "Game Event",
+            "A lifecycle event pertaining to a video game",
+        ),
     ]:
         if (uri, RDF.type, OWL.Class) not in g:
             g.add((uri, RDF.type, OWL.Class))
@@ -411,30 +431,105 @@ def _add_v2_classes(g: Graph) -> None:
 
     # VideoGame subclasses (primitive only)
     for uri, parent, label, comment in [
-        (VG.ReleasedGame, VG.VideoGame, "Released Game", "A video game that has been officially released to the public"),
-        (VG.EarlyAccessGame, VG.VideoGame, "Early Access Game", "A video game available in early access before full release"),
-        (VG.CancelledGame, VG.VideoGame, "Cancelled Game", "A video game whose development was cancelled before release"),
-        (VG.DelistedGame, VG.VideoGame, "Delisted Game", "A video game that has been removed from digital storefronts"),
-        (VG.IndieGame, VG.VideoGame, "Indie Game", "A video game with a relatively small development budget"),
-        (VG.AAAGame, VG.VideoGame, "AAA Game", "A video game produced with a large budget by a major publisher"),
-        (VG.GOTYWinner, VG.AwardWinningGame, "Game of the Year Winner", "A video game that has won a Game of the Year award"),
+        (
+            VG.ReleasedGame,
+            VG.VideoGame,
+            "Released Game",
+            "A video game that has been officially released to the public",
+        ),
+        (
+            VG.EarlyAccessGame,
+            VG.VideoGame,
+            "Early Access Game",
+            "A video game available in early access before full release",
+        ),
+        (
+            VG.CancelledGame,
+            VG.VideoGame,
+            "Cancelled Game",
+            "A video game whose development was cancelled before release",
+        ),
+        (
+            VG.DelistedGame,
+            VG.VideoGame,
+            "Delisted Game",
+            "A video game that has been removed from digital storefronts",
+        ),
+        (
+            VG.IndieGame,
+            VG.VideoGame,
+            "Indie Game",
+            "A video game with a relatively small development budget",
+        ),
+        (
+            VG.AAAGame,
+            VG.VideoGame,
+            "AAA Game",
+            "A video game produced with a large budget by a major publisher",
+        ),
+        (
+            VG.GOTYWinner,
+            VG.AwardWinningGame,
+            "Game of the Year Winner",
+            "A video game that has won a Game of the Year award",
+        ),
     ]:
         _class_decl(g, uri, parent, label, comment)
         added += 1
 
     # Platform hierarchy
     platform_tree: list[tuple[URIRef, URIRef, str, str]] = [
-        (VG.ConsolePlatform, VG.Platform, "Console Platform", "A dedicated video game console hardware platform"),
-        (VG.PlayStationPlatform, VG.ConsolePlatform, "PlayStation Platform", "A platform in the Sony PlayStation family"),
-        (VG.XboxPlatform, VG.ConsolePlatform, "Xbox Platform", "A platform in the Microsoft Xbox family"),
-        (VG.NintendoPlatform, VG.ConsolePlatform, "Nintendo Platform", "A platform in the Nintendo family"),
+        (
+            VG.ConsolePlatform,
+            VG.Platform,
+            "Console Platform",
+            "A dedicated video game console hardware platform",
+        ),
+        (
+            VG.PlayStationPlatform,
+            VG.ConsolePlatform,
+            "PlayStation Platform",
+            "A platform in the Sony PlayStation family",
+        ),
+        (
+            VG.XboxPlatform,
+            VG.ConsolePlatform,
+            "Xbox Platform",
+            "A platform in the Microsoft Xbox family",
+        ),
+        (
+            VG.NintendoPlatform,
+            VG.ConsolePlatform,
+            "Nintendo Platform",
+            "A platform in the Nintendo family",
+        ),
         (VG.PCPlatform, VG.Platform, "PC Platform", "A personal computer platform"),
-        (VG.WindowsPlatform, VG.PCPlatform, "Windows Platform", "A platform running Microsoft Windows"),
-        (VG.MacOSPlatform, VG.PCPlatform, "macOS Platform", "A platform running Apple macOS"),
+        (
+            VG.WindowsPlatform,
+            VG.PCPlatform,
+            "Windows Platform",
+            "A platform running Microsoft Windows",
+        ),
+        (
+            VG.MacOSPlatform,
+            VG.PCPlatform,
+            "macOS Platform",
+            "A platform running Apple macOS",
+        ),
         (VG.LinuxPlatform, VG.PCPlatform, "Linux Platform", "A platform running Linux"),
         (VG.MobilePlatform, VG.Platform, "Mobile Platform", "A mobile device platform"),
-        (VG.IOSPlatform, VG.MobilePlatform, "iOS Platform", "A platform running Apple iOS"),
-        (VG.AndroidPlatform, VG.MobilePlatform, "Android Platform", "A platform running Android"),
+        (
+            VG.IOSPlatform,
+            VG.MobilePlatform,
+            "iOS Platform",
+            "A platform running Apple iOS",
+        ),
+        (
+            VG.AndroidPlatform,
+            VG.MobilePlatform,
+            "Android Platform",
+            "A platform running Android",
+        ),
     ]
     for uri, parent, label, comment in platform_tree:
         _class_decl(g, uri, parent, label, comment)
@@ -442,82 +537,238 @@ def _add_v2_classes(g: Graph) -> None:
 
     # Genre subclasses
     for uri, parent, label, comment in [
-        (VG.ActionGenre, VG.Genre, "Action Genre", "A genre emphasizing physical challenges and hand-eye coordination"),
-        (VG.RPGGenre, VG.Genre, "RPG Genre", "A role-playing game genre with character progression and narrative focus"),
-        (VG.StrategyGenre, VG.Genre, "Strategy Genre", "A genre emphasizing tactical and strategic thinking"),
-        (VG.PuzzleGenre, VG.Genre, "Puzzle Genre", "A genre centred on logic puzzles and problem-solving"),
-        (VG.SimulationGenre, VG.Genre, "Simulation Genre", "A genre that simulates real-world or fictional systems"),
-        (VG.SportsGenre, VG.Genre, "Sports Genre", "A genre simulating traditional sports and athletic competitions"),
-        (VG.RacingGenre, VG.Genre, "Racing Genre", "A genre focusing on vehicle-based competition"),
-        (VG.AdventureGenre, VG.Genre, "Adventure Genre", "A genre emphasizing exploration and narrative-driven gameplay"),
-        (VG.HorrorGenre, VG.Genre, "Horror Genre", "A genre designed to evoke fear, dread, and suspense"),
-        (VG.PlatformerGenre, VG.Genre, "Platformer Genre", "A genre focused on navigating platforms and obstacles"),
+        (
+            VG.ActionGenre,
+            VG.Genre,
+            "Action Genre",
+            "A genre emphasizing physical challenges and hand-eye coordination",
+        ),
+        (
+            VG.RPGGenre,
+            VG.Genre,
+            "RPG Genre",
+            "A role-playing game genre with character progression and narrative focus",
+        ),
+        (
+            VG.StrategyGenre,
+            VG.Genre,
+            "Strategy Genre",
+            "A genre emphasizing tactical and strategic thinking",
+        ),
+        (
+            VG.PuzzleGenre,
+            VG.Genre,
+            "Puzzle Genre",
+            "A genre centred on logic puzzles and problem-solving",
+        ),
+        (
+            VG.SimulationGenre,
+            VG.Genre,
+            "Simulation Genre",
+            "A genre that simulates real-world or fictional systems",
+        ),
+        (
+            VG.SportsGenre,
+            VG.Genre,
+            "Sports Genre",
+            "A genre simulating traditional sports and athletic competitions",
+        ),
+        (
+            VG.RacingGenre,
+            VG.Genre,
+            "Racing Genre",
+            "A genre focusing on vehicle-based competition",
+        ),
+        (
+            VG.AdventureGenre,
+            VG.Genre,
+            "Adventure Genre",
+            "A genre emphasizing exploration and narrative-driven gameplay",
+        ),
+        (
+            VG.HorrorGenre,
+            VG.Genre,
+            "Horror Genre",
+            "A genre designed to evoke fear, dread, and suspense",
+        ),
+        (
+            VG.PlatformerGenre,
+            VG.Genre,
+            "Platformer Genre",
+            "A genre focused on navigating platforms and obstacles",
+        ),
     ]:
         _class_decl(g, uri, parent, label, comment)
         added += 1
 
     # Developer subclasses
     for uri, parent, label, comment in [
-        (VG.FirstPartyDeveloper, VG.Developer, "First-Party Developer", "A studio owned by or exclusive to a platform holder"),
-        (VG.ThirdPartyDeveloper, VG.Developer, "Third-Party Developer", "An independent studio not tied to a specific platform holder"),
-        (VG.IndieDeveloper, VG.Developer, "Indie Developer", "A small independent developer without publisher backing"),
+        (
+            VG.FirstPartyDeveloper,
+            VG.Developer,
+            "First-Party Developer",
+            "A studio owned by or exclusive to a platform holder",
+        ),
+        (
+            VG.ThirdPartyDeveloper,
+            VG.Developer,
+            "Third-Party Developer",
+            "An independent studio not tied to a specific platform holder",
+        ),
+        (
+            VG.IndieDeveloper,
+            VG.Developer,
+            "Indie Developer",
+            "A small independent developer without publisher backing",
+        ),
     ]:
         _class_decl(g, uri, parent, label, comment)
         added += 1
 
     # Publisher subclasses
     for uri, parent, label, comment in [
-        (VG.FirstPartyPublisher, VG.Publisher, "First-Party Publisher", "A publishing division of a platform holder"),
-        (VG.ThirdPartyPublisher, VG.Publisher, "Third-Party Publisher", "An independent publishing company"),
+        (
+            VG.FirstPartyPublisher,
+            VG.Publisher,
+            "First-Party Publisher",
+            "A publishing division of a platform holder",
+        ),
+        (
+            VG.ThirdPartyPublisher,
+            VG.Publisher,
+            "Third-Party Publisher",
+            "An independent publishing company",
+        ),
     ]:
         _class_decl(g, uri, parent, label, comment)
         added += 1
 
     # GameEngine subclasses
     for uri, parent, label, comment in [
-        (VG.ProprietaryEngine, VG.GameEngine, "Proprietary Engine", "A privately owned game engine not publicly licensed"),
-        (VG.OpenSourceEngine, VG.GameEngine, "Open-Source Engine", "A game engine whose source code is publicly available"),
+        (
+            VG.ProprietaryEngine,
+            VG.GameEngine,
+            "Proprietary Engine",
+            "A privately owned game engine not publicly licensed",
+        ),
+        (
+            VG.OpenSourceEngine,
+            VG.GameEngine,
+            "Open-Source Engine",
+            "A game engine whose source code is publicly available",
+        ),
     ]:
         _class_decl(g, uri, parent, label, comment)
         added += 1
 
     # Award subclasses
     for uri, parent, label, comment in [
-        (VG.IndustryAward, VG.Award, "Industry Award", "An award granted by an industry body or trade association"),
-        (VG.EditorialAward, VG.Award, "Editorial Award", "An award granted by an editorial outlet or publication"),
-        (VG.UserAward, VG.Award, "User Award", "An award determined by popular user vote"),
+        (
+            VG.IndustryAward,
+            VG.Award,
+            "Industry Award",
+            "An award granted by an industry body or trade association",
+        ),
+        (
+            VG.EditorialAward,
+            VG.Award,
+            "Editorial Award",
+            "An award granted by an editorial outlet or publication",
+        ),
+        (
+            VG.UserAward,
+            VG.Award,
+            "User Award",
+            "An award determined by popular user vote",
+        ),
     ]:
         _class_decl(g, uri, parent, label, comment)
         added += 1
 
     # Character subclasses
     for uri, parent, label, comment in [
-        (VG.PlayerCharacter, VG.Character, "Player Character", "A character directly controlled by the player"),
-        (VG.NonPlayerCharacter, VG.Character, "Non-Player Character", "A character controlled by the game's AI, not by the player"),
+        (
+            VG.PlayerCharacter,
+            VG.Character,
+            "Player Character",
+            "A character directly controlled by the player",
+        ),
+        (
+            VG.NonPlayerCharacter,
+            VG.Character,
+            "Non-Player Character",
+            "A character controlled by the game's AI, not by the player",
+        ),
     ]:
         _class_decl(g, uri, parent, label, comment)
         added += 1
 
     # Franchise subclasses
-    _class_decl(g, VG.SubFranchise, VG.Franchise, "Sub-Franchise", "A spin-off or sub-series within a larger franchise")
+    _class_decl(
+        g,
+        VG.SubFranchise,
+        VG.Franchise,
+        "Sub-Franchise",
+        "A spin-off or sub-series within a larger franchise",
+    )
     added += 1
 
     # GameMode subclasses
     for uri, parent, label, comment in [
-        (VG.SinglePlayerMode, VG.GameMode, "Single-Player Mode", "A game mode designed for a single player"),
-        (VG.MultiplayerMode, VG.GameMode, "Multiplayer Mode", "A game mode supporting multiple simultaneous players"),
-        (VG.CoopMode, VG.GameMode, "Co-op Mode", "A game mode supporting cooperative play among players"),
-        (VG.MMOMode, VG.GameMode, "MMO Mode", "A massively multiplayer online game mode"),
+        (
+            VG.SinglePlayerMode,
+            VG.GameMode,
+            "Single-Player Mode",
+            "A game mode designed for a single player",
+        ),
+        (
+            VG.MultiplayerMode,
+            VG.GameMode,
+            "Multiplayer Mode",
+            "A game mode supporting multiple simultaneous players",
+        ),
+        (
+            VG.CoopMode,
+            VG.GameMode,
+            "Co-op Mode",
+            "A game mode supporting cooperative play among players",
+        ),
+        (
+            VG.MMOMode,
+            VG.GameMode,
+            "MMO Mode",
+            "A massively multiplayer online game mode",
+        ),
     ]:
         _class_decl(g, uri, parent, label, comment)
         added += 1
 
     # GameEvent subclasses
     for uri, parent, label, comment in [
-        (VG.AnnouncementEvent, VG.GameEvent, "Announcement Event", "An event marking the public announcement of a video game"),
-        (VG.ReleaseEvent, VG.GameEvent, "Release Event", "An event marking the official release of a video game"),
-        (VG.UpdateEvent, VG.GameEvent, "Update Event", "An event marking a major update or patch"),
-        (VG.DelistingEvent, VG.GameEvent, "Delisting Event", "An event marking the removal of a game from digital storefronts"),
+        (
+            VG.AnnouncementEvent,
+            VG.GameEvent,
+            "Announcement Event",
+            "An event marking the public announcement of a video game",
+        ),
+        (
+            VG.ReleaseEvent,
+            VG.GameEvent,
+            "Release Event",
+            "An event marking the official release of a video game",
+        ),
+        (
+            VG.UpdateEvent,
+            VG.GameEvent,
+            "Update Event",
+            "An event marking a major update or patch",
+        ),
+        (
+            VG.DelistingEvent,
+            VG.GameEvent,
+            "Delisting Event",
+            "An event marking the removal of a game from digital storefronts",
+        ),
     ]:
         _class_decl(g, uri, parent, label, comment)
         added += 1
@@ -531,112 +782,207 @@ def _add_v2_object_properties(g: Graph) -> None:
 
     # genreOf (inverse of hasGenre)
     _objprop(
-        g, VG.genreOf, domain=VG.Genre, range_=VG.VideoGame,
-        label="genre of", asymmetric=True, irreflexive=True,
+        g,
+        VG.genreOf,
+        domain=VG.Genre,
+        range_=VG.VideoGame,
+        label="genre of",
+        asymmetric=True,
+        irreflexive=True,
         inverse_of=VG.hasGenre,
-    ); added += 1
+    )
+    added += 1
 
     # platformFor (inverse of availableOn)
     _objprop(
-        g, VG.platformFor, domain=VG.Platform, range_=VG.VideoGame,
-        label="platform for", asymmetric=True, irreflexive=True,
+        g,
+        VG.platformFor,
+        domain=VG.Platform,
+        range_=VG.VideoGame,
+        label="platform for",
+        asymmetric=True,
+        irreflexive=True,
         inverse_of=VG.availableOn,
-    ); added += 1
+    )
+    added += 1
 
     # awardWonBy (inverse of wonAward)
     _objprop(
-        g, VG.awardWonBy, domain=VG.Award, range_=VG.VideoGame,
-        label="award won by", irreflexive=True,
+        g,
+        VG.awardWonBy,
+        domain=VG.Award,
+        range_=VG.VideoGame,
+        label="award won by",
+        irreflexive=True,
         inverse_of=VG.wonAward,
-    ); added += 1
+    )
+    added += 1
 
     # hasSequel (inverse of sequelOf)
     _objprop(
-        g, VG.hasSequel, domain=VG.VideoGame, range_=VG.VideoGame,
-        label="has sequel", asymmetric=True, irreflexive=True,
+        g,
+        VG.hasSequel,
+        domain=VG.VideoGame,
+        range_=VG.VideoGame,
+        label="has sequel",
+        asymmetric=True,
+        irreflexive=True,
         inverse_of=VG.sequelOf,
-    ); added += 1
+    )
+    added += 1
 
     # modeInGame (inverse of hasGameMode)
     _objprop(
-        g, VG.modeInGame, domain=VG.GameMode, range_=VG.VideoGame,
-        label="mode in game", irreflexive=True,
+        g,
+        VG.modeInGame,
+        domain=VG.GameMode,
+        range_=VG.VideoGame,
+        label="mode in game",
+        irreflexive=True,
         inverse_of=VG.hasGameMode,
-    ); added += 1
+    )
+    added += 1
 
     # engineUsedIn (inverse of madeWith)
     _objprop(
-        g, VG.engineUsedIn, domain=VG.GameEngine, range_=VG.VideoGame,
-        label="engine used in", asymmetric=True, irreflexive=True,
+        g,
+        VG.engineUsedIn,
+        domain=VG.GameEngine,
+        range_=VG.VideoGame,
+        label="engine used in",
+        asymmetric=True,
+        irreflexive=True,
         inverse_of=VG.madeWith,
-    ); added += 1
+    )
+    added += 1
 
     # partOfFranchise (transitive)
     _objprop(
-        g, VG.partOfFranchise, domain=VG.Franchise, range_=VG.Franchise,
+        g,
+        VG.partOfFranchise,
+        domain=VG.Franchise,
+        range_=VG.Franchise,
         label="part of franchise",
         comment="Relates a sub-franchise to its parent franchise. Transitive.",
-        asymmetric=True, irreflexive=True, transitive=True,
-    ); added += 1
+        asymmetric=True,
+        irreflexive=True,
+        transitive=True,
+    )
+    added += 1
 
     # subsidiaryOf (transitive)
     _objprop(
-        g, VG.subsidiaryOf,
+        g,
+        VG.subsidiaryOf,
         label="subsidiary of",
         comment="Relates a subsidiary company to its parent organisation.",
-        asymmetric=True, irreflexive=True, transitive=True,
-    ); added += 1
+        asymmetric=True,
+        irreflexive=True,
+        transitive=True,
+    )
+    added += 1
 
     # Review-related
-    _objprop(g, VG.reviewer, domain=VG.Review, label="reviewer",
-             comment="The reviewer or outlet that authored the review"); added += 1
-    _objprop(g, VG.reviewedGame, domain=VG.Review, range_=VG.VideoGame,
-             label="reviewed game", comment="The video game that this review evaluates",
-             functional=True, inverse_of=VG.hasReview); added += 1
-    _objprop(g, VG.hasReview, domain=VG.VideoGame, range_=VG.Review,
-             label="has review", comment="A review written about this video game"); added += 1
-    _objprop(g, VG.reviewOf, domain=VG.Review, range_=VG.VideoGame,
-             label="review of", comment="The video game this review is about"); added += 1
+    _objprop(
+        g,
+        VG.reviewer,
+        domain=VG.Review,
+        label="reviewer",
+        comment="The reviewer or outlet that authored the review",
+    )
+    added += 1
+    _objprop(
+        g,
+        VG.reviewedGame,
+        domain=VG.Review,
+        range_=VG.VideoGame,
+        label="reviewed game",
+        comment="The video game that this review evaluates",
+        functional=True,
+        inverse_of=VG.hasReview,
+    )
+    added += 1
+    _objprop(
+        g,
+        VG.hasReview,
+        domain=VG.VideoGame,
+        range_=VG.Review,
+        label="has review",
+        comment="A review written about this video game",
+    )
+    added += 1
+    _objprop(
+        g,
+        VG.reviewOf,
+        domain=VG.Review,
+        range_=VG.VideoGame,
+        label="review of",
+        comment="The video game this review is about",
+    )
+    added += 1
 
     # Event-related
-    _objprop(g, VG.eventFor, domain=VG.GameEvent, range_=VG.VideoGame,
-             label="event for", comment="The video game this event pertains to",
-             inverse_of=VG.hasEvent); added += 1
-    _objprop(g, VG.hasEvent, domain=VG.VideoGame, range_=VG.GameEvent,
-             label="has event", comment="A lifecycle event associated with this game"); added += 1
+    _objprop(
+        g,
+        VG.eventFor,
+        domain=VG.GameEvent,
+        range_=VG.VideoGame,
+        label="event for",
+        comment="The video game this event pertains to",
+        inverse_of=VG.hasEvent,
+    )
+    added += 1
+    _objprop(
+        g,
+        VG.hasEvent,
+        domain=VG.VideoGame,
+        range_=VG.GameEvent,
+        label="has event",
+        comment="A lifecycle event associated with this game",
+    )
+    added += 1
 
     # hasGenre: add Asymmetric + inverseOf genreOf
     if (VG.hasGenre, OWL.inverseOf, VG.genreOf) not in g:
         g.add((VG.hasGenre, RDF.type, OWL.AsymmetricProperty))
-        g.add((VG.hasGenre, OWL.inverseOf, VG.genreOf)); added += 2
+        g.add((VG.hasGenre, OWL.inverseOf, VG.genreOf))
+        added += 2
 
     # hasGameMode: tighten range from rdfs:Resource to GameMode
     if (VG.hasGameMode, RDFS.range, VG.GameMode) not in g:
-        g.set((VG.hasGameMode, RDFS.range, VG.GameMode)); added += 1
+        g.set((VG.hasGameMode, RDFS.range, VG.GameMode))
+        added += 1
 
     # sequelOf: add TransitiveProperty + inverseOf hasSequel
     if (VG.sequelOf, RDF.type, OWL.TransitiveProperty) not in g:
-        g.add((VG.sequelOf, RDF.type, OWL.TransitiveProperty)); added += 1
+        g.add((VG.sequelOf, RDF.type, OWL.TransitiveProperty))
+        added += 1
     if (VG.sequelOf, OWL.inverseOf, VG.hasSequel) not in g:
-        g.add((VG.sequelOf, OWL.inverseOf, VG.hasSequel)); added += 1
+        g.add((VG.sequelOf, OWL.inverseOf, VG.hasSequel))
+        added += 1
 
     # wonAward: add inverseOf awardWonBy
     if (VG.wonAward, OWL.inverseOf, VG.awardWonBy) not in g:
-        g.add((VG.wonAward, OWL.inverseOf, VG.awardWonBy)); added += 1
+        g.add((VG.wonAward, OWL.inverseOf, VG.awardWonBy))
+        added += 1
 
     # availableOn: add inverseOf platformFor
     if (VG.availableOn, OWL.inverseOf, VG.platformFor) not in g:
-        g.add((VG.availableOn, OWL.inverseOf, VG.platformFor)); added += 1
+        g.add((VG.availableOn, OWL.inverseOf, VG.platformFor))
+        added += 1
 
     # madeWith: add Asymmetric + inverseOf engineUsedIn
     if (VG.madeWith, RDF.type, OWL.AsymmetricProperty) not in g:
-        g.add((VG.madeWith, RDF.type, OWL.AsymmetricProperty)); added += 1
+        g.add((VG.madeWith, RDF.type, OWL.AsymmetricProperty))
+        added += 1
     if (VG.madeWith, OWL.inverseOf, VG.engineUsedIn) not in g:
-        g.add((VG.madeWith, OWL.inverseOf, VG.engineUsedIn)); added += 1
+        g.add((VG.madeWith, OWL.inverseOf, VG.engineUsedIn))
+        added += 1
 
     # hasGameMode: add inverseOf modeInGame
     if (VG.hasGameMode, OWL.inverseOf, VG.modeInGame) not in g:
-        g.add((VG.hasGameMode, OWL.inverseOf, VG.modeInGame)); added += 1
+        g.add((VG.hasGameMode, OWL.inverseOf, VG.modeInGame))
+        added += 1
 
     logger.info(f"  [V2] +{added} object property axioms added")
 
@@ -645,38 +991,123 @@ def _add_v2_datatype_properties(g: Graph) -> None:
     """Add new datatype properties."""
     added = 0
 
-    props: list[tuple[URIRef, Optional[URIRef], URIRef, str, str, bool, bool, Optional[URIRef]]] = [
-        (VG.hasSteamAppId, VG.VideoGame, XSD.string, "Steam App ID",
-         "The unique Steam application identifier", True, True, None),
-        (VG.hasWikidataId, None, XSD.string, "Wikidata ID",
-         "The Wikidata entity identifier", False, True, None),
-        (VG.hasIGDBId, VG.VideoGame, XSD.string, "IGDB ID",
-         "The Internet Game Database identifier", False, True, None),
-        (VG.reviewScore, VG.Review, XSD.integer, "review score",
-         "The numerical score given by this review", True, False, None),
-        (VG.reviewDate, VG.Review, XSD.date, "review date",
-         "The date on which this review was published", False, False, None),
-        (VG.reviewerName, VG.Review, XSD.string, "reviewer name",
-         "The name of the reviewer or outlet", False, False, None),
-        (VG.eventDate, VG.GameEvent, XSD.date, "event date",
-         "The date on which this lifecycle event occurred", False, False, None),
-        (VG.budgetTier, VG.VideoGame, XSD.string, "budget tier",
-         "The budget tier classification (e.g. indie, AA, AAA)", False, False, None),
-        (VG.playerCount, VG.VideoGame, XSD.integer, "player count",
-         "The estimated total number of players", False, False, None),
+    props: list[
+        tuple[URIRef, Optional[URIRef], URIRef, str, str, bool, bool, Optional[URIRef]]
+    ] = [
+        (
+            VG.hasSteamAppId,
+            VG.VideoGame,
+            XSD.string,
+            "Steam App ID",
+            "The unique Steam application identifier",
+            True,
+            True,
+            None,
+        ),
+        (
+            VG.hasWikidataId,
+            None,
+            XSD.string,
+            "Wikidata ID",
+            "The Wikidata entity identifier",
+            False,
+            True,
+            None,
+        ),
+        (
+            VG.hasIGDBId,
+            VG.VideoGame,
+            XSD.string,
+            "IGDB ID",
+            "The Internet Game Database identifier",
+            False,
+            True,
+            None,
+        ),
+        (
+            VG.reviewScore,
+            VG.Review,
+            XSD.integer,
+            "review score",
+            "The numerical score given by this review",
+            True,
+            False,
+            None,
+        ),
+        (
+            VG.reviewDate,
+            VG.Review,
+            XSD.date,
+            "review date",
+            "The date on which this review was published",
+            False,
+            False,
+            None,
+        ),
+        (
+            VG.reviewerName,
+            VG.Review,
+            XSD.string,
+            "reviewer name",
+            "The name of the reviewer or outlet",
+            False,
+            False,
+            None,
+        ),
+        (
+            VG.eventDate,
+            VG.GameEvent,
+            XSD.date,
+            "event date",
+            "The date on which this lifecycle event occurred",
+            False,
+            False,
+            None,
+        ),
+        (
+            VG.budgetTier,
+            VG.VideoGame,
+            XSD.string,
+            "budget tier",
+            "The budget tier classification (e.g. indie, AA, AAA)",
+            False,
+            False,
+            None,
+        ),
+        (
+            VG.playerCount,
+            VG.VideoGame,
+            XSD.integer,
+            "player count",
+            "The estimated total number of players",
+            False,
+            False,
+            None,
+        ),
     ]
     for uri, dom, rng, lbl, cmt, func, invfunc, sup in props:
-        _dataprop(g, uri, domain=dom, range_=rng, label=lbl, comment=cmt,
-                   functional=func, inverse_functional=invfunc, subproperty_of=sup)
+        _dataprop(
+            g,
+            uri,
+            domain=dom,
+            range_=rng,
+            label=lbl,
+            comment=cmt,
+            functional=func,
+            inverse_functional=invfunc,
+            subproperty_of=sup,
+        )
         added += 1
 
     # releaseDate: add FunctionalProperty
     if (VG.releaseDate, RDF.type, OWL.FunctionalProperty) not in g:
-        g.add((VG.releaseDate, RDF.type, OWL.FunctionalProperty)); added += 1
+        g.add((VG.releaseDate, RDF.type, OWL.FunctionalProperty))
+        added += 1
 
     # metacriticScore: add FunctionalProperty
     if (VG.metacriticScore, RDF.type, OWL.FunctionalProperty) not in g:
-        g.add((VG.metacriticScore, RDF.type, OWL.FunctionalProperty)); added += 1
+        g.add((VG.metacriticScore, RDF.type, OWL.FunctionalProperty))
+        added += 1
 
     logger.info(f"  [V2] +{added} datatype property axioms added")
 
@@ -687,41 +1118,87 @@ def _add_v2_defined_classes(g: Graph) -> None:
 
     # --- someValuesFrom defined classes (equivalentClass) ---
     defined: list[tuple[URIRef, str, str, URIRef, URIRef]] = [
-        (VG.MultiplayerGame, "Multiplayer Game",
-         "A video game that supports a multiplayer game mode",
-         VG.hasGameMode, VG.MultiplayerMode),
-        (VG.SinglePlayerGame, "Single-Player Game",
-         "A video game that supports a single-player game mode",
-         VG.hasGameMode, VG.SinglePlayerMode),
-        (VG.CoopGame, "Co-op Game",
-         "A video game that supports a cooperative game mode",
-         VG.hasGameMode, VG.CoopMode),
-        (VG.PCGame, "PC Game",
-         "A video game available on a PC platform",
-         VG.availableOn, VG.PCPlatform),
-        (VG.ConsoleGame, "Console Game",
-         "A video game available on a console platform",
-         VG.availableOn, VG.ConsolePlatform),
-        (VG.MobileGame, "Mobile Game",
-         "A video game available on a mobile platform",
-         VG.availableOn, VG.MobilePlatform),
-        (VG.NintendoGame, "Nintendo Game",
-         "A video game available on a Nintendo platform",
-         VG.availableOn, VG.NintendoPlatform),
-        (VG.PlayStationGame, "PlayStation Game",
-         "A video game available on a PlayStation platform",
-         VG.availableOn, VG.PlayStationPlatform),
-        (VG.XboxGame, "Xbox Game",
-         "A video game available on an Xbox platform",
-         VG.availableOn, VG.XboxPlatform),
-        (VG.SequelGame, "Sequel Game",
-         "A video game that is a sequel to another game",
-         VG.sequelOf, VG.VideoGame),
+        (
+            VG.MultiplayerGame,
+            "Multiplayer Game",
+            "A video game that supports a multiplayer game mode",
+            VG.hasGameMode,
+            VG.MultiplayerMode,
+        ),
+        (
+            VG.SinglePlayerGame,
+            "Single-Player Game",
+            "A video game that supports a single-player game mode",
+            VG.hasGameMode,
+            VG.SinglePlayerMode,
+        ),
+        (
+            VG.CoopGame,
+            "Co-op Game",
+            "A video game that supports a cooperative game mode",
+            VG.hasGameMode,
+            VG.CoopMode,
+        ),
+        (
+            VG.PCGame,
+            "PC Game",
+            "A video game available on a PC platform",
+            VG.availableOn,
+            VG.PCPlatform,
+        ),
+        (
+            VG.ConsoleGame,
+            "Console Game",
+            "A video game available on a console platform",
+            VG.availableOn,
+            VG.ConsolePlatform,
+        ),
+        (
+            VG.MobileGame,
+            "Mobile Game",
+            "A video game available on a mobile platform",
+            VG.availableOn,
+            VG.MobilePlatform,
+        ),
+        (
+            VG.NintendoGame,
+            "Nintendo Game",
+            "A video game available on a Nintendo platform",
+            VG.availableOn,
+            VG.NintendoPlatform,
+        ),
+        (
+            VG.PlayStationGame,
+            "PlayStation Game",
+            "A video game available on a PlayStation platform",
+            VG.availableOn,
+            VG.PlayStationPlatform,
+        ),
+        (
+            VG.XboxGame,
+            "Xbox Game",
+            "A video game available on an Xbox platform",
+            VG.availableOn,
+            VG.XboxPlatform,
+        ),
+        (
+            VG.SequelGame,
+            "Sequel Game",
+            "A video game that is a sequel to another game",
+            VG.sequelOf,
+            VG.VideoGame,
+        ),
     ]
     for uri, lbl, cmt, prop, val in defined:
-        _defined_class_svf(g, uri, VG.VideoGame, lbl,
-                           cmt + ". Inferred by OWL-RL reasoning.",
-                           prop, val)
+        _defined_class_svf(
+            g,
+            uri,
+            VG.VideoGame,
+            lbl,
+            cmt + ". Inferred by OWL-RL reasoning.",
+            prop,
+            val,
+        )
         added += 1
 
     # StandaloneGame: VideoGame ∩ ¬(∃sequelOf.VideoGame)
@@ -730,10 +1207,18 @@ def _add_v2_defined_classes(g: Graph) -> None:
         g.add((sga, RDF.type, OWL.Class))
         g.add((sga, RDFS.subClassOf, VG.VideoGame))
         g.add((sga, RDFS.label, _lit("Standalone Game")))
-        g.add((sga, RDFS.comment,
-               _lit("A video game that is not a sequel to any other game. Requires negation-as-failure in materialiser.")))
-        restriction = _blank(g, [(OWL.onProperty, VG.sequelOf),
-                                  (OWL.someValuesFrom, VG.VideoGame)])
+        g.add(
+            (
+                sga,
+                RDFS.comment,
+                _lit(
+                    "A video game that is not a sequel to any other game. Requires negation-as-failure in materialiser."
+                ),
+            )
+        )
+        restriction = _blank(
+            g, [(OWL.onProperty, VG.sequelOf), (OWL.someValuesFrom, VG.VideoGame)]
+        )
         complement = _blank(g, [(OWL.complementOf, restriction)])
         intersection = _intersection(g, [VG.VideoGame, complement])
         equiv_class = _blank(g, [(OWL.intersectionOf, intersection)])
@@ -746,15 +1231,24 @@ def _add_v2_defined_classes(g: Graph) -> None:
         g.add((hrg, RDF.type, OWL.Class))
         g.add((hrg, RDFS.subClassOf, VG.VideoGame))
         g.add((hrg, RDFS.label, _lit("Highly Rated Game")))
-        g.add((hrg, RDFS.comment,
-               _lit("A video game with a Metacritic score of 85 or above. Inferred via CONSTRUCT reasoning.")))
-        facet_bn = _blank(g, [(XSD.minInclusive,
-                                Literal(85, datatype=XSD.integer))])
+        g.add(
+            (
+                hrg,
+                RDFS.comment,
+                _lit(
+                    "A video game with a Metacritic score of 85 or above. Inferred via CONSTRUCT reasoning."
+                ),
+            )
+        )
+        facet_bn = _blank(g, [(XSD.minInclusive, Literal(85, datatype=XSD.integer))])
         restrictions_list = _rdf_list(g, [facet_bn])
-        dt_bn = _blank(g, [(OWL.onDatatype, XSD.integer),
-                            (OWL.withRestrictions, restrictions_list)])
-        restriction = _blank(g, [(OWL.onProperty, VG.metacriticScore),
-                                  (OWL.someValuesFrom, dt_bn)])
+        dt_bn = _blank(
+            g,
+            [(OWL.onDatatype, XSD.integer), (OWL.withRestrictions, restrictions_list)],
+        )
+        restriction = _blank(
+            g, [(OWL.onProperty, VG.metacriticScore), (OWL.someValuesFrom, dt_bn)]
+        )
         intersection = _intersection(g, [VG.VideoGame, restriction])
         equiv_class = _blank(g, [(OWL.intersectionOf, intersection)])
         g.add((hrg, OWL.equivalentClass, equiv_class))
@@ -766,15 +1260,25 @@ def _add_v2_defined_classes(g: Graph) -> None:
         g.add((rg, RDF.type, OWL.Class))
         g.add((rg, RDFS.subClassOf, VG.VideoGame))
         g.add((rg, RDFS.label, _lit("Recent Game")))
-        g.add((rg, RDFS.comment,
-               _lit("A video game released on or after 2020-01-01. Inferred via CONSTRUCT reasoning.")))
-        facet_bn = _blank(g, [(XSD.minInclusive,
-                                Literal("2020-01-01", datatype=XSD.date))])
+        g.add(
+            (
+                rg,
+                RDFS.comment,
+                _lit(
+                    "A video game released on or after 2020-01-01. Inferred via CONSTRUCT reasoning."
+                ),
+            )
+        )
+        facet_bn = _blank(
+            g, [(XSD.minInclusive, Literal("2020-01-01", datatype=XSD.date))]
+        )
         restrictions_list = _rdf_list(g, [facet_bn])
-        dt_bn = _blank(g, [(OWL.onDatatype, XSD.date),
-                            (OWL.withRestrictions, restrictions_list)])
-        restriction = _blank(g, [(OWL.onProperty, VG.releaseDate),
-                                  (OWL.someValuesFrom, dt_bn)])
+        dt_bn = _blank(
+            g, [(OWL.onDatatype, XSD.date), (OWL.withRestrictions, restrictions_list)]
+        )
+        restriction = _blank(
+            g, [(OWL.onProperty, VG.releaseDate), (OWL.someValuesFrom, dt_bn)]
+        )
         intersection = _intersection(g, [VG.VideoGame, restriction])
         equiv_class = _blank(g, [(OWL.intersectionOf, intersection)])
         g.add((rg, OWL.equivalentClass, equiv_class))
@@ -786,11 +1290,22 @@ def _add_v2_defined_classes(g: Graph) -> None:
         g.add((gsd, RDF.type, OWL.Class))
         g.add((gsd, RDFS.subClassOf, VG.VideoGame))
         g.add((gsd, RDFS.label, _lit("Game with Single Developer")))
-        g.add((gsd, RDFS.comment,
-               _lit("A video game developed by at most one developer studio. Necessary condition only.")))
-        restriction = _blank(g, [(OWL.onProperty, VG.developedBy),
-                                  (OWL.maxCardinality,
-                                   Literal(1, datatype=XSD.nonNegativeInteger))])
+        g.add(
+            (
+                gsd,
+                RDFS.comment,
+                _lit(
+                    "A video game developed by at most one developer studio. Necessary condition only."
+                ),
+            )
+        )
+        restriction = _blank(
+            g,
+            [
+                (OWL.onProperty, VG.developedBy),
+                (OWL.maxCardinality, Literal(1, datatype=XSD.nonNegativeInteger)),
+            ],
+        )
         g.add((gsd, RDFS.subClassOf, restriction))
         added += 1
 
@@ -800,11 +1315,22 @@ def _add_v2_defined_classes(g: Graph) -> None:
         g.add((exr, RDF.type, OWL.Class))
         g.add((exr, RDFS.subClassOf, VG.VideoGame))
         g.add((exr, RDFS.label, _lit("Exclusive Release")))
-        g.add((exr, RDFS.comment,
-               _lit("A video game available on at most one platform. Necessary condition only.")))
-        restriction = _blank(g, [(OWL.onProperty, VG.availableOn),
-                                  (OWL.maxCardinality,
-                                   Literal(1, datatype=XSD.nonNegativeInteger))])
+        g.add(
+            (
+                exr,
+                RDFS.comment,
+                _lit(
+                    "A video game available on at most one platform. Necessary condition only."
+                ),
+            )
+        )
+        restriction = _blank(
+            g,
+            [
+                (OWL.onProperty, VG.availableOn),
+                (OWL.maxCardinality, Literal(1, datatype=XSD.nonNegativeInteger)),
+            ],
+        )
         g.add((exr, RDFS.subClassOf, restriction))
         added += 1
 
@@ -817,9 +1343,20 @@ def _add_v2_disjointness(g: Graph) -> None:
 
     blocks: list[list[URIRef]] = [
         # Top entity classes
-        [VG.VideoGame, VG.Developer, VG.Publisher, VG.Genre, VG.Platform,
-         VG.Character, VG.Franchise, VG.Award, VG.GameEngine, VG.GameMode,
-         VG.Review, VG.GameEvent],
+        [
+            VG.VideoGame,
+            VG.Developer,
+            VG.Publisher,
+            VG.Genre,
+            VG.Platform,
+            VG.Character,
+            VG.Franchise,
+            VG.Award,
+            VG.GameEngine,
+            VG.GameMode,
+            VG.Review,
+            VG.GameEvent,
+        ],
         # Platform partition
         [VG.ConsolePlatform, VG.PCPlatform, VG.MobilePlatform],
         # ConsolePlatform sub-partition
@@ -892,7 +1429,6 @@ def _add_v2_keys(g: Graph) -> None:
     added = 0
 
     # VideoGame hasKey hasWikidataId
-    key1 = (VG.VideoGame, OWL.hasKey, None)
     already1 = any(s == VG.VideoGame and p == OWL.hasKey for s, p, _ in g)
     if not already1:
         lst = _rdf_list(g, [VG.hasWikidataId])
@@ -903,7 +1439,6 @@ def _add_v2_keys(g: Graph) -> None:
     # Check separately since hasKey creates blank nodes
     key2_present = False
     for s, p, o in g.triples((VG.VideoGame, OWL.hasKey, None)):
-        items: list[URIRef] = []
         current = o
         while current and current != RDF.nil:
             first_val = list(g.objects(current, RDF.first))
@@ -1125,37 +1660,49 @@ def _materialise(g: Graph, max_group: int = 50) -> int:
             if o == VG.CoopMode or (o, RDF.type, VG.CoopMode) in g:
                 coop_games.add(s)
 
-    total_class = (len(award_games) + len(franchise_games) +
-                   len(multiplayer_games) + len(singleplayer_games) +
-                   len(coop_games))
+    total_class = (
+        len(award_games)
+        + len(franchise_games)
+        + len(multiplayer_games)
+        + len(singleplayer_games)
+        + len(coop_games)
+    )
     with tqdm(
-        total=total_class, desc="  [1/5] Class membership",
-        unit="game", ncols=80, leave=True,
+        total=total_class,
+        desc="  [1/5] Class membership",
+        unit="game",
+        ncols=80,
+        leave=True,
     ) as pbar:
         for game in award_games:
             t = (game, RDF.type, VG.AwardWinningGame)
             if t not in g:
-                g.add(t); added += 1
+                g.add(t)
+                added += 1
             pbar.update(1)
         for game in franchise_games:
             t = (game, RDF.type, VG.FranchiseGame)
             if t not in g:
-                g.add(t); added += 1
+                g.add(t)
+                added += 1
             pbar.update(1)
         for game in multiplayer_games:
             t = (game, RDF.type, VG.MultiplayerGame)
             if t not in g:
-                g.add(t); added += 1
+                g.add(t)
+                added += 1
             pbar.update(1)
         for game in singleplayer_games:
             t = (game, RDF.type, VG.SinglePlayerGame)
             if t not in g:
-                g.add(t); added += 1
+                g.add(t)
+                added += 1
             pbar.update(1)
         for game in coop_games:
             t = (game, RDF.type, VG.CoopGame)
             if t not in g:
-                g.add(t); added += 1
+                g.add(t)
+                added += 1
             pbar.update(1)
 
     # ── 7 & 8: Platform classification ─────────────────────────────────────
@@ -1209,7 +1756,9 @@ def _materialise(g: Graph, max_group: int = 50) -> int:
                     platform_inferred += 1
 
     added += platform_inferred
-    logger.info(f"  [2/5] Platform classification: +{platform_inferred} class assertions")
+    logger.info(
+        f"  [2/5] Platform classification: +{platform_inferred} class assertions"
+    )
 
     # ── 9: HighlyRatedGame (metacriticScore >= 85) ─────────────────────────
     hrg_inferred = 0
@@ -1306,7 +1855,7 @@ def _materialise(g: Graph, max_group: int = 50) -> int:
                 continue
             glist = list(games)
             for i, g1 in enumerate(glist):
-                for g2 in glist[i + 1:]:
+                for g2 in glist[i + 1 :]:
                     pairs.append((g1, g2))
 
         if skipped_groups:
@@ -1330,18 +1879,27 @@ def _materialise(g: Graph, max_group: int = 50) -> int:
 
     # ── 3: sharedFranchiseWith ──────────────────────────────────────────────
     added += _pairwise(
-        VG.belongsTo, VG.includes, VG.sharedFranchiseWith,
-        "sharedFranchiseWith", "6a/6",
+        VG.belongsTo,
+        VG.includes,
+        VG.sharedFranchiseWith,
+        "sharedFranchiseWith",
+        "6a/6",
     )
 
     # ── 4 & 5: sharesDeveloperWith / sharesPublisherWith ────────────────────
     added += _pairwise(
-        VG.developedBy, VG.developerOf, VG.sharesDeveloperWith,
-        "sharesDeveloperWith", "6b/6",
+        VG.developedBy,
+        VG.developerOf,
+        VG.sharesDeveloperWith,
+        "sharesDeveloperWith",
+        "6b/6",
     )
     added += _pairwise(
-        VG.publishedBy, VG.publisherOf, VG.sharesPublisherWith,
-        "sharesPublisherWith", "6c/6",
+        VG.publishedBy,
+        VG.publisherOf,
+        VG.sharesPublisherWith,
+        "sharesPublisherWith",
+        "6c/6",
     )
 
     return added
@@ -1439,11 +1997,19 @@ def _add_axioms_v1_only(g: Graph) -> int:
         g.add((awg, RDF.type, OWL.Class))
         g.add((awg, RDFS.subClassOf, VG.VideoGame))
         g.add((awg, RDFS.label, _lit("Award Winning Game")))
-        g.add((awg, RDFS.comment,
-               _lit("A video game that has received at least one award. "
-                    "Instances are inferred by OWL-RL reasoning.")))
-        restriction = _blank(g, [(OWL.onProperty, VG.wonAward),
-                                  (OWL.someValuesFrom, VG.Award)])
+        g.add(
+            (
+                awg,
+                RDFS.comment,
+                _lit(
+                    "A video game that has received at least one award. "
+                    "Instances are inferred by OWL-RL reasoning."
+                ),
+            )
+        )
+        restriction = _blank(
+            g, [(OWL.onProperty, VG.wonAward), (OWL.someValuesFrom, VG.Award)]
+        )
         intersection = _intersection(g, [VG.VideoGame, restriction])
         equiv_class = _blank(g, [(OWL.intersectionOf, intersection)])
         g.add((awg, OWL.equivalentClass, equiv_class))
@@ -1454,11 +2020,19 @@ def _add_axioms_v1_only(g: Graph) -> int:
         g.add((fg, RDF.type, OWL.Class))
         g.add((fg, RDFS.subClassOf, VG.VideoGame))
         g.add((fg, RDFS.label, _lit("Franchise Game")))
-        g.add((fg, RDFS.comment,
-               _lit("A video game that is part of a franchise or series. "
-                    "Instances are inferred by OWL-RL reasoning.")))
-        restriction = _blank(g, [(OWL.onProperty, VG.belongsTo),
-                                  (OWL.someValuesFrom, VG.Franchise)])
+        g.add(
+            (
+                fg,
+                RDFS.comment,
+                _lit(
+                    "A video game that is part of a franchise or series. "
+                    "Instances are inferred by OWL-RL reasoning."
+                ),
+            )
+        )
+        restriction = _blank(
+            g, [(OWL.onProperty, VG.belongsTo), (OWL.someValuesFrom, VG.Franchise)]
+        )
         intersection = _intersection(g, [VG.VideoGame, restriction])
         equiv_class = _blank(g, [(OWL.intersectionOf, intersection)])
         g.add((fg, OWL.equivalentClass, equiv_class))
@@ -1471,9 +2045,16 @@ def _add_axioms_v1_only(g: Graph) -> int:
         g.add((sfw, RDFS.domain, VG.VideoGame))
         g.add((sfw, RDFS.range, VG.VideoGame))
         g.add((sfw, RDFS.label, _lit("shared franchise with")))
-        g.add((sfw, RDFS.comment,
-               _lit("Links two games that belong to the same franchise/series. "
-                    "Inferred via property chain.")))
+        g.add(
+            (
+                sfw,
+                RDFS.comment,
+                _lit(
+                    "Links two games that belong to the same franchise/series. "
+                    "Inferred via property chain."
+                ),
+            )
+        )
         chain = _rdf_list(g, [VG.belongsTo, VG.includes])
         g.add((sfw, OWL.propertyChainAxiom, chain))
 
@@ -1485,9 +2066,16 @@ def _add_axioms_v1_only(g: Graph) -> int:
         g.add((sdw, RDFS.domain, VG.VideoGame))
         g.add((sdw, RDFS.range, VG.VideoGame))
         g.add((sdw, RDFS.label, _lit("shares developer with")))
-        g.add((sdw, RDFS.comment,
-               _lit("Links two games developed by the same studio. "
-                    "Inferred via property chain.")))
+        g.add(
+            (
+                sdw,
+                RDFS.comment,
+                _lit(
+                    "Links two games developed by the same studio. "
+                    "Inferred via property chain."
+                ),
+            )
+        )
         chain = _rdf_list(g, [VG.developedBy, VG.developerOf])
         g.add((sdw, OWL.propertyChainAxiom, chain))
 
@@ -1499,9 +2087,16 @@ def _add_axioms_v1_only(g: Graph) -> int:
         g.add((spw, RDFS.domain, VG.VideoGame))
         g.add((spw, RDFS.range, VG.VideoGame))
         g.add((spw, RDFS.label, _lit("shares publisher with")))
-        g.add((spw, RDFS.comment,
-               _lit("Links two games published by the same company. "
-                    "Inferred via property chain.")))
+        g.add(
+            (
+                spw,
+                RDFS.comment,
+                _lit(
+                    "Links two games published by the same company. "
+                    "Inferred via property chain."
+                ),
+            )
+        )
         chain = _rdf_list(g, [VG.publishedBy, VG.publisherOf])
         g.add((spw, OWL.propertyChainAxiom, chain))
 
@@ -1550,9 +2145,9 @@ def main() -> None:
         action="store_true",
         default=False,
         help="Restore DL-only axioms (FunctionalProperty/InverseFunctionalProperty "
-             "on DatatypeProperty, owl:hasKey) into the output after reasoning. "
-             "Default: stripped for owlrl-safe output. "
-             "Only relevant with --reason.",
+        "on DatatypeProperty, owl:hasKey) into the output after reasoning. "
+        "Default: stripped for owlrl-safe output. "
+        "Only relevant with --reason.",
     )
     ns = parser.parse_args()
 

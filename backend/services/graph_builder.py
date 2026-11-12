@@ -307,7 +307,14 @@ def find_cross_links(
     new_set = set(new_uris)
     all_set = existing_set | new_set
 
-    _SKIP_PREDS = {"type", "label", "subClassOf", "sameAs", "equivalentClass", "equivalentProperty"}
+    _SKIP_PREDS = {
+        "type",
+        "label",
+        "subClassOf",
+        "sameAs",
+        "equivalentClass",
+        "equivalentProperty",
+    }
 
     links: list[dict] = []
     seen: set[tuple] = set()

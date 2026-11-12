@@ -37,7 +37,9 @@ def get(key: str) -> str | None:
     with _lock:
         row = (
             _db()
-            .execute("SELECT value FROM cache WHERE key=? AND expires>=?", (key, time.time()))
+            .execute(
+                "SELECT value FROM cache WHERE key=? AND expires>=?", (key, time.time())
+            )
             .fetchone()
         )
     return row[0] if row else None

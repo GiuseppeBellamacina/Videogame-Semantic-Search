@@ -28,10 +28,8 @@ from collections import defaultdict, deque
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Optional
 
-from rdflib import OWL, RDF, RDFS, BNode, Graph, Literal, Namespace, URIRef
-from rdflib.namespace import XSD
+from rdflib import OWL, RDF, RDFS, BNode, Graph, Namespace, URIRef
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -193,7 +191,9 @@ def _collect_declared_entities(g: Graph) -> tuple[_EntitySet, _EntitySet]:
 def _collect_all_declared(g: Graph) -> _EntitySet:
     """Return the union of all declared classes, properties and named individuals."""
     classes, props = _collect_declared_entities(g)
-    individuals = {s for s in g.subjects(RDF.type, OWL.NamedIndividual) if isinstance(s, URIRef)}
+    individuals = {
+        s for s in g.subjects(RDF.type, OWL.NamedIndividual) if isinstance(s, URIRef)
+    }
     return classes | props | individuals
 
 
@@ -583,7 +583,6 @@ def check_missing_label(g: Graph) -> list[Finding]:
 
     for prop in sorted(props, key=str):
         if not list(g.objects(prop, RDFS.label)):
-            prop_type = "Property"
             findings.append(
                 Finding(
                     severity="WARNING",
@@ -712,9 +711,7 @@ def check_restriction_completeness(g: Graph) -> list[Finding]:
     for bn in sorted(restriction_bnodes, key=str):
         on_prop = list(g.objects(bn, OWL.onProperty))
         value_preds = [
-            p
-            for p in RESTRICTION_VALUE_PREDICATES
-            if list(g.objects(bn, p))
+            p for p in RESTRICTION_VALUE_PREDICATES if list(g.objects(bn, p))
         ]
 
         if not on_prop:
@@ -725,9 +722,7 @@ def check_restriction_completeness(g: Graph) -> list[Finding]:
                 Finding(
                     severity="ERROR",
                     code="RESTRICTION_MISSING_ONPROPERTY",
-                    message=(
-                        f"owl:Restriction blank node {bn} has no owl:onProperty"
-                    ),
+                    message=(f"owl:Restriction blank node {bn} has no owl:onProperty"),
                     subjects=[f"_:{bn}", *ctx_strs],
                 )
             )
@@ -866,9 +861,7 @@ def format_report(findings: list[Finding], file_path: str) -> str:
     lines.append("")
 
     for f_finding in findings:
-        lines.append(
-            f"{f_finding.severity} [{f_finding.code}] {f_finding.message}"
-        )
+        lines.append(f"{f_finding.severity} [{f_finding.code}] {f_finding.message}")
         if f_finding.subjects:
             lines.append(f"  subjects: {f_finding.subjects}")
         lines.append("")

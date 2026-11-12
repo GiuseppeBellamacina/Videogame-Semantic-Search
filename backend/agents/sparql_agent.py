@@ -9,8 +9,8 @@ with automatic retry on errors.
 import logging
 from dataclasses import dataclass, field
 
-from backend.agents.prompts import SPARQL_GENERATOR_PROMPT
 from backend.agents.llm import LLM
+from backend.agents.prompts import SPARQL_GENERATOR_PROMPT
 from backend.config import MAX_SPARQL_RETRIES
 from backend.services.ontology_service import OntologyService
 from backend.utils.result_formatter import format_results_summary

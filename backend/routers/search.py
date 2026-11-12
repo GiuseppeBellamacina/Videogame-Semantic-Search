@@ -21,7 +21,11 @@ async def suggest(
     type: str | None = Query(None, description="Comma-separated entity types"),
     limit: int = Query(8, ge=1, le=25),
 ):
-    types = [t for t in (type or "").split(",") if t in search_index.NAME_PROPS or t == "GameMode"]
+    types = [
+        t
+        for t in (type or "").split(",")
+        if t in search_index.NAME_PROPS or t == "GameMode"
+    ]
     return search_index.suggest_text(q, types or None, limit)
 
 
@@ -47,14 +51,19 @@ class BuilderRequest(BaseModel):
 async def builder_query(body: BuilderRequest):
     try:
         sparql = query_builder.build(
-            [f.model_dump() for f in body.filters], body.order_by, body.limit, body.output
+            [f.model_dump() for f in body.filters],
+            body.order_by,
+            body.limit,
+            body.output,
         )
     except (query_builder.BuilderError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     def _run():
         rows = OntologyService.execute_sparql(sparql)
-        graph = build_graph(rows, OntologyService) if rows else {"nodes": [], "links": []}
+        graph = (
+            build_graph(rows, OntologyService) if rows else {"nodes": [], "links": []}
+        )
         return rows, graph
 
     try:
@@ -62,5 +71,9 @@ async def builder_query(body: BuilderRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Query failed: {e}")
     return QueryResponse(
-        results=rows, graph=graph, sparql=sparql, total_rows=len(rows), success=bool(rows)
+        results=rows,
+        graph=graph,
+        sparql=sparql,
+        total_rows=len(rows),
+        success=bool(rows),
     )

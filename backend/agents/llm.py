@@ -47,7 +47,9 @@ class LLM:
         self.provider, self.model = parse_model(spec)
         if self.provider == "anthropic":
             if not ANTHROPIC_API_KEY:
-                raise ValueError("ANTHROPIC_API_KEY is required for LLM_MODEL=anthropic:*")
+                raise ValueError(
+                    "ANTHROPIC_API_KEY is required for LLM_MODEL=anthropic:*"
+                )
             import anthropic
 
             self._client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)

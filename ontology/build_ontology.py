@@ -47,10 +47,25 @@ STAGES = ["fetch", "reason", "validate", "write"]
 
 # Classes that must be non-empty on the full dataset (inferred or typed)
 SANITY_CLASSES = [
-    "VideoGame", "Developer", "Publisher", "Genre", "Platform", "GameMode",
-    "AwardWinningGame", "FranchiseGame", "SinglePlayerGame", "MultiplayerGame",
-    "PCGame", "ConsoleGame", "PlayStationGame", "HighlyRatedGame", "RecentGame",
-    "SequelGame", "StandaloneGame", "MultiConsoleGame", "NintendoPublishedGame",
+    "VideoGame",
+    "Developer",
+    "Publisher",
+    "Genre",
+    "Platform",
+    "GameMode",
+    "AwardWinningGame",
+    "FranchiseGame",
+    "SinglePlayerGame",
+    "MultiplayerGame",
+    "PCGame",
+    "ConsoleGame",
+    "PlayStationGame",
+    "HighlyRatedGame",
+    "RecentGame",
+    "SequelGame",
+    "StandaloneGame",
+    "MultiConsoleGame",
+    "NintendoPublishedGame",
 ]
 
 
@@ -99,8 +114,12 @@ def stage_fetch(years: list[int], cache_dir: Path, out: Path) -> Graph:
 def stage_reason(g: Graph, max_group: int, keep_dl: bool, out: Path) -> Graph:
     _bind(g)
     steps = [
-        "V2 axioms", "strip DL-only", "OWL-RL closure", "materialise",
-        "CONSTRUCT rules", "restore DL-only" if keep_dl else "finalise",
+        "V2 axioms",
+        "strip DL-only",
+        "OWL-RL closure",
+        "materialise",
+        "CONSTRUCT rules",
+        "restore DL-only" if keep_dl else "finalise",
     ]
     with tqdm(total=len(steps), desc="Reasoning", unit="step", ncols=90) as bar:
 
@@ -119,7 +138,9 @@ def stage_reason(g: Graph, max_group: int, keep_dl: bool, out: Path) -> Graph:
         import owlrl
 
         t0, n0 = time.time(), len(g)
-        tqdm.write(f"  OWL-RL closure on {n0} triples (no percentage available, see the heartbeat lines)")
+        tqdm.write(
+            f"  OWL-RL closure on {n0} triples (no percentage available, see the heartbeat lines)"
+        )
         with _heartbeat("OWL-RL", g):
             owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
         tqdm.write(f"  OWL-RL: +{len(g) - n0} triples in {time.time() - t0:.0f}s")
@@ -172,18 +193,38 @@ def stage_write(g: Graph, out_stem: Path) -> None:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument("--from-stage", choices=STAGES, default="fetch",
-                    help="start at this stage, loading earlier results from the cache dir")
-    ap.add_argument("--years", default=None,
-                    help="year or range, e.g. 2024 or 2020-2026 (default: 2010-2026)")
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawTextHelpFormatter
+    )
+    ap.add_argument(
+        "--from-stage",
+        choices=STAGES,
+        default="fetch",
+        help="start at this stage, loading earlier results from the cache dir",
+    )
+    ap.add_argument(
+        "--years",
+        default=None,
+        help="year or range, e.g. 2024 or 2020-2026 (default: 2010-2026)",
+    )
     ap.add_argument("--cache-dir", type=Path, default=HERE / ".cache")
-    ap.add_argument("--output", type=Path, default=HERE / "videogames_full",
-                    help="output path without extension")
-    ap.add_argument("--max-group", type=int, default=50,
-                    help="cap for pairwise franchise/developer/publisher links")
-    ap.add_argument("--keep-dl-axioms", action="store_true",
-                    help="restore DL-only axioms in the output (not owlrl-safe)")
+    ap.add_argument(
+        "--output",
+        type=Path,
+        default=HERE / "videogames_full",
+        help="output path without extension",
+    )
+    ap.add_argument(
+        "--max-group",
+        type=int,
+        default=50,
+        help="cap for pairwise franchise/developer/publisher links",
+    )
+    ap.add_argument(
+        "--keep-dl-axioms",
+        action="store_true",
+        help="restore DL-only axioms in the output (not owlrl-safe)",
+    )
     args = ap.parse_args()
 
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s  %(message)s")

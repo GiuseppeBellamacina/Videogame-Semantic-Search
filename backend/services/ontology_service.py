@@ -57,10 +57,23 @@ class OntologyService:
     # Defined game classes (SinglePlayerGame, HighlyRatedGame...) are query
     # shortcuts, not visual types: they always display as VideoGame.
     _DEFINED_GAME_CLASSES = {
-        "AwardWinningGame", "FranchiseGame", "SinglePlayerGame", "MultiplayerGame",
-        "CoopGame", "PCGame", "ConsoleGame", "MobileGame", "NintendoGame",
-        "PlayStationGame", "XboxGame", "SequelGame", "StandaloneGame",
-        "HighlyRatedGame", "RecentGame", "MultiConsoleGame", "NintendoPublishedGame",
+        "AwardWinningGame",
+        "FranchiseGame",
+        "SinglePlayerGame",
+        "MultiplayerGame",
+        "CoopGame",
+        "PCGame",
+        "ConsoleGame",
+        "MobileGame",
+        "NintendoGame",
+        "PlayStationGame",
+        "XboxGame",
+        "SequelGame",
+        "StandaloneGame",
+        "HighlyRatedGame",
+        "RecentGame",
+        "MultiConsoleGame",
+        "NintendoPublishedGame",
         "GameWithSingleDeveloper",
         "ExclusiveRelease",
     }
@@ -76,7 +89,9 @@ class OntologyService:
             stack = [base]
             while stack:
                 parent = stack.pop()
-                for quad in store.quads_for_pattern(None, sub, ox.NamedNode(VG_NS + parent)):
+                for quad in store.quads_for_pattern(
+                    None, sub, ox.NamedNode(VG_NS + parent)
+                ):
                     if isinstance(quad.subject, ox.NamedNode):
                         name = cls._get_local_name(quad.subject.value)
                         if name not in mapping or mapping[name] != base:
@@ -108,10 +123,16 @@ class OntologyService:
             # CONSTRUCT: one row per triple; the graph is built from these in graph_builder
             triples, seen = [], set()
             for t in results:
-                row = (t.subject.value, cls._get_local_name(t.predicate.value), t.object.value)
+                row = (
+                    t.subject.value,
+                    cls._get_local_name(t.predicate.value),
+                    t.object.value,
+                )
                 if row not in seen:
                     seen.add(row)
-                    triples.append({"subject": row[0], "predicate": row[1], "object": row[2]})
+                    triples.append(
+                        {"subject": row[0], "predicate": row[1], "object": row[2]}
+                    )
                     if len(triples) >= MAX_CONSTRUCT_TRIPLES:
                         break
             return triples
