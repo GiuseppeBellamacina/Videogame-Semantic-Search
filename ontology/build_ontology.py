@@ -28,7 +28,7 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
-from rdflib import OWL, RDF, RDFS, Graph
+from rdflib import OWL, RDF, RDFS, Graph, Namespace
 from tqdm import tqdm
 
 HERE = Path(__file__).parent
@@ -56,6 +56,30 @@ def _bind(g: Graph) -> Graph:
     g.bind("vg", VG)
     g.bind("owl", OWL)
     return g
+
+
+AGENT = Namespace("http://www.daml.org/2002/03/agents/agent-ont#")
+
+
+def _clean_closure(g: Graph) -> None:
+    """Drop owlrl noise: its ErrorMessage nodes (reported, not stored) and the
+    trivial reflexive triples (X subClassOf/equivalentClass/sameAs X)."""
+    errors = [str(e) for _, _, e in g.triples((None, AGENT.error, None))]
+    for node in set(g.subjects(RDF.type, AGENT.ErrorMessage)):
+        g.remove((node, None, None))
+    if errors:
+        tqdm.write(f"  WARNING: owlrl reported {len(errors)} inconsistencies (removed):")
+        for e in errors[:10]:
+            tqdm.write(f"    {e}")
+    trivial = [
+        t
+        for p in (RDFS.subClassOf, RDFS.subPropertyOf, OWL.equivalentClass, OWL.sameAs)
+        for t in g.triples((None, p, None))
+        if t[0] == t[2]
+    ]
+    for t in trivial:
+        g.remove(t)
+    tqdm.write(f"  Cleanup: {len(trivial)} reflexive triples removed")
 
 
 @contextmanager
@@ -127,6 +151,7 @@ def stage_reason(g: Graph, max_group: int, keep_dl: bool, out: Path) -> Graph:
         with _heartbeat("OWL-RL", g):
             owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
         tqdm.write(f"  OWL-RL: +{len(g) - n0} triples in {time.time() - t0:.0f}s")
+        _clean_closure(g)
         bar.update()
 
         step(3)

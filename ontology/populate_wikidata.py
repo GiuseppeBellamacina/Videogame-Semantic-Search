@@ -280,19 +280,22 @@ _NAME_PROPS = [
 
 def deduplicate_graph(g: Graph) -> int:
     """
-    Merge duplicate entities that share the same normalised name.
+    Merge duplicate entities that share the same normalised name *and the same
+    kind* (same name property): a game and its franchise, or a developer and a
+    publisher with the same name, are different individuals and must stay apart
+    (the top classes are pairwise disjoint).
     For each group of URIs with the same name (case-insensitive, stripped),
     keep the URI with the most triples (subject + object) and redirect all
     references to the others to the canonical URI.
     Returns the number of duplicates removed.
     """
-    name_to_uris: dict[str, list[URIRef]] = defaultdict(list)
+    name_to_uris: dict[tuple[str, str], list[URIRef]] = defaultdict(list)
 
     for prop_local in _NAME_PROPS:
         prop = VG[prop_local]
         for subj, _, obj in g.triples((None, prop, None)):
             if isinstance(obj, Literal) and isinstance(subj, URIRef):
-                key = str(obj).strip().lower()
+                key = (prop_local, str(obj).strip().lower())
                 if subj not in name_to_uris[key]:
                     name_to_uris[key].append(subj)
 
@@ -329,7 +332,7 @@ def deduplicate_graph(g: Graph) -> int:
                     g.add((subj, pred, canonical))
 
             removed += 1
-            logger.debug(f"[DEDUP] Merged '{name_key}': {duplicate} → {canonical}")
+            logger.debug(f"[DEDUP] Merged '{name_key[1]}': {duplicate} → {canonical}")
 
     return removed
 

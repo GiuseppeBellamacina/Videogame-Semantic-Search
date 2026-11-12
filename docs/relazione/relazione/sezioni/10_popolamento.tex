@@ -53,9 +53,9 @@ e, per ciascun nome, mantiene l'URI con il maggior numero di triple associate.
 
 Dopo il fetch e gli assiomi V2 viene eseguito il reasoning (cfr.\ Sezione~\ref{sec:reasoning}):
 chiusura OWL 2 RL tramite \texttt{owlrl}, materializzazione mirata delle classi definite e
-regole SPARQL CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} richiede circa mezz'ora e porta il grafo da
-877.673 a circa 4,5 milioni di triple; la materializzazione mirata aggiunge 175.997 triple e
-le regole CONSTRUCT 891 (\texttt{MultiConsoleGame}). Nelle relazioni \texttt{sharesDeveloperWith} e
+regole SPARQL CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} richiede circa 38 minuti e aggiunge 4,56 milioni di triple
+al grafo di 877.673 (la successiva pulizia toglie 248.818 triple riflessive e i messaggi di errore di \texttt{owlrl}); la materializzazione mirata aggiunge 175.997 triple e
+le regole CONSTRUCT 12.991 (tra cui \texttt{MultiConsoleGame} e \texttt{MultiPlatformGame}). Nelle relazioni \texttt{sharesDeveloperWith} e
 \texttt{sharesPublisherWith} i gruppi con pi\`u di 50 giochi (19 sviluppatori e 66 publisher) sono esclusi
 per limitare la crescita quadratica delle coppie. I conteggi finali sono in Tabella~\ref{tab:abox}
 e Tabella~\ref{tab:inferite}.
@@ -70,7 +70,7 @@ e Tabella~\ref{tab:inferite}.
 \textbf{Metrica} & \textbf{Valore} \\
 \midrule
 Triple scaricate da Wikidata & 877.689 \\
-Triple nel file finale (dopo il reasoning) & 4.770.037 \\
+Triple nel file finale (dopo il reasoning) & 5.379.766 \\
 Videogiochi & 105.860 \\
 Sviluppatori / Publisher & 5.374 / 3.830 \\
 Generi / Piattaforme & 581 / 249 \\
@@ -90,14 +90,14 @@ Modalit\`a di gioco (individui) & 35 \\
 \textbf{Classe} & \textbf{Istanze} & \textbf{Classe} & \textbf{Istanze} \\
 \midrule
 StandaloneGame & 105.330 & VisualNovelGame & 2.309 \\
-PCGame & 99.155 & NintendoGame & 2.040 \\
-WindowsGame & 98.942 & PlayStationGame & 1.919 \\
+PCGame & 99.140 & NintendoGame & 1.150 \\
+WindowsGame & 98.942 & PlayStationGame & 1.918 \\
 SinglePlayerGame & 94.642 & ShooterGame & 1.801 \\
 RecentGame & 70.586 & PuzzleGame & 1.749 \\
-ActionGame & 33.685 & UnrealEngineGame & 1.556 \\
-CasualGame & 32.606 & PlatformerGame & 1.355 \\
-AdventureGame & 30.258 & MultiConsoleGame & 919 \\
-MacOSGame & 19.880 & HorrorGame & 751 \\
+ActionGame & 32.472 & UnrealEngineGame & 1.556 \\
+CasualGame & 32.606 & PlatformerGame & 1.340 \\
+AdventureGame & 30.258 & MultiConsoleGame & 619 \\
+MacOSGame & 19.850 & HorrorGame & 751 \\
 MultiplayerGame & 16.803 & AwardWinningGame & 741 \\
 SimulationGame & 16.321 & BrowserGame & 695 \\
 StrategyGame & 15.262 & SequelGame & 530 \\
@@ -105,11 +105,11 @@ LinuxGame & 14.632 & NintendoPublishedGame & 387 \\
 RPGGame & 14.416 & BandaiNamcoPublishedGame & 321 \\
 MultiPlatformGame & 12.372 & ArcadeGame & 262 \\
 CoopGame & 8.937 & SquareEnixPublishedGame & 228 \\
-ConsoleGame & 6.572 & SonyPublishedGame & 206 \\
+ConsoleGame & 5.889 & SonyPublishedGame & 206 \\
 FranchiseGame & 4.358 & GOTYWinner & 194 \\
 JapaneseGame & 3.856 & ElectronicArtsPublishedGame & 171 \\
 MobileGame & 3.775 & XboxPublishedGame & 166 \\
-AndroidGame & 3.746 & RetroComputerGame & 138 \\
+AndroidGame & 3.746 & RetroComputerGame & 141 \\
 SportsGame & 3.391 & KonamiPublishedGame & 121 \\
 RacingGame & 3.300 & CapcomPublishedGame & 105 \\
 XboxGame & 2.989 & HighlyRatedGame & 81 \\
