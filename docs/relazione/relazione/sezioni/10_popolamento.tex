@@ -53,8 +53,54 @@ e, per ciascun nome, mantiene l'URI con il maggior numero di triple associate.
 
 Dopo il fetch e gli assiomi V2 viene eseguito il reasoning (cfr.\ Sezione~\ref{sec:reasoning}):
 chiusura OWL 2 RL tramite \texttt{owlrl}, materializzazione mirata delle classi definite e
-regole SPARQL CONSTRUCT. I conteggi finali (triple e istanze per classe) sono stampati dallo script
-a fine esecuzione e disponibili a runtime su \texttt{/api/stats}.
+regole SPARQL CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} porta il grafo da
+877.673 a circa 4,5 milioni di triple in 33 minuti; la materializzazione mirata aggiunge 175.997 triple e
+le regole CONSTRUCT 891 (\texttt{MultiConsoleGame}). Nelle relazioni \texttt{sharesDeveloperWith} e
+\texttt{sharesPublisherWith} i gruppi con pi\`u di 50 giochi (19 sviluppatori e 66 publisher) sono esclusi
+per limitare la crescita quadratica delle coppie. I conteggi finali sono in Tabella~\ref{tab:abox}
+e Tabella~\ref{tab:inferite}.
+
+\begin{table}[h]
+\centering
+\caption{Ontologia popolata (build completa 2010--2026)}
+\label{tab:abox}
+\small
+\begin{tabular}{lr}
+\toprule
+\textbf{Metrica} & \textbf{Valore} \\
+\midrule
+Triple scaricate da Wikidata & 877.689 \\
+Triple nel file finale (dopo il reasoning) & 4.451.547 \\
+Videogiochi & 105.860 \\
+Sviluppatori / Publisher & 5.374 / 3.830 \\
+Generi / Piattaforme & 581 / 249 \\
+Franchise / Motori / Personaggi / Premi & 1.518 / 302 / 4.438 / 389 \\
+Modalit\`a di gioco (individui) & 35 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Istanze delle classi definite dopo il reasoning}
+\label{tab:inferite}
+\small
+\begin{tabular}{lrlr}
+\toprule
+\textbf{Classe} & \textbf{Istanze} & \textbf{Classe} & \textbf{Istanze} \\
+\midrule
+SinglePlayerGame & 94.642 & PCGame & 99.155 \\
+MultiplayerGame & 16.803 & ConsoleGame & 6.498 \\
+CoopGame & 8.937 & MobileGame & 3.759 \\
+FranchiseGame & 4.358 & XboxGame & 2.989 \\
+AwardWinningGame & 741 & NintendoGame & 2.030 \\
+RecentGame & 70.586 & PlayStationGame & 1.919 \\
+HighlyRatedGame & 81 & MultiConsoleGame & 891 \\
+StandaloneGame & 105.330 & NintendoPublishedGame & 387 \\
+SequelGame & 530 & & \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Store RDF a runtime: pyoxigraph}
 

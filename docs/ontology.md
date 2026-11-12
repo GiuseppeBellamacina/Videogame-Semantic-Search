@@ -289,6 +289,18 @@ Questa architettura evita chiamate HTTP ripetitive mantenendo bassa la RAM.
 
 ---
 
-## Statistiche
+## Statistiche (build completa 2010–2026)
 
-I conteggi dipendono dalla build: al termine, `build_ontology.py` stampa il numero di istanze per ogni classe (`VideoGame`, `Developer`, `Publisher`, `Genre`, `Platform`, `GameMode`, `AwardWinningGame`, `HighlyRatedGame`, `SequelGame`, …) e il numero di triple. Lo stesso riepilogo è disponibile a runtime su `GET /api/stats`.
+| Metrica                               | Valore             |
+| ------------------------------------- | ------------------ |
+| Triple scaricate da Wikidata          | 877.689            |
+| Triple nel file finale                | 4.451.547          |
+| Videogiochi                           | 105.860            |
+| Sviluppatori / Publisher              | 5.374 / 3.830      |
+| Generi / Piattaforme                  | 581 / 249          |
+| Franchise / Motori / Personaggi / Premi | 1.518 / 302 / 4.438 / 389 |
+| Modalità di gioco (individui)         | 35                 |
+
+Istanze delle classi definite: `SinglePlayerGame` 94.642, `PCGame` 99.155, `StandaloneGame` 105.330, `RecentGame` 70.586, `MultiplayerGame` 16.803, `CoopGame` 8.937, `ConsoleGame` 6.498, `FranchiseGame` 4.358, `MobileGame` 3.759, `XboxGame` 2.989, `NintendoGame` 2.030, `PlayStationGame` 1.919, `MultiConsoleGame` 891, `AwardWinningGame` 741, `SequelGame` 530, `NintendoPublishedGame` 387, `HighlyRatedGame` 81.
+
+Il reasoning sulla build completa: `owlrl` porta 877.673 triple a circa 4,5 milioni in 33 minuti, la materializzazione mirata aggiunge 175.997 triple, le regole CONSTRUCT 891. Le relazioni `sharesDeveloperWith` / `sharesPublisherWith` escludono i gruppi con più di 50 giochi (19 sviluppatori, 66 publisher). Lo stesso riepilogo, per le classi principali, è disponibile a runtime su `GET /api/stats`.
