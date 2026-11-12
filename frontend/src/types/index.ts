@@ -103,3 +103,23 @@ export interface BuilderRequest {
   limit: number;
   output: "table" | "graph";
 }
+
+export type SearchPhase =
+  | "generating"
+  | "validating"
+  | "executing"
+  | "building_graph";
+
+export type SearchEvent =
+  | { type: "phase"; phase: SearchPhase; attempt?: number }
+  | { type: "query"; sparql: string }
+  | { type: "retry"; reason: "syntax" | "error" | "empty" }
+  | { type: "done"; cached: boolean; result: QueryResponse }
+  | { type: "error"; detail: string };
+
+export interface SearchProgress {
+  phase: SearchPhase;
+  attempt: number;
+  retry?: "syntax" | "error" | "empty";
+  sparql?: string;
+}

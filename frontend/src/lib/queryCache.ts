@@ -1,5 +1,4 @@
 import type { QueryResponse } from "@/types";
-import { queryOntology } from "@/lib/api";
 
 // Module-level cache: persists for the entire browser session
 const cache = new Map<string, QueryResponse>();
@@ -25,18 +24,3 @@ export const SUGGESTIONS = [
   "Quali giochi sono disponibili su PlayStation 5?",
   "Giochi sviluppati da Nintendo dopo il 2020",
 ];
-
-// Warm up the cache for all suggestion queries sequentially
-export async function warmupCache(): Promise<void> {
-  for (const question of SUGGESTIONS) {
-    if (hasCached(question)) continue;
-    try {
-      const response = await queryOntology(question);
-      setCached(question, response);
-    } catch {
-      // Silently ignore warmup failures
-    }
-    // Small delay between requests to avoid hammering the backend
-    await new Promise((r) => setTimeout(r, 300));
-  }
-}
