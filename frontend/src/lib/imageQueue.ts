@@ -1,4 +1,4 @@
-import { assetUrl, fetchImages } from "@/lib/api";
+import { assetUrl, fetchImages, retryImageApi } from "@/lib/api";
 import { IMAGE_TYPES } from "@/lib/theme";
 
 /**
@@ -23,6 +23,25 @@ let running = 0;
 
 const norm = (t: string) =>
   t === "AwardWinningGame" || t === "FranchiseGame" ? "VideoGame" : t;
+
+const listeners = new Set<() => void>();
+/** Called when a picture is replaced (retry): hooks and the canvas repaint. */
+export const onImagesChanged = (cb: () => void) => {
+  listeners.add(cb);
+  return () => {
+    listeners.delete(cb);
+  };
+};
+
+/** Another picture for this entity; null when Wikipedia has no other candidate. */
+export async function retryImage(type: string, name: string): Promise<string | null> {
+  const url = assetUrl(await retryImageApi(name, norm(type)));
+  if (url) {
+    done.set(imageKey(type, name), url);
+    listeners.forEach((cb) => cb());
+  }
+  return url;
+}
 
 export const imageKey = (type: string, name: string) => `${norm(type)}|${name}`;
 

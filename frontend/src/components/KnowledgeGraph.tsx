@@ -3,7 +3,7 @@ import ForceGraph2D from "react-force-graph-2d";
 import { Crosshair, Eraser, Eye, EyeOff, Focus, Link2, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
 import type { GraphData, GraphNode } from "@/types";
 import { GAME_TYPES, IMAGE_TYPES, typeColor, typeLabel } from "@/lib/theme";
-import { peekImage, requestImage } from "@/lib/imageQueue";
+import { onImagesChanged, peekImage, requestImage } from "@/lib/imageQueue";
 import { getRelation, type RelationInfo } from "@/lib/api";
 
 interface KnowledgeGraphProps {
@@ -180,6 +180,7 @@ export function KnowledgeGraph({
     };
   }, [data, hiddenTypes, showDerived]);
 
+  useEffect(() => onImagesChanged(repaint), [repaint]);
   useEffect(() => setSecondary(null), [highlightNode]);
   useEffect(() => setAlertOff(false), [hiddenCount, hiddenTypes.size]);
 

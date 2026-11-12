@@ -1,9 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
-import { X, ChevronDown, ExternalLink } from "lucide-react";
+import { X, ChevronDown, ExternalLink, RefreshCw } from "lucide-react";
 import type { NodeDetails, GraphData, GraphNode } from "@/types";
 import { getNodeDetails } from "@/lib/api";
 import { Thumb } from "@/components/Thumb";
-import { typeColor, typeLabel, typeSize } from "@/lib/theme";
+import { IMAGE_TYPES, typeColor, typeLabel, typeSize } from "@/lib/theme";
+import { retryImage } from "@/lib/imageQueue";
 
 interface NodeDetailProps {
   uri: string | null;
@@ -34,6 +35,7 @@ export function NodeDetail({ uri, onClose, onNavigate, onGraphExpand }: NodeDeta
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState<Set<string>>(new Set());
+  const [retrying, setRetrying] = useState(false);
 
   useEffect(() => {
     if (!uri) {
@@ -177,14 +179,31 @@ export function NodeDetail({ uri, onClose, onNavigate, onGraphExpand }: NodeDeta
               <Thumb type={details.type} name={details.label} size={112} urgent />
               <div className="min-w-0 pb-1">
                 <h2 className="font-serif text-[28px] leading-[1.1]">{details.label}</h2>
-                <a
-                  href={`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(details.label)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-xs text-mute hover:text-brick"
-                >
-                  Cerca su Wikipedia <ExternalLink className="h-3 w-3" />
-                </a>
+                <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+                  <a
+                    href={`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(details.label)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-mute hover:text-brick"
+                  >
+                    Cerca su Wikipedia <ExternalLink className="h-3 w-3" />
+                  </a>
+                  {IMAGE_TYPES.has(details.type) && (
+                    <button
+                      onClick={async () => {
+                        setRetrying(true);
+                        await retryImage(details.type, details.label);
+                        setRetrying(false);
+                      }}
+                      disabled={retrying}
+                      title="Cerca un'altra immagine su Wikipedia"
+                      className="inline-flex items-center gap-1 text-xs text-mute hover:text-brick disabled:opacity-50"
+                    >
+                      <RefreshCw className={`h-3 w-3 ${retrying ? "animate-spin" : ""}`} />
+                      Riprova copertina
+                    </button>
+                  )}
+                </div>
               </div>
             </header>
 

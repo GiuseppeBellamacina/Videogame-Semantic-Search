@@ -128,6 +128,17 @@ class ImagesRequest(BaseModel):
     items: list[ImageItem] = Field(max_length=60)
 
 
+class RetryImageRequest(BaseModel):
+    name: str
+    type: str = "VideoGame"
+
+
+@router.post("/images/retry")
+async def retry_image(body: RetryImageRequest):
+    """Another picture for one entity: the next Wikipedia candidate."""
+    return await image_store.retry(body.name, body.type)
+
+
 @router.post("/images")
 async def images(body: ImagesRequest):
     """Batch lookup, resolved concurrently. Keys are "<type>|<name>"."""

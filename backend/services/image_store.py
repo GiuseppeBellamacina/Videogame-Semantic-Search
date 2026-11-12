@@ -31,7 +31,7 @@ USER_AGENT = (
     "(https://github.com/GiuseppeBellamacina/Videogame-Semantic-Search; educational project)"
 )
 KEY_PREFIX = "img:"
-FILE_RE = re.compile(r"^[0-9a-f]{16}\.(jpg|png|webp|gif)$")
+FILE_RE = re.compile(r"^[0-9a-f]{16}(-\d+)?\.(jpg|png|webp|gif)$")
 MAX_BYTES = 2_000_000
 EXT = {
     "image/jpeg": "jpg",
@@ -243,6 +243,79 @@ async def _resolve(name: str, etype: str) -> dict:
     entry = {"url": thumb, "file": file, "source": "wikipedia"}
     await cache.aset(key, json.dumps(entry), CACHE_TTL_IMAGE)
     return {"imageUrl": local_url(file) if file else thumb, "source": "wikipedia"}
+
+
+async def _search_thumbs(name: str, etype: str) -> list[str]:
+    resp = await _get(
+        "https://en.wikipedia.org/w/api.php",
+        params={
+            "action": "query",
+            "generator": "search",
+            "gsrlimit": 6,
+            "format": "json",
+            "gsrsearch": f"{name} {_HINT.get(etype, '')}".strip(),
+            "prop": "pageimages",
+            "piprop": "thumbnail",
+            "pithumbsize": 320,
+        },
+    )
+    if resp is None or resp.status_code != 200:
+        return []
+    pages = (resp.json().get("query") or {}).get("pages") or {}
+    ranked = sorted(pages.values(), key=lambda p: p.get("index", 99))
+    return [t for p in ranked if (t := (p.get("thumbnail") or {}).get("source"))]
+
+
+async def _candidates(name: str, etype: str) -> list[str]:
+    """Every picture Wikipedia offers for this entity: the title variants, then the best search hits
+    (all asked at the same time)."""
+    found = await asyncio.gather(
+        *(_summary_thumb(tpl.format(n=name), etype) for tpl in _VARIANTS.get(etype, ["{n}"])),
+        _search_thumbs(name, etype),
+    )
+    out: list[str] = []
+    for item in found:
+        for thumb in item if isinstance(item, list) else [item]:
+            if thumb and thumb not in out:
+                out.append(thumb)
+    return out
+
+
+async def retry(name: str, etype: str = "VideoGame") -> dict:
+    """Pick another picture for an entity (the stored one was missing or wrong).
+
+    Each call moves to the next candidate, so repeated retries cycle through them.
+    The file gets a new name, so the browser does not keep showing the old one.
+    """
+    name = name.strip()
+    etype = _norm_type(etype)
+    key = key_for(name, etype)
+    stem = file_stem(key)
+    raw = await cache.aget(key)
+    entry = json.loads(raw) if raw else {}
+    cands = entry.get("cands") or await _candidates(name, etype)  # kept: later retries are instant
+    if not cands:
+        return {"imageUrl": None, "source": None, "changed": False}
+    attempt = int(entry.get("attempt", 0)) + 1
+    start = cands.index(entry["url"]) + 1 if entry.get("url") in cands else attempt
+    thumb = cands[start % len(cands)]
+    file = await _download(thumb, f"{stem}-{attempt}")
+    old = entry.get("file")
+    if file and old and old != file and (IMAGE_DIR / old).exists():
+        await asyncio.to_thread((IMAGE_DIR / old).unlink)
+    entry = {
+        "url": thumb,
+        "file": file,
+        "source": "wikipedia",
+        "attempt": attempt,
+        "cands": cands,
+    }
+    await cache.aset(key, json.dumps(entry), CACHE_TTL_IMAGE)
+    return {
+        "imageUrl": local_url(file) if file else thumb,
+        "source": "wikipedia",
+        "changed": True,
+    }
 
 
 async def resolve(name: str, etype: str = "VideoGame") -> dict:

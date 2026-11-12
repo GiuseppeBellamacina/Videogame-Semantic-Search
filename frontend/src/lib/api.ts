@@ -151,6 +151,17 @@ export async function fetchImages(
   return (await res.json()).images ?? {};
 }
 
+/** Ask the backend for another picture of an entity (next Wikipedia candidate). */
+export async function retryImageApi(name: string, type: string): Promise<string | null> {
+  const res = await fetch(`${API_BASE}/images/retry`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, type }),
+  });
+  if (!res.ok) return null;
+  return (await res.json()).imageUrl ?? null;
+}
+
 export async function countBuilder(
   filters: BuilderRequest["filters"],
   signal?: AbortSignal,

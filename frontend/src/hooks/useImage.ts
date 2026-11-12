@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { peekImage, requestImage } from "@/lib/imageQueue";
+import { onImagesChanged, peekImage, requestImage } from "@/lib/imageQueue";
 
 /** Picture for an entity: url when found, null when there is none, undefined while loading. */
 export function useImage(type: string, name: string, urgent = false) {
@@ -18,5 +18,14 @@ export function useImage(type: string, name: string, urgent = false) {
       live = false;
     };
   }, [type, name, urgent]);
+  // a retry replaced the picture
+  useEffect(
+    () =>
+      onImagesChanged(() => {
+        const known = peekImage(type, name);
+        if (known !== undefined) setUrl(known);
+      }),
+    [type, name],
+  );
   return url;
 }
