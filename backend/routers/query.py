@@ -8,6 +8,7 @@ import logging
 import re
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from backend.agents.sparql_agent import SPARQLAgent
@@ -123,6 +124,66 @@ class QueryResponse(BaseModel):
     success: bool
 
 
+def _run_agent(question: str, emit=lambda event: None):
+    """Blocking agent run (LLM HTTP + store CPU): call it from a thread."""
+    state = SPARQLAgent().run(question, emit)
+    graph_data = {"nodes": [], "links": []}
+    if state.results:
+        emit({"type": "phase", "phase": "building_graph"})
+        graph_data = build_graph(state.results, OntologyService)
+    return state, graph_data
+
+
+def _sse(event: dict) -> str:
+    return f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+
+
+@router.post("/query/stream")
+async def query_stream(request: QueryRequest):
+    """Same as /query, but streams the agent's progress as server-sent events."""
+    if not request.question.strip():
+        raise HTTPException(status_code=400, detail="Question cannot be empty")
+
+    async def events():
+        key = _normalise(request.question)
+        cached = await _cache_get(key)
+        if cached:
+            yield _sse({"type": "done", "cached": True, "result": cached})
+            return
+
+        loop = asyncio.get_running_loop()
+        queue: asyncio.Queue = asyncio.Queue()
+        emit = lambda e: loop.call_soon_threadsafe(queue.put_nowait, e)  # noqa: E731
+        task = asyncio.create_task(asyncio.to_thread(_run_agent, request.question, emit))
+        task.add_done_callback(lambda _: queue.put_nowait(None))
+
+        while (event := await queue.get()) is not None:
+            yield _sse(event)
+        try:
+            state, graph_data = task.result()
+        except Exception as e:  # incl. missing API key
+            logger.exception("Query processing failed")
+            yield _sse({"type": "error", "detail": str(e)})
+            return
+
+        response = QueryResponse(
+            results=state.results,
+            graph=graph_data,
+            sparql=state.sparql_query,
+            total_rows=len(state.results),
+            success=state.success,
+        ).model_dump()
+        if state.success and state.results:
+            await _cache_set(key, response)
+        yield _sse({"type": "done", "cached": False, "result": response})
+
+    return StreamingResponse(
+        events(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
 @router.post("/query", response_model=QueryResponse)
 async def query_ontology(request: QueryRequest):
     """
@@ -142,16 +203,7 @@ async def query_ontology(request: QueryRequest):
         return cached
 
     try:
-        # Run blocking agent (LLM HTTP + store CPU) off the event loop
-        def _run_agent():
-            agent = SPARQLAgent()
-            state = agent.run(request.question)
-            graph_data = {"nodes": [], "links": []}
-            if state.results:
-                graph_data = build_graph(state.results, OntologyService)
-            return state, graph_data
-
-        state, graph_data = await asyncio.to_thread(_run_agent)
+        state, graph_data = await asyncio.to_thread(_run_agent, request.question)
 
         response = QueryResponse(
             results=state.results,

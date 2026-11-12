@@ -44,10 +44,11 @@ class SPARQLAgent:
         self.max_retries = MAX_SPARQL_RETRIES
         self.ontology_schema = OntologyService.get_ontology_schema()
 
-    def run(self, question: str) -> SPARQLAgentState:
+    def run(self, question: str, emit=lambda event: None) -> SPARQLAgentState:
         """
         Agent pipeline: generate → validate → execute.
-        Retries up to max_retries on errors.
+        Retries up to max_retries on errors. `emit` receives progress events
+        (phase / query / retry) so a caller can stream them.
         """
         state = SPARQLAgentState(user_question=question)
 
@@ -56,7 +57,10 @@ class SPARQLAgent:
 
             # Step 1: Generate SPARQL
             logger.info(f"[Attempt {attempt + 1}] Generating SPARQL query...")
+            emit({"type": "phase", "phase": "generating", "attempt": attempt + 1})
             state = self._generate_sparql(state)
+            if state.sparql_query:
+                emit({"type": "query", "sparql": state.sparql_query})
 
             if not state.sparql_query:
                 state.error = "Failed to generate SPARQL query"
@@ -64,6 +68,7 @@ class SPARQLAgent:
 
             # Step 2: Validate syntax
             logger.info(f"[Attempt {attempt + 1}] Validating SPARQL syntax...")
+            emit({"type": "phase", "phase": "validating"})
             is_valid, validation_error = validate_sparql(state.sparql_query)
 
             if not is_valid:
@@ -71,17 +76,20 @@ class SPARQLAgent:
                     f"[Attempt {attempt + 1}] Validation failed: {validation_error}"
                 )
                 state.error = f"Syntax error: {validation_error}"
+                emit({"type": "retry", "reason": "syntax"})
                 state.previous_queries.append(state.sparql_query)
                 continue
 
             # Step 3: Execute query
             logger.info(f"[Attempt {attempt + 1}] Executing SPARQL query...")
+            emit({"type": "phase", "phase": "executing"})
             state = self._execute_query(state)
 
             if state.error:
                 logger.warning(
                     f"[Attempt {attempt + 1}] Execution error: {state.error}"
                 )
+                emit({"type": "retry", "reason": "error"})
                 state.previous_queries.append(state.sparql_query)
                 continue
 
@@ -93,6 +101,7 @@ class SPARQLAgent:
                 )
                 state.previous_queries.append(state.sparql_query)
                 if attempt < self.max_retries:
+                    emit({"type": "retry", "reason": "empty"})
                     continue
                 break
 

@@ -157,7 +157,7 @@ GRAPH_RELATIONS = [
 def build(
     filters: list[dict], order_by: str = "name", limit: int = 50, output: str = "table"
 ) -> str:
-    if output not in ("table", "graph"):
+    if output not in ("table", "graph", "count"):
         raise BuilderError(f"Unknown output '{output}'")
     if order_by not in ORDERS:
         raise BuilderError(f"Unknown order '{order_by}'")
@@ -224,6 +224,8 @@ def build(
             body.append(pat if op == "is" else f"FILTER NOT EXISTS {{ {pat} }}")
 
     where = "\n  ".join(body)
+    if output == "count":
+        return f"{PREFIXES}SELECT (COUNT(DISTINCT ?game) AS ?n) WHERE {{\n  {where}\n}}"
     select_query = (
         f"SELECT DISTINCT {' '.join(select)} WHERE {{\n  {where}\n}}\n"
         f"ORDER BY {ORDERS[order_by]}\nLIMIT {limit}"

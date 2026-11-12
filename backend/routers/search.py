@@ -47,6 +47,17 @@ class BuilderRequest(BaseModel):
     output: str = "table"  # table = SELECT, graph = CONSTRUCT
 
 
+@router.post("/builder/count")
+async def builder_count(body: BuilderRequest):
+    """How many games match: powers the live preview in the builder."""
+    try:
+        sparql = query_builder.build([f.model_dump() for f in body.filters], output="count")
+    except (query_builder.BuilderError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    rows = await asyncio.to_thread(OntologyService.execute_sparql, sparql)
+    return {"count": int(rows[0]["n"]) if rows else 0}
+
+
 @router.post("/builder/query", response_model=QueryResponse)
 async def builder_query(body: BuilderRequest):
     try:
