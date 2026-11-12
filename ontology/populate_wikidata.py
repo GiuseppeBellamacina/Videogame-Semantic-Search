@@ -351,49 +351,75 @@ def is_qid_label(value: str | None) -> bool:
 # so that the platform/genre/mode defined classes can be inferred later)
 # ---------------------------------------------------------------------------
 
+# First matching rule wins, so the order matters (families are mutually exclusive).
 _PLATFORM_RULES: list[tuple[str, URIRef]] = [
-    (r"playstation|\bps[0-9p]?\b|\bpsp\b|vita", VG.PlayStationPlatform),
+    (r"playstation|ps[0-9p]?|psp|vita", VG.PlayStationPlatform),
     (r"xbox", VG.XboxPlatform),
     (
-        r"nintendo|\bswitch\b|\bwii\b|game ?boy|\b3?ds\b|gamecube|\bs?nes\b|\bn64\b",
+        r"nintendo|switch|wii|wiiware|game ?boy|3?ds|dsi|gamecube|s?nes|n64|famicom",
         VG.NintendoPlatform,
     ),
     (r"windows", VG.WindowsPlatform),
-    (r"macos|mac os|os x|macintosh|\bmac\b", VG.MacOSPlatform),
+    (r"macos|mac os|os x|macintosh|mac", VG.MacOSPlatform),
     (r"linux", VG.LinuxPlatform),
-    (r"\bios\b|iphone|ipad", VG.IOSPlatform),
+    (r"ios|iphone|ipad", VG.IOSPlatform),
     (r"android", VG.AndroidPlatform),
-    (r"personal computer|\bpc\b|\bdos\b|steam", VG.PCPlatform),
-    (r"mobile|phone", VG.MobilePlatform),
+    (
+        r"web browser|browser game|web application|web platform|web page|html5|google chrome|facebook",
+        VG.BrowserPlatform,
+    ),
+    (r"arcade", VG.ArcadePlatform),
+    (
+        r"commodore|zx spectrum|amstrad|atari st|atari 8|msx|sharp x|apple ii|fm towns|bbc micro|amiga|trs-80|ti-99|pc-98|pc-88",
+        VG.RetroComputerPlatform,
+    ),
+    (r"horizon os|quest|visionos|oculus|vr|vive|virtual reality|hololens", VG.VRPlatform),
+    # other consoles (before the PC rule: "PC Engine" is a console)
+    (
+        r"ouya|turbografx|pc engine|neo geo|atari (2600|5200|7800|vcs|lynx|jaguar)|sega|dreamcast|genesis|mega drive|master system|sg-1000|saturn|game gear|colecovision|intellivision|3do|cd-i|zeebo|vectrex",
+        VG.ConsolePlatform,
+    ),
+    (r"personal computer|pc|dos|steam", VG.PCPlatform),
+    (
+        r"mobile|phone|blackberry|symbian|java platform, micro|harmonyos|watchos",
+        VG.MobilePlatform,
+    ),
 ]
 
+# A genre can belong to several families ("action role-playing game"): every match counts.
 _GENRE_RULES: list[tuple[str, URIRef]] = [
-    (r"role-playing|\brpg\b", VG.RPGGenre),
+    (r"role-playing|rpg", VG.RPGGenre),
     (r"horror", VG.HorrorGenre),
-    (r"platform", VG.PlatformerGenre),
+    (r"platform game|platformer", VG.PlatformerGenre),
     (r"strategy|tactic", VG.StrategyGenre),
     (r"puzzle", VG.PuzzleGenre),
     (r"simulat", VG.SimulationGenre),
     (r"sport", VG.SportsGenre),
     (r"racing|racer", VG.RacingGenre),
     (r"adventure", VG.AdventureGenre),
-    (r"action|shooter|fighting|beat", VG.ActionGenre),
+    (r"action|fighting|beat 'em", VG.ActionGenre),
+    (r"shooter|shoot 'em up|shmup", VG.ShooterGenre),
+    (r"casual|hidden object", VG.CasualGenre),
+    (r"visual novel|eroge", VG.VisualNovelGenre),
 ]
 
 _MODE_RULES: list[tuple[str, URIRef]] = [
-    (r"massively|\bmmo", VG.MMOMode),
+    (r"massively|mmo", VG.MMOMode),
     (r"co-?op", VG.CoopMode),
     (r"multiplayer|multi-player|versus", VG.MultiplayerMode),
     (r"single", VG.SinglePlayerMode),
 ]
 
+_ENGINE_RULES: list[tuple[str, URIRef]] = [(r"unreal engine", VG.UnrealEngineFamily)]
+_AWARD_RULES: list[tuple[str, URIRef]] = [(r"game of the year|goty", VG.GameOfTheYearAward)]
 
-def _classify(label: str, rules: list[tuple[str, URIRef]]) -> URIRef | None:
+
+def _classify(
+    label: str, rules: list[tuple[str, URIRef]], multi: bool = False
+) -> list[URIRef]:
     low = label.lower()
-    for pattern, cls in rules:
-        if re.search(pattern, low):
-            return cls
-    return None
+    hits = [cls for pattern, cls in rules if re.search(pattern, low)]
+    return hits if multi else hits[:1]
 
 
 def _clean(row: dict, *keys: str) -> list[str] | None:
@@ -457,7 +483,7 @@ _LINKS = [
         VG.GameEngine,
         VG.engineName,
         VG.madeWith,
-        None,
+        _ENGINE_RULES,
     ),
     (
         "award",
@@ -467,7 +493,7 @@ _LINKS = [
         VG.Award,
         VG.awardName,
         VG.wonAward,
-        None,
+        _AWARD_RULES,
     ),
 ]
 
@@ -602,8 +628,7 @@ def populate_from_wikidata(
             uri = make_uri(str(VG) + sub, label)
             g.add((uri, RDF.type, cls))
             if rules:
-                sub_cls = _classify(label, rules)
-                if sub_cls:
+                for sub_cls in _classify(label, rules, multi=key == "genre"):
                     g.add((uri, RDF.type, sub_cls))
             g.add((uri, name_prop, Literal(label, datatype=XSD.string)))
             g.add((game_uri, link_prop, uri))
@@ -622,8 +647,7 @@ def populate_from_wikidata(
         game_label, label = vals
         mode_uri = make_uri(str(VG) + "mode/", label)
         g.add((mode_uri, RDF.type, VG.GameMode))
-        mode_cls = _classify(label, _MODE_RULES)
-        if mode_cls:
+        for mode_cls in _classify(label, _MODE_RULES):
             g.add((mode_uri, RDF.type, mode_cls))
         g.add((mode_uri, RDFS.label, Literal(label, datatype=XSD.string)))
         g.add((make_uri(str(VG), game_label), VG.hasGameMode, mode_uri))

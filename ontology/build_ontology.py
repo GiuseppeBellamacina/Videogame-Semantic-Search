@@ -28,7 +28,7 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
-from rdflib import OWL, RDF, Graph
+from rdflib import OWL, RDF, RDFS, Graph
 from tqdm import tqdm
 
 HERE = Path(__file__).parent
@@ -45,31 +45,10 @@ logger = logging.getLogger("build_ontology")
 VG = eo.VG
 STAGES = ["fetch", "reason", "validate", "write"]
 
-# Classes that must be non-empty on the full dataset (inferred or typed)
-SANITY_CLASSES = [
-    "VideoGame",
-    "Developer",
-    "Publisher",
-    "Genre",
-    "Platform",
-    "GameMode",
-    "AwardWinningGame",
-    "FranchiseGame",
-    "SinglePlayerGame",
-    "MultiplayerGame",
-    "PCGame",
-    "ConsoleGame",
-    "PlayStationGame",
-    "CoopGame",
-    "MobileGame",
-    "NintendoGame",
-    "XboxGame",
-    "HighlyRatedGame",
-    "RecentGame",
-    "SequelGame",
-    "StandaloneGame",
-    "MultiConsoleGame",
-    "NintendoPublishedGame",
+# Core classes always checked; every defined game class of the TBox is added at run time
+CORE_CLASSES = [
+    "VideoGame", "Developer", "Publisher", "Genre", "Platform", "GameMode",
+    "Franchise", "GameEngine", "Character", "Award",
 ]
 
 
@@ -182,11 +161,16 @@ def stage_validate(g: Graph) -> None:
     for f in errors:
         tqdm.write(f"  ERROR {f.code}: {f.message}")
 
+    defined = sorted(
+        str(c).split("#")[-1]
+        for c in tbox.transitive_subjects(RDFS.subClassOf, VG.VideoGame)
+        if c != VG.VideoGame and (c, OWL.equivalentClass, None) in tbox
+    )
     tqdm.write("Class instance counts:")
-    for name in tqdm(SANITY_CLASSES, desc="Sanity counts", unit="class", ncols=90):
+    for name in tqdm(CORE_CLASSES + defined, desc="Sanity counts", unit="class", ncols=90):
         n = sum(1 for _ in g.subjects(RDF.type, VG[name]))
         flag = "  <-- EMPTY" if n == 0 else ""
-        tqdm.write(f"  {name:<18} {n:>8}{flag}")
+        tqdm.write(f"  {name:<28} {n:>8}{flag}")
 
 
 def stage_write(g: Graph, out_stem: Path) -> None:

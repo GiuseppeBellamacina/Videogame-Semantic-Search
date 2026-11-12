@@ -99,6 +99,17 @@ WHERE {
     FILTER(?p1 != ?p2)
 }"""),
     ),
+    # ── MultiPlatformGame : >= 3 distinct platforms ───────────────────────
+    Rule(
+        name="classify_multi_platform_game",
+        description="Classify games available on at least three platforms as MultiPlatformGame",
+        query=_q(
+            """CONSTRUCT { ?g a vg:MultiPlatformGame . }
+WHERE {
+    { SELECT ?g WHERE { ?g vg:availableOn ?p } GROUP BY ?g HAVING (COUNT(DISTINCT ?p) >= 3) }
+}"""
+        ),
+    ),
     # ── R3 : StandaloneGame ───────────────────────────────────────────────
     Rule(
         name="classify_standalone",
