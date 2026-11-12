@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect, useState, useMemo } from "react";
 import ForceGraph2D from "react-force-graph-2d";
-import { Crosshair, Lock, Search, Unlock } from "lucide-react";
+import { Crosshair, Focus, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
 import type { GraphData, GraphNode } from "@/types";
 import { GAME_TYPES, IMAGE_TYPES, typeColor, typeLabel } from "@/lib/theme";
 import { peekImage, requestImage } from "@/lib/imageQueue";
@@ -14,6 +14,9 @@ interface KnowledgeGraphProps {
   /** Nodes hidden one by one from the context menu, and how to bring them back. */
   hiddenCount?: number;
   onRestoreHidden?: () => void;
+  /** Keep only these nodes on the canvas / hide these nodes. */
+  onKeepOnly?: (ids: string[]) => void;
+  onHideMany?: (ids: string[]) => void;
 }
 
 const BG = "#14130f";
@@ -68,6 +71,8 @@ export function KnowledgeGraph({
   onNodeRightClick,
   hiddenCount = 0,
   onRestoreHidden,
+  onKeepOnly,
+  onHideMany,
 }: KnowledgeGraphProps) {
   const graphRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -76,6 +81,8 @@ export function KnowledgeGraph({
   const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
   const [frozen, setFrozen] = useState(false);
   const [find, setFind] = useState("");
+  const [selected, setSelected] = useState<Set<string>>(new Set()); // multi-selection (shift+click)
+  const labelBoxes = useRef<number[][]>([]); // edge labels drawn this frame, to avoid overlaps
   const [, setTick] = useState(0);
   const repaint = useCallback(() => setTick((t) => t + 1), []);
   const longPressFired = useRef(false);
@@ -306,13 +313,14 @@ export function KnowledgeGraph({
       ctx.beginPath();
       if (s.r) ctx.arc(x, y, s.r, 0, 2 * Math.PI);
       else ctx.roundRect(x - s.w / 2, y - s.h / 2, s.w, s.h, 2.5);
-      ctx.lineWidth = (isFocus ? 2.2 : 1.2) / Math.min(k, 2);
-      ctx.strokeStyle = n.id === highlightNode ? BRICK : n.id === hovered ? INK : color;
+      const picked = selected.has(n.id);
+      ctx.lineWidth = (isFocus || picked ? 2.4 : 1.2) / Math.min(k, 2);
+      ctx.strokeStyle = picked || n.id === highlightNode ? BRICK : n.id === hovered ? INK : color;
       ctx.stroke();
 
       // label: when zoomed in, or for the node in focus and its neighbours
       const showLabel =
-        isFocus || k > (graphSize > 60 ? 1.2 : 0.55) || (neighbours?.has(n.id) && k > 0.5);
+        isFocus || selected.has(n.id) || k > (graphSize > 60 ? 1.2 : 0.55) || (neighbours?.has(n.id) && k > 0.5);
       if (showLabel) {
         const fs = Math.max(4.5, Math.min(11 / k, 9));
         ctx.font = `${isFocus ? 600 : 400} ${fs}px ${FONT}`;
@@ -328,7 +336,7 @@ export function KnowledgeGraph({
       }
       ctx.globalAlpha = 1;
     },
-    [neighbours, focusId, highlightNode, hovered, repaint, graphSize],
+    [neighbours, focusId, highlightNode, hovered, repaint, graphSize, selected],
   );
 
   const paintLink = useCallback(
@@ -337,24 +345,38 @@ export function KnowledgeGraph({
       const b = link.target;
       if (a?.x === undefined || b?.x === undefined) return;
       const on = neighbours && (a.id === focusId || b.id === focusId);
-      ctx.globalAlpha = neighbours && !on ? 0.06 : 1;
+      // relations derived by the reasoner (sharesDeveloperWith...) are many: dashed, never labelled
+      const derived = /^shar(e|ed)/.test(link.label ?? "");
+      ctx.globalAlpha = neighbours && !on ? 0.06 : derived && !on ? 0.5 : 1;
       ctx.beginPath();
+      if (derived) ctx.setLineDash([4 / k, 3 / k]);
       ctx.moveTo(a.x, a.y);
       ctx.lineTo(b.x, b.y);
       ctx.lineWidth = (on ? 1.6 : 0.8) / Math.min(k, 2);
       ctx.strokeStyle = on ? BRICK : "rgba(236,232,221,0.22)";
       ctx.stroke();
-      if (on && k > 0.9) {
-        ctx.font = `${9 / k + 2}px "IBM Plex Mono", monospace`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+      ctx.setLineDash([]);
+      if (on && !derived && k > 0.7) {
+        // fixed 11px on screen, on a dark pill, skipped when it would cover another label
+        const fs = 11 / k;
+        ctx.font = `${fs}px "IBM Plex Mono", monospace`;
+        const w = ctx.measureText(link.label).width + 8 / k;
+        const h = fs + 5 / k;
         const mx = (a.x + b.x) / 2;
         const my = (a.y + b.y) / 2;
-        ctx.lineWidth = 3 / k;
-        ctx.strokeStyle = BG;
-        ctx.strokeText(link.label, mx, my);
-        ctx.fillStyle = "#9a958a";
-        ctx.fillText(link.label, mx, my);
+        const box = [mx - w / 2, my - h / 2, mx + w / 2, my + h / 2];
+        const clash = labelBoxes.current.some(
+          (o) => box[0] < o[2] && box[2] > o[0] && box[1] < o[3] && box[3] > o[1],
+        );
+        if (!clash) {
+          labelBoxes.current.push(box);
+          ctx.fillStyle = "rgba(20,19,15,0.92)";
+          ctx.fillRect(box[0], box[1], w, h);
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#d9d4c6";
+          ctx.fillText(link.label, mx, my + 0.5 / k);
+        }
       }
       ctx.globalAlpha = 1;
     },
@@ -364,11 +386,22 @@ export function KnowledgeGraph({
   // ── interaction ──────────────────────────────────────────────────────────
   const lastClick = useRef({ id: "", t: 0 });
   const handleClick = useCallback(
-    (node: any) => {
+    (node: any, ev?: MouseEvent) => {
       if (longPressFired.current) {
         longPressFired.current = false;
         return;
       }
+      if (ev && (ev.shiftKey || ev.ctrlKey || ev.metaKey)) {
+        // multi-selection: add or remove, without moving the view or opening the panel
+        setSelected((p) => {
+          const n = new Set(p);
+          if (n.has(node.id)) n.delete(node.id);
+          else n.add(node.id);
+          return n;
+        });
+        return;
+      }
+      setSelected(new Set());
       const now = Date.now();
       const double = lastClick.current.id === node.id && now - lastClick.current.t < 350;
       lastClick.current = { id: node.id, t: now };
@@ -504,6 +537,10 @@ export function KnowledgeGraph({
         linkCanvasObject={paintLink}
         linkCanvasObjectMode={() => "replace"}
         onNodeClick={handleClick}
+        onBackgroundClick={() => setSelected(new Set())}
+        onRenderFramePre={() => {
+          labelBoxes.current = [];
+        }}
         onNodeRightClick={handleRightClick}
         onNodeHover={(node: any) => setHovered(node?.id ?? null)}
         onNodeDragEnd={(node: any) => {
@@ -542,6 +579,72 @@ export function KnowledgeGraph({
             </li>
           ))}
         </ul>
+      )}
+
+      {/* act on the selection (shift+click) or on the node in focus */}
+      {(selected.size > 0 || highlightNode) && !empty && (onKeepOnly || onHideMany) && (
+        <div className="absolute left-3 top-3 z-20 flex w-max max-w-[calc(100%-260px)] flex-wrap items-center gap-1 whitespace-nowrap rounded-sm border border-rule bg-panel px-2 py-1.5 text-sm shadow-[0_12px_32px_-8px_rgba(0,0,0,0.6)] animate-fade-in">
+          <span className="px-2 text-mute">
+            {selected.size > 0 ? `${selected.size} selezionat${selected.size === 1 ? "o" : "i"}` : "1 nodo"}
+          </span>
+          {(() => {
+            const ids = selected.size > 0 ? [...selected] : highlightNode ? [highlightNode] : [];
+            const withNeighbours = () => {
+              const keep = new Set(ids);
+              for (const l of filtered.links) {
+                if (/^shar(e|ed)/.test(l.label ?? "")) continue; // derived links tie every game together
+                const a = endId(l.source);
+                const b = endId(l.target);
+                if (ids.includes(a)) keep.add(b);
+                if (ids.includes(b)) keep.add(a);
+              }
+              return [...keep];
+            };
+            const done = () => setSelected(new Set());
+            return (
+              <>
+                <button
+                  className="btn !px-2.5 !py-1"
+                  title="Tieni solo questi nodi e nascondi tutti gli altri"
+                  onClick={() => {
+                    onKeepOnly?.(ids);
+                    done();
+                  }}
+                >
+                  <Focus className="h-3.5 w-3.5" /> Isola
+                </button>
+                <button
+                  className="btn !px-2.5 !py-1"
+                  title="Tieni questi nodi e i loro vicini diretti"
+                  onClick={() => {
+                    onKeepOnly?.(withNeighbours());
+                    done();
+                  }}
+                >
+                  <Network className="h-3.5 w-3.5" /> Isola con vicini
+                </button>
+                <button
+                  className="btn !px-2.5 !py-1"
+                  title="Nascondi questi nodi"
+                  onClick={() => {
+                    onHideMany?.(ids);
+                    done();
+                  }}
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> Nascondi
+                </button>
+                {selected.size > 0 && (
+                  <button className="btn !px-2 !py-1" onClick={done} aria-label="Deseleziona">
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </>
+            );
+          })()}
+          {selected.size === 0 && (
+            <span className="hidden pl-2 text-[11px] text-mute lg:inline">Maiusc + clic per sceglierne altri</span>
+          )}
+        </div>
       )}
 
       {/* bring back what was hidden */}

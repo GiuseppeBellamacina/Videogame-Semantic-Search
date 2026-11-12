@@ -135,6 +135,13 @@ export default function App() {
     setContextMenu({ node, x, y });
   }, []);
 
+  // every node known to the page, hidden or not: the result list still needs their type and picture
+  const allNodes = useMemo(() => {
+    const base = data?.graph?.nodes ?? [];
+    const ids = new Set(base.map((n) => n.id));
+    return [...base, ...extraGraph.nodes.filter((n) => !ids.has(n.id))];
+  }, [data, extraGraph]);
+
   const mergedGraph = useMemo<GraphData>(() => {
     const base = data?.graph ?? { nodes: [], links: [] };
     const baseIds = new Set(base.nodes.map((n) => n.id));
@@ -150,6 +157,24 @@ export default function App() {
     ].filter((l) => visible.has(endId(l.source)) && visible.has(endId(l.target)));
     return { nodes, links };
   }, [data, extraGraph, hiddenNodeIds]);
+
+  // Isolate: keep only the given nodes (the rest is hidden; "Mostra tutto" brings it back)
+  const handleKeepOnly = useCallback(
+    (ids: string[]) => {
+      const keep = new Set(ids);
+      setHiddenNodeIds(
+        (prev) => new Set([...prev, ...mergedGraph.nodes.filter((n) => !keep.has(n.id)).map((n) => n.id)]),
+      );
+      setContextMenu(null);
+    },
+    [mergedGraph.nodes],
+  );
+
+  const handleHideMany = useCallback((ids: string[]) => {
+    setHiddenNodeIds((prev) => new Set([...prev, ...ids]));
+    setSelectedNode(null);
+    setHighlightNode(null);
+  }, []);
 
   const graphNodeIds = useMemo(
     () => new Set(mergedGraph.nodes.map((n) => n.id)),
@@ -269,7 +294,7 @@ export default function App() {
                 <ResultList
                   results={data.results}
                   totalRows={data.total_rows}
-                  nodes={mergedGraph.nodes}
+                  nodes={allNodes}
                   onNodeClick={handleNodeClick}
                 />
               </>
@@ -316,6 +341,8 @@ export default function App() {
             onNodeRightClick={handleNodeRightClick}
             hiddenCount={hiddenNodeIds.size}
             onRestoreHidden={() => setHiddenNodeIds(new Set())}
+            onKeepOnly={handleKeepOnly}
+            onHideMany={handleHideMany}
           />
         </section>
       </main>

@@ -123,6 +123,21 @@ async def _get(url: str, **kw) -> httpx.Response | None:
     return None
 
 
+async def _wikidata_logo(qid: str) -> str | None:
+    """Commons render (320 px) of the entity's logo image (Wikidata P154)."""
+    resp = await _get(
+        "https://www.wikidata.org/w/api.php",
+        params={"action": "wbgetclaims", "entity": qid, "property": "P154", "format": "json"},
+    )
+    if resp is None or resp.status_code != 200:
+        return None
+    for claim in (resp.json().get("claims") or {}).get("P154", []):
+        file = ((claim.get("mainsnak") or {}).get("datavalue") or {}).get("value")
+        if file:
+            return f"https://commons.wikimedia.org/wiki/Special:FilePath/{quote(file)}?width=320"
+    return None
+
+
 async def _summary_thumb(title: str, etype: str) -> str | None:
     resp = await _get(
         f"https://en.wikipedia.org/api/rest_v1/page/summary/{quote(title.replace(' ', '_'), safe='')}"
@@ -133,6 +148,9 @@ async def _summary_thumb(title: str, etype: str) -> str | None:
     if data.get("type") == "disambiguation":
         return None
     thumb = (data.get("thumbnail") or {}).get("source")
+    if not thumb and etype != "VideoGame" and data.get("wikibase_item"):
+        # companies, platforms and series often have no page image: use the Wikidata logo
+        return await _wikidata_logo(data["wikibase_item"])
     if not thumb:
         return None
     if etype == "VideoGame" and "(video game)" not in title:
