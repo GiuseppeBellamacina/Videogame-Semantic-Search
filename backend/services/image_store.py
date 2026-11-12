@@ -33,7 +33,12 @@ USER_AGENT = (
 KEY_PREFIX = "img:"
 FILE_RE = re.compile(r"^[0-9a-f]{16}\.(jpg|png|webp|gif)$")
 MAX_BYTES = 2_000_000
-EXT = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif"}
+EXT = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+    "image/gif": "gif",
+}
 
 _client: httpx.AsyncClient | None = None
 _sem = asyncio.Semaphore(6)
@@ -110,7 +115,9 @@ async def _get(url: str, **kw) -> httpx.Response | None:
                 return None
             if resp.status_code in (429, 500, 502, 503):
                 wait = resp.headers.get("Retry-After", "")
-                await asyncio.sleep(min(int(wait) if wait.isdigit() else 1.5 * (attempt + 1), 5))
+                await asyncio.sleep(
+                    min(int(wait) if wait.isdigit() else 1.5 * (attempt + 1), 5)
+                )
                 continue
             return resp
     return None
@@ -140,9 +147,14 @@ async def _search_thumb(name: str, etype: str) -> str | None:
     resp = await _get(
         "https://en.wikipedia.org/w/api.php",
         params={
-            "action": "query", "generator": "search", "gsrlimit": 1, "format": "json",
+            "action": "query",
+            "generator": "search",
+            "gsrlimit": 1,
+            "format": "json",
             "gsrsearch": f"{name} {_HINT.get(etype, '')}".strip(),
-            "prop": "pageimages", "piprop": "thumbnail", "pithumbsize": 320,
+            "prop": "pageimages",
+            "piprop": "thumbnail",
+            "pithumbsize": 320,
         },
     )
     if resp is None or resp.status_code != 200:
@@ -196,7 +208,9 @@ async def _resolve(name: str, etype: str) -> dict:
         file = entry.get("file")
         if file and (IMAGE_DIR / file).exists():  # 1. local file
             return {"imageUrl": local_url(file), "source": entry.get("source")}
-        file = await _download(entry["url"], stem)  # 2. stored URL, file lost or never saved
+        file = await _download(
+            entry["url"], stem
+        )  # 2. stored URL, file lost or never saved
         if file:
             entry["file"] = file
             await cache.aset(key, json.dumps(entry), CACHE_TTL_IMAGE)

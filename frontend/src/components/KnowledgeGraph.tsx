@@ -1,811 +1,589 @@
 import { useRef, useCallback, useEffect, useState, useMemo } from "react";
 import ForceGraph2D from "react-force-graph-2d";
-import { Crosshair } from "lucide-react";
+import { Crosshair, Lock, Search, Unlock } from "lucide-react";
 import type { GraphData, GraphNode } from "@/types";
-import { searchGameImage } from "@/lib/api";
+import { GAME_TYPES, IMAGE_TYPES, typeColor, typeLabel } from "@/lib/theme";
+import { peekImage, requestImage } from "@/lib/imageQueue";
 
 interface KnowledgeGraphProps {
   data: GraphData;
+  loading?: boolean;
   onNodeClick: (nodeId: string) => void;
   highlightNode?: string | null;
   onNodeRightClick?: (node: GraphNode, x: number, y: number) => void;
 }
 
-const NODE_COLORS: Record<string, string> = {
-  VideoGame: "#6366f1",
-  AwardWinningGame: "#6366f1",
-  FranchiseGame: "#6366f1",
-  Developer: "#f59e0b",
-  Publisher: "#10b981",
-  Genre: "#ef4444",
-  Platform: "#3b82f6",
-  Character: "#ec4899",
-  Franchise: "#8b5cf6",
-  Award: "#f97316",
-  GameEngine: "#14b8a6",
-  GameMode: "#06b6d4",
-  Unknown: "#6b7280",
-};
+const BG = "#14130f";
+const INK = "#ece8dd";
+const BRICK = "#d4573b";
+const FONT = '"IBM Plex Sans", system-ui, sans-serif';
+/** Past this many nodes only games are fetched and the O(n²) collision is skipped. */
+const BIG_GRAPH = 150;
 
-const GAME_TYPES = new Set(["VideoGame", "AwardWinningGame", "FranchiseGame"]);
-const isGameType = (type: string) => GAME_TYPES.has(type);
+const endId = (e: string | GraphNode) => (typeof e === "string" ? e : e.id);
 
-// Image cache to avoid reloading (imageUrl → HTMLImageElement)
-const imageCache = new Map<string, HTMLImageElement | null>();
-
-// label → imageUrl (or null if tried+failed) — persists across renders/searches
-const labelImageUrlCache = new Map<string, string | null>();
-
-// Track in-flight fetch requests to avoid duplicates
-const fetchingLabels = new Set<string>();
-
-function loadImage(
-  url: string,
-  onLoaded?: () => void,
-): HTMLImageElement | null {
-  if (imageCache.has(url)) return imageCache.get(url) ?? null;
-  imageCache.set(url, null);
+// Decoded images, shared by every node that uses the same url
+const decoded = new Map<string, HTMLImageElement | null>();
+function decode(url: string, onLoaded: () => void): HTMLImageElement | null {
+  if (decoded.has(url)) return decoded.get(url) ?? null;
+  decoded.set(url, null);
   const img = new Image();
   img.onload = () => {
-    imageCache.set(url, img);
-    onLoaded?.();
-  };
-  img.onerror = () => {
-    imageCache.set(url, null);
+    decoded.set(url, img);
+    onLoaded();
   };
   img.src = url;
   return null;
 }
 
+/** Drawn size in graph units: games are portrait, the rest round. */
+function shape(type: string) {
+  if (GAME_TYPES.has(type)) return { w: 34, h: 46, r: 0 };
+  switch (type) {
+    case "Developer":
+    case "Publisher":
+    case "Platform":
+    case "Franchise":
+    case "GameEngine":
+      return { w: 0, h: 0, r: 17 };
+    case "Character":
+      return { w: 0, h: 0, r: 12 };
+    default:
+      return { w: 0, h: 0, r: 7 };
+  }
+}
+const hitRadius = (type: string) => {
+  const s = shape(type);
+  return s.r || Math.hypot(s.w, s.h) / 2;
+};
+
 export function KnowledgeGraph({
   data,
+  loading,
   onNodeClick,
   highlightNode,
   onNodeRightClick,
 }: KnowledgeGraphProps) {
   const graphRef = useRef<any>(null);
-  const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
-  const lastZoomFetchRef = useRef<number>(0);
-
-  // Long-press detection for mobile (simulates right-click)
+  const [size, setSize] = useState({ width: 800, height: 600 });
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
+  const [frozen, setFrozen] = useState(false);
+  const [find, setFind] = useState("");
+  const [, setTick] = useState(0);
+  const repaint = useCallback(() => setTick((t) => t + 1), []);
   const longPressFired = useRef(false);
 
-  // Center and zoom on highlighted node when it changes (e.g. clicked from result list)
-  const prevHighlightRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (
-      highlightNode &&
-      highlightNode !== prevHighlightRef.current &&
-      graphRef.current
-    ) {
-      const node = data.nodes.find((n) => n.id === highlightNode);
-      if (node && node.x !== undefined && node.y !== undefined) {
-        graphRef.current.centerAt(node.x, node.y, 300);
-        graphRef.current.zoom(2.5, 300);
-      }
+  // ── data filtered by the legend ──────────────────────────────────────────
+  const filtered = useMemo<GraphData>(() => {
+    if (!hiddenTypes.size) return data;
+    const ids = new Set(data.nodes.filter((n) => !hiddenTypes.has(n.type)).map((n) => n.id));
+    return {
+      nodes: data.nodes.filter((n) => ids.has(n.id)),
+      links: data.links.filter((l) => ids.has(endId(l.source)) && ids.has(endId(l.target))),
+    };
+  }, [data, hiddenTypes]);
+
+  const typeCounts = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const n of data.nodes) m.set(n.type, (m.get(n.type) ?? 0) + 1);
+    m.delete("Unknown");
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+  }, [data.nodes]);
+
+  // neighbours of the node in focus (hover wins over selection): everything else is dimmed
+  const focusId = hovered ?? highlightNode ?? null;
+  const neighbours = useMemo(() => {
+    if (!focusId) return null;
+    const s = new Set<string>([focusId]);
+    for (const l of filtered.links) {
+      const a = endId(l.source);
+      const b = endId(l.target);
+      if (a === focusId) s.add(b);
+      if (b === focusId) s.add(a);
     }
-    prevHighlightRef.current = highlightNode ?? null;
-  }, [highlightNode, data.nodes]);
+    return s;
+  }, [focusId, filtered.links]);
 
-  // Types present in the current data
-  const availableTypes = useMemo(
-    () =>
-      [...new Set(data.nodes.map((n) => n.type))].filter(
-        (t) => t !== "Unknown",
-      ),
-    [data.nodes],
-  );
-
-  // Hidden types — start with all visible
-  const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
-
-  const toggleType = useCallback((type: string) => {
-    setHiddenTypes((prev) => {
-      const next = new Set(prev);
-      if (next.has(type)) next.delete(type);
-      else next.add(type);
-      return next;
-    });
-  }, []);
-
-  // Filtered graph: exclude nodes of hidden types and links touching them
-  // Sort so that the clicked/highlighted node is painted last (on top)
-  const filteredData = useMemo<GraphData>(() => {
-    let nodes = data.nodes;
-    let links = data.links;
-
-    if (hiddenTypes.size > 0) {
-      const visibleIds = new Set(
-        nodes.filter((n) => !hiddenTypes.has(n.type)).map((n) => n.id),
-      );
-      nodes = nodes.filter((n) => visibleIds.has(n.id));
-      links = links.filter((l) => {
-        const src = typeof l.source === "string" ? l.source : l.source.id;
-        const tgt = typeof l.target === "string" ? l.target : l.target.id;
-        return visibleIds.has(src) && visibleIds.has(tgt);
+  // ── pictures: asked through the shared queue, painted as they arrive ─────
+  useEffect(() => {
+    const big = data.nodes.length > BIG_GRAPH;
+    for (const n of data.nodes.slice(0, 400)) {
+      if (!IMAGE_TYPES.has(n.type) || (big && !GAME_TYPES.has(n.type))) continue;
+      requestImage(n.type, n.label).then((url) => {
+        if (url) decode(url, repaint);
+        repaint();
       });
     }
-
-    // Sort: only clicked (highlighted) node goes on top — not hover
-    if (highlightNode) {
-      nodes = [...nodes].sort((a, b) => {
-        if (a.id === highlightNode) return 1;
-        if (b.id === highlightNode) return -1;
-        return 0;
-      });
-    }
-
-    return { nodes, links };
-  }, [data, hiddenTypes, highlightNode]);
-
-  const prevWidthRef = useRef(0);
+  }, [data.nodes, repaint]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    // the node under the pointer or selected goes to the front of the queue
+    const n = data.nodes.find((x) => x.id === focusId);
+    if (n && IMAGE_TYPES.has(n.type))
+      requestImage(n.type, n.label, true).then((url) => {
+        if (url) decode(url, repaint);
+        repaint();
+      });
+  }, [focusId, data.nodes, repaint]);
 
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (entry) {
-        const { width, height } = entry.contentRect;
-        setDimensions({ width, height });
-        // When container becomes visible (0 → non-zero width), re-fit the graph
-        if (prevWidthRef.current === 0 && width > 0 && data.nodes.length > 0) {
-          setTimeout(() => {
-            graphRef.current?.zoomToFit(300, 50);
-          }, 100);
-        }
-        prevWidthRef.current = width;
-      }
+  // ── size, forces, fit ────────────────────────────────────────────────────
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    let prev = 0;
+    const ro = new ResizeObserver(([e]) => {
+      const { width, height } = e.contentRect;
+      setSize({ width, height });
+      if (prev === 0 && width > 0 && data.nodes.length)
+        setTimeout(() => graphRef.current?.zoomToFit(300, 60), 120);
+        setTimeout(() => graphRef.current?.zoomToFit(300, 60), 600);
+      prev = width;
     });
-
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
+    ro.observe(el);
+    return () => ro.disconnect();
   }, [data.nodes.length]);
 
-  // Apply collision force to prevent node overlap
   useEffect(() => {
-    if (!graphRef.current) return;
-
     const fg = graphRef.current;
+    if (!fg) return;
+    fg.d3Force("charge")?.strength(-420);
+    const link = fg.d3Force("link");
+    link?.distance(95);
+    link?.strength(0.08);
 
-    // 1. Global repulsion
-    fg.d3Force("charge")?.strength(-800);
-
-    // 2. Link force
-    const linkForce = fg.d3Force("link");
-    if (linkForce) {
-      linkForce.distance(150);
-      linkForce.strength(0.05);
-    }
-
-    // 3. Custom collision — D3 requires a function, not an object.
-    //    The original object format { initialize, force } was silently ignored.
-    let simulationNodes: any[] = [];
-
-    const customCollisionForce = function (alpha: number) {
-      for (let i = 0; i < simulationNodes.length; i++) {
-        for (let j = i + 1; j < simulationNodes.length; j++) {
-          const a = simulationNodes[i];
-          const b = simulationNodes[j];
+    let nodes: any[] = [];
+    const collide: any = (alpha: number) => {
+      if (nodes.length > BIG_GRAPH) return;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i];
+          const b = nodes[j];
           const dx = (b.x ?? 0) - (a.x ?? 0);
           const dy = (b.y ?? 0) - (a.y ?? 0);
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-
-          const halfA = isGameType(a.type)
-            ? Math.sqrt((a.size * 2.8) ** 2 + (a.size * 4.0) ** 2) / 2
-            : a.size || 8;
-          const halfB = isGameType(b.type)
-            ? Math.sqrt((b.size * 2.8) ** 2 + (b.size * 4.0) ** 2) / 2
-            : b.size || 8;
-
-          const minDist = halfA + halfB + 20;
-          if (dist < minDist) {
-            const push = ((minDist - dist) / dist) * alpha * 0.9;
-            const fx = dx * push;
-            const fy = dy * push;
-            if (a.x !== undefined) {
-              a.x -= fx;
-              a.y -= fy;
-            }
-            if (b.x !== undefined) {
-              b.x += fx;
-              b.y += fy;
-            }
+          const dist = Math.hypot(dx, dy) || 1;
+          const min = hitRadius(a.type) + hitRadius(b.type) + 14;
+          if (dist < min) {
+            const push = ((min - dist) / dist) * alpha * 0.9;
+            a.x -= dx * push;
+            a.y -= dy * push;
+            b.x += dx * push;
+            b.y += dy * push;
           }
         }
       }
     };
-
-    // D3 uses this to inject the node array into the force
-    customCollisionForce.initialize = function (nodes: any[]) {
-      simulationNodes = nodes;
-    };
-
-    fg.d3Force("collision", customCollisionForce);
+    collide.initialize = (ns: any[]) => (nodes = ns);
+    fg.d3Force("collision", collide);
   }, []);
 
-  // When new nodes appear (expansion), place them near connected existing nodes
-  // to prevent them from spawning at (0,0) and flying off-screen.
-  const prevNodeIdsRef = useRef<Set<string>>(new Set());
+  // new nodes (expansion) start next to a neighbour instead of at the origin
+  const prevIds = useRef<Set<string>>(new Set());
   useEffect(() => {
-    const prevIds = prevNodeIdsRef.current;
-    const currIds = new Set(data.nodes.map((n) => n.id));
-    const newNodes = data.nodes.filter(
-      (n) => !prevIds.has(n.id) && n.x === undefined,
-    );
-
-    if (newNodes.length > 0 && prevIds.size > 0) {
-      // Find position of connected existing nodes from links
-      const nodeMap = new Map(data.nodes.map((n) => [n.id, n]));
-      for (const nn of newNodes) {
-        // Find a link connecting this new node to an existing one
-        const link = data.links.find((l) => {
-          const src = typeof l.source === "string" ? l.source : l.source.id;
-          const tgt = typeof l.target === "string" ? l.target : l.target.id;
-          return (
-            (src === nn.id && prevIds.has(tgt)) ||
-            (tgt === nn.id && prevIds.has(src))
-          );
-        });
-        if (link) {
-          const neighborId =
-            (typeof link.source === "string" ? link.source : link.source.id) ===
-            nn.id
-              ? typeof link.target === "string"
-                ? link.target
-                : link.target.id
-              : typeof link.source === "string"
-                ? link.source
-                : link.source.id;
-          const neighbor = nodeMap.get(neighborId);
-          if (
-            neighbor &&
-            neighbor.x !== undefined &&
-            neighbor.y !== undefined
-          ) {
-            // Place near the neighbor with a small random offset
-            const angle = Math.random() * Math.PI * 2;
-            const dist = 30 + Math.random() * 40;
-            (nn as any).x = neighbor.x + Math.cos(angle) * dist;
-            (nn as any).y = neighbor.y + Math.sin(angle) * dist;
-          }
+    const before = prevIds.current;
+    if (before.size) {
+      const byId = new Map(data.nodes.map((n) => [n.id, n]));
+      for (const n of data.nodes) {
+        if (before.has(n.id) || n.x !== undefined) continue;
+        const l = data.links.find(
+          (k) =>
+            (endId(k.source) === n.id && before.has(endId(k.target))) ||
+            (endId(k.target) === n.id && before.has(endId(k.source))),
+        );
+        const nb = l && byId.get(endId(l.source) === n.id ? endId(l.target) : endId(l.source));
+        if (nb?.x !== undefined && nb.y !== undefined) {
+          const a = Math.random() * Math.PI * 2;
+          n.x = nb.x + Math.cos(a) * 50;
+          n.y = nb.y + Math.sin(a) * 50;
         }
       }
     }
-
-    prevNodeIdsRef.current = currIds;
+    prevIds.current = new Set(data.nodes.map((n) => n.id));
   }, [data]);
 
-  // Zoom to fit whenever graph data changes (new search or expansion)
-  const prevDataRef = useRef(data);
+  const prevData = useRef(data);
   useEffect(() => {
-    if (data !== prevDataRef.current && data.nodes.length > 0) {
-      prevDataRef.current = data;
-      // Short delay for the simulation to stabilize a little
-      setTimeout(() => {
-        graphRef.current?.zoomToFit(300, 50);
-      }, 400);
+    if (data !== prevData.current && data.nodes.length) {
+      prevData.current = data;
+      const t = setTimeout(() => graphRef.current?.zoomToFit(400, 60), 450);
+      return () => clearTimeout(t);
     }
   }, [data]);
 
-  // Fetch fallback images only for clicked/zoomed VideoGame nodes
-  // forceApi=true → hit the API if not cached; false → only apply what is already cached
-  const fetchImageForNode = useCallback(
-    async (node: GraphNode, forceApi = false) => {
-      if (!isGameType(node.type) || node.imageUrl) return;
+  // centre on the node chosen elsewhere (result list, side panel)
+  const lastFocus = useRef<string | null>(null);
+  useEffect(() => {
+    if (highlightNode && highlightNode !== lastFocus.current) {
+      const n = data.nodes.find((x) => x.id === highlightNode);
+      if (n?.x !== undefined && n.y !== undefined) {
+        graphRef.current?.centerAt(n.x, n.y, 350);
+        graphRef.current?.zoom(1.6, 350);
+      }
+    }
+    lastFocus.current = highlightNode ?? null;
+  }, [highlightNode, data.nodes]);
 
-      // Always check local cache first — no API call needed
-      if (labelImageUrlCache.has(node.label)) {
-        const cached = labelImageUrlCache.get(node.label);
-        if (cached) {
-          node.imageUrl = cached;
-          loadImage(cached, () => graphRef.current?.refresh());
-        }
-        // cached empty string means "not found" — skip API
+  // freeze / resume the layout
+  useEffect(() => {
+    const fg = graphRef.current;
+    if (!fg) return;
+    if (frozen) fg.pauseAnimation?.();
+    else fg.resumeAnimation?.();
+  }, [frozen]);
+
+  const graphSize = filtered.nodes.length;
+
+  // ── painting ─────────────────────────────────────────────────────────────
+  const paintNode = useCallback(
+    (node: any, ctx: CanvasRenderingContext2D, k: number) => {
+      const n = node as GraphNode;
+      const color = typeColor(n.type);
+      const s = shape(n.type);
+      const dim = neighbours && !neighbours.has(n.id);
+      const isFocus = n.id === focusId;
+      ctx.globalAlpha = dim ? 0.18 : 1;
+
+      // far away: just a dot
+      if (k < 0.45) {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 3 / Math.max(k, 0.2) / 2, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
         return;
       }
 
-      // Cache miss — only call the API when explicitly allowed
-      if (!forceApi) return;
-      if (fetchingLabels.has(node.label)) return;
+      const url = IMAGE_TYPES.has(n.type) ? peekImage(n.type, n.label) : undefined;
+      const img = url ? decode(url, repaint) : null;
+      const x = node.x;
+      const y = node.y;
 
-      fetchingLabels.add(node.label);
-      try {
-        const result = await searchGameImage(node.label);
-        if (result.imageUrl) {
-          labelImageUrlCache.set(node.label, result.imageUrl);
-          node.imageUrl = result.imageUrl;
-          loadImage(result.imageUrl, () => graphRef.current?.refresh());
+      ctx.save();
+      ctx.beginPath();
+      if (s.r) ctx.arc(x, y, s.r, 0, 2 * Math.PI);
+      else ctx.roundRect(x - s.w / 2, y - s.h / 2, s.w, s.h, 2.5);
+      ctx.fillStyle = BG;
+      ctx.fill();
+      ctx.clip();
+      const bw = s.r ? s.r * 2 : s.w;
+      const bh = s.r ? s.r * 2 : s.h;
+      if (img) {
+        // object-fit: cover
+        const sc = Math.max(bw / img.width, bh / img.height);
+        ctx.drawImage(img, x - (img.width * sc) / 2, y - (img.height * sc) / 2, img.width * sc, img.height * sc);
+      } else {
+        ctx.fillStyle = `${color}33`;
+        ctx.fillRect(x - bw / 2, y - bh / 2, bw, bh);
+        if (s.r > 8 || s.w) {
+          ctx.fillStyle = color;
+          ctx.font = `${Math.round(bh * 0.46)}px "Newsreader", Georgia, serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(n.label.trim().charAt(0).toUpperCase(), x, y + 1);
         } else {
-          // Mark as "tried, not found" so we don't retry in this session
-          labelImageUrlCache.set(node.label, "");
+          ctx.fillStyle = color;
+          ctx.fillRect(x - bw / 2, y - bh / 2, bw, bh);
         }
-      } catch {
-        // do not cache errors — allow retry next time
-      } finally {
-        fetchingLabels.delete(node.label);
       }
+      ctx.restore();
+
+      // outline: type colour, brick when selected, ink when hovered
+      ctx.beginPath();
+      if (s.r) ctx.arc(x, y, s.r, 0, 2 * Math.PI);
+      else ctx.roundRect(x - s.w / 2, y - s.h / 2, s.w, s.h, 2.5);
+      ctx.lineWidth = (isFocus ? 2.2 : 1.2) / Math.min(k, 2);
+      ctx.strokeStyle = n.id === highlightNode ? BRICK : n.id === hovered ? INK : color;
+      ctx.stroke();
+
+      // label: when zoomed in, or for the node in focus and its neighbours
+      const showLabel =
+        isFocus || k > (graphSize > 60 ? 1.2 : 0.55) || (neighbours?.has(n.id) && k > 0.5);
+      if (showLabel) {
+        const fs = Math.max(4.5, Math.min(11 / k, 9));
+        ctx.font = `${isFocus ? 600 : 400} ${fs}px ${FONT}`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        const text = n.label.length > 22 ? `${n.label.slice(0, 21)}…` : n.label;
+        const ty = y + (s.r || s.h / 2) + 3;
+        ctx.lineWidth = 3 / k;
+        ctx.strokeStyle = BG;
+        ctx.strokeText(text, x, ty);
+        ctx.fillStyle = INK;
+        ctx.fillText(text, x, ty);
+      }
+      ctx.globalAlpha = 1;
     },
-    [],
+    [neighbours, focusId, highlightNode, hovered, repaint, graphSize],
   );
 
-  // For every VideoGame node: check cache immediately; call API only if autoFetchImage
-  useEffect(() => {
-    const gameNodes = data.nodes.filter((n) => isGameType(n.type));
-    for (const node of gameNodes) {
-      fetchImageForNode(node, node.autoFetchImage === true);
-    }
-  }, [data, fetchImageForNode]);
-
-  const handleNodeRightClick = useCallback(
-    (node: any, event: MouseEvent) => {
-      event.preventDefault();
-      if (onNodeRightClick) {
-        onNodeRightClick(node as GraphNode, event.clientX, event.clientY);
+  const paintLink = useCallback(
+    (link: any, ctx: CanvasRenderingContext2D, k: number) => {
+      const a = link.source;
+      const b = link.target;
+      if (a?.x === undefined || b?.x === undefined) return;
+      const on = neighbours && (a.id === focusId || b.id === focusId);
+      ctx.globalAlpha = neighbours && !on ? 0.06 : 1;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.lineWidth = (on ? 1.6 : 0.8) / Math.min(k, 2);
+      ctx.strokeStyle = on ? BRICK : "rgba(236,232,221,0.22)";
+      ctx.stroke();
+      if (on && k > 0.9) {
+        ctx.font = `${9 / k + 2}px "IBM Plex Mono", monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        const mx = (a.x + b.x) / 2;
+        const my = (a.y + b.y) / 2;
+        ctx.lineWidth = 3 / k;
+        ctx.strokeStyle = BG;
+        ctx.strokeText(link.label, mx, my);
+        ctx.fillStyle = "#9a958a";
+        ctx.fillText(link.label, mx, my);
       }
+      ctx.globalAlpha = 1;
     },
-    [onNodeRightClick],
+    [neighbours, focusId],
   );
 
-  const handleNodeClick = useCallback(
-    (node: any, event: MouseEvent) => {
-      // Ignore if long-press just fired (mobile)
+  // ── interaction ──────────────────────────────────────────────────────────
+  const lastClick = useRef({ id: "", t: 0 });
+  const handleClick = useCallback(
+    (node: any) => {
       if (longPressFired.current) {
         longPressFired.current = false;
         return;
       }
+      const now = Date.now();
+      const double = lastClick.current.id === node.id && now - lastClick.current.t < 350;
+      lastClick.current = { id: node.id, t: now };
       onNodeClick(node.id);
-      // Always force API on click
-      fetchImageForNode(node as GraphNode, true);
-      // Center on clicked node
-      if (graphRef.current) {
-        graphRef.current.centerAt(node.x, node.y, 300);
-        graphRef.current.zoom(2.5, 300);
+      graphRef.current?.centerAt(node.x, node.y, 300);
+      graphRef.current?.zoom(1.6, 300);
+      // double click: open the relations menu to expand the node
+      if (double && onNodeRightClick && graphRef.current) {
+        const p = graphRef.current.graph2ScreenCoords(node.x, node.y);
+        const r = containerRef.current!.getBoundingClientRect();
+        onNodeRightClick(node as GraphNode, r.left + p.x + 24, r.top + p.y);
       }
     },
-    [onNodeClick, fetchImageForNode],
+    [onNodeClick, onNodeRightClick],
   );
 
-  // Touch/pointer long-press detection for context menu on mobile.
-  // Uses pointer events in CAPTURE phase to fire before d3-drag/zoom handlers.
+  const handleRightClick = useCallback(
+    (node: any, e: MouseEvent) => {
+      e.preventDefault();
+      onNodeRightClick?.(node as GraphNode, e.clientX, e.clientY);
+    },
+    [onNodeRightClick],
+  );
+
+  // long press = context menu on touch screens (capture phase, before d3-drag)
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
+    const el = containerRef.current;
+    if (!el) return;
     let timer: ReturnType<typeof setTimeout> | null = null;
-    let startX = 0;
-    let startY = 0;
-    let active = false;
-
-    const onPointerDown = (e: PointerEvent) => {
-      // Only detect touch (not mouse — mouse has right-click)
-      if (e.pointerType !== "touch") return;
-      if (!graphRef.current) return;
-
-      startX = e.clientX;
-      startY = e.clientY;
-
-      // Check if pointer is over a node
-      const rect = container.getBoundingClientRect();
-      const screenX = e.clientX - rect.left;
-      const screenY = e.clientY - rect.top;
-      const graphCoords = graphRef.current.screen2GraphCoords(screenX, screenY);
-
-      const nodes = filteredData.nodes;
-      let closest: any = null;
-      let closestDist = Infinity;
-      for (const n of nodes) {
-        const dx = (n.x ?? 0) - graphCoords.x;
-        const dy = (n.y ?? 0) - graphCoords.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const hitRadius = isGameType(n.type)
-          ? (n.size || 8) * 4
-          : (n.size || 8) * 2;
-        if (dist < hitRadius && dist < closestDist) {
-          closest = n;
-          closestDist = dist;
+    let sx = 0;
+    let sy = 0;
+    const down = (e: PointerEvent) => {
+      if (e.pointerType !== "touch" || !graphRef.current) return;
+      sx = e.clientX;
+      sy = e.clientY;
+      const r = el.getBoundingClientRect();
+      const g = graphRef.current.screen2GraphCoords(sx - r.left, sy - r.top);
+      let best: any = null;
+      let bd = Infinity;
+      for (const n of filtered.nodes) {
+        const d = Math.hypot((n.x ?? 0) - g.x, (n.y ?? 0) - g.y);
+        if (d < hitRadius(n.type) * 1.6 && d < bd) {
+          best = n;
+          bd = d;
         }
       }
-
-      if (!closest) return;
-
-      active = true;
+      if (!best) return;
       longPressFired.current = false;
-      const targetNode = closest;
-
       timer = setTimeout(() => {
         longPressFired.current = true;
-        active = false;
-        if (onNodeRightClick) {
-          onNodeRightClick(targetNode as GraphNode, startX, startY);
-        }
+        onNodeRightClick?.(best as GraphNode, sx, sy);
       }, 500);
     };
-
-    const onPointerMove = (e: PointerEvent) => {
-      if (!active || !timer) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      if (dx * dx + dy * dy > 20 * 20) {
-        clearTimeout(timer);
-        timer = null;
-        active = false;
-      }
-    };
-
-    const onPointerUp = () => {
-      if (timer) {
+    const move = (e: PointerEvent) => {
+      if (timer && Math.hypot(e.clientX - sx, e.clientY - sy) > 20) {
         clearTimeout(timer);
         timer = null;
       }
-      active = false;
     };
-
-    // CAPTURE phase ensures we see events before d3-drag
-    container.addEventListener("pointerdown", onPointerDown, { capture: true });
-    container.addEventListener("pointermove", onPointerMove, { capture: true });
-    container.addEventListener("pointerup", onPointerUp, { capture: true });
-    container.addEventListener("pointercancel", onPointerUp, { capture: true });
-
+    const up = () => {
+      if (timer) clearTimeout(timer);
+      timer = null;
+    };
+    const o = { capture: true } as const;
+    el.addEventListener("pointerdown", down, o);
+    el.addEventListener("pointermove", move, o);
+    el.addEventListener("pointerup", up, o);
+    el.addEventListener("pointercancel", up, o);
     return () => {
-      container.removeEventListener("pointerdown", onPointerDown, {
-        capture: true,
-      });
-      container.removeEventListener("pointermove", onPointerMove, {
-        capture: true,
-      });
-      container.removeEventListener("pointerup", onPointerUp, {
-        capture: true,
-      });
-      container.removeEventListener("pointercancel", onPointerUp, {
-        capture: true,
-      });
+      el.removeEventListener("pointerdown", down, o);
+      el.removeEventListener("pointermove", move, o);
+      el.removeEventListener("pointerup", up, o);
+      el.removeEventListener("pointercancel", up, o);
       if (timer) clearTimeout(timer);
     };
-  }, [filteredData.nodes, onNodeRightClick]);
+  }, [filtered.nodes, onNodeRightClick]);
 
-  // On zoom, fetch images for visible game nodes when zoomed in enough
-  const handleZoom = useCallback(
-    ({ k }: { k: number }) => {
-      if (k <= 1.8) return;
-      const now = Date.now();
-      if (now - lastZoomFetchRef.current < 800) return;
-      lastZoomFetchRef.current = now;
+  const toggleType = (t: string) =>
+    setHiddenTypes((p) => {
+      const n = new Set(p);
+      if (n.has(t)) n.delete(t);
+      else n.add(t);
+      return n;
+    });
 
-      const pending = data.nodes.filter(
-        (n) =>
-          isGameType(n.type) &&
-          !n.imageUrl &&
-          !labelImageUrlCache.has(n.label) &&
-          !fetchingLabels.has(n.label),
-      );
-      // Force API for up to 5 nodes per zoom burst
-      for (const node of pending.slice(0, 5)) {
-        fetchImageForNode(node, true);
-      }
-    },
-    [data.nodes, fetchImageForNode],
-  );
+  const matches = useMemo(() => {
+    const q = find.trim().toLowerCase();
+    if (q.length < 2) return [];
+    return data.nodes.filter((n) => n.label.toLowerCase().includes(q)).slice(0, 6);
+  }, [find, data.nodes]);
 
-  const paintNode = useCallback(
-    (node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const label = node.label || "";
-      const size = node.size || 8;
-      const color = node.color || NODE_COLORS[node.type] || NODE_COLORS.Unknown;
-      const isHighlighted =
-        node.id === highlightNode || node.id === hoveredNode;
-      const fontSize = Math.max(10 / globalScale, 2);
-      const isGame = isGameType(node.type);
+  const releasePins = () => {
+    for (const n of data.nodes as any[]) {
+      n.fx = undefined;
+      n.fy = undefined;
+    }
+    graphRef.current?.d3ReheatSimulation?.();
+  };
 
-      if (isGame) {
-        const w = size * 2.8;
-        const h = size * 4.0;
-        const r = size * 0.5;
-        const rx = node.x - w / 2;
-        const ry = node.y - h / 2;
-
-        // Glow
-        if (isHighlighted) {
-          ctx.beginPath();
-          ctx.roundRect(rx - 4, ry - 4, w + 8, h + 8, r + 2);
-          ctx.fillStyle = `${color}40`;
-          ctx.fill();
-        }
-
-        // Try to draw image
-        let imageDrawn = false;
-        if (node.imageUrl) {
-          const img = loadImage(node.imageUrl);
-          if (img && img.complete && img.naturalWidth > 0) {
-            ctx.save();
-            ctx.beginPath();
-            ctx.roundRect(rx, ry, w, h, r);
-            ctx.clip();
-            ctx.drawImage(img, rx, ry, w, h);
-            ctx.restore();
-            ctx.beginPath();
-            ctx.roundRect(rx, ry, w, h, r);
-            ctx.strokeStyle = isHighlighted ? "#ffffff" : color;
-            ctx.lineWidth = isHighlighted ? 2.5 : 1.5;
-            ctx.stroke();
-            imageDrawn = true;
-          }
-        }
-
-        if (!imageDrawn) {
-          // Solid rect with random emoji + label
-          ctx.beginPath();
-          ctx.roundRect(rx, ry, w, h, r);
-          ctx.fillStyle = isHighlighted ? color : `${color}cc`;
-          ctx.fill();
-          ctx.strokeStyle = isHighlighted ? "#ffffff" : color;
-          ctx.lineWidth = isHighlighted ? 2 : 0.5;
-          ctx.stroke();
-
-          // Pick a stable random emoji based on node id
-          const GAME_EMOJIS = [
-            "🎮",
-            "🕹️",
-            "👾",
-            "🎯",
-            "🏆",
-            "⚔️",
-            "🧙",
-            "🚀",
-            "🐉",
-            "💎",
-            "🛡️",
-            "🔥",
-            "🌟",
-            "🎲",
-            "🗡️",
-            "🏰",
-          ];
-          const emojiIdx =
-            Math.abs(
-              node.id
-                .split("")
-                .reduce((a: number, c: string) => a + c.charCodeAt(0), 0),
-            ) % GAME_EMOJIS.length;
-          const emoji = GAME_EMOJIS[emojiIdx];
-          const emojiFontSize = Math.min(w, h) * 0.45;
-          ctx.font = `${emojiFontSize}px serif`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(emoji, node.x, node.y - h * 0.08);
-
-          // Label below emoji
-          ctx.font = `${isHighlighted ? "bold " : ""}${fontSize}px Inter, sans-serif`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillStyle = isHighlighted ? "#ffffff" : "#e5e7eb";
-          const maxLen = 18;
-          const displayLabel =
-            label.length > maxLen ? label.slice(0, maxLen) + "…" : label;
-          ctx.fillText(displayLabel, node.x, node.y + h * 0.3);
-          return;
-        }
-
-        // Label below image rect
-        if (globalScale > 0.7 || isHighlighted) {
-          ctx.font = `${isHighlighted ? "bold " : ""}${fontSize}px Inter, sans-serif`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "top";
-          ctx.fillStyle = isHighlighted ? "#ffffff" : "#e5e7eb";
-          const maxLen = 20;
-          const displayLabel =
-            label.length > maxLen ? label.slice(0, maxLen) + "…" : label;
-          ctx.fillText(displayLabel, node.x, ry + h + 2);
-        }
-        return;
-      }
-
-      // ── Circular nodes for all other types ───────────────────────────────
-
-      // Draw glow for highlighted nodes
-      if (isHighlighted) {
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, size + 4, 0, 2 * Math.PI);
-        ctx.fillStyle = `${color}40`;
-        ctx.fill();
-      }
-
-      // Draw node circle
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, size, 0, 2 * Math.PI);
-      ctx.fillStyle = isHighlighted ? color : `${color}cc`;
-      ctx.fill();
-      ctx.strokeStyle = isHighlighted ? "#ffffff" : `${color}`;
-      ctx.lineWidth = isHighlighted ? 2 : 0.5;
-      ctx.stroke();
-
-      // Draw label
-      if (globalScale > 0.7 || isHighlighted) {
-        ctx.font = `${isHighlighted ? "bold " : ""}${fontSize}px Inter, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "top";
-        ctx.fillStyle = isHighlighted ? "#ffffff" : "#e5e7eb";
-        const maxLen = 20;
-        const displayLabel =
-          label.length > maxLen ? label.slice(0, maxLen) + "…" : label;
-        ctx.fillText(displayLabel, node.x, node.y + size + 2);
-      }
-    },
-    [highlightNode, hoveredNode],
-  );
-
-  const paintLink = useCallback(
-    (link: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const start = link.source;
-      const end = link.target;
-      if (
-        !start ||
-        !end ||
-        typeof start === "string" ||
-        typeof end === "string"
-      )
-        return;
-
-      // Draw link line
-      ctx.beginPath();
-      ctx.moveTo(start.x, start.y);
-      ctx.lineTo(end.x, end.y);
-      ctx.strokeStyle = "#374151";
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-
-      // Draw link label on hover
-      if (
-        globalScale > 1.5 &&
-        (start.id === hoveredNode || end.id === hoveredNode)
-      ) {
-        const midX = (start.x + end.x) / 2;
-        const midY = (start.y + end.y) / 2;
-        const fontSize = Math.max(8 / globalScale, 2);
-        ctx.font = `${fontSize}px Inter, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "#9ca3af";
-        ctx.fillText(link.label || "", midX, midY);
-      }
-    },
-    [hoveredNode],
-  );
-
-  if (!data.nodes.length) {
-    return (
-      <div
-        ref={containerRef}
-        className="h-full w-full relative overflow-hidden flex items-center justify-center text-gray-600"
-      >
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
-            <svg
-              className="w-8 h-8 text-gray-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-              />
-            </svg>
-          </div>
-          <p className="text-sm">
-            Il grafo di conoscenza apparirà qui dopo una ricerca
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const empty = filtered.nodes.length === 0;
 
   return (
-    <div ref={containerRef} className="h-full w-full relative overflow-hidden">
-      {/* Legend + type filter */}
-      <div className="absolute top-3 left-3 z-10 bg-gray-900/90 backdrop-blur-sm border border-gray-700 rounded-lg p-3">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-          {Object.entries(NODE_COLORS)
-            .filter(([k]) => k !== "Unknown" && availableTypes.includes(k))
-            .map(([type, color]) => {
-              const hidden = hiddenTypes.has(type);
-              return (
-                <button
-                  key={type}
-                  onClick={() => toggleType(type)}
-                  className={`flex items-center gap-1.5 text-left transition-opacity ${
-                    hidden ? "opacity-35" : "opacity-100"
-                  }`}
-                  title={hidden ? `Mostra ${type}` : `Nascondi ${type}`}
-                >
-                  {isGameType(type) ? (
-                    <div
-                      className="w-2 h-3.5 rounded-sm flex-shrink-0"
-                      style={{ backgroundColor: hidden ? "#4b5563" : color }}
-                    />
-                  ) : (
-                    <div
-                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: hidden ? "#4b5563" : color }}
-                    />
-                  )}
-                  <span
-                    className={`text-[10px] ${hidden ? "text-gray-600" : "text-gray-400"}`}
-                  >
-                    {type}
-                  </span>
-                </button>
-              );
-            })}
+    <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-paper">
+      {empty && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center">
+          {loading ? (
+            <div className="flex gap-3" aria-label="Carico il grafo">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className="h-3 w-3 animate-shimmer rounded-full bg-mute"
+                  style={{ animationDelay: `${i * 0.25}s` }}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="font-serif text-2xl text-mute">Il grafo apparirà qui</p>
+          )}
         </div>
-      </div>
+      )}
 
       <ForceGraph2D
         ref={graphRef}
-        graphData={filteredData}
-        width={dimensions.width}
-        height={dimensions.height}
-        backgroundColor="#030712"
+        graphData={filtered}
+        width={size.width}
+        height={size.height}
+        backgroundColor={BG}
         nodeCanvasObject={paintNode}
+        nodeCanvasObjectMode={() => "replace"}
         linkCanvasObject={paintLink}
-        onNodeClick={handleNodeClick}
-        onNodeRightClick={handleNodeRightClick}
-        onNodeHover={(node: any) => setHoveredNode(node?.id || null)}
-        onZoom={handleZoom}
-        nodePointerAreaPaint={(
-          node: any,
-          color: string,
-          ctx: CanvasRenderingContext2D,
-        ) => {
-          const size = node.size || 8;
-          if (isGameType(node.type)) {
-            const w = size * 2.8 + 8;
-            const h = size * 4.0 + 8;
-            ctx.beginPath();
-            ctx.roundRect(node.x - w / 2, node.y - h / 2, w, h, size * 0.5);
-            ctx.fillStyle = color;
-            ctx.fill();
-          } else {
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, size + 4, 0, 2 * Math.PI);
-            ctx.fillStyle = color;
-            ctx.fill();
-          }
+        linkCanvasObjectMode={() => "replace"}
+        onNodeClick={handleClick}
+        onNodeRightClick={handleRightClick}
+        onNodeHover={(node: any) => setHovered(node?.id ?? null)}
+        onNodeDragEnd={(node: any) => {
+          node.fx = node.x;
+          node.fy = node.y;
         }}
-        linkDirectionalArrowLength={4}
-        linkDirectionalArrowRelPos={0.85}
-        nodeVal={(node: any) =>
-          // Highlighted node gets a much higher val so ForceGraph renders it last (on top)
-          node.id === highlightNode || node.id === hoveredNode
-            ? (node.size || 8) * 100
-            : node.size || 8
-        }
+        nodePointerAreaPaint={(node: any, color: string, ctx: CanvasRenderingContext2D) => {
+          const r = hitRadius(node.type) + 3;
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, r, 0, 2 * Math.PI);
+          ctx.fillStyle = color;
+          ctx.fill();
+        }}
+        linkDirectionalArrowLength={3}
+        linkDirectionalArrowRelPos={0.9}
         d3VelocityDecay={0.4}
         d3AlphaDecay={0.03}
-        warmupTicks={80}
-        cooldownTicks={150}
+        warmupTicks={60}
+        cooldownTicks={140}
       />
 
-      {/* Bottom-right controls */}
-      <div className="absolute bottom-3 right-3 flex items-center gap-2">
+      {/* legend with counts: click to hide a type */}
+      {typeCounts.length > 0 && (
+        <ul className="absolute bottom-3 left-3 max-h-[60%] space-y-0.5 overflow-y-auto bg-paper/85 py-1 pr-3">
+          {typeCounts.map(([t, c]) => (
+            <li key={t}>
+              <button
+                onClick={() => toggleType(t)}
+                className={`flex w-full items-center gap-2 py-0.5 text-left text-[12px] transition-opacity ${hiddenTypes.has(t) ? "opacity-40" : ""}`}
+                aria-pressed={!hiddenTypes.has(t)}
+              >
+                <span className="h-2 w-2 rounded-full" style={{ background: typeColor(t) }} />
+                <span>{typeLabel(t)}</span>
+                <span className="ml-auto pl-3 font-mono text-[11px] text-mute">{c}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* find a node */}
+      {data.nodes.length > 0 && (
+        <div className="absolute right-3 top-3 w-56">
+          <div className="flex items-center gap-2 border-b border-rule bg-paper/85 px-1 py-1.5">
+            <Search className="h-3.5 w-3.5 text-mute" />
+            <input
+              value={find}
+              onChange={(e) => setFind(e.target.value)}
+              placeholder="Trova nel grafo"
+              className="w-full bg-transparent text-sm placeholder:text-mute focus:outline-none"
+              aria-label="Trova un nodo nel grafo"
+            />
+          </div>
+          {matches.length > 0 && (
+            <ul className="border border-t-0 border-rule bg-panel">
+              {matches.map((m) => (
+                <li key={m.id}>
+                  <button
+                    className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-sm hover:bg-raised"
+                    onClick={() => {
+                      onNodeClick(m.id);
+                      setFind("");
+                    }}
+                  >
+                    <span className="h-2 w-2 rounded-full" style={{ background: typeColor(m.type) }} />
+                    <span className="truncate">{m.label}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      <div className="absolute bottom-3 right-3 flex items-center gap-1">
+        <span className="mr-2 font-mono text-[11px] text-mute">
+          {filtered.nodes.length} nodi · {filtered.links.length} relazioni
+        </span>
         <button
           onClick={() => graphRef.current?.zoomToFit(400, 60)}
-          title="Recentra grafo"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-900/90 backdrop-blur-sm border border-gray-700 rounded-lg text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+          className="btn !px-2 !py-1.5"
+          title="Adatta alla vista"
+          aria-label="Adatta alla vista"
         >
-          <Crosshair className="w-3.5 h-3.5" />
-          <span className="text-xs">Recentra</span>
+          <Crosshair className="h-3.5 w-3.5" />
         </button>
-        <div className="bg-gray-900/90 backdrop-blur-sm border border-gray-700 rounded-lg px-3 py-1.5">
-          <span className="text-xs text-gray-400">
-            {filteredData.nodes.length} nodi · {filteredData.links.length}{" "}
-            relazioni
-          </span>
-        </div>
+        <button
+          onClick={() => {
+            if (frozen) releasePins();
+            setFrozen((f) => !f);
+          }}
+          className="btn !px-2 !py-1.5"
+          title={frozen ? "Riavvia il layout" : "Blocca il layout"}
+          aria-label={frozen ? "Riavvia il layout" : "Blocca il layout"}
+        >
+          {frozen ? <Unlock className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}
+        </button>
       </div>
     </div>
   );

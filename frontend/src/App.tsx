@@ -27,6 +27,7 @@ export default function App() {
   const { data, loading, error, progress, search, searchBuilder, cancel } =
     useQuery();
   const [mode, setMode] = useState<Mode>("nl");
+  const [seed, setSeed] = useState("");
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [highlightNode, setHighlightNode] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<"results" | "graph">("results");
@@ -192,6 +193,7 @@ export default function App() {
                 onCancel={cancel}
                 loading={loading}
                 progress={progress}
+                seed={seed}
               />
             ) : (
               <QueryBuilder
@@ -279,6 +281,7 @@ export default function App() {
                       <button
                         onClick={() => {
                           setMode("nl");
+                          setSeed(q);
                           handleSearch(q);
                         }}
                         className="w-full py-2.5 text-left text-sm hover:text-brick"

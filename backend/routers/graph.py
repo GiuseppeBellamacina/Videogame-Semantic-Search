@@ -9,8 +9,8 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-from backend.services.graph_builder import build_graph_from_node, find_cross_links
 from backend.services import image_store
+from backend.services.graph_builder import build_graph_from_node, find_cross_links
 from backend.services.ontology_service import OntologyService
 
 logger = logging.getLogger(__name__)
@@ -95,7 +95,9 @@ async def images(body: ImagesRequest):
     """Batch lookup, resolved concurrently. Keys are "<type>|<name>"."""
     found = await image_store.resolve_many([(i.name, i.type) for i in body.items])
     return {
-        "images": {f"{i.type}|{i.name}": r["imageUrl"] for i, r in zip(body.items, found)}
+        "images": {
+            f"{i.type}|{i.name}": r["imageUrl"] for i, r in zip(body.items, found)
+        }
     }
 
 

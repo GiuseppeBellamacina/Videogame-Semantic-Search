@@ -154,7 +154,9 @@ async def query_stream(request: QueryRequest):
         loop = asyncio.get_running_loop()
         queue: asyncio.Queue = asyncio.Queue()
         emit = lambda e: loop.call_soon_threadsafe(queue.put_nowait, e)  # noqa: E731
-        task = asyncio.create_task(asyncio.to_thread(_run_agent, request.question, emit))
+        task = asyncio.create_task(
+            asyncio.to_thread(_run_agent, request.question, emit)
+        )
         task.add_done_callback(lambda _: queue.put_nowait(None))
 
         while (event := await queue.get()) is not None:

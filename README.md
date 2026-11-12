@@ -33,7 +33,7 @@ Il fetch interroga Wikidata per anno × mese (per evitare i timeout) con checkpo
 │  └─────────────────────┘  └───────────────────────────────────┘ │
 │  ┌─────────────────────┐  ┌───────────────────────────────────┐ │
 │  │  SQLite (locale)    │  │     Wikipedia Image API           │ │
-│  │  (cache persistente)│  │     (fallback cover art)          │ │
+│  │  (cache persistente)│  │  (copertine, salvate in locale)   │ │
 │  └─────────────────────┘  └───────────────────────────────────┘ │
 └──────────────────────────────┬──────────────────────────────────┘
                                │
@@ -141,7 +141,8 @@ Scrivi domande come:
 
 ### Cache a due livelli
 
-- **SQLite locale** (`backend/cache.db`, persistente) per immagini e risultati query
+- **SQLite locale** (`backend/cache.db`, persistente) per URL delle immagini, esiti "non trovato" e risultati delle query
+- **Immagini**: per giochi, publisher, piattaforme, serie e motori il backend cerca la miniatura su Wikipedia in modo asincrono (un solo client HTTP, concorrenza limitata), la scarica in `backend/cache/images/` e ricorda anche gli URL. Ordine: file locale → URL salvato → ricerca. Per ripulire: `uv run python -m backend.tools.clear_images` (tutto) oppure `--misses` (solo i "non trovato", per ritentare)
 - **In-memory** (Python dict) per label e tipi derivati dal grafo RDF
 - Risultati null non vengono cachati (permettono retry su Wikipedia)
 

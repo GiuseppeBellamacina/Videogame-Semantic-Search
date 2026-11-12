@@ -9,6 +9,8 @@ interface SearchBarProps {
   onCancel: () => void;
   loading: boolean;
   progress: SearchProgress | null;
+  /** Text to put in the box (e.g. an example picked elsewhere). */
+  seed?: string;
 }
 
 const STEPS = ["generating", "validating", "executing", "building_graph"] as const;
@@ -43,8 +45,11 @@ function useElapsed(active: boolean) {
   return s;
 }
 
-export function SearchBar({ onSearch, onCancel, loading, progress }: SearchBarProps) {
+export function SearchBar({ onSearch, onCancel, loading, progress, seed }: SearchBarProps) {
   const [query, setQuery] = useState("");
+  useEffect(() => {
+    if (seed) setQuery(seed);
+  }, [seed]);
   const elapsed = useElapsed(loading);
 
   const submit = (q: string = query) => {

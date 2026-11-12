@@ -15,15 +15,23 @@ from backend.services.image_store import KEY_PREFIX
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument("--misses", action="store_true", help="remove only the entries without an image, to retry them")
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawTextHelpFormatter
+    )
+    ap.add_argument(
+        "--misses",
+        action="store_true",
+        help="remove only the entries without an image, to retry them",
+    )
     args = ap.parse_args()
 
     rows = cache.items(KEY_PREFIX)
     if args.misses:
         keys = [k for k, v in rows if _is_miss(v)]
         cache.delete(keys)
-        print(f"Removed {len(keys)} 'not found' entries (kept {len(rows) - len(keys)}).")
+        print(
+            f"Removed {len(keys)} 'not found' entries (kept {len(rows) - len(keys)})."
+        )
         return
 
     cache.delete([k for k, _ in rows])

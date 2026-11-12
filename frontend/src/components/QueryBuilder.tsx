@@ -46,6 +46,24 @@ const FIELD_VERB: Record<string, string> = {
   isA: "categoria",
 };
 
+const FIELD_NAME: Record<string, string> = {
+  developedBy: "Sviluppatore",
+  publishedBy: "Publisher",
+  hasGenre: "Genere",
+  availableOn: "Piattaforma",
+  belongsTo: "Serie",
+  hasCharacter: "Personaggio",
+  wonAward: "Premio",
+  madeWith: "Motore di gioco",
+  hasGameMode: "Modalità di gioco",
+  metacriticScore: "Punteggio Metacritic",
+  releaseYear: "Anno di uscita",
+  gameName: "Titolo",
+  countryOfOrigin: "Paese",
+  isA: "Categoria",
+};
+const nameOf = (f: BuilderField) => FIELD_NAME[f.field] ?? f.label;
+
 const sel =
   "bg-transparent text-sm text-ink focus:outline-none cursor-pointer [&>option]:bg-panel";
 
@@ -193,7 +211,7 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
                     types={[f.target!]}
                     onChange={(v) => patch(c.id, { display: v, value: v })}
                     onPick={(s) => patch(c.id, { value: s.uri, display: s.label })}
-                    placeholder={f.label.toLowerCase()}
+                    placeholder={nameOf(f).toLowerCase()}
                     className="w-full bg-transparent text-sm placeholder:text-mute focus:outline-none"
                   />
                 </div>
@@ -246,7 +264,7 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
                     onClick={() => add(f)}
                     className="w-full px-3 py-1.5 text-left text-sm hover:bg-raised"
                   >
-                    {f.label}
+                    {nameOf(f)}
                   </button>
                 </li>
               ))}

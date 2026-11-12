@@ -11,22 +11,7 @@ import {
 } from "lucide-react";
 import { getNodeDetails } from "@/lib/api";
 import type { GraphNode, GraphData, NodeDetails } from "@/types";
-
-const NODE_COLORS: Record<string, string> = {
-  VideoGame: "#6366f1",
-  AwardWinningGame: "#6366f1",
-  FranchiseGame: "#6366f1",
-  Developer: "#f59e0b",
-  Publisher: "#10b981",
-  Genre: "#ef4444",
-  Platform: "#3b82f6",
-  Character: "#ec4899",
-  Franchise: "#8b5cf6",
-  Award: "#f97316",
-  GameEngine: "#14b8a6",
-  GameMode: "#06b6d4",
-  Unknown: "#6b7280",
-};
+import { typeColor, typeLabel, typeSize } from "@/lib/theme";
 
 interface NodeContextMenuProps {
   node: GraphNode;
@@ -44,8 +29,8 @@ function makeNode(uri: string, label: string, type: string): GraphNode {
     id: uri,
     label,
     type,
-    color: NODE_COLORS[type] ?? NODE_COLORS.Unknown,
-    size: 8,
+    color: typeColor(type),
+    size: typeSize(type),
   };
 }
 
@@ -233,39 +218,39 @@ export function NodeContextMenu({
     <div
       ref={menuRef}
       style={style}
-      className="w-80 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden animate-fade-in"
+      className="w-80 bg-panel border border-rule rounded-sm shadow-[0_16px_40px_-8px_rgba(0,0,0,0.7)] overflow-hidden animate-fade-in"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-gray-900/95">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-rule bg-panel">
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-white truncate">
+          <p className="text-sm font-semibold text-ink truncate">
             {node.label}
           </p>
-          <p className="text-xs text-gray-500">{node.type}</p>
+          <p className="text-xs text-mute">{typeLabel(node.type)}</p>
         </div>
         <button
           onClick={onClose}
-          className="p-1 hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0 ml-2"
+          className="p-1 hover:bg-raised rounded-sm transition-colors flex-shrink-0 ml-2"
         >
-          <X className="w-4 h-4 text-gray-400" />
+          <X className="w-4 h-4 text-mute" />
         </button>
       </div>
 
       {/* Open in sidebar + Remove */}
-      <div className="px-4 py-2 border-b border-gray-800 flex items-center justify-between">
+      <div className="px-4 py-2 border-b border-rule flex items-center justify-between">
         <button
           onClick={() => {
             onNavigate(node.id);
             onClose();
           }}
-          className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+          className="text-xs text-petrol hover:text-brick transition-colors"
         >
           Apri nella sidebar →
         </button>
         <button
           onClick={() => onRemoveNode(node.id)}
           title="Rimuovi dal grafo"
-          className="flex items-center gap-1 text-xs text-red-500 hover:text-red-400 transition-colors"
+          className="flex items-center gap-1 text-xs text-brick hover:text-ink transition-colors"
         >
           <Trash2 className="w-3.5 h-3.5" />
           Rimuovi
@@ -275,16 +260,16 @@ export function NodeContextMenu({
       {/* Content — grouped by predicate */}
       <div className="max-h-64 overflow-y-auto">
         {loading && (
-          <div className="flex items-center justify-center py-8 text-gray-500">
+          <div className="flex items-center justify-center py-8 text-mute">
             <Loader2 className="w-5 h-5 animate-spin mr-2" />
             <span className="text-sm">Caricamento relazioni...</span>
           </div>
         )}
 
-        {error && <div className="px-4 py-3 text-sm text-red-400">{error}</div>}
+        {error && <div className="px-4 py-3 text-sm text-brick">{error}</div>}
 
         {details && groups.length > 0 && (
-          <div className="divide-y divide-gray-800/60">
+          <div className="divide-y divide-rule">
             {groups.map((group) => {
               const key = `${group.direction}:${group.predicate}`;
               const isExpanded = expandedGroups.has(key);
@@ -298,23 +283,23 @@ export function NodeContextMenu({
                   <div className="flex items-center">
                     <button
                       onClick={() => toggleGroup(key)}
-                      className="flex-1 flex items-center gap-2 px-4 py-2.5 hover:bg-gray-800/50 transition-colors text-left"
+                      className="flex-1 flex items-center gap-2 px-4 py-2.5 hover:bg-raised transition-colors text-left"
                     >
                       {group.direction === "out" ? (
-                        <ArrowRight className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
+                        <ArrowRight className="w-3.5 h-3.5 text-petrol flex-shrink-0" />
                       ) : (
-                        <ArrowLeft className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                        <ArrowLeft className="w-3.5 h-3.5 text-petrol flex-shrink-0" />
                       )}
-                      <span className="text-xs text-gray-300 flex-1">
+                      <span className="text-xs text-ink flex-1">
                         {group.predicate}
                       </span>
-                      <span className="text-[10px] text-gray-500 mr-1">
+                      <span className="text-[10px] text-mute mr-1">
                         {group.items.length}
                       </span>
                       {isExpanded ? (
-                        <ChevronDown className="w-3 h-3 text-gray-500" />
+                        <ChevronDown className="w-3 h-3 text-mute" />
                       ) : (
-                        <ChevronRight className="w-3 h-3 text-gray-500" />
+                        <ChevronRight className="w-3 h-3 text-mute" />
                       )}
                     </button>
                     {/* Expand all in this group */}
@@ -322,7 +307,7 @@ export function NodeContextMenu({
                       <button
                         onClick={() => expandGroup(group)}
                         title={`Espandi tutti (${group.items.length})`}
-                        className="px-2 py-2.5 text-[10px] font-mono text-indigo-500 hover:text-indigo-300 hover:bg-gray-800/50 transition-colors"
+                        className="px-2 py-2.5 text-[10px] font-mono text-petrol hover:text-brick hover:bg-raised transition-colors"
                       >
                         +{newInGroup}
                       </button>
@@ -331,7 +316,7 @@ export function NodeContextMenu({
 
                   {/* Expanded items */}
                   {isExpanded && (
-                    <div className="bg-gray-800/20">
+                    <div className="bg-raised/40">
                       {group.items.map((item, i) => (
                         <button
                           key={i}
@@ -344,13 +329,13 @@ export function NodeContextMenu({
                               group.direction,
                             )
                           }
-                          className="w-full px-6 py-1.5 flex items-center gap-2 hover:bg-gray-800 transition-colors text-left"
+                          className="w-full px-6 py-1.5 flex items-center gap-2 hover:bg-raised transition-colors text-left"
                         >
-                          <span className="text-xs text-gray-300 truncate flex-1">
+                          <span className="text-xs text-ink truncate flex-1">
                             {item.label}
                           </span>
                           {!graphNodeIds.has(item.uri) && (
-                            <span className="text-[10px] text-indigo-500 font-mono flex-shrink-0">
+                            <span className="text-[10px] text-petrol font-mono flex-shrink-0">
                               +1
                             </span>
                           )}
@@ -365,7 +350,7 @@ export function NodeContextMenu({
         )}
 
         {details && groups.length === 0 && !loading && (
-          <p className="px-4 py-6 text-sm text-gray-600 text-center">
+          <p className="px-4 py-6 text-sm text-mute text-center">
             Nessuna relazione trovata
           </p>
         )}
@@ -373,10 +358,10 @@ export function NodeContextMenu({
 
       {/* Footer — expand all */}
       {details && newAllCount > 0 && (
-        <div className="border-t border-gray-800 p-3">
+        <div className="border-t border-rule p-3">
           <button
             onClick={expandAll}
-            className="w-full flex items-center gap-2 px-3 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 text-xs rounded-lg transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 bg-brick/15 hover:bg-brick/25 text-brick text-xs rounded-sm transition-colors"
           >
             <GitFork className="w-3.5 h-3.5 flex-shrink-0" />
             <span>Espandi tutti nel grafo</span>
