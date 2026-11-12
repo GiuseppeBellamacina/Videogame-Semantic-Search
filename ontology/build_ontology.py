@@ -23,7 +23,9 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
+import threading
 import time
+from contextlib import contextmanager
 from pathlib import Path
 
 from rdflib import OWL, RDF, Graph
@@ -56,6 +58,23 @@ def _bind(g: Graph) -> Graph:
     g.bind("vg", VG)
     g.bind("owl", OWL)
     return g
+
+
+@contextmanager
+def _heartbeat(label: str, g: Graph, every: int = 15):
+    """owlrl has no progress hook: print elapsed time and graph size while it runs."""
+    stop = threading.Event()
+    t0 = time.time()
+
+    def run() -> None:
+        while not stop.wait(every):
+            tqdm.write(f"  [{label}] {time.time() - t0:.0f}s elapsed, {len(g)} triples")
+
+    threading.Thread(target=run, daemon=True).start()
+    try:
+        yield
+    finally:
+        stop.set()
 
 
 def _timed(label: str):
@@ -100,8 +119,9 @@ def stage_reason(g: Graph, max_group: int, keep_dl: bool, out: Path) -> Graph:
         import owlrl
 
         t0, n0 = time.time(), len(g)
-        tqdm.write(f"  OWL-RL closure on {n0} triples (several minutes, no sub-progress)")
-        owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
+        tqdm.write(f"  OWL-RL closure on {n0} triples (no percentage available, see the heartbeat lines)")
+        with _heartbeat("OWL-RL", g):
+            owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
         tqdm.write(f"  OWL-RL: +{len(g) - n0} triples in {time.time() - t0:.0f}s")
         bar.update()
 
