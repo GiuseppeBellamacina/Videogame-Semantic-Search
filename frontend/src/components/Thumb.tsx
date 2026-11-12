@@ -15,12 +15,13 @@ interface ThumbProps {
 export function Thumb({ type, name, size = 40, urgent, className = "" }: ThumbProps) {
   const url = useImage(type, name, urgent);
   const [loaded, setLoaded] = useState(false);
+  const [logo, setLogo] = useState(false); // wide or tall picture of a non-game entity: show it whole
   const portrait = GAME_TYPES.has(type);
   const color = typeColor(type);
   const style = {
     height: size,
     width: portrait ? Math.round(size * 0.75) : size,
-    backgroundColor: `${color}26`,
+    backgroundColor: logo && loaded ? "#ece8dd" : `${color}26`,
     color,
   };
   return (
@@ -39,8 +40,14 @@ export function Thumb({ type, name, size = 40, urgent, className = "" }: ThumbPr
           src={url}
           alt=""
           loading="lazy"
-          onLoad={() => setLoaded(true)}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+          onLoad={(e) => {
+            const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
+            if (!portrait && w && h && (w / h > 1.3 || w / h < 0.77)) setLogo(true);
+            setLoaded(true);
+          }}
+          className={`absolute inset-0 h-full w-full transition-opacity duration-300 ${
+            logo ? "object-contain p-[14%]" : "object-cover"
+          } ${loaded ? "opacity-100" : "opacity-0"}`}
         />
       )}
     </div>

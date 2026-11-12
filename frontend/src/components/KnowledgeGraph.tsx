@@ -11,6 +11,9 @@ interface KnowledgeGraphProps {
   onNodeClick: (nodeId: string) => void;
   highlightNode?: string | null;
   onNodeRightClick?: (node: GraphNode, x: number, y: number) => void;
+  /** Nodes hidden one by one from the context menu, and how to bring them back. */
+  hiddenCount?: number;
+  onRestoreHidden?: () => void;
 }
 
 const BG = "#14130f";
@@ -63,6 +66,8 @@ export function KnowledgeGraph({
   onNodeClick,
   highlightNode,
   onNodeRightClick,
+  hiddenCount = 0,
+  onRestoreHidden,
 }: KnowledgeGraphProps) {
   const graphRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -269,9 +274,18 @@ export function KnowledgeGraph({
       const bw = s.r ? s.r * 2 : s.w;
       const bh = s.r ? s.r * 2 : s.h;
       if (img) {
-        // object-fit: cover
-        const sc = Math.max(bw / img.width, bh / img.height);
-        ctx.drawImage(img, x - (img.width * sc) / 2, y - (img.height * sc) / 2, img.width * sc, img.height * sc);
+        const ratio = img.width / img.height;
+        const whole = !GAME_TYPES.has(n.type) && (ratio > 1.3 || ratio < 0.77); // logos: show them entirely
+        if (whole) {
+          ctx.fillStyle = "#ece8dd";
+          ctx.fillRect(x - bw / 2, y - bh / 2, bw, bh);
+          const sc = Math.min((bw * 0.72) / img.width, (bh * 0.72) / img.height);
+          ctx.drawImage(img, x - (img.width * sc) / 2, y - (img.height * sc) / 2, img.width * sc, img.height * sc);
+        } else {
+          // object-fit: cover
+          const sc = Math.max(bw / img.width, bh / img.height);
+          ctx.drawImage(img, x - (img.width * sc) / 2, y - (img.height * sc) / 2, img.width * sc, img.height * sc);
+        }
       } else {
         ctx.fillStyle = `${color}33`;
         ctx.fillRect(x - bw / 2, y - bh / 2, bw, bh);
@@ -455,6 +469,7 @@ export function KnowledgeGraph({
   };
 
   const empty = filtered.nodes.length === 0;
+  const hiddenByType = hiddenTypes.size > 0;
 
   return (
     <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-paper">
@@ -470,6 +485,8 @@ export function KnowledgeGraph({
                 />
               ))}
             </div>
+          ) : hiddenCount > 0 || hiddenByType ? (
+            <p className="font-serif text-2xl text-mute">Tutti i nodi sono nascosti</p>
           ) : (
             <p className="font-serif text-2xl text-mute">Il grafo apparirà qui</p>
           )}
@@ -525,6 +542,26 @@ export function KnowledgeGraph({
             </li>
           ))}
         </ul>
+      )}
+
+      {/* bring back what was hidden */}
+      {(hiddenCount > 0 || hiddenByType) && (
+        <div className="absolute bottom-14 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 rounded-sm border border-rule bg-panel px-3.5 py-2 text-sm shadow-[0_12px_32px_-8px_rgba(0,0,0,0.6)] animate-fade-in">
+          <span className="text-mute">
+            {hiddenCount > 0 && `${hiddenCount} ${hiddenCount === 1 ? "nodo nascosto" : "nodi nascosti"}`}
+            {hiddenCount > 0 && hiddenByType && " · "}
+            {hiddenByType && `${hiddenTypes.size} ${hiddenTypes.size === 1 ? "tipo nascosto" : "tipi nascosti"}`}
+          </span>
+          <button
+            onClick={() => {
+              setHiddenTypes(new Set());
+              onRestoreHidden?.();
+            }}
+            className="font-medium text-brick hover:underline"
+          >
+            Mostra tutto
+          </button>
+        </div>
       )}
 
       {/* find a node */}

@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { List, Network } from "lucide-react";
+import { List, Network, Sparkles, SlidersHorizontal } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
 import { QueryBuilder } from "@/components/QueryBuilder";
 import { ResultList } from "@/components/ResultList";
@@ -156,17 +156,10 @@ export default function App() {
     [mergedGraph],
   );
 
-  const tabBtn = (m: Mode, label: string) => (
-    <button
-      key={m}
-      onClick={() => setMode(m)}
-      className={`border-b py-1 text-sm transition-colors ${
-        mode === m ? "border-brick text-ink" : "border-transparent text-mute hover:text-ink"
-      }`}
-    >
-      {label}
-    </button>
-  );
+  const modes = [
+    ["nl", "Fai una domanda", Sparkles],
+    ["builder", "Usa i filtri", SlidersHorizontal],
+  ] as const;
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -181,12 +174,28 @@ export default function App() {
                 Grafo di conoscenza · OWL 2 · SPARQL
               </p>
             </div>
-            <nav className="flex gap-5" aria-label="Modalità di ricerca">
-              {tabBtn("nl", "Domanda")}
-              {tabBtn("builder", "Filtri")}
-            </nav>
           </div>
           <div className="max-w-4xl">
+            <div
+              role="tablist"
+              aria-label="Modalità di ricerca"
+              className="mb-3 inline-flex rounded-sm border border-rule bg-panel p-0.5"
+            >
+              {modes.map(([m, label, Icon]) => (
+                <button
+                  key={m}
+                  role="tab"
+                  aria-selected={mode === m}
+                  onClick={() => setMode(m)}
+                  className={`inline-flex items-center gap-2 rounded-[3px] px-3.5 py-1.5 text-sm transition-colors ${
+                    mode === m ? "bg-raised text-ink" : "text-mute hover:text-ink"
+                  }`}
+                >
+                  <Icon className={`h-3.5 w-3.5 ${mode === m ? "text-brick" : ""}`} />
+                  {label}
+                </button>
+              ))}
+            </div>
             {mode === "nl" ? (
               <SearchBar
                 onSearch={handleSearch}
@@ -305,6 +314,8 @@ export default function App() {
             onNodeClick={handleNodeClick}
             highlightNode={highlightNode}
             onNodeRightClick={handleNodeRightClick}
+            hiddenCount={hiddenNodeIds.size}
+            onRestoreHidden={() => setHiddenNodeIds(new Set())}
           />
         </section>
       </main>

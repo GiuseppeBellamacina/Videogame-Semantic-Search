@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Plus, X, ArrowRight, Loader2 } from "lucide-react";
+import { Plus, X, ArrowRight, Loader2, Network, List } from "lucide-react";
 import { countBuilder, getBuilderSchema } from "@/lib/api";
 import { SuggestInput } from "@/components/SuggestInput";
+import { Dropdown } from "@/components/Dropdown";
 import type { BuilderField, BuilderRequest, BuilderSchema } from "@/types";
 
 interface Cond {
   id: number;
   field: string;
   op: string;
-  value: string; // entity URI (picked suggestion), number or free text
+  value: string; // entity URI (picked suggestion), number, class name or free text
   display: string; // what the input shows
 }
 
@@ -17,33 +18,17 @@ const OP_LABELS: Record<string, string> = {
   is_not: "non è",
   contains: "contiene",
   equals: "uguale a",
-  "=": "=",
-  ">=": "≥",
-  "<=": "≤",
-  ">": ">",
-  "<": "<",
+  "=": "uguale a",
+  ">=": "almeno",
+  "<=": "al massimo",
+  ">": "più di",
+  "<": "meno di",
 };
 const ORDER_LABELS: Record<string, string> = {
-  name: "titolo",
-  score_desc: "punteggio",
-  date_desc: "più recenti",
-  date_asc: "più vecchi",
-};
-const FIELD_VERB: Record<string, string> = {
-  developedBy: "sviluppato da",
-  publishedBy: "pubblicato da",
-  hasGenre: "genere",
-  availableOn: "su",
-  belongsTo: "serie",
-  hasCharacter: "con personaggio",
-  wonAward: "premio",
-  madeWith: "motore",
-  hasGameMode: "modalità",
-  metacriticScore: "punteggio",
-  releaseYear: "anno di uscita",
-  gameName: "titolo",
-  countryOfOrigin: "paese",
-  isA: "categoria",
+  name: "Titolo (A–Z)",
+  score_desc: "Punteggio più alto",
+  date_desc: "Più recenti",
+  date_asc: "Più vecchi",
 };
 
 const FIELD_NAME: Record<string, string> = {
@@ -59,13 +44,99 @@ const FIELD_NAME: Record<string, string> = {
   metacriticScore: "Punteggio Metacritic",
   releaseYear: "Anno di uscita",
   gameName: "Titolo",
-  countryOfOrigin: "Paese",
+  countryOfOrigin: "Paese di origine",
   isA: "Categoria",
 };
-const nameOf = (f: BuilderField) => FIELD_NAME[f.field] ?? f.label;
+const FIELD_HINT: Record<string, string> = {
+  developedBy: "es. FromSoftware",
+  publishedBy: "es. Capcom",
+  hasGenre: "es. action role-playing",
+  availableOn: "es. Nintendo Switch",
+  belongsTo: "es. The Legend of Zelda",
+  hasCharacter: "es. Link",
+  wonAward: "es. Game of the Year",
+  madeWith: "es. Unreal Engine",
+  hasGameMode: "es. co-op",
+  metacriticScore: "da 0 a 100",
+  releaseYear: "es. 2023",
+  gameName: "parte del titolo",
+  countryOfOrigin: "es. Japan",
+  isA: "classi dedotte dal reasoner",
+};
+const GROUPS: { title: string; fields: string[] }[] = [
+  { title: "Chi lo ha fatto", fields: ["developedBy", "publishedBy", "countryOfOrigin"] },
+  { title: "Com'è fatto", fields: ["hasGenre", "hasGameMode", "belongsTo", "hasCharacter", "madeWith"] },
+  { title: "Dove e quando", fields: ["availableOn", "releaseYear"] },
+  { title: "Giudizi", fields: ["metacriticScore", "wonAward"] },
+  { title: "Altro", fields: ["gameName", "isA"] },
+];
 
-const sel =
-  "bg-transparent text-sm text-ink focus:outline-none cursor-pointer [&>option]:bg-panel";
+/** Readable names for the inferred classes offered by the "Categoria" filter. */
+const CLASS_LABELS: Record<string, string> = {
+  AwardWinningGame: "Con almeno un premio",
+  FranchiseGame: "Parte di una serie",
+  SinglePlayerGame: "Giocatore singolo",
+  MultiplayerGame: "Multiplayer",
+  CoopGame: "Cooperativo",
+  PCGame: "Per PC",
+  ConsoleGame: "Per console",
+  MobileGame: "Per mobile",
+  NintendoGame: "Su piattaforme Nintendo",
+  PlayStationGame: "Su PlayStation",
+  XboxGame: "Su Xbox",
+  HighlyRatedGame: "Molto recensito (≥ 85)",
+  RecentGame: "Uscito dal 2020",
+  SequelGame: "Sequel",
+  StandaloneGame: "Non è un sequel",
+  MultiConsoleGame: "Su 2+ console",
+  NintendoPublishedGame: "Pubblicato da Nintendo",
+  MultiPlatformGame: "Su 3+ piattaforme",
+  WindowsGame: "Per Windows",
+  MacOSGame: "Per macOS",
+  LinuxGame: "Per Linux",
+  AndroidGame: "Per Android",
+  BrowserGame: "Nel browser",
+  ArcadeGame: "Arcade",
+  RetroComputerGame: "Home computer retro",
+  VRGame: "Realtà virtuale",
+  SonyPublishedGame: "Pubblicato da Sony",
+  XboxPublishedGame: "Pubblicato da Xbox Game Studios",
+  BandaiNamcoPublishedGame: "Pubblicato da Bandai Namco",
+  SquareEnixPublishedGame: "Pubblicato da Square Enix",
+  ElectronicArtsPublishedGame: "Pubblicato da Electronic Arts",
+  KonamiPublishedGame: "Pubblicato da Konami",
+  CapcomPublishedGame: "Pubblicato da Capcom",
+  ActionGame: "Azione",
+  RPGGame: "Gioco di ruolo",
+  StrategyGame: "Strategia",
+  SimulationGame: "Simulazione",
+  AdventureGame: "Avventura",
+  SportsGame: "Sportivo",
+  RacingGame: "Corse",
+  PuzzleGame: "Puzzle",
+  HorrorGame: "Horror",
+  PlatformerGame: "Platform",
+  ShooterGame: "Sparatutto",
+  CasualGame: "Casual",
+  VisualNovelGame: "Visual novel",
+  UnrealEngineGame: "Fatto con Unreal Engine",
+  GOTYWinner: "Vincitore Game of the Year",
+  JapaneseGame: "Giapponese",
+  AmericanGame: "Statunitense",
+};
+
+/** One-click starting points. */
+const PRESETS: { label: string; field: string; value: string }[] = [
+  { label: "Molto recensiti", field: "isA", value: "HighlyRatedGame" },
+  { label: "Usciti dal 2020", field: "isA", value: "RecentGame" },
+  { label: "Giochi di ruolo", field: "isA", value: "RPGGame" },
+  { label: "Cooperativi", field: "isA", value: "CoopGame" },
+  { label: "Su più piattaforme", field: "isA", value: "MultiPlatformGame" },
+  { label: "Vincitori Game of the Year", field: "isA", value: "GOTYWinner" },
+];
+
+const LIMITS = [25, 50, 100, 250, 500];
+const nameOf = (f: BuilderField) => FIELD_NAME[f.field] ?? f.label;
 
 interface QueryBuilderProps {
   onRun: (body: BuilderRequest) => void;
@@ -133,16 +204,10 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
     };
   }, [filters, schema]);
 
-  const add = (f: BuilderField) => {
+  const add = (f: BuilderField, value = "") => {
     setConds((c) => [
       ...c,
-      {
-        id: nextId++,
-        field: f.field,
-        op: f.ops[0],
-        value: f.kind === "class" ? f.options![0] : "",
-        display: "",
-      },
+      { id: nextId++, field: f.field, op: f.ops[0], value, display: "" },
     ]);
     setMenu(false);
   };
@@ -156,167 +221,225 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
 
   const run = () => onRun({ filters, order_by: orderBy, limit, output });
   const noMatch = count === 0;
+  const fieldOptions = schema.fields.map((f) => ({ value: f.field, label: nameOf(f) }));
+  const has = (field: string, value: string) => conds.some((c) => c.field === field && c.value === value);
+
+  const valueInput = (c: Cond, f: BuilderField) => {
+    if (f.kind === "entity")
+      return (
+        <div className="flex h-9 min-w-[200px] flex-1 items-center rounded-sm border border-rule bg-panel px-3 focus-within:border-mute">
+          <SuggestInput
+            value={c.display}
+            types={[f.target!]}
+            onChange={(v) => patch(c.id, { display: v, value: v })}
+            onPick={(s) => patch(c.id, { value: s.uri, display: s.label })}
+            placeholder={FIELD_HINT[f.field]}
+            className="w-full bg-transparent text-sm placeholder:text-mute focus:outline-none"
+          />
+        </div>
+      );
+    if (f.kind === "class")
+      return (
+        <Dropdown
+          className="min-w-[220px] flex-1"
+          value={c.value}
+          searchable
+          placeholder="Scegli una categoria"
+          options={f.options!.map((o) => ({ value: o, label: CLASS_LABELS[o] ?? o }))}
+          onChange={(v) => patch(c.id, { value: v })}
+          ariaLabel="Categoria"
+        />
+      );
+    return (
+      <input
+        type={f.kind === "text" ? "text" : "number"}
+        value={c.value}
+        onChange={(e) => patch(c.id, { value: e.target.value, display: e.target.value })}
+        placeholder={FIELD_HINT[f.field]}
+        className="h-9 min-w-[140px] flex-1 rounded-sm border border-rule bg-panel px-3 text-sm placeholder:text-mute focus:border-mute focus:outline-none"
+      />
+    );
+  };
 
   return (
-    <div>
-      {/* the query reads as a sentence */}
-      <div className="flex min-h-11 flex-wrap items-center gap-x-2 gap-y-2 rounded-sm border border-rule bg-panel px-3 py-2">
-        <span className="font-serif text-lg">Cerca videogiochi</span>
+    <div className="rounded-sm border border-rule bg-panel/60">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 px-4 pt-3.5">
+        <h2 className="font-serif text-xl">Cerca videogiochi</h2>
+        <span className="font-mono text-xs text-mute" aria-live="polite">
+          {count === null ? (
+            "conto…"
+          ) : noMatch ? (
+            <span className="text-brick">nessun gioco corrisponde</span>
+          ) : (
+            <>
+              <b className="text-base font-medium text-ink">{count.toLocaleString("it-IT")}</b>{" "}
+              {count === 1 ? "gioco corrisponde" : "giochi corrispondono"}
+            </>
+          )}
+        </span>
+      </div>
 
-        {conds.map((c) => {
-          const f = field(c.field)!;
-          return (
-            <span
-              key={c.id}
-              className="group inline-flex items-center gap-1.5 rounded-sm border border-rule bg-raised py-0.5 pl-2.5 pr-1 animate-fade-in"
-            >
-              <select
-                value={c.field}
-                onChange={(e) => {
-                  const nf = field(e.target.value)!;
-                  patch(c.id, {
-                    field: nf.field,
-                    op: nf.ops[0],
-                    value: nf.kind === "class" ? nf.options![0] : "",
-                    display: "",
-                  });
+      <div className="space-y-2 px-4 py-3">
+        {conds.length === 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="label mr-1">Parti da</span>
+            {PRESETS.map((p) => (
+              <button
+                key={p.label}
+                onClick={() => {
+                  const f = field(p.field);
+                  if (f && !has(p.field, p.value)) add(f, p.value);
                 }}
-                className={`${sel} text-mute`}
-                aria-label="Campo"
+                className="rounded-full border border-rule px-3 py-1 text-[13px] text-ink transition-colors hover:border-brick hover:text-brick"
               >
-                {schema.fields.map((x) => (
-                  <option key={x.field} value={x.field}>
-                    {FIELD_VERB[x.field] ?? x.label}
-                  </option>
-                ))}
-              </select>
-              {f.ops.length > 1 && (
-                <select
-                  value={c.op}
-                  onChange={(e) => patch(c.id, { op: e.target.value })}
-                  className={`${sel} text-brick`}
-                  aria-label="Operatore"
-                >
-                  {f.ops.map((op) => (
-                    <option key={op} value={op}>
-                      {OP_LABELS[op] ?? op}
-                    </option>
+                {p.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {conds.map((c, i) => {
+          const f = field(c.field)!;
+          const opOptions = f.ops.map((op) => ({ value: op, label: OP_LABELS[op] ?? op }));
+          return (
+            <div key={c.id} className="flex flex-wrap items-center gap-2 animate-fade-in">
+              <span className="label w-9 flex-shrink-0">{i === 0 ? "dove" : "e"}</span>
+              <Dropdown
+                className="w-44 flex-shrink-0"
+                value={c.field}
+                options={fieldOptions}
+                ariaLabel="Campo"
+                onChange={(name) => {
+                  const nf = field(name)!;
+                  patch(c.id, { field: nf.field, op: nf.ops[0], value: "", display: "" });
+                }}
+              />
+              {f.ops.length === 2 && (f.kind === "entity" || f.kind === "class") ? (
+                <div className="inline-flex h-9 flex-shrink-0 rounded-sm border border-rule p-0.5" role="group" aria-label="Operatore">
+                  {opOptions.map((o) => (
+                    <button
+                      key={o.value}
+                      onClick={() => patch(c.id, { op: o.value })}
+                      className={`rounded-[3px] px-3 text-sm transition-colors ${
+                        c.op === o.value
+                          ? o.value === "is_not"
+                            ? "bg-brick text-paper"
+                            : "bg-ink text-paper"
+                          : "text-mute hover:text-ink"
+                      }`}
+                    >
+                      {o.label}
+                    </button>
                   ))}
-                </select>
-              )}
-              {f.kind === "entity" ? (
-                <div className="w-40">
-                  <SuggestInput
-                    value={c.display}
-                    types={[f.target!]}
-                    onChange={(v) => patch(c.id, { display: v, value: v })}
-                    onPick={(s) => patch(c.id, { value: s.uri, display: s.label })}
-                    placeholder={nameOf(f).toLowerCase()}
-                    className="w-full bg-transparent text-sm placeholder:text-mute focus:outline-none"
-                  />
                 </div>
-              ) : f.kind === "class" ? (
-                <select
-                  value={c.value}
-                  onChange={(e) => patch(c.id, { value: e.target.value })}
-                  className={sel}
-                  aria-label="Categoria"
-                >
-                  {f.options!.map((o) => (
-                    <option key={o} value={o}>
-                      {o}
-                    </option>
-                  ))}
-                </select>
               ) : (
-                <input
-                  type={f.kind === "text" ? "text" : "number"}
-                  value={c.value}
-                  onChange={(e) => patch(c.id, { value: e.target.value, display: e.target.value })}
-                  placeholder={f.kind === "year" ? "2023" : f.kind === "number" ? "85" : "testo"}
-                  className="w-20 bg-transparent text-sm placeholder:text-mute focus:outline-none"
+                <Dropdown
+                  className="w-32 flex-shrink-0"
+                  value={c.op}
+                  options={opOptions}
+                  ariaLabel="Operatore"
+                  onChange={(op) => patch(c.id, { op })}
                 />
               )}
+              {valueInput(c, f)}
               <button
                 onClick={() => drop(c.id)}
-                className="rounded-sm p-1 text-mute hover:bg-rule hover:text-ink"
-                aria-label="Rimuovi condizione"
+                className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-sm text-mute hover:bg-raised hover:text-ink"
+                aria-label="Rimuovi filtro"
               >
-                <X className="h-3 w-3" />
+                <X className="h-4 w-4" />
               </button>
-            </span>
+            </div>
           );
         })}
 
-        <div className="relative" ref={menuRef}>
+        <div className="relative inline-block" ref={menuRef}>
           <button
             onClick={() => setMenu((m) => !m)}
-            className="inline-flex items-center gap-1 rounded-sm border border-dashed border-rule px-2 py-0.5 text-sm text-mute transition-colors hover:border-brick hover:text-ink"
+            className="inline-flex h-9 items-center gap-1.5 rounded-sm border border-dashed border-rule px-3 text-sm text-mute transition-colors hover:border-brick hover:text-ink"
             aria-expanded={menu}
           >
-            <Plus className="h-3.5 w-3.5" /> {conds.length ? "condizione" : "aggiungi una condizione"}
+            <Plus className="h-3.5 w-3.5" /> {conds.length ? "Aggiungi un altro filtro" : "Aggiungi un filtro"}
           </button>
           {menu && (
-            <ul className="absolute left-0 top-full z-50 mt-1.5 max-h-72 w-52 overflow-y-auto rounded-sm border border-rule bg-panel py-1 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.6)] animate-fade-in">
-              {schema.fields.map((f) => (
-                <li key={f.field}>
-                  <button
-                    onClick={() => add(f)}
-                    className="w-full px-3 py-1.5 text-left text-sm hover:bg-raised"
-                  >
-                    {nameOf(f)}
-                  </button>
-                </li>
+            <div className="absolute left-0 top-full z-50 mt-1.5 grid w-[min(760px,92vw)] animate-fade-in grid-cols-1 gap-x-6 gap-y-3 rounded-sm border border-rule bg-panel p-4 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.7)] sm:grid-cols-3">
+              {GROUPS.map((g) => (
+                <div key={g.title}>
+                  <p className="label mb-1">{g.title}</p>
+                  <ul>
+                    {g.fields
+                      .map((name) => field(name))
+                      .filter((f): f is BuilderField => !!f)
+                      .map((f) => (
+                        <li key={f.field}>
+                          <button
+                            onClick={() => add(f)}
+                            className="w-full rounded-sm px-2 py-1.5 text-left hover:bg-raised"
+                          >
+                            <span className="block text-sm">{nameOf(f)}</span>
+                            <span className="block text-[11px] text-mute">{FIELD_HINT[f.field]}</span>
+                          </button>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-mute">
-        <span className="font-mono text-xs" aria-live="polite">
-          {count === null ? "…" : noMatch ? "nessun gioco" : `${count.toLocaleString("it-IT")} giochi`}
-        </span>
-        <label className="flex items-center gap-1.5">
-          ordina per
-          <select value={orderBy} onChange={(e) => setOrderBy(e.target.value)} className={`${sel} text-ink`}>
-            {schema.orders.map((o) => (
-              <option key={o} value={o}>
-                {ORDER_LABELS[o] ?? o}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex items-center gap-1.5">
-          max
-          <input
-            type="number"
-            min={1}
-            max={500}
-            value={limit}
-            onChange={(e) => setLimit(Math.max(1, Math.min(500, Number(e.target.value) || 1)))}
-            className="w-14 bg-transparent text-ink focus:outline-none"
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5 border-t border-rule px-4 py-3">
+        <label className="flex items-center gap-2 text-[13px] text-mute">
+          Ordina per
+          <Dropdown
+            className="w-44"
+            value={orderBy}
+            options={schema.orders.map((o) => ({ value: o, label: ORDER_LABELS[o] ?? o }))}
+            onChange={setOrderBy}
+            ariaLabel="Ordinamento"
           />
         </label>
-        <label className="flex items-center gap-1.5">
-          mostra
-          <select
-            value={output}
-            onChange={(e) => setOutput(e.target.value as "table" | "graph")}
-            className={`${sel} text-ink`}
-          >
-            <option value="table">elenco</option>
-            <option value="graph">relazioni</option>
-          </select>
+        <label className="flex items-center gap-2 text-[13px] text-mute">
+          Mostra al massimo
+          <Dropdown
+            className="w-20"
+            value={String(limit)}
+            options={LIMITS.map((n) => ({ value: String(n), label: String(n) }))}
+            onChange={(v) => setLimit(Number(v))}
+            ariaLabel="Numero massimo di risultati"
+          />
         </label>
+        <div className="flex items-center gap-2 text-[13px] text-mute">
+          Come
+          <div className="inline-flex h-9 rounded-sm border border-rule p-0.5" role="group" aria-label="Formato dei risultati">
+            {(
+              [
+                ["table", "Elenco", List],
+                ["graph", "Relazioni", Network],
+              ] as const
+            ).map(([v, label, Icon]) => (
+              <button
+                key={v}
+                onClick={() => setOutput(v)}
+                className={`inline-flex items-center gap-1.5 rounded-[3px] px-3 text-sm transition-colors ${
+                  output === v ? "bg-raised text-ink" : "text-mute hover:text-ink"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
         <span className="ml-auto">
           {loading ? (
-            <button onClick={onCancel} className="btn">
+            <button onClick={onCancel} className="btn h-9">
               <X className="h-4 w-4" /> Annulla
             </button>
           ) : (
-            <button onClick={run} disabled={noMatch} className="btn btn-primary">
-              Mostra <ArrowRight className="h-4 w-4" />
+            <button onClick={run} disabled={noMatch} className="btn btn-primary h-9">
+              Mostra i risultati <ArrowRight className="h-4 w-4" />
             </button>
           )}
         </span>
