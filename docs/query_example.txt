@@ -1,0 +1,24 @@
+CONSTRUCT {
+  ?g vg:developedBy ?dev .
+  ?g vg:publishedBy ?pub .
+  ?g vg:belongsTo ?serie .
+  ?g vg:madeWith ?motore .
+  ?g vg:hasGenre ?genere .
+}
+WHERE {
+  VALUES ?titolo {
+    "The Legend of Zelda: Breath of the Wild" "The Legend of Zelda: Tears of the Kingdom"
+    "The Legend of Zelda: Twilight Princess" "The Legend of Zelda: Skyward Sword"
+    "Cyberpunk 2077" "The Witcher 3: Wild Hunt"
+    "Grand Theft Auto V" "Grand Theft Auto VI" "Red Dead Redemption 2"
+    "Fallout: New Vegas" "Fallout 76"
+    "Dark Souls III" "Elden Ring Nightreign"
+    "Death Stranding" "Resident Evil 4"
+  }
+  ?g vg:gameName ?titolo .
+  { ?g vg:developedBy ?dev }
+  UNION { ?g vg:publishedBy ?pub }
+  UNION { ?g vg:belongsTo ?serie }
+  UNION { ?g vg:madeWith ?motore }
+  UNION { ?g vg:hasGenre ?genere }
+}
