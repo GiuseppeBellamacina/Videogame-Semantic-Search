@@ -53,9 +53,9 @@ e, per ciascun nome, mantiene l'URI con il maggior numero di triple associate.
 
 Dopo il fetch e gli assiomi V2 viene eseguito il reasoning (cfr.\ Sezione~\ref{sec:reasoning}):
 chiusura OWL 2 RL tramite \texttt{owlrl}, materializzazione mirata delle classi definite e
-regole SPARQL CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} richiede circa 38 minuti e aggiunge 4,56 milioni di triple
-al grafo di 877.673 (la successiva pulizia toglie i messaggi di errore di \texttt{owlrl}, 248.818 triple riflessive e 1,1 milioni di triple con nodi anonimi, sostituiti dallo schema originale); la materializzazione mirata aggiunge 175.997 triple e
-le regole CONSTRUCT 12.991 (tra cui \texttt{MultiConsoleGame} e \texttt{MultiPlatformGame}). Nelle relazioni \texttt{sharesDeveloperWith} e
+regole SPARQL CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} richiede circa 42 minuti e aggiunge 4,57 milioni di triple
+al grafo di 877.673 (la successiva pulizia toglie i messaggi di errore di \texttt{owlrl}, 248.818 triple riflessive e 1,24 milioni di triple con nodi anonimi, sostituiti dallo schema originale); la materializzazione mirata aggiunge 175.997 triple e
+le regole CONSTRUCT 13.293 (tra cui \texttt{MultiConsoleGame} e \texttt{MultiPlatformGame}). Nelle relazioni \texttt{sharesDeveloperWith} e
 \texttt{sharesPublisherWith} i gruppi con pi\`u di 50 giochi (19 sviluppatori e 66 publisher) sono esclusi
 per limitare la crescita quadratica delle coppie. I conteggi finali sono in Tabella~\ref{tab:abox}
 e Tabella~\ref{tab:inferite}.
@@ -70,7 +70,7 @@ e Tabella~\ref{tab:inferite}.
 \textbf{Metrica} & \textbf{Valore} \\
 \midrule
 Triple scaricate da Wikidata & 877.689 \\
-Triple nel file finale (dopo il reasoning) & 4.144.693 \\
+Triple nel file finale (dopo il reasoning) & 4.146.423 \\
 Videogiochi & 105.860 \\
 Sviluppatori / Publisher & 5.374 / 3.830 \\
 Generi / Piattaforme & 581 / 249 \\
@@ -90,30 +90,30 @@ Modalit\`a di gioco (individui) & 35 \\
 \textbf{Classe} & \textbf{Istanze} & \textbf{Classe} & \textbf{Istanze} \\
 \midrule
 StandaloneGame & 105.330 & VisualNovelGame & 2.309 \\
-PCGame & 99.140 & PlayStationGame & 1.918 \\
-WindowsGame & 98.942 & ShooterGame & 1.801 \\
-SinglePlayerGame & 94.642 & PuzzleGame & 1.749 \\
-RecentGame & 70.586 & UnrealEngineGame & 1.556 \\
-CasualGame & 32.606 & PlatformerGame & 1.340 \\
-ActionGame & 32.472 & NintendoGame & 1.150 \\
-AdventureGame & 30.258 & HorrorGame & 751 \\
-MacOSGame & 19.850 & AwardWinningGame & 741 \\
-MultiplayerGame & 16.803 & BrowserGame & 695 \\
-SimulationGame & 16.321 & MultiConsoleGame & 619 \\
+PCGame & 99.151 & NintendoGame & 2.040 \\
+WindowsGame & 98.942 & PlayStationGame & 1.919 \\
+SinglePlayerGame & 94.642 & ShooterGame & 1.801 \\
+RecentGame & 70.586 & PuzzleGame & 1.749 \\
+CasualGame & 32.606 & UnrealEngineGame & 1.556 \\
+ActionGame & 32.472 & PlatformerGame & 1.340 \\
+AdventureGame & 30.258 & MultiConsoleGame & 921 \\
+MacOSGame & 19.880 & HorrorGame & 751 \\
+MultiplayerGame & 16.803 & AwardWinningGame & 741 \\
+SimulationGame & 16.321 & BrowserGame & 695 \\
 StrategyGame & 15.262 & SequelGame & 530 \\
 LinuxGame & 14.632 & NintendoPublishedGame & 387 \\
 RPGGame & 14.416 & BandaiNamcoPublishedGame & 321 \\
 MultiPlatformGame & 12.372 & ArcadeGame & 262 \\
 CoopGame & 8.937 & SquareEnixPublishedGame & 228 \\
-ConsoleGame & 5.889 & SonyPublishedGame & 206 \\
-FranchiseGame & 4.358 & GOTYWinner & 194 \\
-JapaneseGame & 3.856 & ElectronicArtsPublishedGame & 171 \\
-MobileGame & 3.775 & XboxPublishedGame & 166 \\
-AndroidGame & 3.746 & RetroComputerGame & 141 \\
-SportsGame & 3.391 & KonamiPublishedGame & 121 \\
-RacingGame & 3.300 & CapcomPublishedGame & 105 \\
-XboxGame & 2.989 & HighlyRatedGame & 81 \\
-AmericanGame & 2.841 & VRGame & 52 \\
+ConsoleGame & 6.582 & SonyPublishedGame & 206 \\
+FranchiseGame & 4.358 & ElectronicArtsPublishedGame & 171 \\
+JapaneseGame & 3.856 & XboxPublishedGame & 166 \\
+MobileGame & 3.775 & RetroComputerGame & 148 \\
+AndroidGame & 3.746 & KonamiPublishedGame & 121 \\
+SportsGame & 3.391 & CapcomPublishedGame & 105 \\
+RacingGame & 3.300 & HighlyRatedGame & 81 \\
+XboxGame & 2.989 & VRGame & 52 \\
+AmericanGame & 2.841 & GOTYWinner & 20 \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -356,16 +356,16 @@ def is_qid_label(value: str | None) -> bool:
 
 # First matching rule wins, so the order matters (families are mutually exclusive).
 _PLATFORM_RULES: list[tuple[str, URIRef]] = [
-    (r"playstation|ps[0-9p]?|psp|vita", VG.PlayStationPlatform),
+    (r"playstation|\bps[0-9p]?\b|\bpsp\b|vita", VG.PlayStationPlatform),
     (r"xbox", VG.XboxPlatform),
     (
-        r"nintendo|switch|wii|wiiware|game ?boy|3?ds|dsi|gamecube|s?nes|n64|famicom",
+        r"nintendo|\bswitch\b|\bwii\b|wiiware|game ?boy|\b3?ds\b|dsi|gamecube|\bs?nes\b|\bn64\b|famicom",
         VG.NintendoPlatform,
     ),
     (r"windows", VG.WindowsPlatform),
-    (r"macos|mac os|os x|macintosh|mac", VG.MacOSPlatform),
+    (r"macos|mac os|os x|macintosh|\bmac\b", VG.MacOSPlatform),
     (r"linux", VG.LinuxPlatform),
-    (r"ios|iphone|ipad", VG.IOSPlatform),
+    (r"\bios\b|iphone|ipad", VG.IOSPlatform),
     (r"android", VG.AndroidPlatform),
     (
         r"web browser|browser game|web application|web platform|web page|html5|google chrome|facebook",
@@ -373,16 +373,16 @@ _PLATFORM_RULES: list[tuple[str, URIRef]] = [
     ),
     (r"arcade", VG.ArcadePlatform),
     (
-        r"commodore|zx spectrum|amstrad|atari st|atari 8|msx|sharp x|apple ii|fm towns|bbc micro|amiga|trs-80|ti-99|pc-98|pc-88",
+        r"commodore|zx spectrum|amstrad|atari st\b|atari 8|msx|sharp x|apple ii|fm towns|bbc micro|amiga|trs-80|ti-99|pc-98|pc-88",
         VG.RetroComputerPlatform,
     ),
-    (r"horizon os|quest|visionos|oculus|vr|vive|virtual reality|hololens", VG.VRPlatform),
+    (r"horizon os|quest|visionos|oculus|\bvr\b|vive|virtual reality|hololens", VG.VRPlatform),
     # other consoles (before the PC rule: "PC Engine" is a console)
     (
         r"ouya|turbografx|pc engine|neo geo|atari (2600|5200|7800|vcs|lynx|jaguar)|sega|dreamcast|genesis|mega drive|master system|sg-1000|saturn|game gear|colecovision|intellivision|3do|cd-i|zeebo|vectrex",
         VG.ConsolePlatform,
     ),
-    (r"personal computer|pc|dos|steam", VG.PCPlatform),
+    (r"personal computer|\bpc\b|\bdos\b|steam", VG.PCPlatform),
     (
         r"mobile|phone|blackberry|symbian|java platform, micro|harmonyos|watchos",
         VG.MobilePlatform,
@@ -391,7 +391,7 @@ _PLATFORM_RULES: list[tuple[str, URIRef]] = [
 
 # A genre can belong to several families ("action role-playing game"): every match counts.
 _GENRE_RULES: list[tuple[str, URIRef]] = [
-    (r"role-playing|rpg", VG.RPGGenre),
+    (r"role-playing|\brpg\b", VG.RPGGenre),
     (r"horror", VG.HorrorGenre),
     (r"platform game|platformer", VG.PlatformerGenre),
     (r"strategy|tactic", VG.StrategyGenre),
@@ -407,14 +407,20 @@ _GENRE_RULES: list[tuple[str, URIRef]] = [
 ]
 
 _MODE_RULES: list[tuple[str, URIRef]] = [
-    (r"massively|mmo", VG.MMOMode),
+    (r"massively|\bmmo", VG.MMOMode),
     (r"co-?op", VG.CoopMode),
     (r"multiplayer|multi-player|versus", VG.MultiplayerMode),
     (r"single", VG.SinglePlayerMode),
 ]
 
 _ENGINE_RULES: list[tuple[str, URIRef]] = [(r"unreal engine", VG.UnrealEngineFamily)]
-_AWARD_RULES: list[tuple[str, URIRef]] = [(r"game of the year|goty", VG.GameOfTheYearAward)]
+# only the top prize of a ceremony ("The Game Awards - Game of the Year"), not the category
+# prizes ("... for Strategy Game of the Year", "iPad Game of the Year", "Czech ... - Audio")
+_GOTY_MAIN = (
+    r"(?:^|[-–−:]\s*|\bfor\s+|\bawards?\s+)"
+    r"(?:(?:ultimate|best)\s+)?game of the year(?:\s+award)?\s*$"
+)
+_AWARD_RULES: list[tuple[str, URIRef]] = [(_GOTY_MAIN, VG.GameOfTheYearAward)]
 
 
 def _classify(
