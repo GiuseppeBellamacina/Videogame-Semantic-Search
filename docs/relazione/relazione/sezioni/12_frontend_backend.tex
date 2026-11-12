@@ -111,8 +111,12 @@ Oltre alla ricerca via LLM, il backend offre due funzioni che non richiedono il 
     dell'ontologia; propone completamenti sulle ultime parole digitate;
   \item \textbf{Query builder assistito} (\texttt{/api/builder/*}): l'utente compone filtri su
     sviluppatore, genere, piattaforma, modalit\`a, anno, punteggio Metacritic o categorie inferite
-    (es.\ \texttt{Highly\-Rated\-Game}); il backend genera il SPARQL da una whitelist di campi, con
-    escaping dei valori, e lo esegue restituendo risultati e grafo come per la ricerca libera.
+    (es.\ \texttt{Highly\-Rated\-Game}) o mese di uscita; il backend genera il SPARQL da una whitelist di campi, con
+    escaping dei valori, e lo esegue restituendo risultati e grafo come per la ricerca libera. Un endpoint di conteggio
+    mostra in tempo reale quanti giochi corrispondono ai filtri;
+  \item \textbf{Relazioni derivate} (\texttt{/api/relation}): cliccando una relazione del grafo il frontend
+    chiede quale elemento accomuna i due nodi (lo stesso sviluppatore, publisher o serie nel caso delle catene di propriet\`a);
+    \texttt{/api/images/retry} propone un'altra copertina quando quella trovata manca o \`e sbagliata.
 \end{itemize}
 
 \subsubsection{Cache}

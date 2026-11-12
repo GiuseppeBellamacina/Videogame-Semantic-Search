@@ -132,7 +132,14 @@ Scrivi domande come:
 
 - **Autosuggest** mentre scrivi: giochi, sviluppatori, publisher, generi, piattaforme, serie, personaggi, premi, engine e modalità di gioco, sulle ultime parole digitate (tasti ↑ ↓ Invio/Tab).
 - **Relazioni con CONSTRUCT**: l'agente usa `CONSTRUCT` per le domande sulle relazioni (il grafo viene costruito dalle triple restituite) e `SELECT` per classifiche, conteggi ed elenchi; anche il query builder può restituire il grafo delle relazioni.
-- **Query builder assistito**: componi filtri (sviluppatore, genere, piattaforma, modalità, anno, Metacritic, categorie inferite come `HighlyRatedGame`...) con autocomplete sui valori; il backend genera il SPARQL (mostrato nel pannello) senza usare l'LLM.
+- **Query builder assistito**: componi filtri (sviluppatore, genere, piattaforma, modalità, anno, Metacritic, categorie inferite come `HighlyRatedGame`...) con autocomplete sui valori; il backend genera il SPARQL (mostrato nel pannello) senza usare l'LLM. Si può filtrare anche per **mese di uscita** (di qualsiasi anno, o combinato con l'anno). Il pannello mostra il conteggio dei giochi corrispondenti mentre si compone, propone scorciatoie ("Molto recensiti", "Giochi di ruolo"...) e dopo "Mostra i risultati" si riduce a una riga.
+
+### Grafo
+
+- **Clic su una relazione**: mostra la frase che la descrive e, per le relazioni derivate dal reasoner (`sharesDeveloperWith`, `sharesPublisherWith`, `sharedFranchiseWith`...), l'elemento che i due nodi hanno in comune (lo stesso sviluppatore, publisher, serie).
+- **Due nodi**: clic su un nodo, poi su un secondo collegato mostra le etichette delle relazioni fra i due (anche derivate); il doppio clic sposta il fuoco.
+- **Selezione**: Maiusc + clic per sceglierne più d'uno; *Isola* (tiene solo la selezione), *Isola con vicini*, *Nascondi* (reversibile, "Mostra tutto") ed *Elimina* (via dalla scena). *Svuota* azzera il grafo; *Derivate* mostra o nasconde le relazioni dedotte (tratteggiate).
+- **Copertine**: i loghi larghi si mostrano interi; "Riprova copertina" nel pannello del nodo passa alla candidata successiva di Wikipedia (per aziende, piattaforme e serie, se manca l'immagine di pagina, si usa il logo di Wikidata).
 
 ### Agente SPARQL intelligente
 
@@ -212,6 +219,8 @@ Tutto è eseguito da `ontology/build_ontology.py` (vedi Setup):
 | POST   | `/api/query`        | Ricerca NL → risultati + grafo |
 | GET    | `/api/node/{uri}`   | Dettaglio nodo + sottografo    |
 | GET    | `/api/image-search` | Cerca cover art da Wikipedia   |
+| POST   | `/api/images/retry` | Un'altra copertina per un'entità |
+| GET    | `/api/relation`     | Cosa hanno in comune due nodi collegati da una relazione derivata |
 | GET    | `/api/stats`        | Statistiche ontologia          |
 | GET    | `/api/suggest`      | Autosuggest su nomi ed entità  |
 | GET    | `/api/builder/schema` | Campi e operatori del builder |
