@@ -129,6 +129,7 @@ Scrivi domande come:
 ### Autosuggest e query builder
 
 - **Autosuggest** mentre scrivi: giochi, sviluppatori, publisher, generi, piattaforme, serie, personaggi, premi, engine e modalità di gioco, sulle ultime parole digitate (tasti ↑ ↓ Invio/Tab).
+- **Relazioni con CONSTRUCT**: l'agente usa `CONSTRUCT` per le domande sulle relazioni (il grafo viene costruito dalle triple restituite) e `SELECT` per classifiche, conteggi ed elenchi; anche il query builder può restituire il grafo delle relazioni.
 - **Query builder assistito**: componi filtri (sviluppatore, genere, piattaforma, modalità, anno, Metacritic, categorie inferite come `HighlyRatedGame`...) con autocomplete sui valori; il backend genera il SPARQL (mostrato nel pannello) senza usare l'LLM.
 
 ### Agente SPARQL intelligente

@@ -41,6 +41,45 @@ NODE_SIZES = {
 }
 
 
+_TRIPLE_KEYS = {"subject", "predicate", "object"}
+_VG = "http://www.videogame-ontology.org/"
+_NON_RELATIONS = {"type", "label", "comment", "subClassOf", "sameAs"}
+
+
+def build_graph(results: list[dict], ontology_service: Any) -> dict:
+    """Graph for either result shape: CONSTRUCT triples or SELECT rows."""
+    if results and set(results[0]) == _TRIPLE_KEYS:
+        return build_graph_from_triples(results, ontology_service)
+    return build_graph_from_results(results, ontology_service)
+
+
+def build_graph_from_triples(triples: list[dict], ontology_service: Any) -> dict:
+    """Each CONSTRUCT triple whose object is an entity becomes a link between two nodes."""
+    nodes: dict[str, dict] = {}
+    links: list[dict] = []
+
+    def node(uri: str) -> None:
+        if uri in nodes:
+            return
+        t = ontology_service._get_node_type(uri)
+        nodes[uri] = {
+            "id": uri,
+            "label": ontology_service._get_node_label(uri),
+            "type": t,
+            "color": NODE_COLORS.get(t, NODE_COLORS["Unknown"]),
+            "size": NODE_SIZES.get(t, NODE_SIZES["Unknown"]),
+        }
+
+    for row in triples:
+        s_, p, o = row["subject"], row["predicate"], row["object"]
+        if p in _NON_RELATIONS or not (s_.startswith(_VG) and o.startswith(_VG)):
+            continue
+        node(s_)
+        node(o)
+        links.append({"source": s_, "target": o, "label": p})
+    return {"nodes": list(nodes.values()), "links": links}
+
+
 def build_graph_from_results(
     results: list[dict],
     ontology_service: Any,

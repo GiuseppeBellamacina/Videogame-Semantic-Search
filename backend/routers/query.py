@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from backend.agents.sparql_agent import SPARQLAgent
 from backend.config import CACHE_TTL_QUERY, ONTOLOGY_FILE
 from backend.services import cache
-from backend.services.graph_builder import build_graph_from_results
+from backend.services.graph_builder import build_graph
 from backend.services.ontology_service import OntologyService
 
 logger = logging.getLogger(__name__)
@@ -146,7 +146,7 @@ async def query_ontology(request: QueryRequest):
             state = agent.run(request.question)
             graph_data = {"nodes": [], "links": []}
             if state.results:
-                graph_data = build_graph_from_results(state.results, OntologyService)
+                graph_data = build_graph(state.results, OntologyService)
             return state, graph_data
 
         state, graph_data = await asyncio.to_thread(_run_agent)

@@ -15,12 +15,14 @@ USER QUESTION (in natural language, may be in Italian or English):
 {error_feedback}
 
 INSTRUCTIONS:
-1. Generate a valid SPARQL SELECT query that answers the user's question.
+1. Generate ONE valid SPARQL query that answers the user's question. Choose the form like this:
+   - CONSTRUCT when the question is about RELATIONSHIPS or CONNECTIONS between entities (who developed / published / is linked to what, which games belong to a franchise, how two entities are connected, "collegati", "relazioni", "serie", "stesso sviluppatore"). It returns a graph.
+   - SELECT when CONSTRUCT makes no sense: rankings (top N, highest score), counts and aggregates (COUNT, GROUP BY, HAVING), filters returning values (dates, scores), lists of names.
 2. Always use these prefixes:
    PREFIX vg: <http://www.videogame-ontology.org/ontology#>
    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-3. CRITICAL: Always SELECT entity URI variables (?game, ?dev, ?pub, ?genre, ?platform, etc.) IN ADDITION to their name literals.
+3. For SELECT queries, CRITICAL: always SELECT entity URI variables (?game, ?dev, ?pub, ?genre, ?platform, etc.) IN ADDITION to their name literals.
    The URIs are needed to build the knowledge graph visualization. Name them with the suffix "Name" for literals (e.g., ?gameName, ?devName).
 4. Use FILTER with CONTAINS(LCASE(str(?var)), "search_term") for text matching (case-insensitive).
 5. Use OPTIONAL for properties that might not exist for all entities.
@@ -30,7 +32,7 @@ INSTRUCTIONS:
 9. For date filtering, use: FILTER(YEAR(?date) >= YYYY) or comparison operators on xsd:date.
 10. Return ONLY the SPARQL query, no explanations or markdown.
 11. The query runs on a LOCAL Oxigraph store, NOT on a remote endpoint — do NOT use SERVICE clauses.
-12. IMPORTANT: Always include ?game URI variable. For related entities (developer, publisher, genre, platform, etc.), include their URI variable too so the graph can show connections.
+12. IMPORTANT: Always include ?game URI variable (in a CONSTRUCT, the template triples must link entity URIs, e.g. ?game vg:developedBy ?dev; do not construct literal-only triples). For related entities (developer, publisher, genre, platform, etc.), include their URI variable too so the graph can show connections.
 13. INFERRED CLASSES/PROPERTIES (already materialised in the store — prefer them over manual joins):
     - vg:sharedFranchiseWith / sharesDeveloperWith / sharesPublisherWith — link two games directly
     - rdf:type vg:AwardWinningGame, FranchiseGame, SinglePlayerGame, MultiplayerGame, CoopGame,
@@ -42,7 +44,7 @@ INSTRUCTIONS:
     When asked about "serie", "franchise", "stesso sviluppatore", "stesso publisher", "premi", "multiplayer", "single player", "sequel", "molto apprezzati" → use them.
 14. For multiplatform queries, use GROUP BY / HAVING COUNT(DISTINCT ?platform) >= 2.
 
-EXAMPLES:
+EXAMPLES (SELECT unless marked CONSTRUCT):
 
 Q: "Quali giochi ha sviluppato FromSoftware?"
 A:
@@ -281,4 +283,56 @@ SELECT DISTINCT ?game ?gameName ?releaseDate WHERE {{
 }}
 ORDER BY DESC(?releaseDate)
 LIMIT 50
+
+Q (CONSTRUCT): "Come sono collegati i giochi di FromSoftware ai loro publisher e generi?"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+CONSTRUCT {{
+  ?game vg:developedBy ?dev .
+  ?game vg:publishedBy ?pub .
+  ?game vg:hasGenre ?genre .
+}}
+WHERE {{
+  ?game rdf:type vg:VideoGame .
+  ?game vg:developedBy ?dev .
+  ?dev vg:developerName ?devName .
+  FILTER(CONTAINS(LCASE(str(?devName)), "fromsoftware"))
+  OPTIONAL {{ ?game vg:publishedBy ?pub }}
+  OPTIONAL {{ ?game vg:hasGenre ?genre }}
+}}
+LIMIT 100
+
+Q (CONSTRUCT): "Quali giochi sono collegati ad Elden Ring?"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+CONSTRUCT {{
+  ?game vg:sharedFranchiseWith ?related .
+  ?game vg:sharesDeveloperWith ?same .
+}}
+WHERE {{
+  ?game rdf:type vg:VideoGame .
+  ?game vg:gameName ?gameName .
+  FILTER(CONTAINS(LCASE(str(?gameName)), "elden ring"))
+  OPTIONAL {{ ?game vg:sharedFranchiseWith ?related }}
+  OPTIONAL {{ ?game vg:sharesDeveloperWith ?same . FILTER(?same != ?game) }}
+}}
+LIMIT 100
+
+Q (CONSTRUCT): "Giochi della serie Zelda e le piattaforme su cui escono"
+A:
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+CONSTRUCT {{
+  ?game vg:belongsTo ?franchise .
+  ?game vg:availableOn ?platform .
+}}
+WHERE {{
+  ?franchise vg:franchiseName ?franchiseName .
+  FILTER(CONTAINS(LCASE(str(?franchiseName)), "zelda"))
+  ?game vg:belongsTo ?franchise .
+  OPTIONAL {{ ?game vg:availableOn ?platform }}
+}}
+LIMIT 100
 """

@@ -74,7 +74,18 @@ def _lit(value: str) -> str:
     return f'"{esc}"'
 
 
-def build(filters: list[dict], order_by: str = "name", limit: int = 50) -> str:
+# relations shown when the builder returns a graph
+GRAPH_RELATIONS = [
+    "developedBy", "publishedBy", "hasGenre", "availableOn", "belongsTo",
+    "madeWith", "hasGameMode", "hasCharacter", "wonAward", "sequelOf",
+]
+
+
+def build(
+    filters: list[dict], order_by: str = "name", limit: int = 50, output: str = "table"
+) -> str:
+    if output not in ("table", "graph"):
+        raise BuilderError(f"Unknown output '{output}'")
     if order_by not in ORDERS:
         raise BuilderError(f"Unknown order '{order_by}'")
     limit = max(1, min(int(limit), 500))
@@ -136,7 +147,15 @@ def build(filters: list[dict], order_by: str = "name", limit: int = 50) -> str:
             body.append(pat if op == "is" else f"FILTER NOT EXISTS {{ {pat} }}")
 
     where = "\n  ".join(body)
-    return (
-        f"{PREFIXES}SELECT DISTINCT {' '.join(select)} WHERE {{\n  {where}\n}}\n"
+    select_query = (
+        f"SELECT DISTINCT {' '.join(select)} WHERE {{\n  {where}\n}}\n"
         f"ORDER BY {ORDERS[order_by]}\nLIMIT {limit}"
+    )
+    if output == "table":
+        return PREFIXES + select_query
+    rels = ", ".join(f"vg:{r}" for r in GRAPH_RELATIONS)
+    return (
+        f"{PREFIXES}CONSTRUCT {{ ?game ?p ?o }}\nWHERE {{\n"
+        f"  {{ {select_query.replace(chr(10), chr(10) + '    ')} }}\n"
+        f"  ?game ?p ?o .\n  FILTER(?p IN ({rels}))\n}}"
     )

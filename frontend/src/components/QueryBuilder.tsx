@@ -45,6 +45,7 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
   const [rows, setRows] = useState<Row[]>([]);
   const [orderBy, setOrderBy] = useState("name");
   const [limit, setLimit] = useState(50);
+  const [output, setOutput] = useState<"table" | "graph">("table");
 
   useEffect(() => {
     getBuilderSchema().then(setSchema).catch(() => setSchemaError(true));
@@ -80,7 +81,7 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
           value: kind === "number" || kind === "year" ? Number(r.value) : r.value,
         };
       });
-    onRun({ filters, order_by: orderBy, limit });
+    onRun({ filters, order_by: orderBy, limit, output });
   };
 
   if (schemaError) {
@@ -182,6 +183,14 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
               {ORDER_LABELS[o] ?? o}
             </option>
           ))}
+        </select>
+        <select
+          value={output}
+          onChange={(e) => setOutput(e.target.value as "table" | "graph")}
+          className={selectCls}
+        >
+          <option value="table">Elenco (SELECT)</option>
+          <option value="graph">Relazioni (CONSTRUCT)</option>
         </select>
         <label className="flex items-center gap-2 text-sm text-gray-400">
           Max

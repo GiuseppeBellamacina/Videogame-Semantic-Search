@@ -101,4 +101,5 @@ export interface BuilderRequest {
   filters: BuilderFilterInput[];
   order_by: string;
   limit: number;
+  output: "table" | "graph";
 }

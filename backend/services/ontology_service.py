@@ -14,6 +14,7 @@ from backend.services.image_cache import get_label, get_type, set_label, set_typ
 logger = logging.getLogger(__name__)
 
 VG_NS = ONTOLOGY_NS
+MAX_CONSTRUCT_TRIPLES = 3000
 RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 
 
@@ -102,6 +103,18 @@ class OntologyService:
         """
         store = cls.get_store()
         results = store.query(query)
+
+        if isinstance(results, ox.QueryTriples):
+            # CONSTRUCT: one row per triple; the graph is built from these in graph_builder
+            triples, seen = [], set()
+            for t in results:
+                row = (t.subject.value, cls._get_local_name(t.predicate.value), t.object.value)
+                if row not in seen:
+                    seen.add(row)
+                    triples.append({"subject": row[0], "predicate": row[1], "object": row[2]})
+                    if len(triples) >= MAX_CONSTRUCT_TRIPLES:
+                        break
+            return triples
 
         variables = [v.value for v in results.variables]
         rows = []

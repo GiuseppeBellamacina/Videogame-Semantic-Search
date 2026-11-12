@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 from backend.routers.query import QueryResponse
 from backend.services import query_builder, search_index
-from backend.services.graph_builder import build_graph_from_results
+from backend.services.graph_builder import build_graph
 from backend.services.ontology_service import OntologyService
 
 router = APIRouter()
@@ -40,20 +40,21 @@ class BuilderRequest(BaseModel):
     filters: list[BuilderFilter] = Field(default_factory=list, max_length=12)
     order_by: str = "name"
     limit: int = 50
+    output: str = "table"  # table = SELECT, graph = CONSTRUCT
 
 
 @router.post("/builder/query", response_model=QueryResponse)
 async def builder_query(body: BuilderRequest):
     try:
         sparql = query_builder.build(
-            [f.model_dump() for f in body.filters], body.order_by, body.limit
+            [f.model_dump() for f in body.filters], body.order_by, body.limit, body.output
         )
     except (query_builder.BuilderError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     def _run():
         rows = OntologyService.execute_sparql(sparql)
-        graph = build_graph_from_results(rows, OntologyService) if rows else {"nodes": [], "links": []}
+        graph = build_graph(rows, OntologyService) if rows else {"nodes": [], "links": []}
         return rows, graph
 
     try:
