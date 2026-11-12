@@ -8,7 +8,7 @@ Un progetto di Semantic Web che costruisce e interroga un'ontologia OWL sui vide
 
 L'ontologia (TBox in `ontology/videogames.owl`, descritta nella relazione in `docs/relazione`) viene popolata con i dati di Wikidata dal 2010 ad oggi e arricchita da una pipeline di reasoning in un unico script: `ontology/build_ontology.py`. L'output è `ontology/videogames_full.owl` (caricato dal backend) e `ontology/videogames_full.ttl` (stessa ontologia in Turtle, più leggibile).
 
-Build completa: **105.860 videogiochi**, 5.374 sviluppatori, 3.830 publisher, 581 generi, 249 piattaforme; 877.689 triple scaricate, **5,38 milioni** nel file finale dopo il reasoning (circa 38 minuti per la chiusura OWL-RL). Il dettaglio per classe è in `docs/ontology.md`.
+Build completa: **105.860 videogiochi**, 5.374 sviluppatori, 3.830 publisher, 581 generi, 249 piattaforme; 877.689 triple scaricate, **4,14 milioni** nel file finale dopo il reasoning (circa 38 minuti per la chiusura OWL-RL). Il dettaglio per classe è in `docs/ontology.md`.
 
 Il fetch interroga Wikidata per anno × mese (per evitare i timeout) con checkpoint su disco: se si interrompe, rilanciando lo script riparte dai mesi già scaricati. Non vengono scaricati `gameDescription` e `officialWebsite`, che il sistema non usa.
 

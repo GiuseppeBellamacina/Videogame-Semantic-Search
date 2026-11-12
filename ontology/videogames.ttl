@@ -10,140 +10,90 @@
     rdfs:label "Video Game Ontology" ;
     rdfs:comment "An ontology for describing video games, their developers, publishers, genres, platforms, characters, franchises, awards, game engines, game modes, reviews, and events. Covers games from 2010 onwards. Aligned with Wikidata and Dublin Core." .
 
-vg:ActionGame a owl:Class ;
-    rdfs:label "Action Game" ;
-    rdfs:comment "A video game of an action genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:ActionGenre ] ) ] .
+vg:VideoGame a owl:Class ;
+    rdfs:label "Video Game" ;
+    rdfs:comment "A video game product" ;
+    owl:equivalentClass wd:Q7889 ;
+    owl:hasKey ( vg:hasSteamAppId ),
+        ( vg:hasWikidataId ) .
 
-vg:AdventureGame a owl:Class ;
-    rdfs:label "Adventure Game" ;
-    rdfs:comment "A video game of an adventure genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:AdventureGenre ] ) ] .
+vg:Developer a owl:Class ;
+    rdfs:label "Developer" ;
+    rdfs:comment "A company or studio that develops video games" ;
+    owl:equivalentClass wd:Q210167 .
 
-vg:AmericanGame a owl:Class ;
-    rdfs:label "American Game" ;
-    rdfs:comment "A video game whose country of origin is the United States" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:hasValue "United States"^^xsd:string ;
-                        owl:onProperty vg:countryOfOrigin ] ) ] .
+vg:Publisher a owl:Class ;
+    rdfs:label "Publisher" ;
+    rdfs:comment "A company that publishes video games" .
 
-vg:AndroidGame a owl:Class ;
-    rdfs:label "Android Game" ;
-    rdfs:comment "A video game available on Android" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:AndroidPlatform ] ) ] .
+vg:Genre a owl:Class ;
+    rdfs:label "Genre" ;
+    rdfs:comment "A category or genre of video games" ;
+    owl:equivalentClass wd:Q65956376 .
 
-vg:ArcadeGame a owl:Class ;
-    rdfs:label "Arcade Game" ;
-    rdfs:comment "A video game released for arcade machines" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:ArcadePlatform ] ) ] .
+vg:Platform a owl:Class ;
+    rdfs:label "Platform" ;
+    rdfs:comment "A hardware or software platform on which a game can be played" .
 
-vg:BandaiNamcoPublishedGame a owl:Class ;
-    rdfs:label "Bandai Namco Published Game" ;
-    rdfs:comment "A video game published by Bandai Namco Entertainment" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Bandai_Namco_Entertainment> ;
-                        owl:onProperty vg:publishedBy ] ) ] .
+vg:Character a owl:Class ;
+    rdfs:label "Character" ;
+    rdfs:comment "A fictional character appearing in a video game" .
 
-vg:BrowserGame a owl:Class ;
-    rdfs:label "Browser Game" ;
-    rdfs:comment "A video game playable in a web browser" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:BrowserPlatform ] ) ] .
+vg:Franchise a owl:Class ;
+    rdfs:label "Franchise" ;
+    rdfs:comment "A series or franchise of video games" .
 
-vg:CapcomPublishedGame a owl:Class ;
-    rdfs:label "Capcom Published Game" ;
-    rdfs:comment "A video game published by Capcom" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Capcom> ;
-                        owl:onProperty vg:publishedBy ] ) ] .
+vg:Award a owl:Class ;
+    rdfs:label "Award" ;
+    rdfs:comment "An award or recognition given to a video game" .
 
-vg:CasualGame a owl:Class ;
-    rdfs:label "Casual Game" ;
-    rdfs:comment "A video game of a casual genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:CasualGenre ] ) ] .
+vg:GameEngine a owl:Class ;
+    rdfs:label "Game Engine" ;
+    rdfs:comment "A software framework used to develop video games" ;
+    owl:equivalentClass wd:Q193564 .
 
-vg:ConsoleGame a owl:Class ;
-    rdfs:label "Console Game" ;
-    rdfs:comment "A video game available on a console platform." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:ConsolePlatform ] ) ] .
+vg:GameMode a owl:Class ;
+    rdfs:label "Game Mode" ;
+    rdfs:comment "A mode of play available in a video game" .
 
-vg:CoopGame a owl:Class ;
-    rdfs:label "Co-op Game" ;
-    rdfs:comment "A video game that supports a cooperative game mode." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGameMode ;
-                        owl:someValuesFrom vg:CoopMode ] ) ] .
+vg:Review a owl:Class ;
+    rdfs:label "Review" ;
+    rdfs:comment "A review or critical assessment of a video game" ;
+    owl:hasKey ( vg:reviewedGame vg:reviewerName ) .
 
-vg:ElectronicArtsPublishedGame a owl:Class ;
-    rdfs:label "Electronic Arts Published Game" ;
-    rdfs:comment "A video game published by Electronic Arts" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Electronic_Arts> ;
-                        owl:onProperty vg:publishedBy ] ) ] .
+vg:GameEvent a owl:Class ;
+    rdfs:label "Game Event" ;
+    rdfs:comment "A lifecycle event pertaining to a video game (announcement, release, update, delisting, etc.)" .
 
-vg:ExclusiveRelease a owl:Class ;
-    rdfs:label "Exclusive Release" ;
-    rdfs:comment "A video game available on at most one platform. Necessary condition only (subClassOf, not equivalentClass)." ;
-    rdfs:subClassOf [ a owl:Restriction ;
-            owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onProperty vg:availableOn ],
-        vg:VideoGame .
+vg:ReleasedGame a owl:Class ;
+    rdfs:label "Released Game" ;
+    rdfs:comment "A video game that has been officially released to the public" ;
+    rdfs:subClassOf vg:VideoGame .
 
-vg:FirstPartyDeveloper a owl:Class ;
-    rdfs:label "First-Party Developer" ;
-    rdfs:comment "A development studio owned by or exclusive to a platform holder" ;
-    rdfs:subClassOf vg:Developer .
+vg:EarlyAccessGame a owl:Class ;
+    rdfs:label "Early Access Game" ;
+    rdfs:comment "A video game available in early access before full release" ;
+    rdfs:subClassOf vg:VideoGame .
 
-vg:FirstPartyPublisher a owl:Class ;
-    rdfs:label "First-Party Publisher" ;
-    rdfs:comment "A publishing division of a platform holder" ;
-    rdfs:subClassOf vg:Publisher .
+vg:CancelledGame a owl:Class ;
+    rdfs:label "Cancelled Game" ;
+    rdfs:comment "A video game whose development was cancelled before release" ;
+    rdfs:subClassOf vg:VideoGame .
 
-vg:FranchiseGame a owl:Class ;
-    rdfs:label "Franchise Game" ;
-    rdfs:comment "A video game that is part of a franchise or series." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:belongsTo ;
-                        owl:someValuesFrom vg:Franchise ] ) ] .
+vg:DelistedGame a owl:Class ;
+    rdfs:label "Delisted Game" ;
+    rdfs:comment "A video game that has been removed from digital storefronts" ;
+    rdfs:subClassOf vg:VideoGame .
+
+vg:IndieGame a owl:Class ;
+    rdfs:label "Indie Game" ;
+    rdfs:comment "A video game with a relatively small development budget, typically by independent developers" ;
+    rdfs:subClassOf vg:VideoGame .
+
+vg:AAAGame a owl:Class ;
+    rdfs:label "AAA Game" ;
+    rdfs:comment "A video game produced with a large budget by a major publisher" ;
+    rdfs:subClassOf vg:VideoGame .
 
 vg:GOTYWinner a owl:Class ;
     rdfs:label "Game of the Year Winner" ;
@@ -154,443 +104,412 @@ vg:GOTYWinner a owl:Class ;
                         owl:onProperty vg:wonAward ;
                         owl:someValuesFrom vg:GameOfTheYearAward ] ) ] .
 
-vg:GameWithSingleDeveloper a owl:Class ;
-    rdfs:label "Game with Single Developer" ;
-    rdfs:comment "A video game developed by at most one developer studio. Necessary condition only (subClassOf, not equivalentClass)." ;
-    rdfs:subClassOf [ a owl:Restriction ;
-            owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onProperty vg:developedBy ],
-        vg:VideoGame .
+vg:ConsolePlatform a owl:Class ;
+    rdfs:label "Console Platform" ;
+    rdfs:comment "A dedicated video game console hardware platform" ;
+    rdfs:subClassOf vg:Platform .
 
-vg:HighlyRatedGame a owl:Class ;
-    rdfs:label "Highly Rated Game" ;
-    rdfs:comment "A video game with a Metacritic score of 85 or above. Classified by a SPARQL CONSTRUCT rule (datatype restriction)." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:metacriticScore ;
-                        owl:someValuesFrom [ a rdfs:Datatype ;
-                                owl:onDatatype xsd:integer ;
-                                owl:withRestrictions ( [ xsd:minInclusive 85 ] ) ] ] ) ] .
+vg:PlayStationPlatform a owl:Class ;
+    rdfs:label "PlayStation Platform" ;
+    rdfs:comment "A platform in the Sony PlayStation family of consoles" ;
+    rdfs:subClassOf vg:ConsolePlatform .
 
-vg:HorrorGame a owl:Class ;
-    rdfs:label "Horror Game" ;
-    rdfs:comment "A video game of a horror genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:HorrorGenre ] ) ] .
+vg:XboxPlatform a owl:Class ;
+    rdfs:label "Xbox Platform" ;
+    rdfs:comment "A platform in the Microsoft Xbox family of consoles" ;
+    rdfs:subClassOf vg:ConsolePlatform .
 
-vg:IndieDeveloper a owl:Class ;
-    rdfs:label "Indie Developer" ;
-    rdfs:comment "A small independent developer without publisher backing" ;
+vg:NintendoPlatform a owl:Class ;
+    rdfs:label "Nintendo Platform" ;
+    rdfs:comment "A platform in the Nintendo family of consoles" ;
+    rdfs:subClassOf vg:ConsolePlatform .
+
+vg:PCPlatform a owl:Class ;
+    rdfs:label "PC Platform" ;
+    rdfs:comment "A personal computer platform" ;
+    rdfs:subClassOf vg:Platform .
+
+vg:WindowsPlatform a owl:Class ;
+    rdfs:label "Windows Platform" ;
+    rdfs:comment "A platform running the Microsoft Windows operating system" ;
+    rdfs:subClassOf vg:PCPlatform .
+
+vg:MacOSPlatform a owl:Class ;
+    rdfs:label "macOS Platform" ;
+    rdfs:comment "A platform running the Apple macOS operating system" ;
+    rdfs:subClassOf vg:PCPlatform .
+
+vg:LinuxPlatform a owl:Class ;
+    rdfs:label "Linux Platform" ;
+    rdfs:comment "A platform running a Linux-based operating system" ;
+    rdfs:subClassOf vg:PCPlatform .
+
+vg:MobilePlatform a owl:Class ;
+    rdfs:label "Mobile Platform" ;
+    rdfs:comment "A mobile device platform (phone or tablet)" ;
+    rdfs:subClassOf vg:Platform .
+
+vg:IOSPlatform a owl:Class ;
+    rdfs:label "iOS Platform" ;
+    rdfs:comment "A platform running Apple iOS" ;
+    rdfs:subClassOf vg:MobilePlatform .
+
+vg:AndroidPlatform a owl:Class ;
+    rdfs:label "Android Platform" ;
+    rdfs:comment "A platform running the Android operating system" ;
+    rdfs:subClassOf vg:MobilePlatform .
+
+vg:ActionGenre a owl:Class ;
+    rdfs:label "Action Genre" ;
+    rdfs:comment "A genre emphasizing physical challenges and hand-eye coordination" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:RPGGenre a owl:Class ;
+    rdfs:label "RPG Genre" ;
+    rdfs:comment "A role-playing game genre with character progression and narrative focus" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:StrategyGenre a owl:Class ;
+    rdfs:label "Strategy Genre" ;
+    rdfs:comment "A genre emphasizing tactical and strategic thinking" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:PuzzleGenre a owl:Class ;
+    rdfs:label "Puzzle Genre" ;
+    rdfs:comment "A genre centred on logic puzzles and problem-solving" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:SimulationGenre a owl:Class ;
+    rdfs:label "Simulation Genre" ;
+    rdfs:comment "A genre that simulates real-world or fictional systems" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:SportsGenre a owl:Class ;
+    rdfs:label "Sports Genre" ;
+    rdfs:comment "A genre simulating traditional sports and athletic competitions" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:RacingGenre a owl:Class ;
+    rdfs:label "Racing Genre" ;
+    rdfs:comment "A genre focusing on vehicle-based competition and racing" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:AdventureGenre a owl:Class ;
+    rdfs:label "Adventure Genre" ;
+    rdfs:comment "A genre emphasizing exploration and narrative-driven gameplay" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:HorrorGenre a owl:Class ;
+    rdfs:label "Horror Genre" ;
+    rdfs:comment "A genre designed to evoke fear, dread, and suspense" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:PlatformerGenre a owl:Class ;
+    rdfs:label "Platformer Genre" ;
+    rdfs:comment "A genre focused on navigating platforms and obstacles" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:FirstPartyDeveloper a owl:Class ;
+    rdfs:label "First-Party Developer" ;
+    rdfs:comment "A development studio owned by or exclusive to a platform holder" ;
     rdfs:subClassOf vg:Developer .
-
-vg:JapaneseGame a owl:Class ;
-    rdfs:label "Japanese Game" ;
-    rdfs:comment "A video game whose country of origin is Japan" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:hasValue "Japan"^^xsd:string ;
-                        owl:onProperty vg:countryOfOrigin ] ) ] .
-
-vg:KonamiPublishedGame a owl:Class ;
-    rdfs:label "Konami Published Game" ;
-    rdfs:comment "A video game published by Konami" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Konami> ;
-                        owl:onProperty vg:publishedBy ] ) ] .
-
-vg:LinuxGame a owl:Class ;
-    rdfs:label "Linux Game" ;
-    rdfs:comment "A video game available on Linux" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:LinuxPlatform ] ) ] .
-
-vg:MacOSGame a owl:Class ;
-    rdfs:label "macOS Game" ;
-    rdfs:comment "A video game available on macOS" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:MacOSPlatform ] ) ] .
-
-vg:MobileGame a owl:Class ;
-    rdfs:label "Mobile Game" ;
-    rdfs:comment "A video game available on a mobile platform." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:MobilePlatform ] ) ] .
-
-vg:MultiConsoleGame a owl:Class ;
-    rdfs:label "Multi-Console Game" ;
-    rdfs:comment "A video game available on at least two console platforms. Classified by a SPARQL CONSTRUCT rule (qualified cardinality)." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
-                        owl:onClass vg:ConsolePlatform ;
-                        owl:onProperty vg:availableOn ] ) ] .
-
-vg:MultiPlatformGame a owl:Class ;
-    rdfs:label "Multi-Platform Game" ;
-    rdfs:comment "A video game available on at least three platforms. Classified by a SPARQL CONSTRUCT rule (qualified cardinality)." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:minQualifiedCardinality "3"^^xsd:nonNegativeInteger ;
-                        owl:onClass vg:Platform ;
-                        owl:onProperty vg:availableOn ] ) ] .
-
-vg:MultiplayerGame a owl:Class ;
-    rdfs:label "Multiplayer Game" ;
-    rdfs:comment "A video game that supports a multiplayer game mode." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGameMode ;
-                        owl:someValuesFrom vg:MultiplayerMode ] ) ] .
-
-vg:NintendoGame a owl:Class ;
-    rdfs:label "Nintendo Game" ;
-    rdfs:comment "A video game available on a Nintendo platform." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:NintendoPlatform ] ) ] .
-
-vg:NintendoPublishedGame a owl:Class ;
-    rdfs:label "Nintendo Published Game" ;
-    rdfs:comment "A video game published by Nintendo (nominal: hasValue on the Nintendo publisher individual)." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Nintendo> ;
-                        owl:onProperty vg:publishedBy ] ) ] .
-
-vg:PCGame a owl:Class ;
-    rdfs:label "PC Game" ;
-    rdfs:comment "A video game available on a PC platform." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:PCPlatform ] ) ] .
-
-vg:PlatformerGame a owl:Class ;
-    rdfs:label "Platformer Game" ;
-    rdfs:comment "A video game of a platformer genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:PlatformerGenre ] ) ] .
-
-vg:PlayStationGame a owl:Class ;
-    rdfs:label "PlayStation Game" ;
-    rdfs:comment "A video game available on a PlayStation platform." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:PlayStationPlatform ] ) ] .
-
-vg:PuzzleGame a owl:Class ;
-    rdfs:label "Puzzle Game" ;
-    rdfs:comment "A video game of a puzzle genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:PuzzleGenre ] ) ] .
-
-vg:RPGGame a owl:Class ;
-    rdfs:label "RPG Game" ;
-    rdfs:comment "A video game of a role-playing genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:RPGGenre ] ) ] .
-
-vg:RacingGame a owl:Class ;
-    rdfs:label "Racing Game" ;
-    rdfs:comment "A video game of a racing genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:RacingGenre ] ) ] .
-
-vg:RecentGame a owl:Class ;
-    rdfs:label "Recent Game" ;
-    rdfs:comment "A video game released on or after 2020-01-01. Classified by a SPARQL CONSTRUCT rule (datatype restriction)." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:releaseDate ;
-                        owl:someValuesFrom [ a rdfs:Datatype ;
-                                owl:onDatatype xsd:date ;
-                                owl:withRestrictions ( [ xsd:minInclusive "2020-01-01"^^xsd:date ] ) ] ] ) ] .
-
-vg:RetroComputerGame a owl:Class ;
-    rdfs:label "Retro Computer Game" ;
-    rdfs:comment "A video game available on a retro home computer" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:RetroComputerPlatform ] ) ] .
-
-vg:SequelGame a owl:Class ;
-    rdfs:label "Sequel Game" ;
-    rdfs:comment "A video game that is a sequel to another game." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:sequelOf ;
-                        owl:someValuesFrom vg:VideoGame ] ) ] .
-
-vg:ShooterGame a owl:Class ;
-    rdfs:label "Shooter Game" ;
-    rdfs:comment "A video game of a shooter genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:ShooterGenre ] ) ] .
-
-vg:SimulationGame a owl:Class ;
-    rdfs:label "Simulation Game" ;
-    rdfs:comment "A video game of a simulation genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:SimulationGenre ] ) ] .
-
-vg:SinglePlayerGame a owl:Class ;
-    rdfs:label "Single-Player Game" ;
-    rdfs:comment "A video game that supports a single-player game mode." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGameMode ;
-                        owl:someValuesFrom vg:SinglePlayerMode ] ) ] .
-
-vg:SonyPublishedGame a owl:Class ;
-    rdfs:label "Sony Published Game" ;
-    rdfs:comment "A video game published by Sony Interactive Entertainment" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Sony_Interactive_Entertainment> ;
-                        owl:onProperty vg:publishedBy ] ) ] .
-
-vg:SportsGame a owl:Class ;
-    rdfs:label "Sports Game" ;
-    rdfs:comment "A video game of a sports genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:SportsGenre ] ) ] .
-
-vg:SquareEnixPublishedGame a owl:Class ;
-    rdfs:label "Square Enix Published Game" ;
-    rdfs:comment "A video game published by Square Enix" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Square_Enix> ;
-                        owl:onProperty vg:publishedBy ] ) ] .
-
-vg:StandaloneGame a owl:Class ;
-    rdfs:label "Standalone Game" ;
-    rdfs:comment "A video game that is not a sequel to any other game. Classified by a SPARQL CONSTRUCT rule (negation as failure)." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Class ;
-                        owl:complementOf [ a owl:Restriction ;
-                                owl:onProperty vg:sequelOf ;
-                                owl:someValuesFrom vg:VideoGame ] ] ) ] .
-
-vg:StrategyGame a owl:Class ;
-    rdfs:label "Strategy Game" ;
-    rdfs:comment "A video game of a strategy genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:StrategyGenre ] ) ] .
-
-vg:SubFranchise a owl:Class ;
-    rdfs:label "Sub-Franchise" ;
-    rdfs:comment "A spin-off or sub-series within a larger franchise" ;
-    rdfs:subClassOf vg:Franchise .
 
 vg:ThirdPartyDeveloper a owl:Class ;
     rdfs:label "Third-Party Developer" ;
     rdfs:comment "An independent development studio not tied to a specific platform holder" ;
     rdfs:subClassOf vg:Developer .
 
+vg:IndieDeveloper a owl:Class ;
+    rdfs:label "Indie Developer" ;
+    rdfs:comment "A small independent developer without publisher backing" ;
+    rdfs:subClassOf vg:Developer .
+
+vg:FirstPartyPublisher a owl:Class ;
+    rdfs:label "First-Party Publisher" ;
+    rdfs:comment "A publishing division of a platform holder" ;
+    rdfs:subClassOf vg:Publisher .
+
 vg:ThirdPartyPublisher a owl:Class ;
     rdfs:label "Third-Party Publisher" ;
     rdfs:comment "An independent publishing company not owned by a platform holder" ;
     rdfs:subClassOf vg:Publisher .
 
-vg:UnrealEngineGame a owl:Class ;
-    rdfs:label "Unreal Engine Game" ;
-    rdfs:comment "A video game made with Unreal Engine" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:madeWith ;
-                        owl:someValuesFrom vg:UnrealEngineFamily ] ) ] .
+vg:ProprietaryEngine a owl:Class ;
+    rdfs:label "Proprietary Engine" ;
+    rdfs:comment "A game engine that is privately owned and not publicly licensed" ;
+    rdfs:subClassOf vg:GameEngine .
 
-vg:VRGame a owl:Class ;
-    rdfs:label "VR Game" ;
-    rdfs:comment "A video game available on a virtual reality platform" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:VRPlatform ] ) ] .
+vg:OpenSourceEngine a owl:Class ;
+    rdfs:label "Open-Source Engine" ;
+    rdfs:comment "A game engine whose source code is publicly available" ;
+    rdfs:subClassOf vg:GameEngine .
 
-vg:VisualNovelGame a owl:Class ;
-    rdfs:label "Visual Novel Game" ;
-    rdfs:comment "A video game of a visual novel genre" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasGenre ;
-                        owl:someValuesFrom vg:VisualNovelGenre ] ) ] .
+vg:IndustryAward a owl:Class ;
+    rdfs:label "Industry Award" ;
+    rdfs:comment "An award granted by an industry body or trade association" ;
+    rdfs:subClassOf vg:Award .
 
-vg:WindowsGame a owl:Class ;
-    rdfs:label "Windows Game" ;
-    rdfs:comment "A video game available on Windows" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:WindowsPlatform ] ) ] .
+vg:EditorialAward a owl:Class ;
+    rdfs:label "Editorial Award" ;
+    rdfs:comment "An award granted by an editorial outlet or publication" ;
+    rdfs:subClassOf vg:Award .
 
-vg:XboxGame a owl:Class ;
-    rdfs:label "Xbox Game" ;
-    rdfs:comment "A video game available on an Xbox platform." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:availableOn ;
-                        owl:someValuesFrom vg:XboxPlatform ] ) ] .
+vg:UserAward a owl:Class ;
+    rdfs:label "User Award" ;
+    rdfs:comment "An award determined by popular user vote" ;
+    rdfs:subClassOf vg:Award .
 
-vg:XboxPublishedGame a owl:Class ;
-    rdfs:label "Xbox Published Game" ;
-    rdfs:comment "A video game published by Xbox Game Studios" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Xbox_Game_Studios> ;
-                        owl:onProperty vg:publishedBy ] ) ] .
+vg:PlayerCharacter a owl:Class ;
+    rdfs:label "Player Character" ;
+    rdfs:comment "A character directly controlled by the player" ;
+    rdfs:subClassOf vg:Character .
 
-vg:awardName a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "award name" ;
-    rdfs:domain vg:Award ;
-    rdfs:range xsd:string ;
-    rdfs:subPropertyOf vg:name .
+vg:NonPlayerCharacter a owl:Class ;
+    rdfs:label "Non-Player Character" ;
+    rdfs:comment "A character controlled by the game's AI, not by the player" ;
+    rdfs:subClassOf vg:Character .
 
-vg:awardYear a owl:DatatypeProperty ;
-    rdfs:label "award year" ;
-    rdfs:domain vg:Award ;
-    rdfs:range xsd:integer .
+vg:SubFranchise a owl:Class ;
+    rdfs:label "Sub-Franchise" ;
+    rdfs:comment "A spin-off or sub-series within a larger franchise" ;
+    rdfs:subClassOf vg:Franchise .
 
-vg:budgetTier a owl:DatatypeProperty ;
-    rdfs:label "budget tier" ;
-    rdfs:comment "The budget tier classification of this game (e.g. indie, AA, AAA)" ;
+vg:SinglePlayerMode a owl:Class ;
+    rdfs:label "Single-Player Mode" ;
+    rdfs:comment "A game mode designed for a single player" ;
+    rdfs:subClassOf vg:GameMode .
+
+vg:MultiplayerMode a owl:Class ;
+    rdfs:label "Multiplayer Mode" ;
+    rdfs:comment "A game mode supporting multiple simultaneous players" ;
+    rdfs:subClassOf vg:GameMode .
+
+vg:CoopMode a owl:Class ;
+    rdfs:label "Co-op Mode" ;
+    rdfs:comment "A game mode supporting cooperative play among players" ;
+    rdfs:subClassOf vg:GameMode .
+
+vg:MMOMode a owl:Class ;
+    rdfs:label "MMO Mode" ;
+    rdfs:comment "A massively multiplayer online game mode supporting large concurrent player counts" ;
+    rdfs:subClassOf vg:GameMode .
+
+vg:AnnouncementEvent a owl:Class ;
+    rdfs:label "Announcement Event" ;
+    rdfs:comment "An event marking the public announcement of a video game" ;
+    rdfs:subClassOf vg:GameEvent .
+
+vg:ReleaseEvent a owl:Class ;
+    rdfs:label "Release Event" ;
+    rdfs:comment "An event marking the official release of a video game" ;
+    rdfs:subClassOf vg:GameEvent .
+
+vg:UpdateEvent a owl:Class ;
+    rdfs:label "Update Event" ;
+    rdfs:comment "An event marking a major update or patch to a video game" ;
+    rdfs:subClassOf vg:GameEvent .
+
+vg:DelistingEvent a owl:Class ;
+    rdfs:label "Delisting Event" ;
+    rdfs:comment "An event marking the removal of a video game from digital storefronts" ;
+    rdfs:subClassOf vg:GameEvent .
+
+vg:BrowserPlatform a owl:Class ;
+    rdfs:label "Browser Platform" ;
+    rdfs:comment "A web browser or web-based platform" ;
+    rdfs:subClassOf vg:Platform .
+
+vg:ArcadePlatform a owl:Class ;
+    rdfs:label "Arcade Platform" ;
+    rdfs:comment "An arcade machine" ;
+    rdfs:subClassOf vg:Platform .
+
+vg:RetroComputerPlatform a owl:Class ;
+    rdfs:label "Retro Computer Platform" ;
+    rdfs:comment "A home computer of the 1980s and early 1990s (Commodore 64, ZX Spectrum, Atari ST, MSX...)" ;
+    rdfs:subClassOf vg:Platform .
+
+vg:VRPlatform a owl:Class ;
+    rdfs:label "VR Platform" ;
+    rdfs:comment "A virtual or mixed reality platform" ;
+    rdfs:subClassOf vg:Platform .
+
+vg:CasualGenre a owl:Class ;
+    rdfs:label "Casual Genre" ;
+    rdfs:comment "Casual and hidden-object games" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:VisualNovelGenre a owl:Class ;
+    rdfs:label "Visual Novel Genre" ;
+    rdfs:comment "Visual novels and eroge" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:ShooterGenre a owl:Class ;
+    rdfs:label "Shooter Genre" ;
+    rdfs:comment "First-person, third-person and shoot 'em up games" ;
+    rdfs:subClassOf vg:Genre .
+
+vg:UnrealEngineFamily a owl:Class ;
+    rdfs:label "Unreal Engine Family" ;
+    rdfs:comment "Any version of Unreal Engine" ;
+    rdfs:subClassOf vg:GameEngine .
+
+vg:GameOfTheYearAward a owl:Class ;
+    rdfs:label "Game of the Year Award" ;
+    rdfs:comment "An award named Game of the Year (including genre- and platform-specific ones)" ;
+    rdfs:subClassOf vg:Award .
+
+vg:developedBy a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "developed by" ;
     rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:string .
+    rdfs:range vg:Developer ;
+    owl:inverseOf vg:developerOf .
 
-vg:characterName a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "character name" ;
-    rdfs:domain vg:Character ;
-    rdfs:range xsd:string ;
-    rdfs:subPropertyOf vg:name .
-
-vg:description a owl:DatatypeProperty ;
-    rdfs:label "description" ;
-    rdfs:range xsd:string .
-
-vg:developerName a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "developer name" ;
+vg:developerOf a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "developer of" ;
     rdfs:domain vg:Developer ;
-    rdfs:range xsd:string ;
-    rdfs:subPropertyOf vg:name .
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:developedBy .
 
-vg:engineName a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "engine name" ;
-    rdfs:domain vg:GameEngine ;
-    rdfs:range xsd:string ;
-    rdfs:subPropertyOf vg:name .
-
-vg:eventDate a owl:DatatypeProperty ;
-    rdfs:label "event date" ;
-    rdfs:comment "The date on which this lifecycle event occurred" ;
-    rdfs:domain vg:GameEvent ;
-    rdfs:range xsd:date .
-
-vg:franchiseName a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "franchise name" ;
-    rdfs:domain vg:Franchise ;
-    rdfs:range xsd:string ;
-    rdfs:subPropertyOf vg:name .
-
-vg:gameDescription a owl:DatatypeProperty ;
-    rdfs:label "game description" ;
+vg:publishedBy a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "published by" ;
     rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:string ;
-    owl:equivalentProperty dcterms:description .
+    rdfs:range vg:Publisher ;
+    owl:inverseOf vg:publisherOf .
 
-vg:gameName a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "game name" ;
+vg:publisherOf a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "publisher of" ;
+    rdfs:domain vg:Publisher ;
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:publishedBy .
+
+vg:hasGenre a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "has genre" ;
     rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:string ;
-    rdfs:subPropertyOf vg:name ;
-    owl:equivalentProperty dcterms:title .
+    rdfs:range vg:Genre ;
+    owl:inverseOf vg:genreOf .
 
-vg:genreName a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "genre name" ;
+vg:genreOf a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "genre of" ;
     rdfs:domain vg:Genre ;
-    rdfs:range xsd:string ;
-    rdfs:subPropertyOf vg:name .
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:hasGenre .
 
-vg:hasIGDBId a owl:DatatypeProperty ;
-    rdfs:label "IGDB ID" ;
-    rdfs:comment "The Internet Game Database identifier for this game" ;
+vg:availableOn a owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "available on" ;
     rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:string .
+    rdfs:range vg:Platform ;
+    owl:inverseOf vg:platformFor .
 
-vg:officialWebsite a owl:DatatypeProperty ;
-    rdfs:label "official website" ;
+vg:platformFor a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "platform for" ;
+    rdfs:domain vg:Platform ;
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:availableOn .
+
+vg:hasCharacter a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "has character" ;
     rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:anyURI .
+    rdfs:range vg:Character ;
+    owl:inverseOf vg:appearsIn .
+
+vg:appearsIn a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "appears in" ;
+    rdfs:domain vg:Character ;
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:hasCharacter .
+
+vg:belongsTo a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "belongs to" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Franchise ;
+    owl:inverseOf vg:includes .
+
+vg:includes a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "includes" ;
+    rdfs:domain vg:Franchise ;
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:belongsTo .
+
+vg:wonAward a owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "won award" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Award ;
+    owl:inverseOf vg:awardWonBy .
+
+vg:awardWonBy a owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "award won by" ;
+    rdfs:domain vg:Award ;
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:wonAward .
+
+vg:sequelOf a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "sequel of" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:hasSequel .
+
+vg:hasSequel a owl:ObjectProperty ;
+    rdfs:label "has sequel" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:sequelOf .
+
+vg:hasGameMode a owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "has game mode" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:GameMode ;
+    owl:inverseOf vg:modeInGame .
+
+vg:modeInGame a owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "mode in game" ;
+    rdfs:domain vg:GameMode ;
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:hasGameMode .
+
+vg:madeWith a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "made with" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:GameEngine ;
+    owl:inverseOf vg:engineUsedIn .
+
+vg:engineUsedIn a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:label "engine used in" ;
+    rdfs:domain vg:GameEngine ;
+    rdfs:range vg:VideoGame ;
+    owl:inverseOf vg:madeWith .
 
 vg:partOfFranchise a owl:ObjectProperty,
         owl:TransitiveProperty ;
@@ -599,50 +518,14 @@ vg:partOfFranchise a owl:ObjectProperty,
     rdfs:domain vg:Franchise ;
     rdfs:range vg:Franchise .
 
-vg:platformName a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "platform name" ;
-    rdfs:domain vg:Platform ;
-    rdfs:range xsd:string ;
-    rdfs:subPropertyOf vg:name .
-
-vg:playerCount a owl:DatatypeProperty ;
-    rdfs:label "player count" ;
-    rdfs:comment "The estimated total number of players for this game" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:integer .
-
-vg:publisherName a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "publisher name" ;
-    rdfs:domain vg:Publisher ;
-    rdfs:range xsd:string ;
-    rdfs:subPropertyOf vg:name .
-
-vg:reviewDate a owl:DatatypeProperty ;
-    rdfs:label "review date" ;
-    rdfs:comment "The date on which this review was published" ;
-    rdfs:domain vg:Review ;
-    rdfs:range xsd:date .
-
-vg:reviewOf a owl:ObjectProperty ;
-    rdfs:label "review of" ;
-    rdfs:comment "The video game this review is about (alias of reviewedGame)" ;
-    rdfs:domain vg:Review ;
-    rdfs:range vg:VideoGame .
-
-vg:reviewScore a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "review score" ;
-    rdfs:comment "The numerical score given by this review" ;
-    rdfs:domain vg:Review ;
-    rdfs:range xsd:integer .
-
-vg:reviewer a owl:ObjectProperty ;
-    rdfs:label "reviewer" ;
-    rdfs:comment "The reviewer or outlet that authored the review" ;
-    rdfs:domain vg:Review ;
-    rdfs:range owl:Thing .
+vg:subsidiaryOf a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "subsidiary of" ;
+    rdfs:comment "Relates a subsidiary company (developer or publisher) to its parent organisation" ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( vg:Developer vg:Publisher ) ] ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( vg:Developer vg:Publisher ) ] .
 
 vg:sharedFranchiseWith a owl:ObjectProperty,
         owl:SymmetricProperty ;
@@ -668,246 +551,19 @@ vg:sharesPublisherWith a owl:ObjectProperty,
     rdfs:range vg:VideoGame ;
     owl:propertyChainAxiom ( vg:publishedBy vg:publisherOf ) .
 
-vg:subsidiaryOf a owl:ObjectProperty,
-        owl:TransitiveProperty ;
-    rdfs:label "subsidiary of" ;
-    rdfs:comment "Relates a subsidiary company (developer or publisher) to its parent organisation" ;
-    rdfs:domain [ a owl:Class ;
-            owl:unionOf ( vg:Developer vg:Publisher ) ] ;
-    rdfs:range [ a owl:Class ;
-            owl:unionOf ( vg:Developer vg:Publisher ) ] .
+vg:reviewer a owl:ObjectProperty ;
+    rdfs:label "reviewer" ;
+    rdfs:comment "The reviewer or outlet that authored the review" ;
+    rdfs:domain vg:Review ;
+    rdfs:range owl:Thing .
 
-vg:AAAGame a owl:Class ;
-    rdfs:label "AAA Game" ;
-    rdfs:comment "A video game produced with a large budget by a major publisher" ;
-    rdfs:subClassOf vg:VideoGame .
-
-vg:ActionGenre a owl:Class ;
-    rdfs:label "Action Genre" ;
-    rdfs:comment "A genre emphasizing physical challenges and hand-eye coordination" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:AdventureGenre a owl:Class ;
-    rdfs:label "Adventure Genre" ;
-    rdfs:comment "A genre emphasizing exploration and narrative-driven gameplay" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:AnnouncementEvent a owl:Class ;
-    rdfs:label "Announcement Event" ;
-    rdfs:comment "An event marking the public announcement of a video game" ;
-    rdfs:subClassOf vg:GameEvent .
-
-vg:AwardWinningGame a owl:Class ;
-    rdfs:label "Award Winning Game" ;
-    rdfs:comment "A video game that has received at least one award." ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:wonAward ;
-                        owl:someValuesFrom vg:Award ] ) ] .
-
-vg:CancelledGame a owl:Class ;
-    rdfs:label "Cancelled Game" ;
-    rdfs:comment "A video game whose development was cancelled before release" ;
-    rdfs:subClassOf vg:VideoGame .
-
-vg:CasualGenre a owl:Class ;
-    rdfs:label "Casual Genre" ;
-    rdfs:comment "Casual and hidden-object games" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:DelistedGame a owl:Class ;
-    rdfs:label "Delisted Game" ;
-    rdfs:comment "A video game that has been removed from digital storefronts" ;
-    rdfs:subClassOf vg:VideoGame .
-
-vg:DelistingEvent a owl:Class ;
-    rdfs:label "Delisting Event" ;
-    rdfs:comment "An event marking the removal of a video game from digital storefronts" ;
-    rdfs:subClassOf vg:GameEvent .
-
-vg:EarlyAccessGame a owl:Class ;
-    rdfs:label "Early Access Game" ;
-    rdfs:comment "A video game available in early access before full release" ;
-    rdfs:subClassOf vg:VideoGame .
-
-vg:EditorialAward a owl:Class ;
-    rdfs:label "Editorial Award" ;
-    rdfs:comment "An award granted by an editorial outlet or publication" ;
-    rdfs:subClassOf vg:Award .
-
-vg:GameOfTheYearAward a owl:Class ;
-    rdfs:label "Game of the Year Award" ;
-    rdfs:comment "An award named Game of the Year (including genre- and platform-specific ones)" ;
-    rdfs:subClassOf vg:Award .
-
-vg:HorrorGenre a owl:Class ;
-    rdfs:label "Horror Genre" ;
-    rdfs:comment "A genre designed to evoke fear, dread, and suspense" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:IOSPlatform a owl:Class ;
-    rdfs:label "iOS Platform" ;
-    rdfs:comment "A platform running Apple iOS" ;
-    rdfs:subClassOf vg:MobilePlatform .
-
-vg:IndieGame a owl:Class ;
-    rdfs:label "Indie Game" ;
-    rdfs:comment "A video game with a relatively small development budget, typically by independent developers" ;
-    rdfs:subClassOf vg:VideoGame .
-
-vg:IndustryAward a owl:Class ;
-    rdfs:label "Industry Award" ;
-    rdfs:comment "An award granted by an industry body or trade association" ;
-    rdfs:subClassOf vg:Award .
-
-vg:MMOMode a owl:Class ;
-    rdfs:label "MMO Mode" ;
-    rdfs:comment "A massively multiplayer online game mode supporting large concurrent player counts" ;
-    rdfs:subClassOf vg:GameMode .
-
-vg:NonPlayerCharacter a owl:Class ;
-    rdfs:label "Non-Player Character" ;
-    rdfs:comment "A character controlled by the game's AI, not by the player" ;
-    rdfs:subClassOf vg:Character .
-
-vg:OpenSourceEngine a owl:Class ;
-    rdfs:label "Open-Source Engine" ;
-    rdfs:comment "A game engine whose source code is publicly available" ;
-    rdfs:subClassOf vg:GameEngine .
-
-vg:PlatformerGenre a owl:Class ;
-    rdfs:label "Platformer Genre" ;
-    rdfs:comment "A genre focused on navigating platforms and obstacles" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:PlayerCharacter a owl:Class ;
-    rdfs:label "Player Character" ;
-    rdfs:comment "A character directly controlled by the player" ;
-    rdfs:subClassOf vg:Character .
-
-vg:ProprietaryEngine a owl:Class ;
-    rdfs:label "Proprietary Engine" ;
-    rdfs:comment "A game engine that is privately owned and not publicly licensed" ;
-    rdfs:subClassOf vg:GameEngine .
-
-vg:PuzzleGenre a owl:Class ;
-    rdfs:label "Puzzle Genre" ;
-    rdfs:comment "A genre centred on logic puzzles and problem-solving" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:RPGGenre a owl:Class ;
-    rdfs:label "RPG Genre" ;
-    rdfs:comment "A role-playing game genre with character progression and narrative focus" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:RacingGenre a owl:Class ;
-    rdfs:label "Racing Genre" ;
-    rdfs:comment "A genre focusing on vehicle-based competition and racing" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:ReleaseEvent a owl:Class ;
-    rdfs:label "Release Event" ;
-    rdfs:comment "An event marking the official release of a video game" ;
-    rdfs:subClassOf vg:GameEvent .
-
-vg:ReleasedGame a owl:Class ;
-    rdfs:label "Released Game" ;
-    rdfs:comment "A video game that has been officially released to the public" ;
-    rdfs:subClassOf vg:VideoGame .
-
-vg:ShooterGenre a owl:Class ;
-    rdfs:label "Shooter Genre" ;
-    rdfs:comment "First-person, third-person and shoot 'em up games" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:SimulationGenre a owl:Class ;
-    rdfs:label "Simulation Genre" ;
-    rdfs:comment "A genre that simulates real-world or fictional systems" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:SportsGenre a owl:Class ;
-    rdfs:label "Sports Genre" ;
-    rdfs:comment "A genre simulating traditional sports and athletic competitions" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:StrategyGenre a owl:Class ;
-    rdfs:label "Strategy Genre" ;
-    rdfs:comment "A genre emphasizing tactical and strategic thinking" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:UnrealEngineFamily a owl:Class ;
-    rdfs:label "Unreal Engine Family" ;
-    rdfs:comment "Any version of Unreal Engine" ;
-    rdfs:subClassOf vg:GameEngine .
-
-vg:UpdateEvent a owl:Class ;
-    rdfs:label "Update Event" ;
-    rdfs:comment "An event marking a major update or patch to a video game" ;
-    rdfs:subClassOf vg:GameEvent .
-
-vg:UserAward a owl:Class ;
-    rdfs:label "User Award" ;
-    rdfs:comment "An award determined by popular user vote" ;
-    rdfs:subClassOf vg:Award .
-
-vg:VisualNovelGenre a owl:Class ;
-    rdfs:label "Visual Novel Genre" ;
-    rdfs:comment "Visual novels and eroge" ;
-    rdfs:subClassOf vg:Genre .
-
-vg:appearsIn a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
+vg:reviewedGame a owl:FunctionalProperty,
         owl:ObjectProperty ;
-    rdfs:label "appears in" ;
-    rdfs:domain vg:Character ;
+    rdfs:label "reviewed game" ;
+    rdfs:comment "The video game that this review evaluates" ;
+    rdfs:domain vg:Review ;
     rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:hasCharacter .
-
-vg:awardWonBy a owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "award won by" ;
-    rdfs:domain vg:Award ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:wonAward .
-
-vg:engineUsedIn a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "engine used in" ;
-    rdfs:domain vg:GameEngine ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:madeWith .
-
-vg:eventFor a owl:ObjectProperty ;
-    rdfs:label "event for" ;
-    rdfs:comment "The video game this event pertains to" ;
-    rdfs:domain vg:GameEvent ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:hasEvent .
-
-vg:genreOf a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "genre of" ;
-    rdfs:domain vg:Genre ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:hasGenre .
-
-vg:hasCharacter a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "has character" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Character ;
-    owl:inverseOf vg:appearsIn .
-
-vg:hasEvent a owl:ObjectProperty ;
-    rdfs:label "has event" ;
-    rdfs:comment "A lifecycle event associated with this video game" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:GameEvent ;
-    owl:inverseOf vg:eventFor .
+    owl:inverseOf vg:hasReview .
 
 vg:hasReview a owl:ObjectProperty ;
     rdfs:label "has review" ;
@@ -916,11 +572,131 @@ vg:hasReview a owl:ObjectProperty ;
     rdfs:range vg:Review ;
     owl:inverseOf vg:reviewedGame .
 
-vg:hasSequel a owl:ObjectProperty ;
-    rdfs:label "has sequel" ;
-    rdfs:domain vg:VideoGame ;
+vg:reviewOf a owl:ObjectProperty ;
+    rdfs:label "review of" ;
+    rdfs:comment "The video game this review is about (alias of reviewedGame)" ;
+    rdfs:domain vg:Review ;
+    rdfs:range vg:VideoGame .
+
+vg:eventFor a owl:ObjectProperty ;
+    rdfs:label "event for" ;
+    rdfs:comment "The video game this event pertains to" ;
+    rdfs:domain vg:GameEvent ;
     rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:sequelOf .
+    owl:inverseOf vg:hasEvent .
+
+vg:hasEvent a owl:ObjectProperty ;
+    rdfs:label "has event" ;
+    rdfs:comment "A lifecycle event associated with this video game" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:GameEvent ;
+    owl:inverseOf vg:eventFor .
+
+vg:name a owl:DatatypeProperty ;
+    rdfs:label "name" ;
+    rdfs:range xsd:string .
+
+vg:gameName a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "game name" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:name ;
+    owl:equivalentProperty dcterms:title .
+
+vg:gameDescription a owl:DatatypeProperty ;
+    rdfs:label "game description" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:string ;
+    owl:equivalentProperty dcterms:description .
+
+vg:releaseDate a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "release date" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:date ;
+    owl:equivalentProperty dcterms:issued .
+
+vg:metacriticScore a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "Metacritic score" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:integer .
+
+vg:developerName a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "developer name" ;
+    rdfs:domain vg:Developer ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:name .
+
+vg:publisherName a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "publisher name" ;
+    rdfs:domain vg:Publisher ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:name .
+
+vg:genreName a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "genre name" ;
+    rdfs:domain vg:Genre ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:name .
+
+vg:platformName a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "platform name" ;
+    rdfs:domain vg:Platform ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:name .
+
+vg:characterName a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "character name" ;
+    rdfs:domain vg:Character ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:name .
+
+vg:franchiseName a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "franchise name" ;
+    rdfs:domain vg:Franchise ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:name .
+
+vg:awardName a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "award name" ;
+    rdfs:domain vg:Award ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:name .
+
+vg:awardYear a owl:DatatypeProperty ;
+    rdfs:label "award year" ;
+    rdfs:domain vg:Award ;
+    rdfs:range xsd:integer .
+
+vg:description a owl:DatatypeProperty ;
+    rdfs:label "description" ;
+    rdfs:range xsd:string .
+
+vg:officialWebsite a owl:DatatypeProperty ;
+    rdfs:label "official website" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:anyURI .
+
+vg:countryOfOrigin a owl:DatatypeProperty ;
+    rdfs:label "country of origin" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:string .
+
+vg:engineName a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:label "engine name" ;
+    rdfs:domain vg:GameEngine ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:name .
 
 vg:hasSteamAppId a owl:DatatypeProperty,
         owl:FunctionalProperty ;
@@ -934,42 +710,512 @@ vg:hasWikidataId a owl:DatatypeProperty ;
     rdfs:comment "The Wikidata entity identifier for this resource" ;
     rdfs:range xsd:string .
 
-vg:metacriticScore a owl:DatatypeProperty,
+vg:hasIGDBId a owl:DatatypeProperty ;
+    rdfs:label "IGDB ID" ;
+    rdfs:comment "The Internet Game Database identifier for this game" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:string .
+
+vg:reviewScore a owl:DatatypeProperty,
         owl:FunctionalProperty ;
-    rdfs:label "Metacritic score" ;
+    rdfs:label "review score" ;
+    rdfs:comment "The numerical score given by this review" ;
+    rdfs:domain vg:Review ;
+    rdfs:range xsd:integer .
+
+vg:reviewDate a owl:DatatypeProperty ;
+    rdfs:label "review date" ;
+    rdfs:comment "The date on which this review was published" ;
+    rdfs:domain vg:Review ;
+    rdfs:range xsd:date .
+
+vg:reviewerName a owl:DatatypeProperty ;
+    rdfs:label "reviewer name" ;
+    rdfs:comment "The name of the reviewer or outlet that wrote this review" ;
+    rdfs:domain vg:Review ;
+    rdfs:range xsd:string .
+
+vg:eventDate a owl:DatatypeProperty ;
+    rdfs:label "event date" ;
+    rdfs:comment "The date on which this lifecycle event occurred" ;
+    rdfs:domain vg:GameEvent ;
+    rdfs:range xsd:date .
+
+vg:budgetTier a owl:DatatypeProperty ;
+    rdfs:label "budget tier" ;
+    rdfs:comment "The budget tier classification of this game (e.g. indie, AA, AAA)" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:string .
+
+vg:playerCount a owl:DatatypeProperty ;
+    rdfs:label "player count" ;
+    rdfs:comment "The estimated total number of players for this game" ;
     rdfs:domain vg:VideoGame ;
     rdfs:range xsd:integer .
 
-vg:modeInGame a owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "mode in game" ;
-    rdfs:domain vg:GameMode ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:hasGameMode .
+vg:AwardWinningGame a owl:Class ;
+    rdfs:label "Award Winning Game" ;
+    rdfs:comment "A video game that has received at least one award." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:wonAward ;
+                        owl:someValuesFrom vg:Award ] ) ] .
 
-vg:platformFor a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "platform for" ;
-    rdfs:domain vg:Platform ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:availableOn .
+vg:FranchiseGame a owl:Class ;
+    rdfs:label "Franchise Game" ;
+    rdfs:comment "A video game that is part of a franchise or series." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:belongsTo ;
+                        owl:someValuesFrom vg:Franchise ] ) ] .
 
-<http://www.videogame-ontology.org/ontology#pub/Bandai_Namco_Entertainment> a vg:Publisher,
-        owl:NamedIndividual ;
-    vg:publisherName "Bandai Namco Entertainment"^^xsd:string .
+vg:MultiplayerGame a owl:Class ;
+    rdfs:label "Multiplayer Game" ;
+    rdfs:comment "A video game that supports a multiplayer game mode." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGameMode ;
+                        owl:someValuesFrom vg:MultiplayerMode ] ) ] .
 
-<http://www.videogame-ontology.org/ontology#pub/Capcom> a vg:Publisher,
-        owl:NamedIndividual ;
-    vg:publisherName "Capcom"^^xsd:string .
+vg:SinglePlayerGame a owl:Class ;
+    rdfs:label "Single-Player Game" ;
+    rdfs:comment "A video game that supports a single-player game mode." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGameMode ;
+                        owl:someValuesFrom vg:SinglePlayerMode ] ) ] .
 
-<http://www.videogame-ontology.org/ontology#pub/Electronic_Arts> a vg:Publisher,
-        owl:NamedIndividual ;
-    vg:publisherName "Electronic Arts"^^xsd:string .
+vg:CoopGame a owl:Class ;
+    rdfs:label "Co-op Game" ;
+    rdfs:comment "A video game that supports a cooperative game mode." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGameMode ;
+                        owl:someValuesFrom vg:CoopMode ] ) ] .
 
-<http://www.videogame-ontology.org/ontology#pub/Konami> a vg:Publisher,
-        owl:NamedIndividual ;
-    vg:publisherName "Konami"^^xsd:string .
+vg:PCGame a owl:Class ;
+    rdfs:label "PC Game" ;
+    rdfs:comment "A video game available on a PC platform." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:PCPlatform ] ) ] .
+
+vg:ConsoleGame a owl:Class ;
+    rdfs:label "Console Game" ;
+    rdfs:comment "A video game available on a console platform." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:ConsolePlatform ] ) ] .
+
+vg:MobileGame a owl:Class ;
+    rdfs:label "Mobile Game" ;
+    rdfs:comment "A video game available on a mobile platform." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:MobilePlatform ] ) ] .
+
+vg:NintendoGame a owl:Class ;
+    rdfs:label "Nintendo Game" ;
+    rdfs:comment "A video game available on a Nintendo platform." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:NintendoPlatform ] ) ] .
+
+vg:PlayStationGame a owl:Class ;
+    rdfs:label "PlayStation Game" ;
+    rdfs:comment "A video game available on a PlayStation platform." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:PlayStationPlatform ] ) ] .
+
+vg:XboxGame a owl:Class ;
+    rdfs:label "Xbox Game" ;
+    rdfs:comment "A video game available on an Xbox platform." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:XboxPlatform ] ) ] .
+
+vg:SequelGame a owl:Class ;
+    rdfs:label "Sequel Game" ;
+    rdfs:comment "A video game that is a sequel to another game." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:sequelOf ;
+                        owl:someValuesFrom vg:VideoGame ] ) ] .
+
+vg:StandaloneGame a owl:Class ;
+    rdfs:label "Standalone Game" ;
+    rdfs:comment "A video game that is not a sequel to any other game. Classified by a SPARQL CONSTRUCT rule (negation as failure)." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Class ;
+                        owl:complementOf [ a owl:Restriction ;
+                                owl:onProperty vg:sequelOf ;
+                                owl:someValuesFrom vg:VideoGame ] ] ) ] .
+
+vg:HighlyRatedGame a owl:Class ;
+    rdfs:label "Highly Rated Game" ;
+    rdfs:comment "A video game with a Metacritic score of 85 or above. Classified by a SPARQL CONSTRUCT rule (datatype restriction)." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:metacriticScore ;
+                        owl:someValuesFrom [ a rdfs:Datatype ;
+                                owl:onDatatype xsd:integer ;
+                                owl:withRestrictions ( [ xsd:minInclusive 85 ] ) ] ] ) ] .
+
+vg:RecentGame a owl:Class ;
+    rdfs:label "Recent Game" ;
+    rdfs:comment "A video game released on or after 2020-01-01. Classified by a SPARQL CONSTRUCT rule (datatype restriction)." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:releaseDate ;
+                        owl:someValuesFrom [ a rdfs:Datatype ;
+                                owl:onDatatype xsd:date ;
+                                owl:withRestrictions ( [ xsd:minInclusive "2020-01-01"^^xsd:date ] ) ] ] ) ] .
+
+vg:MultiConsoleGame a owl:Class ;
+    rdfs:label "Multi-Console Game" ;
+    rdfs:comment "A video game available on at least two console platforms. Classified by a SPARQL CONSTRUCT rule (qualified cardinality)." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                        owl:onClass vg:ConsolePlatform ;
+                        owl:onProperty vg:availableOn ] ) ] .
+
+vg:NintendoPublishedGame a owl:Class ;
+    rdfs:label "Nintendo Published Game" ;
+    rdfs:comment "A video game published by Nintendo (nominal: hasValue on the Nintendo publisher individual)." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Nintendo> ;
+                        owl:onProperty vg:publishedBy ] ) ] .
+
+vg:WindowsGame a owl:Class ;
+    rdfs:label "Windows Game" ;
+    rdfs:comment "A video game available on Windows" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:WindowsPlatform ] ) ] .
+
+vg:MacOSGame a owl:Class ;
+    rdfs:label "macOS Game" ;
+    rdfs:comment "A video game available on macOS" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:MacOSPlatform ] ) ] .
+
+vg:LinuxGame a owl:Class ;
+    rdfs:label "Linux Game" ;
+    rdfs:comment "A video game available on Linux" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:LinuxPlatform ] ) ] .
+
+vg:AndroidGame a owl:Class ;
+    rdfs:label "Android Game" ;
+    rdfs:comment "A video game available on Android" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:AndroidPlatform ] ) ] .
+
+vg:BrowserGame a owl:Class ;
+    rdfs:label "Browser Game" ;
+    rdfs:comment "A video game playable in a web browser" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:BrowserPlatform ] ) ] .
+
+vg:ArcadeGame a owl:Class ;
+    rdfs:label "Arcade Game" ;
+    rdfs:comment "A video game released for arcade machines" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:ArcadePlatform ] ) ] .
+
+vg:RetroComputerGame a owl:Class ;
+    rdfs:label "Retro Computer Game" ;
+    rdfs:comment "A video game available on a retro home computer" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:RetroComputerPlatform ] ) ] .
+
+vg:VRGame a owl:Class ;
+    rdfs:label "VR Game" ;
+    rdfs:comment "A video game available on a virtual reality platform" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:availableOn ;
+                        owl:someValuesFrom vg:VRPlatform ] ) ] .
+
+vg:SonyPublishedGame a owl:Class ;
+    rdfs:label "Sony Published Game" ;
+    rdfs:comment "A video game published by Sony Interactive Entertainment" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Sony_Interactive_Entertainment> ;
+                        owl:onProperty vg:publishedBy ] ) ] .
+
+vg:XboxPublishedGame a owl:Class ;
+    rdfs:label "Xbox Published Game" ;
+    rdfs:comment "A video game published by Xbox Game Studios" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Xbox_Game_Studios> ;
+                        owl:onProperty vg:publishedBy ] ) ] .
+
+vg:BandaiNamcoPublishedGame a owl:Class ;
+    rdfs:label "Bandai Namco Published Game" ;
+    rdfs:comment "A video game published by Bandai Namco Entertainment" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Bandai_Namco_Entertainment> ;
+                        owl:onProperty vg:publishedBy ] ) ] .
+
+vg:SquareEnixPublishedGame a owl:Class ;
+    rdfs:label "Square Enix Published Game" ;
+    rdfs:comment "A video game published by Square Enix" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Square_Enix> ;
+                        owl:onProperty vg:publishedBy ] ) ] .
+
+vg:ElectronicArtsPublishedGame a owl:Class ;
+    rdfs:label "Electronic Arts Published Game" ;
+    rdfs:comment "A video game published by Electronic Arts" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Electronic_Arts> ;
+                        owl:onProperty vg:publishedBy ] ) ] .
+
+vg:KonamiPublishedGame a owl:Class ;
+    rdfs:label "Konami Published Game" ;
+    rdfs:comment "A video game published by Konami" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Konami> ;
+                        owl:onProperty vg:publishedBy ] ) ] .
+
+vg:CapcomPublishedGame a owl:Class ;
+    rdfs:label "Capcom Published Game" ;
+    rdfs:comment "A video game published by Capcom" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue <http://www.videogame-ontology.org/ontology#pub/Capcom> ;
+                        owl:onProperty vg:publishedBy ] ) ] .
+
+vg:ActionGame a owl:Class ;
+    rdfs:label "Action Game" ;
+    rdfs:comment "A video game of an action genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:ActionGenre ] ) ] .
+
+vg:RPGGame a owl:Class ;
+    rdfs:label "RPG Game" ;
+    rdfs:comment "A video game of a role-playing genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:RPGGenre ] ) ] .
+
+vg:StrategyGame a owl:Class ;
+    rdfs:label "Strategy Game" ;
+    rdfs:comment "A video game of a strategy genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:StrategyGenre ] ) ] .
+
+vg:SimulationGame a owl:Class ;
+    rdfs:label "Simulation Game" ;
+    rdfs:comment "A video game of a simulation genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:SimulationGenre ] ) ] .
+
+vg:AdventureGame a owl:Class ;
+    rdfs:label "Adventure Game" ;
+    rdfs:comment "A video game of an adventure genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:AdventureGenre ] ) ] .
+
+vg:SportsGame a owl:Class ;
+    rdfs:label "Sports Game" ;
+    rdfs:comment "A video game of a sports genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:SportsGenre ] ) ] .
+
+vg:RacingGame a owl:Class ;
+    rdfs:label "Racing Game" ;
+    rdfs:comment "A video game of a racing genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:RacingGenre ] ) ] .
+
+vg:PuzzleGame a owl:Class ;
+    rdfs:label "Puzzle Game" ;
+    rdfs:comment "A video game of a puzzle genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:PuzzleGenre ] ) ] .
+
+vg:HorrorGame a owl:Class ;
+    rdfs:label "Horror Game" ;
+    rdfs:comment "A video game of a horror genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:HorrorGenre ] ) ] .
+
+vg:PlatformerGame a owl:Class ;
+    rdfs:label "Platformer Game" ;
+    rdfs:comment "A video game of a platformer genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:PlatformerGenre ] ) ] .
+
+vg:ShooterGame a owl:Class ;
+    rdfs:label "Shooter Game" ;
+    rdfs:comment "A video game of a shooter genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:ShooterGenre ] ) ] .
+
+vg:CasualGame a owl:Class ;
+    rdfs:label "Casual Game" ;
+    rdfs:comment "A video game of a casual genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:CasualGenre ] ) ] .
+
+vg:VisualNovelGame a owl:Class ;
+    rdfs:label "Visual Novel Game" ;
+    rdfs:comment "A video game of a visual novel genre" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasGenre ;
+                        owl:someValuesFrom vg:VisualNovelGenre ] ) ] .
+
+vg:UnrealEngineGame a owl:Class ;
+    rdfs:label "Unreal Engine Game" ;
+    rdfs:comment "A video game made with Unreal Engine" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:madeWith ;
+                        owl:someValuesFrom vg:UnrealEngineFamily ] ) ] .
+
+vg:JapaneseGame a owl:Class ;
+    rdfs:label "Japanese Game" ;
+    rdfs:comment "A video game whose country of origin is Japan" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue "Japan"^^xsd:string ;
+                        owl:onProperty vg:countryOfOrigin ] ) ] .
+
+vg:AmericanGame a owl:Class ;
+    rdfs:label "American Game" ;
+    rdfs:comment "A video game whose country of origin is the United States" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue "United States"^^xsd:string ;
+                        owl:onProperty vg:countryOfOrigin ] ) ] .
+
+vg:MultiPlatformGame a owl:Class ;
+    rdfs:label "Multi-Platform Game" ;
+    rdfs:comment "A video game available on at least three platforms. Classified by a SPARQL CONSTRUCT rule (qualified cardinality)." ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:minQualifiedCardinality "3"^^xsd:nonNegativeInteger ;
+                        owl:onClass vg:Platform ;
+                        owl:onProperty vg:availableOn ] ) ] .
+
+vg:GameWithSingleDeveloper a owl:Class ;
+    rdfs:label "Game with Single Developer" ;
+    rdfs:comment "A video game developed by at most one developer studio. Necessary condition only (subClassOf, not equivalentClass)." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onProperty vg:developedBy ],
+        vg:VideoGame .
+
+vg:ExclusiveRelease a owl:Class ;
+    rdfs:label "Exclusive Release" ;
+    rdfs:comment "A video game available on at most one platform. Necessary condition only (subClassOf, not equivalentClass)." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onProperty vg:availableOn ],
+        vg:VideoGame .
 
 <http://www.videogame-ontology.org/ontology#pub/Nintendo> a vg:Publisher,
         owl:NamedIndividual ;
@@ -979,290 +1225,50 @@ vg:platformFor a owl:AsymmetricProperty,
         owl:NamedIndividual ;
     vg:publisherName "Sony Interactive Entertainment"^^xsd:string .
 
-<http://www.videogame-ontology.org/ontology#pub/Square_Enix> a vg:Publisher,
-        owl:NamedIndividual ;
-    vg:publisherName "Square Enix"^^xsd:string .
-
 <http://www.videogame-ontology.org/ontology#pub/Xbox_Game_Studios> a vg:Publisher,
         owl:NamedIndividual ;
     vg:publisherName "Xbox Game Studios"^^xsd:string .
 
-vg:releaseDate a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:label "release date" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:date ;
-    owl:equivalentProperty dcterms:issued .
+<http://www.videogame-ontology.org/ontology#pub/Bandai_Namco_Entertainment> a vg:Publisher,
+        owl:NamedIndividual ;
+    vg:publisherName "Bandai Namco Entertainment"^^xsd:string .
 
-vg:reviewerName a owl:DatatypeProperty ;
-    rdfs:label "reviewer name" ;
-    rdfs:comment "The name of the reviewer or outlet that wrote this review" ;
-    rdfs:domain vg:Review ;
-    rdfs:range xsd:string .
+<http://www.videogame-ontology.org/ontology#pub/Square_Enix> a vg:Publisher,
+        owl:NamedIndividual ;
+    vg:publisherName "Square Enix"^^xsd:string .
 
-vg:AndroidPlatform a owl:Class ;
-    rdfs:label "Android Platform" ;
-    rdfs:comment "A platform running the Android operating system" ;
-    rdfs:subClassOf vg:MobilePlatform .
+<http://www.videogame-ontology.org/ontology#pub/Electronic_Arts> a vg:Publisher,
+        owl:NamedIndividual ;
+    vg:publisherName "Electronic Arts"^^xsd:string .
 
-vg:ArcadePlatform a owl:Class ;
-    rdfs:label "Arcade Platform" ;
-    rdfs:comment "An arcade machine" ;
-    rdfs:subClassOf vg:Platform .
+<http://www.videogame-ontology.org/ontology#pub/Konami> a vg:Publisher,
+        owl:NamedIndividual ;
+    vg:publisherName "Konami"^^xsd:string .
 
-vg:BrowserPlatform a owl:Class ;
-    rdfs:label "Browser Platform" ;
-    rdfs:comment "A web browser or web-based platform" ;
-    rdfs:subClassOf vg:Platform .
-
-vg:CoopMode a owl:Class ;
-    rdfs:label "Co-op Mode" ;
-    rdfs:comment "A game mode supporting cooperative play among players" ;
-    rdfs:subClassOf vg:GameMode .
-
-vg:LinuxPlatform a owl:Class ;
-    rdfs:label "Linux Platform" ;
-    rdfs:comment "A platform running a Linux-based operating system" ;
-    rdfs:subClassOf vg:PCPlatform .
-
-vg:MacOSPlatform a owl:Class ;
-    rdfs:label "macOS Platform" ;
-    rdfs:comment "A platform running the Apple macOS operating system" ;
-    rdfs:subClassOf vg:PCPlatform .
-
-vg:MultiplayerMode a owl:Class ;
-    rdfs:label "Multiplayer Mode" ;
-    rdfs:comment "A game mode supporting multiple simultaneous players" ;
-    rdfs:subClassOf vg:GameMode .
-
-vg:NintendoPlatform a owl:Class ;
-    rdfs:label "Nintendo Platform" ;
-    rdfs:comment "A platform in the Nintendo family of consoles" ;
-    rdfs:subClassOf vg:ConsolePlatform .
-
-vg:PlayStationPlatform a owl:Class ;
-    rdfs:label "PlayStation Platform" ;
-    rdfs:comment "A platform in the Sony PlayStation family of consoles" ;
-    rdfs:subClassOf vg:ConsolePlatform .
-
-vg:RetroComputerPlatform a owl:Class ;
-    rdfs:label "Retro Computer Platform" ;
-    rdfs:comment "A home computer of the 1980s and early 1990s (Commodore 64, ZX Spectrum, Atari ST, MSX...)" ;
-    rdfs:subClassOf vg:Platform .
-
-vg:SinglePlayerMode a owl:Class ;
-    rdfs:label "Single-Player Mode" ;
-    rdfs:comment "A game mode designed for a single player" ;
-    rdfs:subClassOf vg:GameMode .
-
-vg:VRPlatform a owl:Class ;
-    rdfs:label "VR Platform" ;
-    rdfs:comment "A virtual or mixed reality platform" ;
-    rdfs:subClassOf vg:Platform .
-
-vg:WindowsPlatform a owl:Class ;
-    rdfs:label "Windows Platform" ;
-    rdfs:comment "A platform running the Microsoft Windows operating system" ;
-    rdfs:subClassOf vg:PCPlatform .
-
-vg:XboxPlatform a owl:Class ;
-    rdfs:label "Xbox Platform" ;
-    rdfs:comment "A platform in the Microsoft Xbox family of consoles" ;
-    rdfs:subClassOf vg:ConsolePlatform .
-
-vg:countryOfOrigin a owl:DatatypeProperty ;
-    rdfs:label "country of origin" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:string .
-
-vg:developerOf a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "developer of" ;
-    rdfs:domain vg:Developer ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:developedBy .
-
-vg:includes a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "includes" ;
-    rdfs:domain vg:Franchise ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:belongsTo .
-
-vg:madeWith a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "made with" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:GameEngine ;
-    owl:inverseOf vg:engineUsedIn .
-
-vg:publisherOf a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "publisher of" ;
-    rdfs:domain vg:Publisher ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:publishedBy .
-
-vg:reviewedGame a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:label "reviewed game" ;
-    rdfs:comment "The video game that this review evaluates" ;
-    rdfs:domain vg:Review ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:hasReview .
-
-vg:belongsTo a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "belongs to" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Franchise ;
-    owl:inverseOf vg:includes .
-
-vg:developedBy a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "developed by" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Developer ;
-    owl:inverseOf vg:developerOf .
-
-vg:sequelOf a owl:ObjectProperty,
-        owl:TransitiveProperty ;
-    rdfs:label "sequel of" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:VideoGame ;
-    owl:inverseOf vg:hasSequel .
-
-vg:wonAward a owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "won award" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Award ;
-    owl:inverseOf vg:awardWonBy .
-
-vg:MobilePlatform a owl:Class ;
-    rdfs:label "Mobile Platform" ;
-    rdfs:comment "A mobile device platform (phone or tablet)" ;
-    rdfs:subClassOf vg:Platform .
-
-vg:hasGameMode a owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "has game mode" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:GameMode ;
-    owl:inverseOf vg:modeInGame .
-
-vg:PCPlatform a owl:Class ;
-    rdfs:label "PC Platform" ;
-    rdfs:comment "A personal computer platform" ;
-    rdfs:subClassOf vg:Platform .
-
-vg:Character a owl:Class ;
-    rdfs:label "Character" ;
-    rdfs:comment "A fictional character appearing in a video game" .
-
-vg:ConsolePlatform a owl:Class ;
-    rdfs:label "Console Platform" ;
-    rdfs:comment "A dedicated video game console hardware platform" ;
-    rdfs:subClassOf vg:Platform .
-
-vg:GameEngine a owl:Class ;
-    rdfs:label "Game Engine" ;
-    rdfs:comment "A software framework used to develop video games" ;
-    owl:equivalentClass wd:Q193564 .
-
-vg:GameMode a owl:Class ;
-    rdfs:label "Game Mode" ;
-    rdfs:comment "A mode of play available in a video game" .
-
-vg:Franchise a owl:Class ;
-    rdfs:label "Franchise" ;
-    rdfs:comment "A series or franchise of video games" .
-
-vg:GameEvent a owl:Class ;
-    rdfs:label "Game Event" ;
-    rdfs:comment "A lifecycle event pertaining to a video game (announcement, release, update, delisting, etc.)" .
-
-vg:Review a owl:Class ;
-    rdfs:label "Review" ;
-    rdfs:comment "A review or critical assessment of a video game" ;
-    owl:hasKey ( vg:reviewedGame vg:reviewerName ) .
-
-vg:Developer a owl:Class ;
-    rdfs:label "Developer" ;
-    rdfs:comment "A company or studio that develops video games" ;
-    owl:equivalentClass wd:Q210167 .
-
-vg:name a owl:DatatypeProperty ;
-    rdfs:label "name" ;
-    rdfs:range xsd:string .
-
-vg:Award a owl:Class ;
-    rdfs:label "Award" ;
-    rdfs:comment "An award or recognition given to a video game" .
-
-vg:publishedBy a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "published by" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Publisher ;
-    owl:inverseOf vg:publisherOf .
-
-vg:Platform a owl:Class ;
-    rdfs:label "Platform" ;
-    rdfs:comment "A hardware or software platform on which a game can be played" .
-
-vg:hasGenre a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "has genre" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Genre ;
-    owl:inverseOf vg:genreOf .
-
-vg:Publisher a owl:Class ;
-    rdfs:label "Publisher" ;
-    rdfs:comment "A company that publishes video games" .
-
-vg:Genre a owl:Class ;
-    rdfs:label "Genre" ;
-    rdfs:comment "A category or genre of video games" ;
-    owl:equivalentClass wd:Q65956376 .
-
-vg:availableOn a owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    rdfs:label "available on" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Platform ;
-    owl:inverseOf vg:platformFor .
-
-vg:VideoGame a owl:Class ;
-    rdfs:label "Video Game" ;
-    rdfs:comment "A video game product" ;
-    owl:equivalentClass wd:Q7889 ;
-    owl:hasKey ( vg:hasWikidataId ),
-        ( vg:hasSteamAppId ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:IndieGame vg:AAAGame ) .
+<http://www.videogame-ontology.org/ontology#pub/Capcom> a vg:Publisher,
+        owl:NamedIndividual ;
+    vg:publisherName "Capcom"^^xsd:string .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:VideoGame vg:Developer vg:Publisher vg:Genre vg:Platform vg:Character vg:Franchise vg:Award vg:GameEngine vg:GameMode vg:Review vg:GameEvent ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
+    owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
+    owl:members ( vg:IndieGame vg:AAAGame ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:SinglePlayerMode vg:MultiplayerMode vg:CoopMode vg:MMOMode ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:PlayerCharacter vg:NonPlayerCharacter ) .
@@ -1271,17 +1277,11 @@ vg:VideoGame a owl:Class ;
     owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
-
-[] a owl:AllDisjointClasses ;
     owl:members ( vg:ReleasedGame vg:EarlyAccessGame vg:CancelledGame vg:DelistedGame ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:SinglePlayerMode vg:MultiplayerMode vg:CoopMode vg:MMOMode ) .
+    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
 

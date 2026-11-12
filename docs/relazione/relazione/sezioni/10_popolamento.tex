@@ -54,7 +54,7 @@ e, per ciascun nome, mantiene l'URI con il maggior numero di triple associate.
 Dopo il fetch e gli assiomi V2 viene eseguito il reasoning (cfr.\ Sezione~\ref{sec:reasoning}):
 chiusura OWL 2 RL tramite \texttt{owlrl}, materializzazione mirata delle classi definite e
 regole SPARQL CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} richiede circa 38 minuti e aggiunge 4,56 milioni di triple
-al grafo di 877.673 (la successiva pulizia toglie 248.818 triple riflessive e i messaggi di errore di \texttt{owlrl}); la materializzazione mirata aggiunge 175.997 triple e
+al grafo di 877.673 (la successiva pulizia toglie i messaggi di errore di \texttt{owlrl}, 248.818 triple riflessive e 1,1 milioni di triple con nodi anonimi, sostituiti dallo schema originale); la materializzazione mirata aggiunge 175.997 triple e
 le regole CONSTRUCT 12.991 (tra cui \texttt{MultiConsoleGame} e \texttt{MultiPlatformGame}). Nelle relazioni \texttt{sharesDeveloperWith} e
 \texttt{sharesPublisherWith} i gruppi con pi\`u di 50 giochi (19 sviluppatori e 66 publisher) sono esclusi
 per limitare la crescita quadratica delle coppie. I conteggi finali sono in Tabella~\ref{tab:abox}
@@ -70,7 +70,7 @@ e Tabella~\ref{tab:inferite}.
 \textbf{Metrica} & \textbf{Valore} \\
 \midrule
 Triple scaricate da Wikidata & 877.689 \\
-Triple nel file finale (dopo il reasoning) & 5.379.766 \\
+Triple nel file finale (dopo il reasoning) & 4.144.693 \\
 Videogiochi & 105.860 \\
 Sviluppatori / Publisher & 5.374 / 3.830 \\
 Generi / Piattaforme & 581 / 249 \\

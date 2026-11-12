@@ -28,7 +28,7 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
-from rdflib import OWL, RDF, RDFS, Graph, Namespace
+from rdflib import OWL, RDF, RDFS, BNode, Graph, Literal, Namespace
 from tqdm import tqdm
 
 HERE = Path(__file__).parent
@@ -38,6 +38,7 @@ sys.path.insert(0, str(HERE / "scripts"))
 import construct_reasoner as cr  # noqa: E402
 import enrich_owl as eo  # noqa: E402
 import populate_wikidata as pw  # noqa: E402
+import schema_ttl  # noqa: E402
 import validate_tbox as vt  # noqa: E402
 
 logger = logging.getLogger("build_ontology")
@@ -80,6 +81,24 @@ def _clean_closure(g: Graph) -> None:
     for t in trivial:
         g.remove(t)
     tqdm.write(f"  Cleanup: {len(trivial)} reflexive triples removed")
+
+
+def _clean_tbox(g: Graph, keep_dl: bool) -> None:
+    """owlrl expands every class expression into extra anonymous classes, list
+    fragments and self-equivalent restrictions. The ABox has no blank nodes, so
+    drop all triples touching one and put back the schema exactly as authored
+    (videogames.owl; without the DL-only axioms unless keep_dl)."""
+    junk = [
+        t for t in g if isinstance(t[0], (BNode, Literal)) or isinstance(t[2], BNode)
+    ]
+    for t in junk:
+        g.remove(t)
+    tbox = Graph().parse(str(HERE / "videogames.owl"))
+    if not keep_dl:
+        eo.strip_dl_only_axioms(tbox)
+    for t in tbox:
+        g.add(t)
+    tqdm.write(f"  Schema: {len(junk)} owlrl blank-node triples replaced by {len(tbox)} clean ones")
 
 
 @contextmanager
@@ -126,7 +145,7 @@ def stage_reason(g: Graph, max_group: int, keep_dl: bool, out: Path) -> Graph:
         "OWL-RL closure",
         "materialise",
         "CONSTRUCT rules",
-        "restore DL-only" if keep_dl else "finalise",
+        "clean schema",
     ]
     with tqdm(total=len(steps), desc="Reasoning", unit="step", ncols=90) as bar:
 
@@ -168,8 +187,7 @@ def stage_reason(g: Graph, max_group: int, keep_dl: bool, out: Path) -> Graph:
         bar.update()
 
         step(5)
-        if keep_dl:
-            eo.restore_dl_only_axioms(g)
+        _clean_tbox(g, keep_dl)
         bar.update()
 
     with _timed(f"Saving reasoned graph ({len(g)} triples)"):
@@ -203,6 +221,7 @@ def stage_write(g: Graph, out_stem: Path) -> None:
         path = out_stem.with_suffix(ext)
         with _timed(f"Writing {path.name}"):
             g.serialize(str(path), format=fmt)
+    schema_ttl.write()
 
 
 def main() -> None:
