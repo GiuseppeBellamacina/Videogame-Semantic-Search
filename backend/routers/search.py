@@ -62,18 +62,22 @@ async def builder_count(body: BuilderRequest):
 
 @router.post("/builder/query", response_model=QueryResponse)
 async def builder_query(body: BuilderRequest):
+    if body.output not in ("table", "graph"):
+        raise HTTPException(status_code=400, detail=f"Unknown output '{body.output}'")
     try:
         sparql = query_builder.build(
-            [f.model_dump() for f in body.filters],
-            body.order_by,
-            body.limit,
-            body.output,
+            [f.model_dump() for f in body.filters], body.order_by, body.limit
         )
     except (query_builder.BuilderError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     def _run():
+        nonlocal sparql
         rows = OntologyService.execute_sparql(sparql)
+        if body.output == "graph" and rows:
+            # relations of the games found: a second, indexed query
+            sparql = query_builder.graph_query([r["game"] for r in rows])
+            rows = OntologyService.execute_sparql(sparql)
         graph = (
             build_graph(rows, OntologyService) if rows else {"nodes": [], "links": []}
         )

@@ -5,7 +5,7 @@
 
 L'ontologia definisce \textbf{12 classi top-level}, ciascuna corrispondente a
 un'entit\`a fondamentale del dominio, pi\`u un ricco albero di sottoclassi che
-raggiunge un totale di \textbf{80 classi}: 61 primitive, 17 definite tramite
+raggiunge un totale di \textbf{121 classi}: 69 primitive, 50 definite tramite
 \texttt{owl:equivalentClass} e 2 caratterizzate da un vincolo di cardinalit\`a massima
 (condizione solo necessaria).
 
@@ -92,6 +92,9 @@ RacingGenre         & Genre           & Corse, competizione su veicoli \\
 AdventureGenre      & Genre           & Esplorazione, narrativa \\
 HorrorGenre         & Genre           & Horror, paura, suspense \\
 PlatformerGenre     & Genre           & Piattaforme, ostacoli \\
+ShooterGenre        & Genre           & Sparatutto, shoot 'em up \\
+CasualGenre         & Genre           & Casual, oggetti nascosti \\
+VisualNovelGenre    & Genre           & Visual novel, eroge \\
 \midrule
 
 % ── Platform ──
@@ -109,6 +112,10 @@ LinuxPlatform       & PCPlatform      & Linux \\
 MobilePlatform      & Platform        & Dispositivo mobile \\
 IOSPlatform         & MobilePlatform  & Apple iOS \\
 AndroidPlatform     & MobilePlatform  & Android \\
+BrowserPlatform     & Platform        & Browser e piattaforme web \\
+ArcadePlatform      & Platform        & Macchina arcade \\
+RetroComputerPlatform & Platform      & Home computer anni '80--'90 \\
+VRPlatform          & Platform        & Realt\`a virtuale o mista \\
 \midrule
 
 % ── Character ──
@@ -133,6 +140,7 @@ Award               & owl:Thing       & Premio \\
 IndustryAward       & Award           & Conferito da ente industriale \\
 EditorialAward      & Award           & Conferito da testata editoriale \\
 UserAward           & Award           & Determinato da voto popolare \\
+GameOfTheYearAward  & Award           & Premio ``Game of the Year'' \\
 \midrule
 
 % ── GameEngine ──
@@ -141,6 +149,7 @@ UserAward           & Award           & Determinato da voto popolare \\
 GameEngine          & owl:Thing       & Motore grafico \\
 ProprietaryEngine   & GameEngine      & Proprietario, non pubblico \\
 OpenSourceEngine    & GameEngine      & Open-source \\
+UnrealEngineFamily  & GameEngine      & Qualsiasi versione di Unreal Engine \\
 \midrule
 
 % ── GameMode ──
@@ -174,9 +183,11 @@ DelistingEvent      & GameEvent       & Rimozione dagli store \\
 
 \subsubsection{Partizione di Platform}
 
-La classe \texttt{Platform} \`e stata partizionata in tre rami principali
-(\texttt{ConsolePlatform}, \texttt{PCPlatform}, \texttt{MobilePlatform}),
-ciascuno ulteriormente specializzato:
+\begingroup\sloppy
+La classe \texttt{Platform} \`e stata partizionata in sette famiglie
+(\texttt{ConsolePlatform}, \texttt{PCPlatform}, \texttt{MobilePlatform}, \texttt{BrowserPlatform},
+\texttt{ArcadePlatform}, \texttt{RetroComputerPlatform}, \texttt{VRPlatform}); le prime tre
+sono ulteriormente specializzate:\par\endgroup
 
 \begin{verbatim}
 Platform
@@ -189,8 +200,12 @@ Platform
   |     +-- MacOSPlatform
   |     +-- LinuxPlatform
   +-- MobilePlatform
-        +-- IOSPlatform
-        +-- AndroidPlatform
+  |     +-- IOSPlatform
+  |     +-- AndroidPlatform
+  +-- BrowserPlatform
+  +-- ArcadePlatform
+  +-- RetroComputerPlatform
+  +-- VRPlatform
 \end{verbatim}
 
 Questa struttura consente interrogazioni a diversi livelli di granularit\`a:

@@ -38,10 +38,16 @@ INSTRUCTIONS:
     - rdf:type vg:AwardWinningGame, FranchiseGame, SinglePlayerGame, MultiplayerGame, CoopGame,
       PCGame, ConsoleGame, MobileGame, NintendoGame, PlayStationGame, XboxGame,
       HighlyRatedGame (score >= 85), RecentGame (>= 2020), SequelGame, StandaloneGame,
-      MultiConsoleGame (>= 2 console platforms), NintendoPublishedGame
+      MultiConsoleGame (>= 2 console platforms), MultiPlatformGame (>= 3 platforms),
+      WindowsGame, MacOSGame, LinuxGame, AndroidGame, BrowserGame, ArcadeGame, RetroComputerGame, VRGame,
+      NintendoPublishedGame, SonyPublishedGame, XboxPublishedGame, BandaiNamcoPublishedGame,
+      SquareEnixPublishedGame, ElectronicArtsPublishedGame, KonamiPublishedGame, CapcomPublishedGame,
+      ActionGame, RPGGame, StrategyGame, SimulationGame, AdventureGame, SportsGame, RacingGame,
+      PuzzleGame, HorrorGame, PlatformerGame, ShooterGame, CasualGame, VisualNovelGame,
+      UnrealEngineGame, GOTYWinner, JapaneseGame, AmericanGame
     - vg:sequelOf is transitive; inverse vg:hasSequel; other inverses: developerOf, publisherOf, genreOf, platformFor, awardWonBy, engineUsedIn, modeInGame
     - vg:hasGameMode points to GameMode individuals (typed vg:SinglePlayerMode, MultiplayerMode, CoopMode, MMOMode), never to strings.
-    When asked about "serie", "franchise", "stesso sviluppatore", "stesso publisher", "premi", "multiplayer", "single player", "sequel", "molto apprezzati" → use them.
+    When asked about "serie", "franchise", "stesso sviluppatore", "stesso publisher", "premi", "multiplayer", "single player", "sequel", "molto apprezzati", a genre ("giochi di ruolo"), a platform kind ("giochi per browser", "su Linux"), a major publisher or a country → use them.
 14. For multiplatform queries, use GROUP BY / HAVING COUNT(DISTINCT ?platform) >= 2.
 
 EXAMPLES (SELECT unless marked CONSTRUCT):

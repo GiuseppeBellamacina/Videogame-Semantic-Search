@@ -96,6 +96,39 @@ FIELDS: dict[str, dict] = {
             "StandaloneGame",
             "MultiConsoleGame",
             "NintendoPublishedGame",
+            "MultiPlatformGame",
+            "WindowsGame",
+            "MacOSGame",
+            "LinuxGame",
+            "AndroidGame",
+            "BrowserGame",
+            "ArcadeGame",
+            "RetroComputerGame",
+            "VRGame",
+            "SonyPublishedGame",
+            "XboxPublishedGame",
+            "BandaiNamcoPublishedGame",
+            "SquareEnixPublishedGame",
+            "ElectronicArtsPublishedGame",
+            "KonamiPublishedGame",
+            "CapcomPublishedGame",
+            "ActionGame",
+            "RPGGame",
+            "StrategyGame",
+            "SimulationGame",
+            "AdventureGame",
+            "SportsGame",
+            "RacingGame",
+            "PuzzleGame",
+            "HorrorGame",
+            "PlatformerGame",
+            "ShooterGame",
+            "CasualGame",
+            "VisualNovelGame",
+            "UnrealEngineGame",
+            "GOTYWinner",
+            "JapaneseGame",
+            "AmericanGame",
         ],
     },
 }
@@ -157,7 +190,7 @@ GRAPH_RELATIONS = [
 def build(
     filters: list[dict], order_by: str = "name", limit: int = 50, output: str = "table"
 ) -> str:
-    if output not in ("table", "graph", "count"):
+    if output not in ("table", "count"):
         raise BuilderError(f"Unknown output '{output}'")
     if order_by not in ORDERS:
         raise BuilderError(f"Unknown order '{order_by}'")
@@ -166,8 +199,6 @@ def build(
     body: list[str] = [
         "?game rdf:type vg:VideoGame .",
         "?game vg:gameName ?gameName .",
-        "OPTIONAL { ?game vg:releaseDate ?releaseDate }",
-        "OPTIONAL { ?game vg:metacriticScore ?score }",
     ]
     select = ["?game", "?gameName", "?releaseDate", "?score"]
 
@@ -223,6 +254,12 @@ def build(
             pat = f"?game rdf:type vg:{value} ."
             body.append(pat if op == "is" else f"FILTER NOT EXISTS {{ {pat} }}")
 
+    # OPTIONAL last: Oxigraph is orders of magnitude slower when it comes before the filters
+    if output != "count":
+        body += [
+            "OPTIONAL { ?game vg:releaseDate ?releaseDate }",
+            "OPTIONAL { ?game vg:metacriticScore ?score }",
+        ]
     where = "\n  ".join(body)
     if output == "count":
         return f"{PREFIXES}SELECT (COUNT(DISTINCT ?game) AS ?n) WHERE {{\n  {where}\n}}"
@@ -230,11 +267,15 @@ def build(
         f"SELECT DISTINCT {' '.join(select)} WHERE {{\n  {where}\n}}\n"
         f"ORDER BY {ORDERS[order_by]}\nLIMIT {limit}"
     )
-    if output == "table":
-        return PREFIXES + select_query
-    rels = ", ".join(f"vg:{r}" for r in GRAPH_RELATIONS)
+    return PREFIXES + select_query
+
+
+def graph_query(games: list[str]) -> str:
+    """CONSTRUCT with the main relations of the given games (URIs come from the SELECT:
+    joining the two in one query is very slow on the full dataset)."""
+    rels = " ".join(f"vg:{r}" for r in GRAPH_RELATIONS)
+    uris = " ".join(f"<{g}>" for g in games)
     return (
         f"{PREFIXES}CONSTRUCT {{ ?game ?p ?o }}\nWHERE {{\n"
-        f"  {{ {select_query.replace(chr(10), chr(10) + '    ')} }}\n"
-        f"  ?game ?p ?o .\n  FILTER(?p IN ({rels}))\n}}"
+        f"  VALUES ?game {{ {uris} }}\n  VALUES ?p {{ {rels} }}\n  ?game ?p ?o .\n}}"
     )

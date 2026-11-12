@@ -143,14 +143,14 @@ code,pre,.dl{font-variant-ligatures:none}
       <ul class="b sm">
         <li><b>12 classi top-level</b>: VideoGame, Developer, Publisher, Genre, Platform, Character, Franchise, Award, GameEngine, GameMode, Review, GameEvent</li>
         <li>Namespace <code>http://www.videogame-ontology.org/ontology#</code>, prefisso <code>vg:</code>: un URI che <i>identifica</i>, non un URL da risolvere</li>
-        <li>Lo <b>schema</b> contiene classi, proprietà e assiomi (più l'individuo <code>pub/Nintendo</code>, richiesto da un nominale); le <b>istanze</b> (giochi, studi, piattaforme…) vivono in un grafo separato</li>
+        <li>Lo <b>schema</b> contiene classi, proprietà e assiomi (più gli otto publisher usati come nominali); le <b>istanze</b> (giochi, studi, piattaforme…) vivono in un grafo separato</li>
         <li>Popolamento da <b>Wikidata</b> via SPARQL: le sue proprietà (P31, P136, P400, P577…) sono mappate su quelle di <code>vg:</code></li>
       </ul>
     </div>
     <div class="col">
       <div class="grid3" style="gap:22px 18px">
-        <div class="stat"><div class="big">80</div><span>classi (61 primitive)</span></div>
-        <div class="stat"><div class="big">17</div><span>classi definite</span></div>
+        <div class="stat"><div class="big">121</div><span>classi (69 primitive)</span></div>
+        <div class="stat"><div class="big">50</div><span>classi definite</span></div>
         <div class="stat"><div class="big">57</div><span>proprietà (31 object, 26 datatype)</span></div>
         <div class="stat"><div class="big">12</div><span>coppie inverse</span></div>
         <div class="stat"><div class="big">12</div><span>blocchi AllDisjointClasses</span></div>
@@ -159,7 +159,7 @@ code,pre,.dl{font-variant-ligatures:none}
         <div class="stat"><div class="big">3</div><span>chiavi <code>owl:hasKey</code></span></div>
         <div class="stat"><div class="big">7</div><span>allineamenti (Wikidata, Dublin Core)</span></div>
       </div>
-      <p class="note" style="margin-top:22px">Più 2 classi con solo vincolo di cardinalità (condizioni necessarie). Schema: ~1000 triple. Istanze: 105.860 giochi, 4,45 M triple dopo il reasoning.</p>
+      <p class="note" style="margin-top:22px">Più 2 classi con solo vincolo di cardinalità (condizioni necessarie). Schema: ~1000 triple. Istanze: 105.860 giochi, 4,77 M triple dopo il reasoning.</p>
     </div>
   </div>
   <div class="foot"><span>Videogame Semantic Search</span><span>3</span></div>
@@ -201,8 +201,8 @@ code,pre,.dl{font-variant-ligatures:none}
       </svg>
     </div>
     <div class="col stack">
-      <div class="card"><h3>Generi: tassonomia aperta</h3><p>10 sottoclassi di <code>Genre</code>, ma <b>nessun</b> <code>owl:oneOf</code> né copertura con unione. Wikidata può contenere generi non previsti (Battle Royale, Roguelike): restano istanze di <code>Genre</code> senza violare la semantica.</p></div>
-      <div class="card"><h3>Altre partizioni</h3><p>Stato di rilascio (Released, EarlyAccess, Cancelled, Delisted), budget (Indie, AAA), premi (Industry, Editorial, User), personaggi (Player, NonPlayer), motori (Proprietary, OpenSource).</p></div>
+      <div class="card"><h3>Generi: tassonomia aperta</h3><p>13 sottoclassi di <code>Genre</code> (un genere può stare in più famiglie), ma <b>nessun</b> <code>owl:oneOf</code> né copertura con unione. Wikidata può contenere generi non previsti (Battle Royale, Roguelike): restano istanze di <code>Genre</code> senza violare la semantica.</p></div>
+      <div class="card"><h3>Altre partizioni</h3><p>Stato di rilascio (Released, EarlyAccess, Cancelled, Delisted), budget (Indie, AAA), premi (Industry, Editorial, User), personaggi (Player, NonPlayer), motori (Proprietary, OpenSource). Altre famiglie di piattaforme senza sottoclassi: Browser, Arcade, RetroComputer, VR.</p></div>
     </div>
   </div>
   <div class="foot"><span>Videogame Semantic Search</span><span>4</span></div>
@@ -346,7 +346,7 @@ code,pre,.dl{font-variant-ligatures:none}
         <tr><td>AwardWinningGame</td><td class="dl">VideoGame ⊓ ∃wonAward.Award</td></tr>
         <tr><td>FranchiseGame</td><td class="dl">VideoGame ⊓ ∃belongsTo.Franchise</td></tr>
       </table>
-      <p class="note" style="margin-top:16px">12 classi con <code>intersectionOf</code> + <code>someValuesFrom</code> su object property. Le altre 5 usano costrutti più espressivi (slide successiva). Totale: <b>17</b>.</p>
+      <p class="note" style="margin-top:16px">12 classi con <code>intersectionOf</code> + <code>someValuesFrom</code> su object property. Altre 23 seguono lo stesso schema (sistema operativo, famiglia di piattaforme, genere, motore, premio); le restanti 15 usano costrutti più espressivi (slide successiva). Totale: <b>50</b>.</p>
     </div>
     <div class="col stack">
       <div class="card"><h3>Due direzioni in un'equivalenza</h3><p><span class="dl">VideoGame ⊓ ∃p.C ⊑ X</span> — <b>sufficiente</b>: serve a classificare.<br><span class="dl">X ⊑ VideoGame ⊓ ∃p.C</span> — <b>necessaria</b>: ogni X ha almeno un valore.</p></div>
@@ -368,8 +368,9 @@ code,pre,.dl{font-variant-ligatures:none}
       <tr><td>StandaloneGame</td><td class="dl">≡ VideoGame ⊓ ¬∃sequelOf.VideoGame</td><td><code>owl:complementOf</code></td></tr>
       <tr><td>HighlyRatedGame</td><td class="dl">≡ VideoGame ⊓ ∃metacriticScore.integer[≥ 85]</td><td>datatype restriction, <code>xsd:minInclusive</code></td></tr>
       <tr><td>RecentGame</td><td class="dl">≡ VideoGame ⊓ ∃releaseDate.date[≥ 2020-01-01]</td><td>datatype restriction, <code>xsd:minInclusive</code></td></tr>
-      <tr><td>MultiConsoleGame</td><td class="dl">≡ VideoGame ⊓ ≥2 availableOn.ConsolePlatform</td><td><code>owl:minQualifiedCardinality</code></td></tr>
-      <tr><td>NintendoPublishedGame</td><td class="dl">≡ VideoGame ⊓ ∃publishedBy.{Nintendo}</td><td><code>owl:hasValue</code>, nominale</td></tr>
+      <tr><td>MultiConsoleGame · MultiPlatformGame</td><td class="dl">≡ VideoGame ⊓ ≥2 availableOn.ConsolePlatform (≥3 …Platform)</td><td><code>owl:minQualifiedCardinality</code></td></tr>
+      <tr><td>NintendoPublishedGame e altri 7 publisher</td><td class="dl">≡ VideoGame ⊓ ∃publishedBy.{Nintendo}</td><td><code>owl:hasValue</code>, nominale</td></tr>
+      <tr><td>JapaneseGame · AmericanGame</td><td class="dl">≡ VideoGame ⊓ ∃countryOfOrigin.{"Japan"}</td><td><code>owl:hasValue</code>, valore letterale</td></tr>
       <tr><td>GameWithSingleDeveloper</td><td class="dl">⊑ VideoGame ⊓ ≤1 developedBy</td><td><code>owl:maxCardinality</code>, solo necessaria</td></tr>
       <tr><td>ExclusiveRelease</td><td class="dl">⊑ VideoGame ⊓ ≤1 availableOn</td><td><code>owl:maxCardinality</code>, solo necessaria</td></tr>
     </table>
@@ -431,7 +432,7 @@ code,pre,.dl{font-variant-ligatures:none}
       <table style="font-size:15px">
         <tr><th>Blocco</th><th style="text-align:right">Classi</th></tr>
         <tr><td>Le 12 classi top-level</td><td class="n">12</td></tr>
-        <tr><td>Console / PC / Mobile</td><td class="n">3</td></tr>
+        <tr><td>Console / PC / Mobile / Browser / Arcade / Retro / VR</td><td class="n">7</td></tr>
         <tr><td>PlayStation / Xbox / Nintendo · Windows / MacOS / Linux · iOS / Android</td><td class="n">3·3·2</td></tr>
         <tr><td>Industry / Editorial / User Award</td><td class="n">3</td></tr>
         <tr><td>Player / NonPlayer Character · Proprietary / OpenSource Engine</td><td class="n">2·2</td></tr>
@@ -489,7 +490,7 @@ code,pre,.dl{font-variant-ligatures:none}
     <div class="tiles">
       <div class="tile"><div class="L">𝒮</div><h4>Base + transitività</h4><p>La logica base 𝒜ℒ𝒞 (intersezione ⊓, esistenziale ∃, negazione ¬) più le proprietà transitive</p><p class="ex">VideoGame ⊓ ∃wonAward.Award<br>sequelOf transitiva</p></div>
       <div class="tile"><div class="L">ℛ</div><h4>Catene di ruoli</h4><p>Proprietà ottenute componendone altre; asimmetria e irriflessività</p><p class="ex">developedBy ∘ developerOf<br>⊑ sharesDeveloperWith</p></div>
-      <div class="tile"><div class="L">𝒪</div><h4>Nominali</h4><p>Individui nominati usati dentro una definizione</p><p class="ex">publishedBy value Nintendo</p></div>
+      <div class="tile"><div class="L">𝒪</div><h4>Nominali</h4><p>Individui nominati usati dentro una definizione</p><p class="ex">publishedBy value Capcom</p></div>
       <div class="tile"><div class="L">ℐ</div><h4>Inverse</h4><p>Proprietà lette nel verso opposto</p><p class="ex">developedBy ↔ developerOf</p></div>
       <div class="tile"><div class="L">𝒬</div><h4>Cardinalità qualificate</h4><p>Quanti valori ci sono e di quale classe</p><p class="ex">≥2 availableOn.ConsolePlatform</p></div>
       <div class="tile"><div class="L">(𝒟)</div><h4>Datatype</h4><p>Tipi di dato e restrizioni sui loro valori</p><p class="ex">metacriticScore ≥ 85</p></div>
@@ -596,7 +597,7 @@ code,pre,.dl{font-variant-ligatures:none}
   <div class="body">
     <div class="col">
       <ul class="b">
-        <li>Da 11 a <b>80 classi</b>: 17 definite e 2 con vincolo di cardinalità</li>
+        <li>Da 11 a <b>121 classi</b>: 50 definite e 2 con vincolo di cardinalità</li>
         <li>Inverse, transitive, catene e chiavi: navigazione bidirezionale e relazioni derivate</li>
         <li>12 blocchi di disjointness per far emergere i dati incoerenti</li>
       </ul>

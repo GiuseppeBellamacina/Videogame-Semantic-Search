@@ -63,7 +63,7 @@ La tabella elenca le classi base e le principali classi definite. La TBox includ
 | **GameMode**         | Primitiva  | Una modalità di gioco (individui tipizzati con una sottoclasse `*Mode`) | `vg:GameMode`         |
 | **AwardWinningGame** | Definita ¹ | Sottoclasse di VideoGame: giochi che hanno vinto almeno un premio       | `vg:AwardWinningGame` |
 | **FranchiseGame**    | Definita ¹ | Sottoclasse di VideoGame: giochi che appartengono a una serie/franchise | `vg:FranchiseGame`    |
-| Altre classi definite ¹ | Definita | `MultiConsoleGame` (almeno due console, cardinalità qualificata), `NintendoPublishedGame` (nominale su `pub/Nintendo`), `SinglePlayerGame`, `MultiplayerGame`, `CoopGame`, `PCGame`, `ConsoleGame`, `MobileGame`, `NintendoGame`, `PlayStationGame`, `XboxGame`, `HighlyRatedGame`, `RecentGame`, `SequelGame`, `StandaloneGame` | — |
+| Altre classi definite ¹ | Definita | Per sistema operativo e famiglia di piattaforme, per publisher, per genere, per motore, per paese, premio, multipiattaforma: elenco in §11 | — |
 
 > ¹ **Classi definite** — istanze materializzate dalla pipeline di reasoning (`build_ontology.py`: OWL-RL, `enrich_owl._materialise`, regole CONSTRUCT).
 > Nel grafo di visualizzazione appaiono come normali `VideoGame` (stessa icona e colore); sottoclassi di piattaforme, generi e modalità sono ricondotte al tipo base tramite `rdfs:subClassOf`.
@@ -238,16 +238,21 @@ Le URI sono generate deterministicamente dal nome dell'entità (via `make_uri()`
 
 ### 11. Classi definite e proprietà inferite
 
-L'ontologia include classi **definite** (OWL 2 `equivalentClass` + `intersectionOf`/`someValuesFrom`/datatype restriction), tra cui:
+L'ontologia include 50 classi **definite** (OWL 2 `equivalentClass` + `intersectionOf` con una restrizione), tutte non vuote sulla build completa:
 
-- `AwardWinningGame`, `FranchiseGame`, `SinglePlayerGame`, `MultiplayerGame`, `CoopGame`
-- `PCGame`, `ConsoleGame`, `MobileGame`, `NintendoGame`, `PlayStationGame`, `XboxGame`
-- `HighlyRatedGame` (`metacriticScore ≥ 85`), `RecentGame` (`releaseDate ≥ 2020-01-01`), `SequelGame`, `StandaloneGame`
-- `MultiConsoleGame` (`≥2 availableOn.ConsolePlatform`, cardinalità qualificata, classificata da una regola CONSTRUCT) e `NintendoPublishedGame` (`publishedBy value pub/Nintendo`, nominale: l'individuo è dichiarato nello schema con lo stesso URI generato dal fetch)
+- **Modalità**: `SinglePlayerGame`, `MultiplayerGame`, `CoopGame`
+- **Piattaforma**: `PCGame`, `ConsoleGame`, `MobileGame`, `NintendoGame`, `PlayStationGame`, `XboxGame`; per sistema operativo `WindowsGame`, `MacOSGame`, `LinuxGame`, `AndroidGame`; per altre famiglie `BrowserGame`, `ArcadeGame`, `RetroComputerGame`, `VRGame`
+- **Genere** (un genere può appartenere a più famiglie): `ActionGame`, `RPGGame`, `StrategyGame`, `SimulationGame`, `AdventureGame`, `SportsGame`, `RacingGame`, `PuzzleGame`, `HorrorGame`, `PlatformerGame`, `ShooterGame`, `CasualGame`, `VisualNovelGame`
+- **Publisher** (nominali, `publishedBy value <publisher>`): `NintendoPublishedGame`, `SonyPublishedGame`, `XboxPublishedGame`, `BandaiNamcoPublishedGame`, `SquareEnixPublishedGame`, `ElectronicArtsPublishedGame`, `KonamiPublishedGame`, `CapcomPublishedGame`; ogni publisher è un individuo dichiarato nello schema con lo stesso URI generato dal fetch
+- **Paese** (valore letterale): `JapaneseGame`, `AmericanGame`
+- **Altro**: `AwardWinningGame`, `GOTYWinner` (premio di tipo `GameOfTheYearAward`), `FranchiseGame`, `UnrealEngineGame` (motore di tipo `UnrealEngineFamily`), `HighlyRatedGame` (`metacriticScore ≥ 85`), `RecentGame` (`releaseDate ≥ 2020-01-01`), `SequelGame`, `StandaloneGame`
+- **Cardinalità qualificata** (regola CONSTRUCT): `MultiConsoleGame` (`≥2 availableOn.ConsolePlatform`), `MultiPlatformGame` (`≥3 availableOn.Platform`)
 
-e proprietà con **catene di composizione** (`owl:propertyChainAxiom`) simmetriche: `sharedFranchiseWith` (`belongsTo ∘ includes`), `sharesDeveloperWith`, `sharesPublisherWith`.
+Le istanze di piattaforme, generi, motori e premi ricevono le sottoclassi (`WindowsPlatform`, `RPGGenre`, `UnrealEngineFamily`, `GameOfTheYearAward`...) in base all'etichetta durante il fetch: la tipizzazione è in `populate_wikidata.py`, i game class sono poi inferiti da `owlrl` e dalle regole CONSTRUCT.
 
-Gli assiomi sono aggiunti da `enrich_owl.py`; le inferenze sono materializzate da `build_ontology.py` (OWL-RL + materializzazione mirata + regole CONSTRUCT). Nel frontend le classi definite dei giochi sono normalizzate a `VideoGame` per la visualizzazione, mantenendo tutta la semantica per le query SPARQL.
+Proprietà con **catene di composizione** (`owl:propertyChainAxiom`) simmetriche: `sharedFranchiseWith` (`belongsTo ∘ includes`), `sharesDeveloperWith`, `sharesPublisherWith`.
+
+Gli assiomi stanno in `videogames.owl`; le inferenze sono materializzate da `build_ontology.py` (OWL-RL + materializzazione mirata + regole CONSTRUCT). Nel frontend le classi definite dei giochi sono normalizzate a `VideoGame` per la visualizzazione, mantenendo tutta la semantica per le query SPARQL.
 
 ### 12. Cache a due livelli
 
@@ -294,13 +299,13 @@ Questa architettura evita chiamate HTTP ripetitive mantenendo bassa la RAM.
 | Metrica                               | Valore             |
 | ------------------------------------- | ------------------ |
 | Triple scaricate da Wikidata          | 877.689            |
-| Triple nel file finale                | 4.451.547          |
+| Triple nel file finale                | 4.770.037          |
 | Videogiochi                           | 105.860            |
 | Sviluppatori / Publisher              | 5.374 / 3.830      |
 | Generi / Piattaforme                  | 581 / 249          |
 | Franchise / Motori / Personaggi / Premi | 1.518 / 302 / 4.438 / 389 |
 | Modalità di gioco (individui)         | 35                 |
 
-Istanze delle classi definite: `SinglePlayerGame` 94.642, `PCGame` 99.155, `StandaloneGame` 105.330, `RecentGame` 70.586, `MultiplayerGame` 16.803, `CoopGame` 8.937, `ConsoleGame` 6.498, `FranchiseGame` 4.358, `MobileGame` 3.759, `XboxGame` 2.989, `NintendoGame` 2.030, `PlayStationGame` 1.919, `MultiConsoleGame` 891, `AwardWinningGame` 741, `SequelGame` 530, `NintendoPublishedGame` 387, `HighlyRatedGame` 81.
+Istanze delle 50 classi definite (tutte non vuote): `StandaloneGame` 105.330, `PCGame` 99.155, `WindowsGame` 98.942, `SinglePlayerGame` 94.642, `RecentGame` 70.586, `ActionGame` 33.685, `CasualGame` 32.606, `AdventureGame` 30.258, `MacOSGame` 19.880, `MultiplayerGame` 16.803, `SimulationGame` 16.321, `StrategyGame` 15.262, `LinuxGame` 14.632, `RPGGame` 14.416, `MultiPlatformGame` 12.372, `CoopGame` 8.937, `ConsoleGame` 6.572, `FranchiseGame` 4.358, `JapaneseGame` 3.856, `MobileGame` 3.775, `AndroidGame` 3.746, `SportsGame` 3.391, `RacingGame` 3.300, `XboxGame` 2.989, `AmericanGame` 2.841, `VisualNovelGame` 2.309, `NintendoGame` 2.040, `PlayStationGame` 1.919, `ShooterGame` 1.801, `PuzzleGame` 1.749, `UnrealEngineGame` 1.556, `PlatformerGame` 1.355, `MultiConsoleGame` 919, `HorrorGame` 751, `AwardWinningGame` 741, `BrowserGame` 695, `SequelGame` 530, `NintendoPublishedGame` 387, `BandaiNamcoPublishedGame` 321, `ArcadeGame` 262, `SquareEnixPublishedGame` 228, `SonyPublishedGame` 206, `GOTYWinner` 194, `ElectronicArtsPublishedGame` 171, `XboxPublishedGame` 166, `RetroComputerGame` 138, `KonamiPublishedGame` 121, `CapcomPublishedGame` 105, `HighlyRatedGame` 81, `VRGame` 52.
 
-Il reasoning sulla build completa: `owlrl` porta 877.673 triple a circa 4,5 milioni in 33 minuti, la materializzazione mirata aggiunge 175.997 triple, le regole CONSTRUCT 891. Le relazioni `sharesDeveloperWith` / `sharesPublisherWith` escludono i gruppi con più di 50 giochi (19 sviluppatori, 66 publisher). Lo stesso riepilogo, per le classi principali, è disponibile a runtime su `GET /api/stats`.
+Il reasoning sulla build completa: `owlrl` porta 877.673 triple a circa 4,5 milioni in circa mezz'ora, la materializzazione mirata aggiunge 175.997 triple, le regole CONSTRUCT 891. Le relazioni `sharesDeveloperWith` / `sharesPublisherWith` escludono i gruppi con più di 50 giochi (19 sviluppatori, 66 publisher). Lo stesso riepilogo, per le classi principali, è disponibile a runtime su `GET /api/stats`.

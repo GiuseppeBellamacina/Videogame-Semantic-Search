@@ -9,13 +9,13 @@ l'asserzione esplicita \texttt{rdf:type}, le classi definite specificano
 condizioni necessarie e sufficienti (\texttt{owl:equivalentClass}) che permettono
 a un reasoner di \textbf{inferire automaticamente} l'appartenenza di un'istanza.
 
-L'ontologia definisce \textbf{17 classi definite}, raggruppabili in cinque categorie
+L'ontologia definisce \textbf{50 classi definite}, raggruppabili in categorie
 logiche, a cui si affiancano \textbf{2 classi con vincolo di cardinalit\`a} dotate di
-sole condizioni necessarie. La Tabella~\ref{tab:definite} le elenca tutte e 19 con la
+sole condizioni necessarie. La Tabella~\ref{tab:definite} le elenca tutte e 52 con la
 sintassi DL e il tipo di condizione.
 
 \begingroup\footnotesize\setlength{\tabcolsep}{2.5pt}
-\begin{longtable}{lll>{\raggedright\arraybackslash}p{3.6cm}}
+\begin{longtable}{ll>{\raggedright\arraybackslash}p{6.4cm}>{\raggedright\arraybackslash}p{3.4cm}}
 \caption{Classi definite e classi con vincolo di cardinalit\`a}\label{tab:definite}\\
 \toprule
 \textbf{Classe} & \textbf{Tipo} & \textbf{Sintassi DL} & \textbf{Costrutti OWL 2} \\
@@ -52,6 +52,40 @@ FranchiseGame       & S/N & VideoGame $\sqcap$ $\exists$belongsTo.Franchise     
 % Cardinalit\`a qualificata e nominale
 MultiConsoleGame    & S/N & VideoGame $\sqcap$ $\geq2$\,availableOn.ConsolePlatform & intersectionOf, minQualifiedCardinality, onClass \\
 NintendoPublishedGame & S/N & VideoGame $\sqcap$ $\exists$publishedBy.\{Nintendo\}   & intersectionOf, hasValue (nominale) \\
+% Sistema operativo, famiglia di piattaforme, publisher, genere, motore, paese, premio, multipiattaforma
+WindowsGame           & S/N & VideoGame $\sqcap$ $\exists$ availableOn.WindowsPlatform & intersectionOf, someValuesFrom \\
+MacOSGame             & S/N & VideoGame $\sqcap$ $\exists$ availableOn.MacOSPlatform & intersectionOf, someValuesFrom \\
+LinuxGame             & S/N & VideoGame $\sqcap$ $\exists$ availableOn.LinuxPlatform & intersectionOf, someValuesFrom \\
+AndroidGame           & S/N & VideoGame $\sqcap$ $\exists$ availableOn.AndroidPlatform & intersectionOf, someValuesFrom \\
+BrowserGame           & S/N & VideoGame $\sqcap$ $\exists$ availableOn.BrowserPlatform & intersectionOf, someValuesFrom \\
+ArcadeGame            & S/N & VideoGame $\sqcap$ $\exists$ availableOn.ArcadePlatform & intersectionOf, someValuesFrom \\
+RetroComputerGame     & S/N & VideoGame $\sqcap$ $\exists$ availableOn.RetroComputerPlatform & intersectionOf, someValuesFrom \\
+VRGame                & S/N & VideoGame $\sqcap$ $\exists$ availableOn.VRPlatform & intersectionOf, someValuesFrom \\
+SonyPublishedGame     & S/N & VideoGame $\sqcap$ $\exists$ publishedBy.\{Sony Interactive Entertainment\} & intersectionOf, hasValue (nominale) \\
+XboxPublishedGame     & S/N & VideoGame $\sqcap$ $\exists$ publishedBy.\{Xbox Game Studios\} & intersectionOf, hasValue (nominale) \\
+BandaiNamcoPublishedGame& S/N & VideoGame $\sqcap$ $\exists$ publishedBy.\{Bandai Namco Entertainment\} & intersectionOf, hasValue (nominale) \\
+SquareEnixPublishedGame& S/N & VideoGame $\sqcap$ $\exists$ publishedBy.\{Square Enix\} & intersectionOf, hasValue (nominale) \\
+ElectronicArtsPublishedGame& S/N & VideoGame $\sqcap$ $\exists$ publishedBy.\{Electronic Arts\} & intersectionOf, hasValue (nominale) \\
+KonamiPublishedGame   & S/N & VideoGame $\sqcap$ $\exists$ publishedBy.\{Konami\} & intersectionOf, hasValue (nominale) \\
+CapcomPublishedGame   & S/N & VideoGame $\sqcap$ $\exists$ publishedBy.\{Capcom\} & intersectionOf, hasValue (nominale) \\
+ActionGame            & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.ActionGenre & intersectionOf, someValuesFrom \\
+RPGGame               & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.RPGGenre & intersectionOf, someValuesFrom \\
+StrategyGame          & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.StrategyGenre & intersectionOf, someValuesFrom \\
+SimulationGame        & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.SimulationGenre & intersectionOf, someValuesFrom \\
+AdventureGame         & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.AdventureGenre & intersectionOf, someValuesFrom \\
+SportsGame            & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.SportsGenre & intersectionOf, someValuesFrom \\
+RacingGame            & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.RacingGenre & intersectionOf, someValuesFrom \\
+PuzzleGame            & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.PuzzleGenre & intersectionOf, someValuesFrom \\
+HorrorGame            & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.HorrorGenre & intersectionOf, someValuesFrom \\
+PlatformerGame        & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.PlatformerGenre & intersectionOf, someValuesFrom \\
+ShooterGame           & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.ShooterGenre & intersectionOf, someValuesFrom \\
+CasualGame            & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.CasualGenre & intersectionOf, someValuesFrom \\
+VisualNovelGame       & S/N & VideoGame $\sqcap$ $\exists$ hasGenre.VisualNovelGenre & intersectionOf, someValuesFrom \\
+UnrealEngineGame      & S/N & VideoGame $\sqcap$ $\exists$ madeWith.UnrealEngineFamily & intersectionOf, someValuesFrom \\
+JapaneseGame          & S/N & VideoGame $\sqcap$ $\exists$ countryOfOrigin.\{Japan\} & intersectionOf, hasValue (valore) \\
+AmericanGame          & S/N & VideoGame $\sqcap$ $\exists$ countryOfOrigin.\{United States\} & intersectionOf, hasValue (valore) \\
+MultiPlatformGame     & S/N & VideoGame $\sqcap$ $\geq3$\,availableOn.Platform & intersectionOf, minQualifiedCardinality \\
+GOTYWinner          & S/N & VideoGame $\sqcap$ $\exists$ wonAward.GameOfTheYearAward & intersectionOf, someValuesFrom \\
 % Cardinality (solo necessarie)
 GameWithSingleDeveloper & N & $\sqsubseteq$ VideoGame $\sqcap$ $\leq1$developedBy     & subClassOf, maxCardinality \\
 ExclusiveRelease    & N & $\sqsubseteq$ VideoGame $\sqcap$ $\leq1$availableOn        & subClassOf, maxCardinality \\
@@ -167,7 +201,7 @@ nell'Appendice~\ref{sec:app_turtle}.
 \textbf{Costrutto}          & \textbf{Classi}                                & \textbf{Rif. Lezione} \\
 \midrule
 \texttt{owl:someValuesFrom}& 14: 12 su object property, 2 su datatype property & Lez.~15 (esistenziale) \\
-\texttt{owl:intersectionOf}& Tutte le 17 classi definite                      & Lez.~16 (intersezione) \\
+\texttt{owl:intersectionOf}& Tutte le 50 classi definite                      & Lez.~16 (intersezione) \\
 \texttt{owl:complementOf}  & StandaloneGame                                   & Lez.~16 (complemento) \\
 \texttt{owl:maxCardinality}& GameWithSingleDeveloper, ExclusiveRelease        & Lez.~17--18 \\
 \texttt{owl:minQualified-}\newline\texttt{Cardinality}& MultiConsoleGame                  & Lez.~17--18 \\

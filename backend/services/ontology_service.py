@@ -487,9 +487,12 @@ BASE CLASSES:
 PLATFORM / GENRE SUBCLASSES (assigned to platform and genre individuals):
 - Platforms: vg:ConsolePlatform (vg:PlayStationPlatform, vg:XboxPlatform, vg:NintendoPlatform),
   vg:PCPlatform (vg:WindowsPlatform, vg:MacOSPlatform, vg:LinuxPlatform),
-  vg:MobilePlatform (vg:IOSPlatform, vg:AndroidPlatform)
+  vg:MobilePlatform (vg:IOSPlatform, vg:AndroidPlatform), vg:BrowserPlatform, vg:ArcadePlatform,
+  vg:RetroComputerPlatform (C64, ZX Spectrum, Atari ST...), vg:VRPlatform
 - Genres: vg:ActionGenre, vg:RPGGenre, vg:StrategyGenre, vg:PuzzleGenre, vg:SimulationGenre,
-  vg:SportsGenre, vg:RacingGenre, vg:AdventureGenre, vg:HorrorGenre, vg:PlatformerGenre
+  vg:SportsGenre, vg:RacingGenre, vg:AdventureGenre, vg:HorrorGenre, vg:PlatformerGenre,
+  vg:ShooterGenre, vg:CasualGenre, vg:VisualNovelGenre (a genre can have several)
+- vg:UnrealEngineFamily (engines), vg:GameOfTheYearAward (awards)
 
 DEFINED / INFERRED GAME CLASSES (already materialised: query them with `?game a vg:Class`,
 they are subclasses of VideoGame and much faster than manual joins):
@@ -502,7 +505,17 @@ they are subclasses of VideoGame and much faster than manual joins):
 - vg:RecentGame — releaseDate >= 2020-01-01
 - vg:SequelGame — is a sequel of another game; vg:StandaloneGame — is not a sequel
 - vg:MultiConsoleGame — available on at least two different console platforms
-- vg:NintendoPublishedGame — published by Nintendo
+- vg:MultiPlatformGame — available on at least three platforms
+- By operating system / platform kind: vg:WindowsGame, vg:MacOSGame, vg:LinuxGame, vg:AndroidGame,
+  vg:BrowserGame, vg:ArcadeGame, vg:RetroComputerGame, vg:VRGame
+- By publisher: vg:NintendoPublishedGame, vg:SonyPublishedGame (Sony Interactive Entertainment),
+  vg:XboxPublishedGame (Xbox Game Studios), vg:BandaiNamcoPublishedGame, vg:SquareEnixPublishedGame,
+  vg:ElectronicArtsPublishedGame, vg:KonamiPublishedGame, vg:CapcomPublishedGame
+- By genre: vg:ActionGame, vg:RPGGame, vg:StrategyGame, vg:SimulationGame, vg:AdventureGame,
+  vg:SportsGame, vg:RacingGame, vg:PuzzleGame, vg:HorrorGame, vg:PlatformerGame, vg:ShooterGame,
+  vg:CasualGame, vg:VisualNovelGame
+- vg:UnrealEngineGame (made with Unreal Engine), vg:GOTYWinner (won a Game of the Year award),
+  vg:JapaneseGame / vg:AmericanGame (countryOfOrigin Japan / United States)
 
 OBJECT PROPERTIES (domain → range) and their inverses:
 - vg:developedBy (VideoGame → Developer) — inverse: vg:developerOf

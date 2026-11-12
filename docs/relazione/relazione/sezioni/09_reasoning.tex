@@ -28,7 +28,7 @@ un incremento da $\sim$997 a $\sim$2680 triple.
 
 \subsubsection{Livello 2: construct\_reasoner.py (SPARQL CONSTRUCT)}
 
-22 regole CONSTRUCT colmano le lacune di OWL 2 RL, operando su costrutti che
+23 regole CONSTRUCT colmano le lacune di OWL 2 RL, operando su costrutti che
 richiedono ragionamento al di fuori del profilo RL. La Tabella~\ref{tab:construct_rules}
 elenca le regole.
 
@@ -51,6 +51,7 @@ R2 & RecentGame da releaseDate $\geq$ 2020-01-01      & \texttt{?g a vg:RecentGa
 R3 & StandaloneGame: VideoGame senza sequelOf          & \texttt{?g a vg:StandaloneGame} (negation-as-failure) \\
 R4 & SequelGame: VideoGame con sequelOf                & \texttt{?g a vg:SequelGame} \\
 R4b & MultiConsoleGame: almeno due console distinte (cardinalit\`a qualificata) & \texttt{?g a vg:MultiConsoleGame} \\
+R4c & MultiPlatformGame: almeno tre piattaforme distinte (cardinalit\`a qualificata) & \texttt{?g a vg:MultiPlatformGame} \\
 R5a--f& Classificazione per piattaforma (PC, Console, Mobile, Nintendo, PS, Xbox) & \texttt{?g a vg:PCGame}, ecc. \\
 R6a--c& Classificazione per modalit\`a (Multiplayer, SinglePlayer, Coop) & \texttt{?g a vg:MultiplayerGame}, ecc. \\
 R7 & Inverse hasSequel: se A sequelOf B $\rightarrow$ B hasSequel A & \texttt{?b vg:hasSequel ?a} \\
@@ -61,7 +62,7 @@ R11 & sharedEngineWith (pairwise) & \texttt{?g1 vg:sharedEngineWith ?g2} \\
 \bottomrule
 \end{longtable}
 
-Solo R1--R3 e R4b coprono costrutti realmente esterni a OWL 2 RL. Le regole R4--R9
+Solo R1--R3, R4b e R4c coprono costrutti realmente esterni a OWL 2 RL. Le regole R4--R9
 (classificazione per sequel, piattaforma e modalit\`a, completamento delle inverse)
 ripetono inferenze che il livello 1 gi\`a produce: sono mantenute perch\'e il livello 2
 possa essere eseguito anche da solo, senza dipendere dalla chiusura \texttt{owlrl}.
@@ -83,9 +84,9 @@ costrutti esulano dal profilo, mentre la quarta vi rientra ma non produce classi
     solo forme limitate di negazione. La regola R3 implementa la
     \textit{negation-as-failure} con \texttt{FILTER NOT EXISTS}, assumendo la
     completezza dei dati (closed-world assumption sulla propriet\`a \texttt{sequelOf});
-  \item \textbf{minQualifiedCardinality} (\texttt{MultiConsoleGame}). Una cardinalit\`a minima non \`e ammessa
-    in RL in posizione di sottoclasse; la regola R4b conta le console distinte di ciascun gioco.
-    La classe \texttt{NintendoPublishedGame} (\texttt{owl:hasValue}), al contrario, rientra nel
+  \item \textbf{minQualifiedCardinality} (\texttt{MultiConsoleGame}, \texttt{MultiPlatformGame}). Una cardinalit\`a minima non \`e ammessa
+    in RL in posizione di sottoclasse; le regole R4b e R4c contano le console e le piattaforme distinte di ciascun gioco.
+    Le classi per publisher e per paese (\texttt{owl:hasValue}), al contrario, rientra nel
     profilo e viene classificata da \texttt{owlrl} (regola \texttt{cls-hv});
   \item \textbf{maxCardinality} (\texttt{GameWithSingleDeveloper}, \texttt{ExclusiveRelease}).
     Una restrizione ${\le}1$ in posizione di superclasse \`e ammessa in OWL 2 RL
