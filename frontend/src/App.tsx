@@ -1,7 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
-import { List, Network, Sparkles, SlidersHorizontal } from "lucide-react";
+import { Code2, List, Network, Sparkles, SlidersHorizontal } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
 import { QueryBuilder } from "@/components/QueryBuilder";
+import { SparqlEditor } from "@/components/SparqlEditor";
 import { ResultList } from "@/components/ResultList";
 import { KnowledgeGraph } from "@/components/KnowledgeGraph";
 import { NodeDetail } from "@/components/NodeDetail";
@@ -17,17 +18,27 @@ import type {
   GraphNode,
 } from "@/types";
 
-type Mode = "nl" | "builder";
+type Mode = "nl" | "builder" | "sparql";
+
+const EDITOR_KEY = "vg:editor-query";
+const loadEditorText = () => {
+  try {
+    return localStorage.getItem(EDITOR_KEY) ?? "";
+  } catch {
+    return "";
+  }
+};
 
 const endId = (e: string | GraphNode) => (typeof e === "string" ? e : e.id);
 const linkKey = (l: GraphLink) => `${endId(l.source)}__${endId(l.target)}__${l.label}`;
 const reverseKey = (l: GraphLink) => `${endId(l.target)}__${endId(l.source)}__${l.label}`;
 
 export default function App() {
-  const { data, loading, error, progress, search, searchBuilder, cancel, reset } =
+  const { data, loading, error, progress, search, searchBuilder, searchSparql, cancel, reset } =
     useQuery();
   const [mode, setMode] = useState<Mode>("nl");
   const [seed, setSeed] = useState("");
+  const [editorText, setEditorText] = useState(loadEditorText);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [highlightNode, setHighlightNode] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<"results" | "graph">("results");
@@ -62,6 +73,32 @@ export default function App() {
       searchBuilder(body);
     },
     [resetCanvas, searchBuilder],
+  );
+
+  const changeEditorText = useCallback((q: string) => {
+    setEditorText(q);
+    try {
+      localStorage.setItem(EDITOR_KEY, q);
+    } catch {
+      /* storage unavailable */
+    }
+  }, []);
+
+  const handleSparqlRun = useCallback(
+    (q: string) => {
+      resetCanvas();
+      searchSparql(q);
+    },
+    [resetCanvas, searchSparql],
+  );
+
+  // "Modifica" on any query shown in the results: open it in the editor
+  const handleEditQuery = useCallback(
+    (q: string) => {
+      changeEditorText(q);
+      setMode("sparql");
+    },
+    [changeEditorText],
   );
 
   const handleRemoveNode = useCallback(
@@ -211,6 +248,7 @@ export default function App() {
   const modes = [
     ["nl", "Fai una domanda", Sparkles],
     ["builder", "Usa i filtri", SlidersHorizontal],
+    ["sparql", "Editor SPARQL", Code2],
   ] as const;
 
   return (
@@ -260,6 +298,15 @@ export default function App() {
             </div>
             <div className={mode === "builder" ? "" : "hidden"}>
               <QueryBuilder onRun={handleBuilderRun} onCancel={cancel} loading={loading} />
+            </div>
+            <div className={mode === "sparql" ? "" : "hidden"}>
+              <SparqlEditor
+                value={editorText}
+                onChange={changeEditorText}
+                onRun={handleSparqlRun}
+                onCancel={cancel}
+                loading={loading}
+              />
             </div>
           </div>
         </div>
@@ -315,7 +362,12 @@ export default function App() {
 
             {!loading && data && (
               <>
-                <SparqlViewer sparql={data.sparql} success={data.success} />
+                <SparqlViewer sparql={data.sparql} success={data.success} onEdit={handleEditQuery} />
+                {data.truncated && (
+                  <p className="text-[13px] text-mute">
+                    Mostrate le prime {data.total_rows} righe: aggiungi un filtro o un LIMIT per restringere.
+                  </p>
+                )}
                 <ResultList
                   results={data.results}
                   totalRows={data.total_rows}

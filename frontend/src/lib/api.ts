@@ -120,6 +120,21 @@ export async function getBuilderSchema(): Promise<BuilderSchema> {
   return res.json();
 }
 
+/** A query written by the user in the SPARQL editor. */
+export async function runSparqlQuery(query: string, signal?: AbortSignal): Promise<QueryResponse> {
+  const res = await fetch(`${API_BASE}/sparql`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query }),
+    signal,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Unknown error" }));
+    throw new Error(err.detail || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
 export async function runBuilderQuery(
   body: BuilderRequest,
   signal?: AbortSignal,

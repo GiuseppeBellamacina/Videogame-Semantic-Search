@@ -122,6 +122,7 @@ class QueryResponse(BaseModel):
     sparql: str
     total_rows: int
     success: bool
+    truncated: bool = False
 
 
 def _run_agent(question: str, emit=lambda event: None):

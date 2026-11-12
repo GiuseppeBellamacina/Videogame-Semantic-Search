@@ -111,7 +111,7 @@ class OntologyService:
         return cls._store
 
     @classmethod
-    def execute_sparql(cls, query: str) -> list[dict]:
+    def execute_sparql(cls, query: str, max_rows: int | None = None) -> list[dict]:
         """
         Execute a SPARQL query on the local ontology and return results
         as a list of dicts. Deduplicates rows with identical values.
@@ -154,6 +154,8 @@ class OntologyService:
             if row_key not in seen:
                 seen.add(row_key)
                 rows.append(row_dict)
+                if max_rows and len(rows) >= max_rows:
+                    break
 
         return rows
 

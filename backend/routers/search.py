@@ -3,14 +3,17 @@ Autosuggest and assisted query builder endpoints.
 """
 
 import asyncio
+import re
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from backend.config import ONTOLOGY_NS
 from backend.routers.query import QueryResponse
 from backend.services import query_builder, search_index
 from backend.services.graph_builder import build_graph
 from backend.services.ontology_service import OntologyService
+from backend.utils.sparql_validator import validate_sparql
 
 router = APIRouter()
 
@@ -93,4 +96,92 @@ async def builder_query(body: BuilderRequest):
         sparql=sparql,
         total_rows=len(rows),
         success=bool(rows),
+    )
+
+
+# ───────────────────────────── free SPARQL editor ─────────────────────────────
+STANDARD_PREFIXES = {
+    "vg": ONTOLOGY_NS,
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "wd": "http://www.wikidata.org/entity/",
+    "dcterms": "http://purl.org/dc/terms/",
+}
+EDITOR_MAX_ROWS = 1000
+EDITOR_TIMEOUT = 30  # seconds
+
+
+class SparqlRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=10000)
+
+
+def _with_prefixes(query: str) -> str:
+    """Prepend the standard prefixes the query uses but does not declare."""
+    body = re.sub(r"#[^\n]*", "", query)  # comments do not count
+    missing = [
+        f"PREFIX {p}: <{iri}>"
+        for p, iri in STANDARD_PREFIXES.items()
+        if re.search(rf"(?<![\w:/]){p}:", body)
+        and not re.search(rf"PREFIX\s+{p}\s*:", body, re.I)
+    ]
+    return ("\n".join(missing) + "\n" if missing else "") + query
+
+
+@router.post("/sparql", response_model=QueryResponse)
+async def run_sparql(body: SparqlRequest):
+    """Run a query written by the user (read-only: SELECT, CONSTRUCT, ASK, DESCRIBE)."""
+    sparql = _with_prefixes(body.query.strip())
+    # ASK is recognised from the text, so the query is evaluated only once
+    is_ask = bool(
+        re.match(
+            r"\s*(?:(?:PREFIX|BASE)[^\n]*\n\s*)*ASK\b",
+            re.sub(r"#[^\n]*", "", sparql),
+            re.I,
+        )
+    )
+
+    def _run():
+        store = OntologyService.get_store()
+        if is_ask:
+            return [{"result": "true" if bool(store.query(sparql)) else "false"}], False
+        rows = OntologyService.execute_sparql(sparql, max_rows=EDITOR_MAX_ROWS)
+        return rows, len(rows) >= EDITOR_MAX_ROWS
+
+    # shortcut: a timed-out query keeps running in its thread (pyoxigraph cannot cancel it);
+    # fine for one local user, a server would need a worker process to kill
+    try:
+        rows, truncated = await asyncio.wait_for(
+            asyncio.to_thread(_run), timeout=EDITOR_TIMEOUT
+        )
+    except asyncio.TimeoutError:
+        raise HTTPException(
+            status_code=408,
+            detail=f"La query supera i {EDITOR_TIMEOUT} secondi: aggiungi dei filtri o un LIMIT.",
+        )
+    except (
+        SyntaxError
+    ) as e:  # pyoxigraph's parser (also rejects UPDATE: the editor is read-only)
+        # rdflib words syntax errors better than pyoxigraph; it only runs on the failure path
+        _, nicer = validate_sparql(sparql)
+        raise HTTPException(status_code=400, detail=f"Sintassi non valida: {nicer or e}")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Errore nell'esecuzione: {e}")
+
+    try:
+        graph = (
+            build_graph(rows, OntologyService)
+            if rows and "result" not in rows[0]
+            else {"nodes": [], "links": []}
+        )
+    except Exception:
+        graph = {"nodes": [], "links": []}
+    return QueryResponse(
+        results=rows,
+        graph=graph,
+        sparql=sparql,
+        total_rows=len(rows),
+        success=bool(rows),
+        truncated=truncated,
     )

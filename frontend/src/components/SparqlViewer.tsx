@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Pencil } from "lucide-react";
 
 interface SparqlViewerProps {
   sparql: string;
   /** Still being generated or run. */
   live?: boolean;
   success?: boolean;
+  /** Load the query in the editor. */
+  onEdit?: (sparql: string) => void;
 }
 
-export function SparqlViewer({ sparql, live, success = true }: SparqlViewerProps) {
+export function SparqlViewer({ sparql, live, success = true, onEdit }: SparqlViewerProps) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   if (!sparql) return null;
@@ -39,12 +41,19 @@ export function SparqlViewer({ sparql, live, success = true }: SparqlViewerProps
           Query SPARQL · {kind}
           <span className="text-brick">{open ? "nascondi" : "mostra"}</span>
         </button>
-        {open && (
-          <button onClick={copy} className="flex items-center gap-1 text-xs text-mute hover:text-ink">
-            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-            {copied ? "Copiata" : "Copia"}
-          </button>
-        )}
+        <span className="flex items-center gap-3">
+          {onEdit && !live && (
+            <button onClick={() => onEdit(sparql)} className="flex items-center gap-1 text-xs text-mute hover:text-brick" title="Apri la query nell'editor">
+              <Pencil className="h-3.5 w-3.5" /> Modifica
+            </button>
+          )}
+          {open && (
+            <button onClick={copy} className="flex items-center gap-1 text-xs text-mute hover:text-ink">
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? "Copiata" : "Copia"}
+            </button>
+          )}
+        </span>
       </div>
       {open && (
         <pre className="mt-2 max-h-72 overflow-auto bg-black/40 p-3 font-mono text-[11.5px] leading-relaxed text-mute">

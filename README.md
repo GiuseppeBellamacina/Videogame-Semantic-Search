@@ -134,6 +134,10 @@ Scrivi domande come:
 - **Relazioni con CONSTRUCT**: l'agente usa `CONSTRUCT` per le domande sulle relazioni (il grafo viene costruito dalle triple restituite) e `SELECT` per classifiche, conteggi ed elenchi; anche il query builder può restituire il grafo delle relazioni.
 - **Query builder assistito**: componi filtri (sviluppatore, genere, piattaforma, modalità, anno, Metacritic, categorie inferite come `HighlyRatedGame`...) con autocomplete sui valori; il backend genera il SPARQL (mostrato nel pannello) senza usare l'LLM. Si può filtrare anche per **mese di uscita** (di qualsiasi anno, o combinato con l'anno). Il pannello mostra il conteggio dei giochi corrispondenti mentre si compone, propone scorciatoie ("Molto recensiti", "Giochi di ruolo"...) e dopo "Mostra i risultati" si riduce a una riga.
 
+### Editor SPARQL
+
+Terza modalità accanto a «Fai una domanda» e «Usa i filtri»: si scrive una query a mano (SELECT, CONSTRUCT, ASK, DESCRIBE), con esempi da cui partire, Ctrl+Invio per eseguirla e i prefissi `vg:`, `rdf:`, `rdfs:`, `xsd:`, `owl:`, `wd:`, `dcterms:` aggiunti da soli. È di sola lettura (un UPDATE viene rifiutato), restituisce al massimo 1000 righe e si interrompe dopo 30 secondi. Il risultato diventa elenco e grafo come per le altre modalità, gli errori di sintassi indicano riga e colonna e il link «Modifica» su qualsiasi query mostrata (anche quelle generate dall'LLM o dal builder) la apre nell'editor. Il testo si ricorda tra una sessione e l'altra.
+
 ### Grafo
 
 - **Clic su una relazione**: mostra la frase che la descrive e, per le relazioni derivate dal reasoner (`sharesDeveloperWith`, `sharesPublisherWith`, `sharedFranchiseWith`...), l'elemento che i due nodi hanno in comune (lo stesso sviluppatore, publisher, serie).
@@ -219,6 +223,7 @@ Tutto è eseguito da `ontology/build_ontology.py` (vedi Setup):
 | POST   | `/api/query`        | Ricerca NL → risultati + grafo |
 | GET    | `/api/node/{uri}`   | Dettaglio nodo + sottografo    |
 | GET    | `/api/image-search` | Cerca cover art da Wikipedia   |
+| POST   | `/api/sparql`       | Query SPARQL scritta dall'utente (sola lettura) |
 | POST   | `/api/images/retry` | Un'altra copertina per un'entità |
 | GET    | `/api/relation`     | Cosa hanno in comune due nodi collegati da una relazione derivata |
 | GET    | `/api/stats`        | Statistiche ontologia          |

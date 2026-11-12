@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import type { BuilderRequest, QueryResponse, SearchProgress } from "@/types";
-import { runBuilderQuery, streamQuery } from "@/lib/api";
+import { runBuilderQuery, runSparqlQuery, streamQuery } from "@/lib/api";
 import { getCached, setCached, hasCached } from "@/lib/queryCache";
 
 export function useQuery() {
@@ -86,6 +86,19 @@ export function useQuery() {
     }
   }, []);
 
+  // SPARQL editor: the user's own query, run as written
+  const searchSparql = useCallback(async (query: string) => {
+    const c = begin();
+    try {
+      setData(await runSparqlQuery(query, c.signal));
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") return;
+      setError(err instanceof Error ? err.message : "Errore imprevisto");
+    } finally {
+      if (!c.signal.aborted) setLoading(false);
+    }
+  }, []);
+
   const cancel = useCallback(() => {
     abortRef.current?.abort();
     abortRef.current = null;
@@ -98,5 +111,5 @@ export function useQuery() {
     setError(null);
   }, []);
 
-  return { data, loading, error, progress, search, searchBuilder, cancel, reset };
+  return { data, loading, error, progress, search, searchBuilder, searchSparql, cancel, reset };
 }

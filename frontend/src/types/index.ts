@@ -31,6 +31,7 @@ export interface QueryResponse {
   sparql: string;
   total_rows: number;
   success: boolean;
+  truncated?: boolean;
 }
 
 export interface NodeDetails {
