@@ -38,10 +38,12 @@ export default function App() {
   } | null>(null);
   const [extraGraph, setExtraGraph] = useState<GraphData>({ nodes: [], links: [] });
   const [hiddenNodeIds, setHiddenNodeIds] = useState<Set<string>>(new Set());
+  const [deletedNodeIds, setDeletedNodeIds] = useState<Set<string>>(new Set());
 
   const resetCanvas = useCallback(() => {
     setExtraGraph({ nodes: [], links: [] });
     setHiddenNodeIds(new Set());
+    setDeletedNodeIds(new Set());
     setSelectedNode(null);
     setHighlightNode(null);
   }, []);
@@ -77,10 +79,12 @@ export default function App() {
   const handleGraphExpand = useCallback(async (newGraph: GraphData) => {
     // Un-hide any node being re-added (e.g. previously removed, now re-expanded)
     const incomingIds = new Set(newGraph.nodes.map((n) => n.id));
-    setHiddenNodeIds((prev) => {
+    const without = (prev: Set<string>) => {
       const next = new Set([...prev].filter((id) => !incomingIds.has(id)));
       return next.size === prev.size ? prev : next;
-    });
+    };
+    setHiddenNodeIds(without);
+    setDeletedNodeIds(without);
 
     let existingNodeIds: string[] = [];
     let addedNodeIds: string[] = [];
@@ -149,14 +153,14 @@ export default function App() {
     const nodes = [
       ...base.nodes,
       ...extraGraph.nodes.filter((n) => !baseIds.has(n.id)),
-    ].filter((n) => !hiddenNodeIds.has(n.id));
+    ].filter((n) => !hiddenNodeIds.has(n.id) && !deletedNodeIds.has(n.id));
     const visible = new Set(nodes.map((n) => n.id));
     const links = [
       ...base.links,
       ...extraGraph.links.filter((l) => !baseKeys.has(linkKey(l))),
     ].filter((l) => visible.has(endId(l.source)) && visible.has(endId(l.target)));
     return { nodes, links };
-  }, [data, extraGraph, hiddenNodeIds]);
+  }, [data, extraGraph, hiddenNodeIds, deletedNodeIds]);
 
   // Isolate: keep only the given nodes (the rest is hidden; "Mostra tutto" brings it back)
   const handleClear = useCallback(() => {
@@ -174,6 +178,23 @@ export default function App() {
       setContextMenu(null);
     },
     [mergedGraph.nodes],
+  );
+
+  // Delete: gone from the scene for good (re-expanding a node can bring one back)
+  const handleDeleteMany = useCallback((ids: string[]) => {
+    setDeletedNodeIds((prev) => new Set([...prev, ...ids]));
+    setHiddenNodeIds((prev) => new Set([...prev].filter((id) => !ids.includes(id))));
+    setSelectedNode((sel) => (sel && ids.includes(sel) ? null : sel));
+    setHighlightNode((h) => (h && ids.includes(h) ? null : h));
+    setContextMenu(null);
+  }, []);
+
+  const handleDeleteHidden = useCallback(
+    (typeHiddenIds: string[]) => {
+      setDeletedNodeIds((prev) => new Set([...prev, ...hiddenNodeIds, ...typeHiddenIds]));
+      setHiddenNodeIds(new Set());
+    },
+    [hiddenNodeIds],
   );
 
   const handleHideMany = useCallback((ids: string[]) => {
@@ -347,6 +368,8 @@ export default function App() {
             onRestoreHidden={() => setHiddenNodeIds(new Set())}
             onKeepOnly={handleKeepOnly}
             onClear={handleClear}
+            onDeleteMany={handleDeleteMany}
+            onDeleteHidden={handleDeleteHidden}
             onHideMany={handleHideMany}
           />
         </section>
@@ -368,6 +391,7 @@ export default function App() {
           onNavigate={handleOpenSidebar}
           onGraphExpand={handleGraphExpand}
           onRemoveNode={handleRemoveNode}
+          onDeleteNode={(uri) => handleDeleteMany([uri])}
           onClose={() => setContextMenu(null)}
         />
       )}

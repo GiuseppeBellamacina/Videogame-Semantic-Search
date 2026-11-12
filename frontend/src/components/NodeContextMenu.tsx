@@ -3,6 +3,7 @@ import {
   X,
   Loader2,
   Trash2,
+  EyeOff,
   ArrowRight,
   ArrowLeft,
   GitFork,
@@ -21,6 +22,7 @@ interface NodeContextMenuProps {
   onNavigate: (uri: string) => void;
   onGraphExpand: (graph: GraphData) => void;
   onRemoveNode: (uri: string) => void;
+  onDeleteNode: (uri: string) => void;
   onClose: () => void;
 }
 
@@ -49,6 +51,7 @@ export function NodeContextMenu({
   onNavigate,
   onGraphExpand,
   onRemoveNode,
+  onDeleteNode,
   onClose,
 }: NodeContextMenuProps) {
   const [details, setDetails] = useState<NodeDetails | null>(null);
@@ -247,14 +250,24 @@ export function NodeContextMenu({
         >
           Apri nella sidebar →
         </button>
-        <button
-          onClick={() => onRemoveNode(node.id)}
-          title="Rimuovi dal grafo"
-          className="flex items-center gap-1 text-xs text-brick hover:text-ink transition-colors"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-          Rimuovi
-        </button>
+        <span className="flex items-center gap-3">
+          <button
+            onClick={() => onRemoveNode(node.id)}
+            title="Nascondi (si può rimostrare)"
+            className="flex items-center gap-1 text-xs text-mute hover:text-ink transition-colors"
+          >
+            <EyeOff className="w-3.5 h-3.5" />
+            Nascondi
+          </button>
+          <button
+            onClick={() => onDeleteNode(node.id)}
+            title="Elimina dalla scena"
+            className="flex items-center gap-1 text-xs text-brick hover:text-ink transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Elimina
+          </button>
+        </span>
       </div>
 
       {/* Content — grouped by predicate */}

@@ -80,7 +80,7 @@ export interface Suggestion {
 export interface BuilderField {
   field: string;
   label: string;
-  kind: "entity" | "number" | "year" | "text" | "class";
+  kind: "entity" | "number" | "year" | "month" | "text" | "class";
   target?: string;
   options?: string[];
   ops: string[];

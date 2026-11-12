@@ -43,6 +43,7 @@ const FIELD_NAME: Record<string, string> = {
   hasGameMode: "Modalità di gioco",
   metacriticScore: "Punteggio Metacritic",
   releaseYear: "Anno di uscita",
+  releaseMonth: "Mese di uscita",
   gameName: "Titolo",
   countryOfOrigin: "Paese di origine",
   isA: "Categoria",
@@ -59,6 +60,7 @@ const FIELD_HINT: Record<string, string> = {
   hasGameMode: "es. co-op",
   metacriticScore: "da 0 a 100",
   releaseYear: "es. 2023",
+  releaseMonth: "es. ottobre (di qualsiasi anno)",
   gameName: "parte del titolo",
   countryOfOrigin: "es. Japan",
   isA: "classi dedotte dal reasoner",
@@ -66,7 +68,7 @@ const FIELD_HINT: Record<string, string> = {
 const GROUPS: { title: string; fields: string[] }[] = [
   { title: "Chi lo ha fatto", fields: ["developedBy", "publishedBy", "countryOfOrigin"] },
   { title: "Com'è fatto", fields: ["hasGenre", "hasGameMode", "belongsTo", "hasCharacter", "madeWith"] },
-  { title: "Dove e quando", fields: ["availableOn", "releaseYear"] },
+  { title: "Dove e quando", fields: ["availableOn", "releaseYear", "releaseMonth"] },
   { title: "Giudizi", fields: ["metacriticScore", "wonAward"] },
   { title: "Altro", fields: ["gameName", "isA"] },
 ];
@@ -136,6 +138,10 @@ const PRESETS: { label: string; field: string; value: string }[] = [
 ];
 
 const LIMITS = [25, 50, 100, 250, 500];
+const MONTHS = [
+  "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+  "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre",
+];
 const nameOf = (f: BuilderField) => FIELD_NAME[f.field] ?? f.label;
 
 interface QueryBuilderProps {
@@ -182,7 +188,7 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
           return {
             field: c.field,
             op: c.op,
-            value: kind === "number" || kind === "year" ? Number(c.value) : c.value,
+            value: kind === "number" || kind === "year" || kind === "month" ? Number(c.value) : c.value,
           };
         }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -241,6 +247,17 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
             className="w-full bg-transparent text-sm placeholder:text-mute focus:outline-none"
           />
         </div>
+      );
+    if (f.kind === "month")
+      return (
+        <Dropdown
+          className="min-w-[180px] flex-1"
+          value={c.value}
+          placeholder="Scegli un mese"
+          options={MONTHS.map((m, i) => ({ value: String(i + 1), label: m }))}
+          onChange={(v) => patch(c.id, { value: v })}
+          ariaLabel="Mese"
+        />
       );
     if (f.kind === "class")
       return (
@@ -374,6 +391,8 @@ export function QueryBuilder({ onRun, onCancel, loading }: QueryBuilderProps) {
                     </button>
                   ))}
                 </div>
+              ) : f.ops.length === 1 ? (
+                <span className="w-12 flex-shrink-0 px-1 text-sm text-mute">è</span>
               ) : (
                 <Dropdown
                   className="w-32 flex-shrink-0"

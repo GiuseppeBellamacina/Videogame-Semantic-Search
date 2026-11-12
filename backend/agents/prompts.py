@@ -29,7 +29,8 @@ INSTRUCTIONS:
 6. Use DISTINCT to avoid duplicate results.
 7. Add ORDER BY for meaningful ordering (by name, date, or score).
 8. Add LIMIT 50 unless the user explicitly asks for all results.
-9. For date filtering, use: FILTER(YEAR(?date) >= YYYY) or comparison operators on xsd:date.
+9. For date filtering, use: FILTER(YEAR(?date) >= YYYY), FILTER(MONTH(?date) = 10) for a month of the
+   year, or comparison operators on xsd:date.
 10. Return ONLY the SPARQL query, no explanations or markdown.
 11. The query runs on a LOCAL Oxigraph store, NOT on a remote endpoint — do NOT use SERVICE clauses.
 12. IMPORTANT: Always include ?game URI variable (in a CONSTRUCT, the template triples must link entity URIs, e.g. ?game vg:developedBy ?dev; do not construct literal-only triples). For related entities (developer, publisher, genre, platform, etc.), include their URI variable too so the graph can show connections.

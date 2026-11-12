@@ -73,6 +73,7 @@ FIELDS: dict[str, dict] = {
     },
     "metacriticScore": {"label": "Metacritic score", "kind": "number"},
     "releaseYear": {"label": "Release year", "kind": "year"},
+    "releaseMonth": {"label": "Release month", "kind": "month"},
     "gameName": {"label": "Title", "kind": "text"},
     "countryOfOrigin": {"label": "Country of origin", "kind": "text"},
     "isA": {
@@ -136,6 +137,7 @@ OPS = {
     "entity": ["is", "is_not"],
     "number": ["=", ">=", "<=", ">", "<"],
     "year": ["=", ">=", "<="],
+    "month": ["="],
     "text": ["contains", "equals"],
     "class": ["is", "is_not"],
 }
@@ -240,6 +242,12 @@ def build(
         elif kind == "year":
             body.append(
                 f"?game vg:releaseDate {v} . FILTER(YEAR({v}) {op} {int(value)})"
+            )
+        elif kind == "month":
+            if not 1 <= int(value) <= 12:
+                raise BuilderError(f"Invalid month '{value}'")
+            body.append(
+                f"?game vg:releaseDate {v} . FILTER(MONTH({v}) = {int(value)})"
             )
         elif kind == "text":
             expr = (

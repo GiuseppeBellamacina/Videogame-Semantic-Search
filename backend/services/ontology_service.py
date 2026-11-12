@@ -552,7 +552,7 @@ IMPORTANT SPARQL NOTES:
 - Always use PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> when using rdfs:label
 - Always use PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 - Use FILTER with CONTAINS or regex for text matching (names may vary)
-- releaseDate is xsd:date, use YEAR(?date), comparison operators
+- releaseDate is xsd:date, use YEAR(?date), MONTH(?date), comparison operators
 - Use OPTIONAL for properties that may not exist for all games
 - Use DISTINCT to avoid duplicates
 - Add ORDER BY and LIMIT for manageable results
