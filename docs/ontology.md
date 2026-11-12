@@ -92,7 +92,7 @@ La tabella elenca le classi base e le principali classi definite. La TBox includ
 | `vg:sharesDeveloperWith` ² | VideoGame ↔ VideoGame     | `developedBy ∘ developerOf` | Simmetrica, property chain inferita                   |
 | `vg:sharesPublisherWith` ² | VideoGame ↔ VideoGame     | `publishedBy ∘ publisherOf` | Simmetrica, property chain inferita                   |
 
-> ² **Proprietà inferite** — triple materializzate dalla pipeline di reasoning. Esistono anche `vg:sharedGenreWith` e `vg:sharedEngineWith`.
+> ² **Proprietà inferite** — triple materializzate dalla pipeline di reasoning. (`sharedGenreWith` e `sharedEngineWith` esistono come regole CONSTRUCT ma non sono eseguite sul dataset completo: il numero di coppie cresce col quadrato dei giochi per genere o motore).
 > Permettono query dirette senza join espliciti (es. "tutti i giochi della stessa serie").
 
 ---
@@ -245,7 +245,7 @@ L'ontologia include classi **definite** (OWL 2 `equivalentClass` + `intersection
 - `HighlyRatedGame` (`metacriticScore ≥ 85`), `RecentGame` (`releaseDate ≥ 2020-01-01`), `SequelGame`, `StandaloneGame`
 - `MultiConsoleGame` (`≥2 availableOn.ConsolePlatform`, cardinalità qualificata, classificata da una regola CONSTRUCT) e `NintendoPublishedGame` (`publishedBy value pub/Nintendo`, nominale: l'individuo è dichiarato nello schema con lo stesso URI generato dal fetch)
 
-e proprietà con **catene di composizione** (`owl:propertyChainAxiom`) simmetriche: `sharedFranchiseWith` (`belongsTo ∘ includes`), `sharesDeveloperWith`, `sharesPublisherWith`; più `sharedGenreWith` e `sharedEngineWith` materializzate dalle regole CONSTRUCT.
+e proprietà con **catene di composizione** (`owl:propertyChainAxiom`) simmetriche: `sharedFranchiseWith` (`belongsTo ∘ includes`), `sharesDeveloperWith`, `sharesPublisherWith`.
 
 Gli assiomi sono aggiunti da `enrich_owl.py`; le inferenze sono materializzate da `build_ontology.py` (OWL-RL + materializzazione mirata + regole CONSTRUCT). Nel frontend le classi definite dei giochi sono normalizzate a `VideoGame` per la visualizzazione, mantenendo tutta la semantica per le query SPARQL.
 

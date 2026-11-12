@@ -32,7 +32,7 @@ INSTRUCTIONS:
 11. The query runs on a LOCAL Oxigraph store, NOT on a remote endpoint — do NOT use SERVICE clauses.
 12. IMPORTANT: Always include ?game URI variable. For related entities (developer, publisher, genre, platform, etc.), include their URI variable too so the graph can show connections.
 13. INFERRED CLASSES/PROPERTIES (already materialised in the store — prefer them over manual joins):
-    - vg:sharedFranchiseWith / sharesDeveloperWith / sharesPublisherWith / sharedGenreWith / sharedEngineWith — link two games directly
+    - vg:sharedFranchiseWith / sharesDeveloperWith / sharesPublisherWith — link two games directly
     - rdf:type vg:AwardWinningGame, FranchiseGame, SinglePlayerGame, MultiplayerGame, CoopGame,
       PCGame, ConsoleGame, MobileGame, NintendoGame, PlayStationGame, XboxGame,
       HighlyRatedGame (score >= 85), RecentGame (>= 2020), SequelGame, StandaloneGame,

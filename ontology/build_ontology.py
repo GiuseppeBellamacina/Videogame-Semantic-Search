@@ -111,7 +111,10 @@ def stage_reason(g: Graph, max_group: int, keep_dl: bool, out: Path) -> Graph:
         bar.update()
 
         step(4)
-        counts = cr.apply_all(g, cr.RULES, max_pairs=10_000_000)
+        # shared_genre/engine_with are quadratic in the games per genre/engine (rdflib builds
+        # every pair before the cap applies): fine on small data, unusable on the full dataset
+        selected = {r.name for r in cr.RULES if not r.high_volume}
+        counts = cr.apply_all(g, cr.RULES, max_pairs=0, selected=selected)
         tqdm.write(f"  CONSTRUCT rules: +{sum(counts.values())} triples")
         bar.update()
 

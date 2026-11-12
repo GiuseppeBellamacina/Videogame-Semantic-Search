@@ -487,8 +487,6 @@ INFERRED OBJECT PROPERTIES (materialised; symmetric links between two games):
 - vg:sharedFranchiseWith — same franchise (chain belongsTo ∘ includes)
 - vg:sharesDeveloperWith — same developer (chain developedBy ∘ developerOf)
 - vg:sharesPublisherWith — same publisher (chain publishedBy ∘ publisherOf)
-- vg:sharedGenreWith — same genre
-- vg:sharedEngineWith — same engine
 NOTE: very large groups are capped, so these may be incomplete for huge franchises/studios.
 
 DATA PROPERTIES:
