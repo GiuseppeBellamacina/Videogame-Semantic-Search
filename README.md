@@ -143,6 +143,7 @@ Terza modalità accanto a «Fai una domanda» e «Usa i filtri»: si scrive una 
 - **Clic su una relazione**: mostra la frase che la descrive e, per le relazioni derivate dal reasoner (`sharesDeveloperWith`, `sharesPublisherWith`, `sharedFranchiseWith`...), l'elemento che i due nodi hanno in comune (lo stesso sviluppatore, publisher, serie).
 - **Due nodi**: clic su un nodo, poi su un secondo collegato mostra le etichette delle relazioni fra i due (anche derivate); il doppio clic sposta il fuoco.
 - **Selezione**: Maiusc + clic per sceglierne più d'uno; *Isola* (tiene solo la selezione), *Isola con vicini*, *Nascondi* (reversibile, "Mostra tutto") ed *Elimina* (via dalla scena). *Svuota* azzera il grafo; *Derivate* mostra o nasconde le relazioni dedotte (tratteggiate).
+- **Disponi**: ordina i nodi in griglia scegliendo i tipi (giochi, sviluppatori, publisher, serie, piattaforme...), in un'unica griglia o con una fascia per tipo; "Sblocca" torna alla disposizione automatica.
 - **Copertine**: i loghi larghi si mostrano interi; "Riprova copertina" nel pannello del nodo passa alla candidata successiva di Wikipedia (per aziende, piattaforme e serie, se manca l'immagine di pagina, si usa il logo di Wikidata).
 
 ### Agente SPARQL intelligente

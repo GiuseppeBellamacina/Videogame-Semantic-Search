@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect, useState, useMemo } from "react";
 import ForceGraph2D from "react-force-graph-2d";
-import { Crosshair, Eraser, Eye, EyeOff, Focus, Link2, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
+import { Crosshair, Eraser, Eye, EyeOff, Focus, LayoutGrid, Link2, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
 import type { GraphData, GraphNode } from "@/types";
 import { GAME_TYPES, IMAGE_TYPES, typeColor, typeLabel } from "@/lib/theme";
 import { onImagesChanged, peekImage, requestImage } from "@/lib/imageQueue";
@@ -38,6 +38,16 @@ const endId = (e: string | GraphNode) => (typeof e === "string" ? e : e.id);
 const isDerived = (label?: string) => /^shar(e|ed)/.test(label ?? "");
 /** Fitting a single node would otherwise zoom it to the whole screen. */
 const MAX_FIT_ZOOM = 1.8;
+
+/** Games of every defined class count as one group when laying nodes out. */
+const groupOf = (t: string) => (GAME_TYPES.has(t) ? "VideoGame" : t);
+const GROUP_ORDER = ["VideoGame", "Franchise", "Developer", "Publisher", "Platform", "GameEngine", "Genre", "Character", "Award", "GameMode"];
+const groupRank = (g: string) => {
+  const i = GROUP_ORDER.indexOf(g);
+  return i < 0 ? GROUP_ORDER.length : i;
+};
+const CELL_W = 80;
+const CELL_H = 96;
 
 const REL_VERB: Record<string, string> = {
   developedBy: "è sviluppato da",
@@ -129,6 +139,9 @@ export function KnowledgeGraph({
   // a second node clicked while another one is in focus: we show how the two are related
   const [secondary, setSecondary] = useState<string | null>(null);
   const [alertOff, setAlertOff] = useState(false);
+  const [layoutOpen, setLayoutOpen] = useState(false);
+  const [layoutGroups, setLayoutGroups] = useState<Set<string>>(new Set(["VideoGame"]));
+  const [layoutMode, setLayoutMode] = useState<"grid" | "bands">("grid");
   const [hoverLink, setHoverLink] = useState<any>(null);
   // the relation clicked: where, which, and what the two nodes have in common
   const [linkInfo, setLinkInfo] = useState<{
@@ -600,6 +613,80 @@ export function KnowledgeGraph({
     return data.nodes.filter((n) => n.label.toLowerCase().includes(q)).slice(0, 6);
   }, [find, data.nodes]);
 
+  // groups present in the canvas (games count as one), with how many nodes each
+  const groupCounts = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const n of filtered.nodes) {
+      const g = groupOf(n.type);
+      if (g !== "Unknown") m.set(g, (m.get(g) ?? 0) + 1);
+    }
+    return [...m.entries()].sort((a, b) => groupRank(a[0]) - groupRank(b[0]));
+  }, [filtered.nodes]);
+
+  /** Put the nodes of the chosen groups on a grid (one block, or one band per group) and pin them. */
+  const arrange = (groups: Set<string>, mode: "grid" | "bands") => {
+    const g = graphRef.current;
+    const all = filtered.nodes as any[];
+    const chosen = all.filter((n) => groups.has(groupOf(n.type)));
+    if (!g || chosen.length === 0) return;
+    const placed = all.filter((n) => n.x !== undefined);
+    const cx = placed.reduce((a, n) => a + n.x, 0) / Math.max(placed.length, 1);
+    const cy = placed.reduce((a, n) => a + n.y, 0) / Math.max(placed.length, 1);
+    const target = new Map<string, { x: number; y: number }>();
+    const byLabel = (a: any, b: any) => a.label.localeCompare(b.label);
+
+    if (mode === "grid") {
+      const list = [...chosen].sort((a, b) => groupRank(groupOf(a.type)) - groupRank(groupOf(b.type)) || byLabel(a, b));
+      const cols = Math.max(1, Math.ceil(Math.sqrt(list.length * 2.2)));
+      const rows = Math.ceil(list.length / cols);
+      list.forEach((n, i) =>
+        target.set(n.id, {
+          x: cx + ((i % cols) - (cols - 1) / 2) * CELL_W,
+          y: cy + (Math.floor(i / cols) - (rows - 1) / 2) * CELL_H,
+        }),
+      );
+    } else {
+      const order = [...groups].sort((a, b) => groupRank(a) - groupRank(b));
+      const blocks = order
+        .map((grp) => chosen.filter((n) => groupOf(n.type) === grp).sort(byLabel))
+        .filter((l) => l.length);
+      const MAX_COLS = 14; // wide rows: the canvas is wider than tall
+      const GAP = 50;
+      const heights = blocks.map((l) => Math.ceil(l.length / Math.min(l.length, MAX_COLS)) * CELL_H);
+      let y = cy - (heights.reduce((a, h) => a + h, 0) + GAP * (blocks.length - 1)) / 2;
+      blocks.forEach((list, b) => {
+        const cols = Math.min(list.length, MAX_COLS);
+        list.forEach((n, i) =>
+          target.set(n.id, {
+            x: cx + ((i % cols) - (cols - 1) / 2) * CELL_W,
+            y: y + Math.floor(i / cols) * CELL_H + CELL_H / 2,
+          }),
+        );
+        y += heights[b] + GAP;
+      });
+    }
+
+    // glide there (the pins keep the nodes where they land)
+    const from = new Map(chosen.map((n) => [n.id, { x: n.x ?? 0, y: n.y ?? 0 }]));
+    const t0 = performance.now();
+    const step = (now: number) => {
+      const k = Math.min(1, (now - t0) / 450);
+      const e = 1 - (1 - k) ** 3;
+      for (const n of chosen) {
+        const a = from.get(n.id)!;
+        const b = target.get(n.id)!;
+        // the layout engine may be at rest: set the position too, not only the pin
+        n.x = n.fx = a.x + (b.x - a.x) * e;
+        n.y = n.fy = a.y + (b.y - a.y) * e;
+        n.vx = n.vy = 0;
+      }
+      g.d3ReheatSimulation?.();
+      if (k < 1) requestAnimationFrame(step);
+      else setTimeout(() => fit(500), 150);
+    };
+    requestAnimationFrame(step);
+  };
+
   const releasePins = () => {
     for (const n of data.nodes as any[]) {
       n.fx = undefined;
@@ -722,6 +809,98 @@ export function KnowledgeGraph({
             </li>
           ))}
         </ul>
+      )}
+
+      {/* lay nodes out on a grid */}
+      {layoutOpen && (
+        <div className="absolute bottom-14 right-3 z-30 w-[300px] rounded-sm border border-rule bg-panel p-3.5 text-sm shadow-[0_16px_40px_-8px_rgba(0,0,0,0.7)] animate-fade-in">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="label">Disponi i nodi</span>
+            <button onClick={() => setLayoutOpen(false)} aria-label="Chiudi" className="text-mute hover:text-ink">
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <p className="mb-1.5 text-[12px] text-mute">Quali tipi mettere in ordine</p>
+          <ul className="mb-2 space-y-0.5">
+            {groupCounts.map(([grp, count]) => (
+              <li key={grp}>
+                <label className="flex cursor-pointer items-center gap-2 rounded-sm px-1 py-1 hover:bg-raised">
+                  <input
+                    type="checkbox"
+                    checked={layoutGroups.has(grp)}
+                    onChange={() =>
+                      setLayoutGroups((p) => {
+                        const n = new Set(p);
+                        if (n.has(grp)) n.delete(grp);
+                        else n.add(grp);
+                        return n;
+                      })
+                    }
+                    className="accent-[#d4573b]"
+                  />
+                  <span className="h-2 w-2 rounded-full" style={{ background: typeColor(grp) }} />
+                  <span>{typeLabel(grp)}</span>
+                  <span className="ml-auto font-mono text-[11px] text-mute">{count}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            {(
+              [
+                ["Giochi", ["VideoGame"]],
+                ["Sviluppatori e publisher", ["Developer", "Publisher"]],
+                ["Tutti", groupCounts.map(([g]) => g)],
+              ] as const
+            ).map(([label, list]) => (
+              <button
+                key={label}
+                onClick={() => setLayoutGroups(new Set(list))}
+                className="rounded-full border border-rule px-2.5 py-0.5 text-[12px] text-mute hover:border-brick hover:text-ink"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="mb-3 inline-flex rounded-sm border border-rule p-0.5" role="group" aria-label="Tipo di disposizione">
+            {(
+              [
+                ["grid", "Griglia unica"],
+                ["bands", "Una fascia per tipo"],
+              ] as const
+            ).map(([m, label]) => (
+              <button
+                key={m}
+                onClick={() => setLayoutMode(m)}
+                className={`rounded-[3px] px-2.5 py-1 text-[13px] ${layoutMode === m ? "bg-raised text-ink" : "text-mute hover:text-ink"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              className="btn btn-primary !py-1.5"
+              disabled={layoutGroups.size === 0}
+              onClick={() => {
+                arrange(layoutGroups, layoutMode);
+                setFrozen(false);
+              }}
+            >
+              Applica
+            </button>
+            <button
+              className="btn !py-1.5"
+              onClick={() => {
+                releasePins();
+                setLayoutOpen(false);
+              }}
+              title="Sblocca i nodi: tornano alla disposizione automatica"
+            >
+              Sblocca
+            </button>
+          </div>
+        </div>
       )}
 
       {/* what the two nodes of a clicked relation have in common */}
@@ -936,6 +1115,14 @@ export function KnowledgeGraph({
             <Eraser className="h-3.5 w-3.5" /> Svuota
           </button>
         )}
+        <button
+          onClick={() => setLayoutOpen((o) => !o)}
+          className={`btn !px-2.5 !py-1.5 ${layoutOpen ? "!border-brick" : ""}`}
+          title="Disponi i nodi in griglia"
+          aria-expanded={layoutOpen}
+        >
+          <LayoutGrid className="h-3.5 w-3.5" /> Disponi
+        </button>
         <button
           onClick={() => setShowDerived((v) => !v)}
           className={`btn !px-2.5 !py-1.5 ${showDerived ? "" : "opacity-60"}`}
