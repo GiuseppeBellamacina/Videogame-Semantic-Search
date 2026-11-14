@@ -42,6 +42,8 @@ const isDerived = (label?: string) => /^shar(e|ed)/.test(label ?? "");
 const MAX_FIT_ZOOM = 1.8;
 /** When something is added to the scene, show its connected group, at most this many nodes (nearest first). */
 const MAX_FOCUS_NODES = 25;
+/** ...but never zoomed out further than this: nodes too far from the new ones are left out of the view. */
+const MIN_FOCUS_ZOOM = 0.5;
 
 /** Games of every defined class count as one group when laying nodes out. */
 const groupOf = (t: string) => (GAME_TYPES.has(t) ? "VideoGame" : t);
@@ -168,12 +170,19 @@ export function KnowledgeGraph({
     if (!g) return;
     let bb = g.getGraphBbox?.();
     if (only?.length) {
-      const pts = only.filter((n) => n.x !== undefined && n.y !== undefined);
-      if (pts.length) {
-        const xs = pts.map((n) => n.x as number);
-        const ys = pts.map((n) => n.y as number);
-        bb = { x: [Math.min(...xs) - 30, Math.max(...xs) + 30], y: [Math.min(...ys) - 40, Math.max(...ys) + 40] };
+      // `only` is ordered by closeness: grow the box node by node while it still fits at a readable zoom
+      const { width: W, height: H } = sizeRef.current;
+      let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity, used = 0;
+      for (const n of only) {
+        if (n.x === undefined || n.y === undefined || Number.isNaN(n.x)) continue;
+        const nx0 = Math.min(x0, n.x - 30), nx1 = Math.max(x1, n.x + 30);
+        const ny0 = Math.min(y0, n.y - 40), ny1 = Math.max(y1, n.y + 40);
+        const z = Math.min((W - 180) / (nx1 - nx0), (H - 180) / (ny1 - ny0));
+        if (used >= 3 && z < MIN_FOCUS_ZOOM) break;
+        [x0, x1, y0, y1] = [nx0, nx1, ny0, ny1];
+        used++;
       }
+      if (used) bb = { x: [x0, x1], y: [y0, y1] };
     }
     if (!bb) {
       g.zoomToFit(ms, 60);
@@ -255,6 +264,16 @@ export function KnowledgeGraph({
 
   // ── size, forces, fit ────────────────────────────────────────────────────
   const sizedOnce = useRef(0);
+  // the last time the user zoomed, panned or dragged: automatic fits scheduled before it give way
+  const userInput = useRef(0);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const mark = () => (userInput.current = Date.now());
+    const evs = ["wheel", "pointerdown", "touchstart"] as const;
+    evs.forEach((e) => el.addEventListener(e, mark, { passive: true, capture: true }));
+    return () => evs.forEach((e) => el.removeEventListener(e, mark, { capture: true }));
+  }, []);
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -335,7 +354,7 @@ export function KnowledgeGraph({
   const fitIds = useRef<Set<string>>(new Set());
   // an expansion can change `data` twice in a row (the merged graph is rebuilt): the second change adds
   // nothing, and must keep the focus of the first one instead of falling back to "fit everything"
-  const pendingFocus = useRef<{ ids: Set<string>; t: number } | null>(null);
+  const pendingFocus = useRef<{ ids: string[]; t: number } | null>(null);
   useEffect(() => {
     if (data === prevData.current || !data.nodes.length) return;
     prevData.current = data;
@@ -343,10 +362,11 @@ export function KnowledgeGraph({
     fitIds.current = new Set(data.nodes.map((n) => n.id));
     const added = data.nodes.filter((n) => !before.has(n.id));
     const kept = data.nodes.length - added.length;
-    let focusIds: Set<string> | undefined;
+    let focusIds: string[] | undefined;
     if (added.length && kept > 0) {
       const adj = new Map<string, string[]>();
       for (const l of filtered.links) {
+        if (isDerived(l.label)) continue; // derived links tie every game to every other: not "near"
         const a = endId(l.source);
         const b = endId(l.target);
         adj.set(a, [...(adj.get(a) ?? []), b]);
@@ -369,16 +389,20 @@ export function KnowledgeGraph({
             seen.add(nb);
             order.push(nb);
           }
-      focusIds = seen;
-      pendingFocus.current = { ids: seen, t: Date.now() };
+      focusIds = order;
+      pendingFocus.current = { ids: order, t: Date.now() };
     } else if (!added.length && pendingFocus.current && Date.now() - pendingFocus.current.t < 3000) {
       focusIds = pendingFocus.current.ids;
     }
-    const pick = () => (focusIds ? data.nodes.filter((n) => focusIds!.has(n.id)) : undefined);
+    const t0 = Date.now();
+    const byId = new Map(data.nodes.map((n) => [n.id, n]));
+    const pick = () => focusIds?.map((id) => byId.get(id)).filter(Boolean) as any[] | undefined;
     // the layout needs a moment to place the new nodes: look at them again as it settles
     const ts = focusIds
-      ? [450, 1400, 2800].map((ms) => setTimeout(() => fit(ms === 450 ? 400 : 500, pick()), ms))
-      : [setTimeout(() => fit(400), 450)];
+      ? [450, 1400, 2800].map((ms) =>
+          setTimeout(() => userInput.current < t0 && fit(ms === 450 ? 400 : 500, pick()), ms),
+        )
+      : [setTimeout(() => userInput.current < t0 && fit(400), 450)];
     return () => ts.forEach(clearTimeout);
   }, [data]);
 
