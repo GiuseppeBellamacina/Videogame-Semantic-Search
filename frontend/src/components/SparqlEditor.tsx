@@ -2,7 +2,38 @@ import { useEffect, useRef } from "react";
 import { Play, X, Eraser } from "lucide-react";
 import { Dropdown } from "@/components/Dropdown";
 
+/** Shown in the editor until the user writes something of their own. */
+export const DEFAULT_QUERY = `CONSTRUCT {
+  ?g vg:developedBy ?dev .
+  ?g vg:publishedBy ?pub .
+  ?g vg:belongsTo ?serie .
+  ?g vg:madeWith ?motore .
+  ?g vg:hasGenre ?genere .
+}
+WHERE {
+  VALUES ?titolo {
+    "The Legend of Zelda: Breath of the Wild" "The Legend of Zelda: Tears of the Kingdom"
+    "The Legend of Zelda: Twilight Princess" "The Legend of Zelda: Skyward Sword"
+    "Cyberpunk 2077" "The Witcher 3: Wild Hunt"
+    "Grand Theft Auto V" "Grand Theft Auto VI" "Red Dead Redemption 2"
+    "Fallout: New Vegas" "Fallout 4"
+    "Dark Souls III" "Elden Ring"
+    "Death Stranding" "Resident Evil 4"
+    "Crimson Desert" "Horizon Zero Dawn" "Horizon Forbidden West"
+  }
+  ?g vg:gameName ?titolo .
+  { ?g vg:developedBy ?dev }
+  UNION { ?g vg:publishedBy ?pub }
+  UNION { ?g vg:belongsTo ?serie }
+  UNION { ?g vg:madeWith ?motore }
+  UNION { ?g vg:hasGenre ?genere }
+}`;
+
 const EXAMPLES: { label: string; query: string }[] = [
+  {
+    label: "Grafo di giochi famosi (Zelda, Cyberpunk, GTA, Fallout, Horizon…)",
+    query: DEFAULT_QUERY,
+  },
   {
     label: "Top 10 per punteggio Metacritic",
     query: `SELECT ?name ?score WHERE {

@@ -21,7 +21,7 @@ from urllib.parse import quote
 
 import httpx
 
-from backend.config import CACHE_TTL_IMAGE, IMAGE_DIR, IMAGE_MISS_TTL
+from backend.config import CACHE_TTL_IMAGE, IMAGE_DIR, IMAGE_MISS_TTL, ONTOLOGY_NS
 from backend.services import cache
 
 logger = logging.getLogger(__name__)
@@ -123,6 +123,32 @@ async def _get(url: str, **kw) -> httpx.Response | None:
     return None
 
 
+def _years_sync(name: str) -> list[str]:
+    from backend.services.ontology_service import OntologyService
+
+    lit = name.replace(chr(92), chr(92) * 2).replace('"', chr(92) + '"')
+    rows = OntologyService.execute_sparql(
+        f'SELECT DISTINCT ?d WHERE {{ ?g <{ONTOLOGY_NS}gameName> "{lit}" ; <{ONTOLOGY_NS}releaseDate> ?d }}',
+        max_rows=10,
+    )
+    return sorted({str(r["d"])[:4] for r in rows if r.get("d")})
+
+
+async def _years(name: str, etype: str) -> list[str]:
+    """Release years of the games with this name: Wikipedia titles a homonym "God of War (2018 video game)"."""
+    if etype != "VideoGame":
+        return []
+    try:
+        return await asyncio.to_thread(_years_sync, name)
+    except Exception:  # the ontology is not loaded (tools, tests): search by name only
+        return []
+
+
+def _titles(name: str, etype: str, years: list[str]) -> list[str]:
+    dated = [f"{name} ({y} video game)" for y in years]
+    return dated + [tpl.format(n=name) for tpl in _VARIANTS.get(etype, ["{n}"])]
+
+
 async def _wikidata_logo(qid: str) -> str | None:
     """Commons render (320 px) of the entity's logo image (Wikidata P154)."""
     resp = await _get(
@@ -161,7 +187,7 @@ async def _summary_thumb(title: str, etype: str) -> str | None:
     return thumb
 
 
-async def _search_thumb(name: str, etype: str) -> str | None:
+async def _search_thumb(name: str, etype: str, years: list[str]) -> str | None:
     resp = await _get(
         "https://en.wikipedia.org/w/api.php",
         params={
@@ -169,7 +195,7 @@ async def _search_thumb(name: str, etype: str) -> str | None:
             "generator": "search",
             "gsrlimit": 1,
             "format": "json",
-            "gsrsearch": f"{name} {_HINT.get(etype, '')}".strip(),
+            "gsrsearch": f"{name} {years[0] if years else ''} {_HINT.get(etype, '')}".strip(),
             "prop": "pageimages",
             "piprop": "thumbnail",
             "pithumbsize": 320,
@@ -188,11 +214,12 @@ async def _search_thumb(name: str, etype: str) -> str | None:
 
 
 async def _find_thumb(name: str, etype: str) -> str | None:
-    for tpl in _VARIANTS.get(etype, ["{n}"]):
-        thumb = await _summary_thumb(tpl.format(n=name), etype)
+    years = await _years(name, etype)
+    for title in _titles(name, etype, years):
+        thumb = await _summary_thumb(title, etype)
         if thumb:
             return thumb
-    return await _search_thumb(name, etype)
+    return await _search_thumb(name, etype, years)
 
 
 async def _download(url: str, stem: str) -> str | None:
@@ -245,7 +272,7 @@ async def _resolve(name: str, etype: str) -> dict:
     return {"imageUrl": local_url(file) if file else thumb, "source": "wikipedia"}
 
 
-async def _search_thumbs(name: str, etype: str) -> list[str]:
+async def _search_thumbs(name: str, etype: str, years: list[str]) -> list[str]:
     resp = await _get(
         "https://en.wikipedia.org/w/api.php",
         params={
@@ -253,7 +280,7 @@ async def _search_thumbs(name: str, etype: str) -> list[str]:
             "generator": "search",
             "gsrlimit": 6,
             "format": "json",
-            "gsrsearch": f"{name} {_HINT.get(etype, '')}".strip(),
+            "gsrsearch": f"{name} {years[0] if years else ''} {_HINT.get(etype, '')}".strip(),
             "prop": "pageimages",
             "piprop": "thumbnail",
             "pithumbsize": 320,
@@ -269,9 +296,10 @@ async def _search_thumbs(name: str, etype: str) -> list[str]:
 async def _candidates(name: str, etype: str) -> list[str]:
     """Every picture Wikipedia offers for this entity: the title variants, then the best search hits
     (all asked at the same time)."""
+    years = await _years(name, etype)
     found = await asyncio.gather(
-        *(_summary_thumb(tpl.format(n=name), etype) for tpl in _VARIANTS.get(etype, ["{n}"])),
-        _search_thumbs(name, etype),
+        *(_summary_thumb(t, etype) for t in _titles(name, etype, years)),
+        _search_thumbs(name, etype, years),
     )
     out: list[str] = []
     for item in found:

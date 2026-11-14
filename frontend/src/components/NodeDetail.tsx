@@ -30,6 +30,13 @@ function group(rels: Rel[]) {
   return [...m.entries()];
 }
 
+/** "God of War" alone lands on a disambiguation page: add the year and "video game" for games. */
+function wikiQuery(d: { type: string; label: string; properties: Record<string, string> }) {
+  if (d.type !== "VideoGame") return d.label;
+  const date = Object.entries(d.properties).find(([k]) => /release/i.test(k))?.[1] ?? "";
+  return `${d.label} ${date.slice(0, 4)} video game`.replace(/\s+/g, " ");
+}
+
 export function NodeDetail({ uri, onClose, onNavigate, onGraphExpand }: NodeDetailProps) {
   const [details, setDetails] = useState<NodeDetails | null>(null);
   const [loading, setLoading] = useState(false);
@@ -181,7 +188,7 @@ export function NodeDetail({ uri, onClose, onNavigate, onGraphExpand }: NodeDeta
                 <h2 className="font-serif text-[28px] leading-[1.1]">{details.label}</h2>
                 <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
                   <a
-                    href={`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(details.label)}`}
+                    href={`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(wikiQuery(details))}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-xs text-mute hover:text-brick"

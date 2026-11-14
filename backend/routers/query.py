@@ -6,6 +6,7 @@ import asyncio
 import json
 import logging
 import re
+from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
@@ -30,13 +31,29 @@ _PREFIX = (
 # Normalised questions already cached, for fuzzy matching
 _cached_keys: set[str] = set()
 
-# Max Levenshtein distance for fuzzy matching (relative to query length)
-_FUZZY_THRESHOLD_RATIO = 0.2  # 20% of query length
+# Ready-made questions (backend/presets.json): answered with a stored SPARQL, no LLM call.
+# They take part in the same fuzzy matching as the cached questions.
+_PRESETS_FILE = Path(__file__).resolve().parent.parent / "presets.json"
+
+
+def _load_presets() -> dict[str, str]:
+    try:
+        items = json.loads(_PRESETS_FILE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return {_normalise(i["question"]): i["sparql"] for i in items}
 
 
 def _normalise(question: str) -> str:
     """Lowercase, collapse whitespace — used as cache key."""
     return re.sub(r"\s+", " ", question.strip().lower())
+
+
+PRESETS: dict[str, str] = _load_presets()
+_cached_keys.update(PRESETS)
+
+# Max Levenshtein distance for fuzzy matching (relative to query length)
+_FUZZY_THRESHOLD_RATIO = 0.2  # 20% of query length
 
 
 def _levenshtein(s1: str, s2: str) -> int:
@@ -73,6 +90,9 @@ def _find_fuzzy_match(key: str) -> str | None:
         if abs(len(cached_key) - len(key)) > max_dist:
             continue
         dist = _levenshtein(key, cached_key)
+        # a preset is a hand-written question: only typos match, not "serie Halo" -> "serie Zelda"
+        if cached_key in PRESETS and dist > 2:
+            continue
         if dist < best_dist:
             best_dist = dist
             best_key = cached_key
@@ -91,17 +111,36 @@ def close_cache() -> None:
     cache.close()
 
 
-async def _cache_get(key: str) -> dict | None:
-    value = await cache.aget(_PREFIX + key)
-    if value:
-        return json.loads(value)
+def _run_preset(sparql: str) -> dict:
+    """Execute a stored query like the agent would (rows -> graph)."""
+    rows = OntologyService.execute_sparql(sparql)
+    graph = build_graph(rows, OntologyService) if rows else {"nodes": [], "links": []}
+    return {
+        "results": rows,
+        "graph": graph,
+        "sparql": sparql,
+        "total_rows": len(rows),
+        "success": bool(rows),
+        "truncated": False,
+    }
 
-    fuzzy_key = _find_fuzzy_match(key)
-    if fuzzy_key:
-        logger.info(f"[CACHE] Fuzzy hit: '{key}' → '{fuzzy_key}'")
-        value = await cache.aget(_PREFIX + fuzzy_key)
+
+async def _cache_get(key: str) -> dict | None:
+    fuzzy_key = None
+    for k in (key, None):
+        if k is None:
+            k = fuzzy_key = _find_fuzzy_match(key)
+            if k is None:
+                return None
+            logger.info(f"[CACHE] Fuzzy hit: '{key}' → '{k}'")
+        value = await cache.aget(_PREFIX + k)
         if value:
             return json.loads(value)
+        if k in PRESETS:  # first use of a preset: run it, then keep the answer
+            response = await asyncio.to_thread(_run_preset, PRESETS[k])
+            if response["success"]:
+                await _cache_set(k, response)
+            return response
     return None
 
 

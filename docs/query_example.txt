@@ -11,9 +11,10 @@ WHERE {
     "The Legend of Zelda: Twilight Princess" "The Legend of Zelda: Skyward Sword"
     "Cyberpunk 2077" "The Witcher 3: Wild Hunt"
     "Grand Theft Auto V" "Grand Theft Auto VI" "Red Dead Redemption 2"
-    "Fallout: New Vegas" "Fallout 76"
-    "Dark Souls III" "Elden Ring Nightreign"
+    "Fallout: New Vegas" "Fallout 4"
+    "Dark Souls III" "Elden Ring"
     "Death Stranding" "Resident Evil 4"
+    "Crimson Desert" "Horizon Zero Dawn" "Horizon Forbidden West"
   }
   ?g vg:gameName ?titolo .
   { ?g vg:developedBy ?dev }

@@ -1,0 +1,106 @@
+[
+  {
+    "question": "Quali giochi ha sviluppato FromSoftware?",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:developedBy ?dv0 . ?dv0 vg:developerName ?dvn0 . FILTER(CONTAINS(LCASE(STR(?dvn0)), \"fromsoftware\"))\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY ?releaseDate\nLIMIT 50"
+  },
+  {
+    "question": "Top 10 giochi con il punteggio Metacritic più alto",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:metacriticScore ?s0 .\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 10"
+  },
+  {
+    "question": "Giochi RPG usciti nel 2023",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName ?genre ?genreName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:hasGenre ?genre . ?genre vg:genreName ?genreName . FILTER(CONTAINS(LCASE(STR(?genreName)), \"role-playing\")) ?game vg:releaseDate ?d0 . FILTER(YEAR(?d0) = 2023)\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY ?releaseDate\nLIMIT 50"
+  },
+  {
+    "question": "Giochi della serie Zelda",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:belongsTo ?f0 . ?f0 vg:franchiseName ?fn0 . FILTER(CONTAINS(LCASE(STR(?fn0)), \"zelda\"))\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY ?releaseDate\nLIMIT 50"
+  },
+  {
+    "question": "Quali giochi sono disponibili su PlayStation 5?",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName ?platform ?platformName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:availableOn ?platform . ?platform vg:platformName ?platformName . FILTER(LCASE(STR(?platformName)) = \"playstation 5\")\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 50"
+  },
+  {
+    "question": "Giochi sviluppati da Nintendo dopo il 2020",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:developedBy ?dv0 . ?dv0 vg:developerName ?dvn0 . FILTER(CONTAINS(LCASE(STR(?dvn0)), \"nintendo\")) ?game vg:releaseDate ?d0 . FILTER(YEAR(?d0) >= 2020)\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY ?releaseDate\nLIMIT 50"
+  },
+  {
+    "question": "Quali giochi hanno vinto il Game of the Year?",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:GOTYWinner . ?game vg:gameName ?gameName .\n  \n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY ?releaseDate\nLIMIT 50"
+  },
+  {
+    "question": "Giochi molto apprezzati dalla critica",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:HighlyRatedGame . ?game vg:gameName ?gameName .\n  \n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 50"
+  },
+  {
+    "question": "Giochi pubblicati da Rockstar Games",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:publishedBy ?p0 . ?p0 vg:publisherName ?pn0 . FILTER(CONTAINS(LCASE(STR(?pn0)), \"rockstar\"))\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY ?releaseDate\nLIMIT 50"
+  },
+  {
+    "question": "Giochi cooperativi con il punteggio più alto",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:CoopGame . ?game vg:gameName ?gameName .\n  \n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 30"
+  },
+  {
+    "question": "Giochi per Nintendo Switch con punteggio Metacritic sopra 85",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName ?platform ?platformName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:availableOn ?platform . ?platform vg:platformName ?platformName . FILTER(LCASE(STR(?platformName)) = \"nintendo switch\") ?game vg:metacriticScore ?s0 . FILTER(?s0 > 85)\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 50"
+  },
+  {
+    "question": "Giochi della serie Dark Souls",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:belongsTo ?f0 . ?f0 vg:franchiseName ?fn0 . FILTER(CONTAINS(LCASE(STR(?fn0)), \"dark souls\"))\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY ?releaseDate\nLIMIT 50"
+  },
+  {
+    "question": "Giochi della serie Horizon",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:belongsTo ?f0 . ?f0 vg:franchiseName ?fn0 . FILTER(CONTAINS(LCASE(STR(?fn0)), \"horizon\"))\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY ?releaseDate\nLIMIT 50"
+  },
+  {
+    "question": "Giochi della serie Fallout",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:belongsTo ?f0 . ?f0 vg:franchiseName ?fn0 . FILTER(CONTAINS(LCASE(STR(?fn0)), \"fallout\"))\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY ?releaseDate\nLIMIT 50"
+  },
+  {
+    "question": "Giochi sviluppati con Unreal Engine con il punteggio più alto",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:UnrealEngineGame . ?game vg:gameName ?gameName .\n  \n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 30"
+  },
+  {
+    "question": "Giochi pubblicati da Sony",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:SonyPublishedGame . ?game vg:gameName ?gameName .\n  \n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 50"
+  },
+  {
+    "question": "Giochi horror con il punteggio più alto",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:HorrorGame . ?game vg:gameName ?gameName .\n  \n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 30"
+  },
+  {
+    "question": "Giochi disponibili sia su PlayStation 5 che su Xbox Series X",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName ?platform ?platformName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:availableOn ?platform . ?platform vg:platformName ?platformName . FILTER(LCASE(STR(?platformName)) = \"playstation 5\") ?game vg:availableOn ?p2 . ?p2 vg:platformName ?pn2 . FILTER(CONTAINS(LCASE(STR(?pn2)), \"xbox series\"))\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 50"
+  },
+  {
+    "question": "Giochi di CD Projekt RED",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:developedBy ?dv0 . ?dv0 vg:developerName ?dvn0 . FILTER(CONTAINS(LCASE(STR(?dvn0)), \"cd projekt\"))\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY ?releaseDate\nLIMIT 50"
+  },
+  {
+    "question": "Giochi usciti nel 2025 con il punteggio più alto",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:VideoGame . ?game vg:gameName ?gameName .\n  ?game vg:releaseDate ?d0 . FILTER(YEAR(?d0) = 2025) ?game vg:metacriticScore ?s0 .\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 20"
+  },
+  {
+    "question": "Giochi pubblicati da Capcom con il punteggio più alto",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:CapcomPublishedGame . ?game vg:gameName ?gameName .\n  \n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 30"
+  },
+  {
+    "question": "Giochi per giocatore singolo usciti nel 2024",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName WHERE {\n  ?game rdf:type vg:SinglePlayerGame . ?game vg:gameName ?gameName .\n  ?game vg:releaseDate ?d0 . FILTER(YEAR(?d0) = 2024)\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 30"
+  },
+  {
+    "question": "Giochi di ruolo giapponesi con alto punteggio",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT DISTINCT ?game ?gameName ?releaseDate ?score ?dev ?devName ?genre ?genreName WHERE {\n  ?game rdf:type vg:JapaneseGame . ?game vg:gameName ?gameName .\n  ?game vg:hasGenre ?genre . ?genre vg:genreName ?genreName . FILTER(CONTAINS(LCASE(STR(?genreName)), \"role-playing\")) ?game vg:metacriticScore ?s0 . FILTER(?s0 >= 85)\n  OPTIONAL { ?game vg:releaseDate ?releaseDate }\n  OPTIONAL { ?game vg:metacriticScore ?score }\n  OPTIONAL { ?game vg:developedBy ?dev . ?dev vg:developerName ?devName }\n}\nORDER BY DESC(?score)\nLIMIT 30"
+  },
+  {
+    "question": "Mostra le relazioni dei giochi di FromSoftware",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nCONSTRUCT { ?game vg:developedBy ?dev . ?game vg:hasGenre ?genre . ?game vg:availableOn ?platform . }\nWHERE { ?dev vg:developerName \"FromSoftware\" . ?game vg:developedBy ?dev . ?game rdf:type vg:VideoGame .\n  ?game vg:hasGenre ?genre . OPTIONAL { ?game vg:availableOn ?platform } }\nLIMIT 150"
+  },
+  {
+    "question": "Su quali piattaforme è disponibile Elden Ring?",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nCONSTRUCT { ?game vg:availableOn ?platform . ?game vg:developedBy ?dev . }\nWHERE { ?game vg:gameName \"Elden Ring\" . ?game vg:availableOn ?platform . OPTIONAL { ?game vg:developedBy ?dev } }"
+  },
+  {
+    "question": "Mostra i giochi della serie Zelda e le loro piattaforme",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nCONSTRUCT { ?game vg:belongsTo ?f0 . ?game vg:availableOn ?platform . }\nWHERE { ?game vg:belongsTo ?f0 . ?f0 vg:franchiseName ?fn0 . FILTER(CONTAINS(LCASE(STR(?fn0)), \"zelda\")) ?game vg:availableOn ?platform }\nLIMIT 150"
+  }
+]

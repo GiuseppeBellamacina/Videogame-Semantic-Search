@@ -115,6 +115,10 @@ Scrivi domande come:
 - "Giochi RPG usciti nel 2023"
 - "Giochi della serie Zelda disponibili su Switch"
 
+### Domande pronte
+
+26 domande frequenti («Quali giochi ha sviluppato FromSoftware?», «Giochi della serie Zelda»…) hanno la query SPARQL già scritta in `backend/presets.json`: si rispondono senza chiamare l'LLM (e quindi senza costi), anche con piccoli errori di battitura. Sono quelle proposte come esempi nella barra di ricerca; per aggiungerne basta una voce `{question, sparql}` nel file.
+
 ### Grafo di conoscenza interattivo
 
 - **Nodi colorati** per tipo (gioco, developer, genere, etc.)

@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 import { Code2, List, Network, Sparkles, SlidersHorizontal } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
 import { QueryBuilder } from "@/components/QueryBuilder";
-import { SparqlEditor } from "@/components/SparqlEditor";
+import { DEFAULT_QUERY, SparqlEditor } from "@/components/SparqlEditor";
 import { ResultList } from "@/components/ResultList";
 import { KnowledgeGraph } from "@/components/KnowledgeGraph";
 import { NodeDetail } from "@/components/NodeDetail";
@@ -23,9 +23,9 @@ type Mode = "nl" | "builder" | "sparql";
 const EDITOR_KEY = "vg:editor-query";
 const loadEditorText = () => {
   try {
-    return localStorage.getItem(EDITOR_KEY) ?? "";
+    return localStorage.getItem(EDITOR_KEY) || DEFAULT_QUERY;
   } catch {
-    return "";
+    return DEFAULT_QUERY;
   }
 };
 
