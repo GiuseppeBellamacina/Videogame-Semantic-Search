@@ -220,6 +220,7 @@ export function NodeContextMenu({
   return (
     <div
       ref={menuRef}
+      data-context-menu
       style={style}
       className="w-80 bg-panel border border-rule rounded-sm shadow-[0_16px_40px_-8px_rgba(0,0,0,0.7)] overflow-hidden animate-fade-in"
     >

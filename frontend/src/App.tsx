@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Code2, List, Network, Sparkles, SlidersHorizontal } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
 import { QueryBuilder } from "@/components/QueryBuilder";
@@ -171,6 +171,25 @@ export default function App() {
     setSelectedNode(null);
     setHighlightNode(null);
   }, []);
+
+  // a click on nothing (outside the side panel, the graph tools and any control) lets go of
+  // the open panel, the context menu and the focused node; the canvas reports its own empty clicks
+  const clearFocus = useCallback(() => {
+    setSelectedNode(null);
+    setHighlightNode(null);
+    setContextMenu(null);
+  }, []);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (!t?.closest || !t.isConnected) return;
+      if (t.closest("[data-detail], [data-context-menu], [data-graph], button, a, input, textarea, select, label, [role=option], [role=listbox]")) return;
+      clearFocus();
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [clearFocus]);
 
   const handleNodeRightClick = useCallback((node: GraphNode, x: number, y: number) => {
     setContextMenu({ node, x, y });
@@ -408,6 +427,7 @@ export default function App() {
         </section>
 
         <section
+          data-graph
           className={`${mobileTab === "graph" ? "flex" : "hidden"} relative h-full min-h-0 w-full flex-1 md:flex`}
         >
           <KnowledgeGraph
@@ -416,6 +436,7 @@ export default function App() {
             onNodeClick={handleNodeClick}
             highlightNode={highlightNode}
             onNodeRightClick={handleNodeRightClick}
+            onBackgroundClick={clearFocus}
             hiddenCount={hiddenNodeIds.size}
             onRestoreHidden={() => setHiddenNodeIds(new Set())}
             onKeepOnly={handleKeepOnly}

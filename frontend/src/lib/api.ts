@@ -155,15 +155,22 @@ export async function runBuilderQuery(
 export async function fetchImages(
   items: { name: string; type: string }[],
   signal?: AbortSignal,
-): Promise<Record<string, string | null>> {
+): Promise<ImagesAnswer> {
   const res = await fetch(`${API_BASE}/images`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ items }),
     signal,
   });
-  if (!res.ok) return {};
-  return (await res.json()).images ?? {};
+  if (!res.ok) throw new Error(`images: HTTP ${res.status}`); // not an answer: the queue asks again
+  const body = await res.json();
+  return { images: body.images ?? {}, retry: body.retry ?? {} };
+}
+
+/** images: key -> url | null (null = searched, none exists); retry: key -> seconds, "could not tell yet". */
+export interface ImagesAnswer {
+  images: Record<string, string | null>;
+  retry: Record<string, number>;
 }
 
 /** Ask the backend for another picture of an entity (next Wikipedia candidate). */

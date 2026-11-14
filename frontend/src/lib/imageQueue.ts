@@ -6,14 +6,16 @@ import { IMAGE_TYPES } from "@/lib/theme";
  * grouped into batched requests with a small concurrency limit. Urgent items (hover,
  * selection) jump the queue.
  */
-const BATCH = 12;
+const BATCH = 10;
 const MAX_PARALLEL = 3;
+const MAX_TRIES = 6;
 
 type Job = {
   key: string;
   name: string;
   type: string;
   resolve: (url: string | null) => void;
+  tries?: number;
 };
 
 const done = new Map<string, string | null>();
@@ -77,25 +79,41 @@ function bump(key: string) {
   if (i > 0) queue.unshift(queue.splice(i, 1)[0]);
 }
 
+/** The server could not tell (Wikimedia rate limit, network): not "no image". Try again later,
+ *  a few times; after that leave the key unknown so a later request asks anew. */
+function later(job: Job, seconds: number) {
+  job.tries = (job.tries ?? 0) + 1;
+  if (job.tries >= MAX_TRIES) {
+    pending.delete(job.key);
+    job.resolve(null);
+    return;
+  }
+  setTimeout(() => {
+    queue.push(job);
+    void pump();
+  }, Math.min(Math.max(seconds, 3), 120) * 1000);
+}
+
 function pump() {
   while (running < MAX_PARALLEL && queue.length) {
     const jobs = queue.splice(0, BATCH);
     running++;
     fetchImages(jobs.map((j) => ({ name: j.name, type: j.type })))
-      .then((found) => {
+      .then(({ images, retry }) => {
         for (const j of jobs) {
-          const url = assetUrl(found[`${j.type}|${j.name}`] ?? null);
+          const k = `${j.type}|${j.name}`;
+          if (k in retry || !(k in images)) {
+            later(j, retry[k] ?? 15);
+            continue;
+          }
+          const url = assetUrl(images[k] ?? null);
           done.set(j.key, url);
           pending.delete(j.key);
           j.resolve(url);
         }
       })
       .catch(() => {
-        // network trouble: leave the keys unknown so a later request retries
-        for (const j of jobs) {
-          pending.delete(j.key);
-          j.resolve(null);
-        }
+        for (const j of jobs) later(j, 10);
       })
       .finally(() => {
         running--;

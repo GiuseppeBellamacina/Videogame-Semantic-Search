@@ -162,7 +162,7 @@ export function NodeDetail({ uri, onClose, onNavigate, onGraphExpand }: NodeDeta
   const showType = details && details.type && details.type !== "Unknown" && details.type !== "Thing";
 
   return (
-    <aside className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto border-l border-rule bg-panel shadow-[-24px_0_48px_-24px_rgba(0,0,0,0.7)] animate-slide-in sm:w-[26rem]">
+    <aside data-detail className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto border-l border-rule bg-panel shadow-[-24px_0_48px_-24px_rgba(0,0,0,0.7)] animate-slide-in sm:w-[26rem]">
       <div className="sticky top-0 z-10 flex items-center justify-between border-b border-rule bg-panel px-5 py-3">
         <span className="label">{showType ? typeLabel(details!.type) : "Dettaglio"}</span>
         <button onClick={onClose} className="rounded-sm p-1 text-mute hover:bg-raised hover:text-ink" aria-label="Chiudi">

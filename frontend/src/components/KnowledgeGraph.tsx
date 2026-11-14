@@ -12,6 +12,8 @@ interface KnowledgeGraphProps {
   onNodeClick: (nodeId: string) => void;
   highlightNode?: string | null;
   onNodeRightClick?: (node: GraphNode, x: number, y: number) => void;
+  /** Click on the empty canvas. */
+  onBackgroundClick?: () => void;
   /** Nodes hidden one by one from the context menu, and how to bring them back. */
   hiddenCount?: number;
   onRestoreHidden?: () => void;
@@ -38,6 +40,8 @@ const endId = (e: string | GraphNode) => (typeof e === "string" ? e : e.id);
 const isDerived = (label?: string) => /^shar(e|ed)/.test(label ?? "");
 /** Fitting a single node would otherwise zoom it to the whole screen. */
 const MAX_FIT_ZOOM = 1.8;
+/** When something is added to the scene, show its connected group, at most this many nodes (nearest first). */
+const MAX_FOCUS_NODES = 25;
 
 /** Games of every defined class count as one group when laying nodes out. */
 const groupOf = (t: string) => (GAME_TYPES.has(t) ? "VideoGame" : t);
@@ -120,6 +124,7 @@ export function KnowledgeGraph({
   onNodeClick,
   highlightNode,
   onNodeRightClick,
+  onBackgroundClick,
   hiddenCount = 0,
   onRestoreHidden,
   onKeepOnly,
@@ -158,10 +163,18 @@ export function KnowledgeGraph({
   const repaint = useCallback(() => setTick((t) => t + 1), []);
   const longPressFired = useRef(false);
   // fit the graph in one smooth move, never past MAX_FIT_ZOOM (no zoom-in-then-back jump)
-  const fit = useCallback((ms: number) => {
+  const fit = useCallback((ms: number, only?: any[]) => {
     const g = graphRef.current;
     if (!g) return;
-    const bb = g.getGraphBbox?.();
+    let bb = g.getGraphBbox?.();
+    if (only?.length) {
+      const pts = only.filter((n) => n.x !== undefined && n.y !== undefined);
+      if (pts.length) {
+        const xs = pts.map((n) => n.x as number);
+        const ys = pts.map((n) => n.y as number);
+        bb = { x: [Math.min(...xs) - 30, Math.max(...xs) + 30], y: [Math.min(...ys) - 40, Math.max(...ys) + 40] };
+      }
+    }
     if (!bb) {
       g.zoomToFit(ms, 60);
       return;
@@ -241,17 +254,19 @@ export function KnowledgeGraph({
   }, [focusId, data.nodes, repaint]);
 
   // ── size, forces, fit ────────────────────────────────────────────────────
+  const sizedOnce = useRef(0);
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    let prev = 0;
     const ro = new ResizeObserver(([e]) => {
       const { width, height } = e.contentRect;
       setSize({ width, height });
-      if (prev === 0 && width > 0 && data.nodes.length)
+      // the first time the panel gets a width (not every time the effect re-subscribes): fit once
+      if (sizedOnce.current === 0 && width > 0 && data.nodes.length) {
         setTimeout(() => fit(300), 120);
         setTimeout(() => fit(300), 600);
-      prev = width;
+      }
+      sizedOnce.current = width;
     });
     ro.observe(el);
     return () => ro.disconnect();
@@ -314,13 +329,57 @@ export function KnowledgeGraph({
     prevIds.current = new Set(data.nodes.map((n) => n.id));
   }, [data]);
 
+  // new data: fit everything; but when nodes were *added* to what is already on screen (expand from the
+  // menu or the side panel), show the connected group of the new nodes, nearest MAX_FOCUS_NODES only
   const prevData = useRef(data);
+  const fitIds = useRef<Set<string>>(new Set());
+  // an expansion can change `data` twice in a row (the merged graph is rebuilt): the second change adds
+  // nothing, and must keep the focus of the first one instead of falling back to "fit everything"
+  const pendingFocus = useRef<{ ids: Set<string>; t: number } | null>(null);
   useEffect(() => {
-    if (data !== prevData.current && data.nodes.length) {
-      prevData.current = data;
-      const t = setTimeout(() => fit(400), 450);
-      return () => clearTimeout(t);
+    if (data === prevData.current || !data.nodes.length) return;
+    prevData.current = data;
+    const before = fitIds.current;
+    fitIds.current = new Set(data.nodes.map((n) => n.id));
+    const added = data.nodes.filter((n) => !before.has(n.id));
+    const kept = data.nodes.length - added.length;
+    let focusIds: Set<string> | undefined;
+    if (added.length && kept > 0) {
+      const adj = new Map<string, string[]>();
+      for (const l of filtered.links) {
+        const a = endId(l.source);
+        const b = endId(l.target);
+        adj.set(a, [...(adj.get(a) ?? []), b]);
+        adj.set(b, [...(adj.get(b) ?? []), a]);
+      }
+      const addedIds = new Set(added.map((n) => n.id));
+      let roots = [...addedIds];
+      if (roots.length > MAX_FOCUS_NODES) {
+        // a big expansion: centre on the node it grew from (the one linked to most of the new ones)
+        const hits = new Map<string, number>();
+        for (const [a, nbs] of adj) if (!addedIds.has(a)) hits.set(a, nbs.filter((x) => addedIds.has(x)).length);
+        const hub = [...hits.entries()].sort((x, y) => y[1] - x[1])[0]?.[0];
+        roots = hub ? [hub] : roots.slice(0, MAX_FOCUS_NODES);
+      }
+      const seen = new Set(roots);
+      const order = [...roots];
+      for (let i = 0; i < order.length && order.length < MAX_FOCUS_NODES; i++)
+        for (const nb of adj.get(order[i]) ?? [])
+          if (!seen.has(nb) && order.length < MAX_FOCUS_NODES) {
+            seen.add(nb);
+            order.push(nb);
+          }
+      focusIds = seen;
+      pendingFocus.current = { ids: seen, t: Date.now() };
+    } else if (!added.length && pendingFocus.current && Date.now() - pendingFocus.current.t < 3000) {
+      focusIds = pendingFocus.current.ids;
     }
+    const pick = () => (focusIds ? data.nodes.filter((n) => focusIds!.has(n.id)) : undefined);
+    // the layout needs a moment to place the new nodes: look at them again as it settles
+    const ts = focusIds
+      ? [450, 1400, 2800].map((ms) => setTimeout(() => fit(ms === 450 ? 400 : 500, pick()), ms))
+      : [setTimeout(() => fit(400), 450)];
+    return () => ts.forEach(clearTimeout);
   }, [data]);
 
   // centre on the node chosen elsewhere (result list, side panel)
@@ -463,6 +522,27 @@ export function KnowledgeGraph({
       ctx.strokeStyle = pair || on || hov ? BRICK : "rgba(236,232,221,0.22)";
       ctx.stroke();
       ctx.setLineDash([]);
+      // arrowhead on the object: subject -> object (derived relations are symmetric: no arrow)
+      if (!derived) {
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const len = Math.hypot(dx, dy);
+        const back = hitRadius(b.type) + 1;
+        const sz = 6 / Math.min(Math.max(k, 0.35), 2.5);
+        if (len > back + sz * 1.5) {
+          const ux = dx / len;
+          const uy = dy / len;
+          const tx = b.x - ux * back;
+          const ty = b.y - uy * back;
+          ctx.beginPath();
+          ctx.moveTo(tx, ty);
+          ctx.lineTo(tx - ux * sz * 1.6 - uy * sz * 0.6, ty - uy * sz * 1.6 + ux * sz * 0.6);
+          ctx.lineTo(tx - ux * sz * 1.6 + uy * sz * 0.6, ty - uy * sz * 1.6 - ux * sz * 0.6);
+          ctx.closePath();
+          ctx.fillStyle = pair || on || hov ? BRICK : "rgba(236,232,221,0.5)";
+          ctx.fill();
+        }
+      }
       if (pair || hov || (on && !derived && k > 0.7)) {
         // fixed 11px on screen, on a dark pill; skipped when it would cover another label
         // (the pair's labels are never skipped: they are moved down instead)
@@ -739,6 +819,7 @@ export function KnowledgeGraph({
         onBackgroundClick={() => {
           setSelected(new Set());
           setLinkInfo(null);
+          onBackgroundClick?.();
         }}
         onLinkHover={(l: any) => setHoverLink(l ?? null)}
         linkHoverPrecision={8}
@@ -784,8 +865,6 @@ export function KnowledgeGraph({
           ctx.fillStyle = color;
           ctx.fill();
         }}
-        linkDirectionalArrowLength={3}
-        linkDirectionalArrowRelPos={0.9}
         d3VelocityDecay={0.4}
         d3AlphaDecay={0.03}
         warmupTicks={60}

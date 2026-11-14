@@ -143,10 +143,12 @@ async def retry_image(body: RetryImageRequest):
 async def images(body: ImagesRequest):
     """Batch lookup, resolved concurrently. Keys are "<type>|<name>"."""
     found = await image_store.resolve_many([(i.name, i.type) for i in body.items])
+    keys = [f"{i.type}|{i.name}" for i in body.items]
+    # "retry": keys the server could not settle (rate limit, network): not "no image", ask again later
+    retry = {k: r["retryAfter"] for k, r in zip(keys, found) if "retryAfter" in r}
     return {
-        "images": {
-            f"{i.type}|{i.name}": r["imageUrl"] for i, r in zip(body.items, found)
-        }
+        "images": {k: r["imageUrl"] for k, r in zip(keys, found) if k not in retry},
+        "retry": retry,
     }
 
 

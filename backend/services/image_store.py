@@ -16,6 +16,7 @@ import hashlib
 import json
 import logging
 import re
+import time
 from pathlib import Path
 from urllib.parse import quote
 
@@ -41,7 +42,45 @@ EXT = {
 }
 
 _client: httpx.AsyncClient | None = None
-_sem = asyncio.Semaphore(6)
+
+# Politeness towards Wikimedia, all of it asynchronous. Two pools of workers: the API calls
+# (searches, titles: the expensive ones; Wikimedia asks for 3 at a time at most) and the picture
+# downloads (static files from the CDN: a few more in parallel). Each pool also spaces the start of
+# its requests. After a 429 *nothing* is sent, by any pool, until the cooldown is over (it doubles
+# while 429s keep coming), so a burst of nodes can never turn into a ban.
+class _Pool:
+    def __init__(self, workers: int, interval: float):
+        self.sem = asyncio.Semaphore(workers)
+        self.interval = interval
+        self.lock = asyncio.Lock()
+        self.next_slot = 0.0
+
+    async def pace(self) -> None:
+        async with self.lock:
+            now = time.monotonic()
+            self.next_slot = max(self.next_slot, now) + self.interval
+            wait = self.next_slot - self.interval - now
+        if wait > 0:
+            await asyncio.sleep(wait)
+
+
+POOLS = {"api": _Pool(3, 0.25), "img": _Pool(5, 0.12)}
+COOLDOWN_START, COOLDOWN_MAX = 30.0, 300.0
+_cooldown_until = 0.0
+_cooldown = COOLDOWN_START
+
+
+class Transient(Exception):
+    """The request could not be answered (rate limit, server error, network): it says nothing
+    about whether the picture exists, so it must never be remembered as "not found"."""
+
+    def __init__(self, retry_after: float = 5.0):
+        super().__init__(f"transient, retry in {retry_after:.0f}s")
+        self.retry_after = retry_after
+
+
+def cooldown_left() -> float:
+    return max(0.0, _cooldown_until - time.monotonic())
 _inflight: dict[str, asyncio.Future] = {}
 
 # Wikipedia title variants and search hint per entity type
@@ -104,23 +143,32 @@ async def close() -> None:
         _client = None
 
 
-async def _get(url: str, **kw) -> httpx.Response | None:
-    """GET with the shared client, the semaphore and a short retry on 429/5xx."""
-    async with _sem:
-        for attempt in range(3):
-            try:
-                resp = await _http().get(url, **kw)
-            except httpx.HTTPError as e:
-                logger.warning(f"[IMG] {url[:80]}: {e}")
-                return None
-            if resp.status_code in (429, 500, 502, 503):
-                wait = resp.headers.get("Retry-After", "")
-                await asyncio.sleep(
-                    min(int(wait) if wait.isdigit() else 1.5 * (attempt + 1), 5)
-                )
-                continue
-            return resp
-    return None
+async def _get(url: str, pool: str = "api", **kw) -> httpx.Response:
+    """GET with the shared client, the semaphore and the pacing. A definite answer (200, 404...)
+    is returned; 429, server errors and network failures raise Transient."""
+    global _cooldown_until, _cooldown
+    workers = POOLS[pool]
+    async with workers.sem:
+        left = cooldown_left()
+        if left > 0:  # in cooldown after a 429: do not even try
+            raise Transient(left)
+        await workers.pace()
+        try:
+            resp = await _http().get(url, **kw)
+        except httpx.HTTPError as e:
+            logger.warning(f"[IMG] {url[:80]}: {e}")
+            raise Transient(10) from e
+    if resp.status_code == 429:
+        wait = resp.headers.get("Retry-After", "")
+        pause = max(float(wait) if wait.isdigit() else 0.0, _cooldown)
+        _cooldown_until = time.monotonic() + pause
+        _cooldown = min(_cooldown * 2, COOLDOWN_MAX)
+        logger.warning(f"[IMG] 429 from Wikimedia: pausing every request for {pause:.0f}s")
+        raise Transient(pause)
+    if resp.status_code in (403, 500, 502, 503, 504):
+        raise Transient(15)
+    _cooldown = COOLDOWN_START  # a good answer: the backoff starts over
+    return resp
 
 
 def _years_sync(name: str) -> list[str]:
@@ -155,7 +203,7 @@ async def _wikidata_logo(qid: str) -> str | None:
         "https://www.wikidata.org/w/api.php",
         params={"action": "wbgetclaims", "entity": qid, "property": "P154", "format": "json"},
     )
-    if resp is None or resp.status_code != 200:
+    if resp.status_code != 200:
         return None
     for claim in (resp.json().get("claims") or {}).get("P154", []):
         file = ((claim.get("mainsnak") or {}).get("datavalue") or {}).get("value")
@@ -164,27 +212,51 @@ async def _wikidata_logo(qid: str) -> str | None:
     return None
 
 
-async def _summary_thumb(title: str, etype: str) -> str | None:
+async def _title_thumbs(titles: list[str], etype: str) -> list[str | None]:
+    """One API call for all the title variants of an entity (instead of one call per title):
+    the thumbnail of each title, in the same order, None where the page is missing, is a
+    disambiguation page or is not about a game."""
     resp = await _get(
-        f"https://en.wikipedia.org/api/rest_v1/page/summary/{quote(title.replace(' ', '_'), safe='')}"
+        "https://en.wikipedia.org/w/api.php",
+        params={
+            "action": "query",
+            "format": "json",
+            "redirects": 1,
+            "titles": "|".join(titles),
+            "prop": "pageimages|pageprops|extracts|description",
+            "piprop": "thumbnail",
+            "pilicense": "any",
+            "pithumbsize": 320,
+            "ppprop": "disambiguation|wikibase_item",
+            "exintro": 1,
+            "explaintext": 1,
+            "exchars": 300,
+            "exlimit": "max",
+        },
     )
-    if resp is None or resp.status_code != 200:
-        return None
-    data = resp.json()
-    if data.get("type") == "disambiguation":
-        return None
-    thumb = (data.get("thumbnail") or {}).get("source")
-    if not thumb and etype != "VideoGame" and data.get("wikibase_item"):
-        # companies, platforms and series often have no page image: use the Wikidata logo
-        return await _wikidata_logo(data["wikibase_item"])
-    if not thumb:
-        return None
-    if etype == "VideoGame" and "(video game)" not in title:
-        # a bare title may be a film, a person or a franchise: require a game in the blurb
-        blurb = f"{data.get('description', '')} {data.get('extract', '')}".lower()
-        if "game" not in blurb:
-            return None
-    return thumb
+    if resp.status_code != 200:
+        return [None] * len(titles)
+    q = resp.json().get("query") or {}
+    norm = {x["from"]: x["to"] for x in q.get("normalized", [])}
+    redir = {x["from"]: x["to"] for x in q.get("redirects", [])}
+    pages = {p.get("title"): p for p in (q.get("pages") or {}).values()}
+    out: list[str | None] = []
+    for t in titles:
+        page = pages.get(redir.get(norm.get(t, t), norm.get(t, t)))
+        thumb = None
+        if page and "missing" not in page and "disambiguation" not in (page.get("pageprops") or {}):
+            thumb = (page.get("thumbnail") or {}).get("source")
+            qid = (page.get("pageprops") or {}).get("wikibase_item")
+            if not thumb and etype != "VideoGame" and qid:
+                # companies, platforms and series often have no page image: use the Wikidata logo
+                thumb = await _wikidata_logo(qid)
+            elif thumb and etype == "VideoGame" and "video game)" not in t:
+                # a bare title may be a film, a person or a franchise: require a game in the blurb
+                blurb = f"{page.get('description', '')} {page.get('extract', '')}".lower()
+                if "game" not in blurb:
+                    thumb = None
+        out.append(thumb)
+    return out
 
 
 async def _search_thumb(name: str, etype: str, years: list[str]) -> str | None:
@@ -198,10 +270,11 @@ async def _search_thumb(name: str, etype: str, years: list[str]) -> str | None:
             "gsrsearch": f"{name} {years[0] if years else ''} {_HINT.get(etype, '')}".strip(),
             "prop": "pageimages",
             "piprop": "thumbnail",
+            "pilicense": "any",
             "pithumbsize": 320,
         },
     )
-    if resp is None or resp.status_code != 200:
+    if resp.status_code != 200:
         return None
     pages = (resp.json().get("query") or {}).get("pages") or {}
     for page in pages.values():
@@ -215,8 +288,7 @@ async def _search_thumb(name: str, etype: str, years: list[str]) -> str | None:
 
 async def _find_thumb(name: str, etype: str) -> str | None:
     years = await _years(name, etype)
-    for title in _titles(name, etype, years):
-        thumb = await _summary_thumb(title, etype)
+    for thumb in await _title_thumbs(_titles(name, etype, years), etype):
         if thumb:
             return thumb
     return await _search_thumb(name, etype, years)
@@ -224,12 +296,12 @@ async def _find_thumb(name: str, etype: str) -> str | None:
 
 async def _download(url: str, stem: str) -> str | None:
     """Fetch the thumbnail into IMAGE_DIR; returns the file name."""
-    resp = await _get(url)
-    if resp is None or resp.status_code != 200:
-        return None
+    resp = await _get(url, "img")
+    if resp.status_code != 200:
+        raise Transient(60)  # a thumbnail the API listed but does not serve: try again much later
     ext = EXT.get(resp.headers.get("content-type", "").split(";")[0].strip())
     if not ext or len(resp.content) > MAX_BYTES:
-        return None
+        raise Transient(600)
     name = f"{stem}.{ext}"
 
     def write() -> None:
@@ -253,23 +325,20 @@ async def _resolve(name: str, etype: str) -> dict:
         file = entry.get("file")
         if file and (IMAGE_DIR / file).exists():  # 1. local file
             return {"imageUrl": local_url(file), "source": entry.get("source")}
-        file = await _download(
-            entry["url"], stem
-        )  # 2. stored URL, file lost or never saved
-        if file:
-            entry["file"] = file
-            await cache.aset(key, json.dumps(entry), CACHE_TTL_IMAGE)
-            return {"imageUrl": local_url(file), "source": entry.get("source")}
-        return {"imageUrl": entry["url"], "source": entry.get("source")}
+        # 2. stored URL, file lost or never saved
+        entry["file"] = await _download(entry["url"], stem)
+        await cache.aset(key, json.dumps(entry), CACHE_TTL_IMAGE)
+        return {"imageUrl": local_url(entry["file"]), "source": entry.get("source")}
 
-    thumb = await _find_thumb(name, _norm_type(etype))  # 3. search
+    # 3. search: only a search that ran to the end without a hitch may end in "not found"
+    thumb = await _find_thumb(name, _norm_type(etype))
     if not thumb:
         await cache.aset(key, json.dumps({"miss": True}), IMAGE_MISS_TTL)
         return {"imageUrl": None, "source": None}
     file = await _download(thumb, stem)
     entry = {"url": thumb, "file": file, "source": "wikipedia"}
     await cache.aset(key, json.dumps(entry), CACHE_TTL_IMAGE)
-    return {"imageUrl": local_url(file) if file else thumb, "source": "wikipedia"}
+    return {"imageUrl": local_url(file), "source": "wikipedia"}
 
 
 async def _search_thumbs(name: str, etype: str, years: list[str]) -> list[str]:
@@ -283,10 +352,11 @@ async def _search_thumbs(name: str, etype: str, years: list[str]) -> list[str]:
             "gsrsearch": f"{name} {years[0] if years else ''} {_HINT.get(etype, '')}".strip(),
             "prop": "pageimages",
             "piprop": "thumbnail",
+            "pilicense": "any",
             "pithumbsize": 320,
         },
     )
-    if resp is None or resp.status_code != 200:
+    if resp.status_code != 200:
         return []
     pages = (resp.json().get("query") or {}).get("pages") or {}
     ranked = sorted(pages.values(), key=lambda p: p.get("index", 99))
@@ -298,9 +368,15 @@ async def _candidates(name: str, etype: str) -> list[str]:
     (all asked at the same time)."""
     years = await _years(name, etype)
     found = await asyncio.gather(
-        *(_summary_thumb(t, etype) for t in _titles(name, etype, years)),
+        _title_thumbs(_titles(name, etype, years), etype),
         _search_thumbs(name, etype, years),
+        return_exceptions=True,
     )
+    for item in found:
+        if isinstance(item, Transient):
+            raise item  # an incomplete list would hide good candidates
+        if isinstance(item, BaseException):
+            raise item
     out: list[str] = []
     for item in found:
         for thumb in item if isinstance(item, list) else [item]:
@@ -321,13 +397,19 @@ async def retry(name: str, etype: str = "VideoGame") -> dict:
     stem = file_stem(key)
     raw = await cache.aget(key)
     entry = json.loads(raw) if raw else {}
-    cands = entry.get("cands") or await _candidates(name, etype)  # kept: later retries are instant
+    try:
+        cands = entry.get("cands") or await _candidates(name, etype)  # kept: later retries are instant
+    except Transient as t:
+        return {"imageUrl": None, "source": None, "changed": False, "retryAfter": t.retry_after}
     if not cands:
         return {"imageUrl": None, "source": None, "changed": False}
     attempt = int(entry.get("attempt", 0)) + 1
     start = cands.index(entry["url"]) + 1 if entry.get("url") in cands else attempt
     thumb = cands[start % len(cands)]
-    file = await _download(thumb, f"{stem}-{attempt}")
+    try:
+        file = await _download(thumb, f"{stem}-{attempt}")
+    except Transient as t:
+        return {"imageUrl": None, "source": None, "changed": False, "retryAfter": t.retry_after}
     old = entry.get("file")
     if file and old and old != file and (IMAGE_DIR / old).exists():
         await asyncio.to_thread((IMAGE_DIR / old).unlink)
@@ -340,7 +422,7 @@ async def retry(name: str, etype: str = "VideoGame") -> dict:
     }
     await cache.aset(key, json.dumps(entry), CACHE_TTL_IMAGE)
     return {
-        "imageUrl": local_url(file) if file else thumb,
+        "imageUrl": local_url(file),
         "source": "wikipedia",
         "changed": True,
     }
@@ -358,9 +440,11 @@ async def resolve(name: str, etype: str = "VideoGame") -> dict:
         fut.add_done_callback(lambda _: _inflight.pop(key, None))
     try:
         return await asyncio.shield(fut)
-    except Exception as e:  # network trouble must never break the graph
+    except Transient as t:  # nothing was learned: no "not found" is stored, the client asks again later
+        return {"imageUrl": None, "source": None, "retryAfter": t.retry_after}
+    except Exception as e:  # anything unexpected must never break the graph, nor be remembered
         logger.warning(f"[IMG] {etype} '{name}': {e}")
-        return {"imageUrl": None, "source": None}
+        return {"imageUrl": None, "source": None, "retryAfter": 30.0}
 
 
 async def resolve_many(items: list[tuple[str, str]]) -> list[dict]:
