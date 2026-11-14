@@ -10,6 +10,7 @@ import logging
 import re
 import shutil
 import time
+import unicodedata
 from collections import defaultdict
 from pathlib import Path
 
@@ -258,6 +259,23 @@ def sync_query_cache(cache_dir: Path, key: str, template: str) -> None:
     mark.write_text(digest)
 
 
+def prefer_en_labels(rows: list, *pairs: tuple[str, str]) -> list:
+    """One label per entity: the same item can come back with an "en" and a "mul"
+    label that differ (Xbox Series X and Series S / Xbox Series X/S), which would
+    create two nodes for it. pairs = (label column, uri column); "en" wins."""
+    for lab, uri in pairs:
+        best: dict[str, dict] = {}
+        for r in rows:
+            if lab in r and uri in r:
+                u = r[uri]["value"]
+                if u not in best or r[lab].get("xml:lang") == "en":
+                    best[u] = r[lab]
+        for r in rows:
+            if lab in r and uri in r:
+                r[lab] = best[r[uri]["value"]]
+    return rows
+
+
 def run_per_year_month_queries(
     sparql: SPARQLWrapper,
     query_template: str,
@@ -303,6 +321,30 @@ _NAME_PROPS = [
 ]
 
 
+# Near-duplicates of platforms, developers and publishers. Companies are compared
+# without punctuation, case and legal form ("Netflix, Inc." = "Netflix"); words such as
+# Games/Studios stay, because Rockstar Games and Rockstar Studios are different entities.
+_LEGAL = re.compile(
+    r"\b(?:inc|incorporated|ltd|limited|llc|gmbh|co|corp|corporation|plc|ab|bv|oy|srl|kk|pty|ag|company|the)\b"
+)
+# the same thing under another name (Wikidata aliases and renamed companies)
+_ALIASES = {
+    "platformName": {"ps5": "playstation 5"},
+    "developerName": {"konami digital entertainment": "konami", "marvelous entertainment": "marvelous"},
+    "publisherName": {"konami digital entertainment": "konami", "marvelous entertainment": "marvelous"},
+}
+
+
+def dedup_name(prop_local: str, name: str) -> str:
+    low = name.strip().lower()
+    low = _ALIASES.get(prop_local, {}).get(low, low)
+    if prop_local not in ("developerName", "publisherName"):
+        return low
+    n = unicodedata.normalize("NFKC", low).replace("&", " and ")
+    n = _LEGAL.sub(" ", re.sub(r"[^\w ]", " ", n))
+    return "".join(n.split()) or low
+
+
 def deduplicate_graph(g: Graph) -> int:
     """
     Merge duplicate entities that share the same normalised name *and the same
@@ -320,7 +362,7 @@ def deduplicate_graph(g: Graph) -> int:
         prop = VG[prop_local]
         for subj, _, obj in g.triples((None, prop, None)):
             if isinstance(obj, Literal) and isinstance(subj, URIRef):
-                key = (prop_local, str(obj).strip().lower())
+                key = (prop_local, dedup_name(prop_local, str(obj)))
                 if subj not in name_to_uris[key]:
                     name_to_uris[key].append(subj)
 
@@ -346,6 +388,8 @@ def deduplicate_graph(g: Graph) -> int:
             # Re-point all triples where duplicate is the subject
             for pred, obj in list(g.predicate_objects(duplicate)):
                 g.remove((duplicate, pred, obj))
+                if pred == VG[name_key[0]]:
+                    continue  # keep a single name: the canonical one
                 # Add to canonical only if not already present
                 if (canonical, pred, obj) not in g:
                     g.add((canonical, pred, obj))
@@ -439,12 +483,18 @@ _MODE_RULES: list[tuple[str, URIRef]] = [
 ]
 
 _ENGINE_RULES: list[tuple[str, URIRef]] = [(r"unreal engine", VG.UnrealEngineFamily)]
-# only the top prize of a ceremony ("The Game Awards - Game of the Year"), not the category
-# prizes ("... for Strategy Game of the Year", "iPad Game of the Year", "Czech ... - Audio")
-_GOTY_MAIN = (
-    r"(?:^|[-–−:]\s*|\bfor\s+|\bawards?\s+)"
-    r"(?:(?:ultimate|best)\s+)?game of the year(?:\s+award)?\s*$"
-)
+# GameOfTheYearAward = the main prize of The Game Awards (Wikidata covers 2014 onwards),
+# not the many category prizes ("... for Strategy Game of the Year", "iPad Game of the Year")
+# nor the GOTY of other bodies (Golden Joystick, DICE, GDC...)
+_GOTY_MAIN = r"^the game awards\s*[-–−:]\s*game of the year\s*$"
+# Spike Video Game Awards GOTY (the TGA's predecessor, 2010-2013): its winners are not
+# linked to the games on Wikidata, so they are listed here by game name
+_VGA_GOTY = {
+    2010: "Red Dead Redemption",
+    2011: "The Elder Scrolls V: Skyrim",
+    2012: "The Walking Dead: Season One",
+    2013: "Grand Theft Auto V",
+}
 _AWARD_RULES: list[tuple[str, URIRef]] = [(_GOTY_MAIN, VG.GameOfTheYearAward)]
 
 
@@ -569,6 +619,7 @@ def populate_from_wikidata(
             bindings = run_query(
                 sparql, query, f"Core game data ({year}-{month:02d})", cache_file
             )
+            prefer_en_labels(bindings, ("devLabel", "dev"), ("pubLabel", "pub"))
 
             for row in bindings:
                 game_uri_str = get_val(row, "game")
@@ -653,6 +704,7 @@ def populate_from_wikidata(
         rows = run_per_year_month_queries(
             sparql, tpl, key, f"{key.capitalize()} data", years, cache_dir
         )
+        prefer_en_labels(rows, (var, var[: -len("Label")]))
         added = 0
         for row in rows:
             vals = _clean(row, "gameLabel", var)
@@ -669,6 +721,16 @@ def populate_from_wikidata(
             g.add((game_uri, link_prop, uri))
             added += 1
         logger.info(f"  {key} associations added: {added}")
+
+    vga = make_uri(str(VG) + "award/", "Spike Video Game Awards - Game of the Year")
+    g.add((vga, RDF.type, VG.Award))
+    g.add((vga, RDF.type, VG.GameOfTheYearAward))
+    g.add((vga, VG.awardName, Literal("Spike Video Game Awards - Game of the Year", datatype=XSD.string)))
+    for year, name in _VGA_GOTY.items():
+        if name in games_seen:
+            g.add((make_uri(str(VG), name), VG.wonAward, vga))
+        else:
+            logger.warning(f"VGA {year} Game of the Year '{name}' not in the fetched games")
 
     # --- Game modes: individuals typed with the GameMode subclasses ---
     logger.info("STEP 8: game mode data")
