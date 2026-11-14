@@ -25,8 +25,8 @@ vg:VideoGame a owl:Class ;
     rdfs:label "Video Game" ;
     rdfs:comment "A video game product" ;
     owl:equivalentClass wd:Q7889 ;
-    owl:hasKey ( vg:hasSteamAppId ),
-        ( vg:hasWikidataId ) .
+    owl:hasKey ( vg:hasWikidataId ),
+        ( vg:hasSteamAppId ) .
 
 vg:Developer a owl:Class ;
     rdfs:label "Developer" ;
@@ -1291,38 +1291,38 @@ vg:ExclusiveRelease a owl:Class ;
     owl:imports <http://www.videogame-ontology.org/ontology/classes> .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:IndieGame vg:AAAGame ) .
+    owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:ReleasedGame vg:EarlyAccessGame vg:CancelledGame vg:DelistedGame ) .
+    owl:members ( vg:IndieGame vg:AAAGame ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
+    owl:members ( vg:SinglePlayerMode vg:MultiplayerMode vg:CoopMode vg:MMOMode ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:ReleasedGame vg:EarlyAccessGame vg:CancelledGame vg:DelistedGame ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:PlayerCharacter vg:NonPlayerCharacter ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:VideoGame vg:Developer vg:Publisher vg:Genre vg:Platform vg:Character vg:Franchise vg:Award vg:GameEngine vg:GameMode vg:Review vg:GameEvent ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:SinglePlayerMode vg:MultiplayerMode vg:CoopMode vg:MMOMode ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:PlayerCharacter vg:NonPlayerCharacter ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
 
