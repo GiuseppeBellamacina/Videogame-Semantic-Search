@@ -1,0 +1,910 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns="http://www.videogame-ontology.org/ontology#"
+     xml:base="http://www.videogame-ontology.org/ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:wd="http://www.wikidata.org/entity/"
+     xmlns:dcterms="http://purl.org/dc/terms/">
+
+    <owl:Ontology rdf:about="http://www.videogame-ontology.org/ontology/defined-classes">
+        <rdfs:label>Video Game Ontology: defined classes</rdfs:label>
+        <rdfs:comment>Classes defined by equivalence (restrictions, nominals, qualified cardinality, datatype restrictions); classified by the CONSTRUCT rules in rules/.</rdfs:comment>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/classes"/>
+    </owl:Ontology>
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////
+Defined classes
+///////////////////////////////////////////////////////////////////////////////////////
+-->
+
+    <owl:Class rdf:about="#AwardWinningGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Award Winning Game</rdfs:label>
+        <rdfs:comment>A video game that has received at least one award.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#wonAward"/>
+                        <owl:someValuesFrom rdf:resource="#Award"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#FranchiseGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Franchise Game</rdfs:label>
+        <rdfs:comment>A video game that is part of a franchise or series.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#belongsTo"/>
+                        <owl:someValuesFrom rdf:resource="#Franchise"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#MultiplayerGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Multiplayer Game</rdfs:label>
+        <rdfs:comment>A video game that supports a multiplayer game mode.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGameMode"/>
+                        <owl:someValuesFrom rdf:resource="#MultiplayerMode"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#SinglePlayerGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Single-Player Game</rdfs:label>
+        <rdfs:comment>A video game that supports a single-player game mode.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGameMode"/>
+                        <owl:someValuesFrom rdf:resource="#SinglePlayerMode"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#CoopGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Co-op Game</rdfs:label>
+        <rdfs:comment>A video game that supports a cooperative game mode.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGameMode"/>
+                        <owl:someValuesFrom rdf:resource="#CoopMode"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#PCGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>PC Game</rdfs:label>
+        <rdfs:comment>A video game available on a PC platform.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#PCPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ConsoleGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Console Game</rdfs:label>
+        <rdfs:comment>A video game available on a console platform.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#ConsolePlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#MobileGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Mobile Game</rdfs:label>
+        <rdfs:comment>A video game available on a mobile platform.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#MobilePlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#NintendoGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Nintendo Game</rdfs:label>
+        <rdfs:comment>A video game available on a Nintendo platform.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#NintendoPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#PlayStationGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>PlayStation Game</rdfs:label>
+        <rdfs:comment>A video game available on a PlayStation platform.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#PlayStationPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#XboxGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Xbox Game</rdfs:label>
+        <rdfs:comment>A video game available on an Xbox platform.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#XboxPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#SequelGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Sequel Game</rdfs:label>
+        <rdfs:comment>A video game that is a sequel to another game.</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#sequelOf"/>
+                        <owl:someValuesFrom rdf:resource="#VideoGame"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- StandaloneGame (complementOf) -->
+    <owl:Class rdf:about="#StandaloneGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Standalone Game</rdfs:label>
+        <rdfs:comment>A video game that is not a sequel to any other game. Classified by a SPARQL CONSTRUCT rule (negation as failure).</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Class>
+                        <owl:complementOf>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="#sequelOf"/>
+                                <owl:someValuesFrom rdf:resource="#VideoGame"/>
+                            </owl:Restriction>
+                        </owl:complementOf>
+                    </owl:Class>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- HighlyRatedGame (datatype restriction: metacriticScore >= 85) -->
+    <owl:Class rdf:about="#HighlyRatedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Highly Rated Game</rdfs:label>
+        <rdfs:comment>A video game with a Metacritic score of 85 or above. Classified by a SPARQL CONSTRUCT rule (datatype restriction).</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#metacriticScore"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">85</xsd:minInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- RecentGame (datatype restriction: releaseDate >= 2020-01-01) -->
+    <owl:Class rdf:about="#RecentGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Recent Game</rdfs:label>
+        <rdfs:comment>A video game released on or after 2020-01-01. Classified by a SPARQL CONSTRUCT rule (datatype restriction).</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#releaseDate"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2020-01-01</xsd:minInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#MultiConsoleGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Multi-Console Game</rdfs:label>
+        <rdfs:comment>A video game available on at least two console platforms. Classified by a SPARQL CONSTRUCT rule (qualified cardinality).</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="#ConsolePlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#NintendoPublishedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Nintendo Published Game</rdfs:label>
+        <rdfs:comment>A video game published by Nintendo (nominal: hasValue on the Nintendo publisher individual).</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#publishedBy"/>
+                        <owl:hasValue rdf:resource="#pub/Nintendo"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#WindowsGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Windows Game</rdfs:label>
+        <rdfs:comment>A video game available on Windows</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#WindowsPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#MacOSGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>macOS Game</rdfs:label>
+        <rdfs:comment>A video game available on macOS</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#MacOSPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#LinuxGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Linux Game</rdfs:label>
+        <rdfs:comment>A video game available on Linux</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#LinuxPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#AndroidGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Android Game</rdfs:label>
+        <rdfs:comment>A video game available on Android</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#AndroidPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#BrowserGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Browser Game</rdfs:label>
+        <rdfs:comment>A video game playable in a web browser</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#BrowserPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ArcadeGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Arcade Game</rdfs:label>
+        <rdfs:comment>A video game released for arcade machines</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#ArcadePlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#RetroComputerGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Retro Computer Game</rdfs:label>
+        <rdfs:comment>A video game available on a retro home computer</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#RetroComputerPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#VRGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>VR Game</rdfs:label>
+        <rdfs:comment>A video game available on a virtual reality platform</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:someValuesFrom rdf:resource="#VRPlatform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#SonyPublishedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Sony Published Game</rdfs:label>
+        <rdfs:comment>A video game published by Sony Interactive Entertainment</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#publishedBy"/>
+                        <owl:hasValue rdf:resource="#pub/Sony_Interactive_Entertainment"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#XboxPublishedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Xbox Published Game</rdfs:label>
+        <rdfs:comment>A video game published by Xbox Game Studios</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#publishedBy"/>
+                        <owl:hasValue rdf:resource="#pub/Xbox_Game_Studios"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#BandaiNamcoPublishedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Bandai Namco Published Game</rdfs:label>
+        <rdfs:comment>A video game published by Bandai Namco Entertainment</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#publishedBy"/>
+                        <owl:hasValue rdf:resource="#pub/Bandai_Namco_Entertainment"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#SquareEnixPublishedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Square Enix Published Game</rdfs:label>
+        <rdfs:comment>A video game published by Square Enix</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#publishedBy"/>
+                        <owl:hasValue rdf:resource="#pub/Square_Enix"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ElectronicArtsPublishedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Electronic Arts Published Game</rdfs:label>
+        <rdfs:comment>A video game published by Electronic Arts</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#publishedBy"/>
+                        <owl:hasValue rdf:resource="#pub/Electronic_Arts"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#KonamiPublishedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Konami Published Game</rdfs:label>
+        <rdfs:comment>A video game published by Konami</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#publishedBy"/>
+                        <owl:hasValue rdf:resource="#pub/Konami"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#CapcomPublishedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Capcom Published Game</rdfs:label>
+        <rdfs:comment>A video game published by Capcom</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#publishedBy"/>
+                        <owl:hasValue rdf:resource="#pub/Capcom"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ActionGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Action Game</rdfs:label>
+        <rdfs:comment>A video game of an action genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#ActionGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#RPGGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>RPG Game</rdfs:label>
+        <rdfs:comment>A video game of a role-playing genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#RPGGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#StrategyGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Strategy Game</rdfs:label>
+        <rdfs:comment>A video game of a strategy genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#StrategyGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#SimulationGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Simulation Game</rdfs:label>
+        <rdfs:comment>A video game of a simulation genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#SimulationGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#AdventureGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Adventure Game</rdfs:label>
+        <rdfs:comment>A video game of an adventure genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#AdventureGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#SportsGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Sports Game</rdfs:label>
+        <rdfs:comment>A video game of a sports genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#SportsGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#RacingGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Racing Game</rdfs:label>
+        <rdfs:comment>A video game of a racing genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#RacingGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#PuzzleGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Puzzle Game</rdfs:label>
+        <rdfs:comment>A video game of a puzzle genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#PuzzleGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#HorrorGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Horror Game</rdfs:label>
+        <rdfs:comment>A video game of a horror genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#HorrorGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#PlatformerGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Platformer Game</rdfs:label>
+        <rdfs:comment>A video game of a platformer genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#PlatformerGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ShooterGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Shooter Game</rdfs:label>
+        <rdfs:comment>A video game of a shooter genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#ShooterGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#CasualGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Casual Game</rdfs:label>
+        <rdfs:comment>A video game of a casual genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#CasualGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#VisualNovelGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Visual Novel Game</rdfs:label>
+        <rdfs:comment>A video game of a visual novel genre</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#hasGenre"/>
+                        <owl:someValuesFrom rdf:resource="#VisualNovelGenre"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#UnrealEngineGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Unreal Engine Game</rdfs:label>
+        <rdfs:comment>A video game made with Unreal Engine</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#madeWith"/>
+                        <owl:someValuesFrom rdf:resource="#UnrealEngineFamily"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#JapaneseGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Japanese Game</rdfs:label>
+        <rdfs:comment>A video game whose country of origin is Japan</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#countryOfOrigin"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Japan</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#AmericanGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>American Game</rdfs:label>
+        <rdfs:comment>A video game whose country of origin is the United States</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#countryOfOrigin"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">United States</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#MultiPlatformGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Multi-Platform Game</rdfs:label>
+        <rdfs:comment>A video game available on at least three platforms. Classified by a SPARQL CONSTRUCT rule (qualified cardinality).</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#availableOn"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">3</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="#Platform"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- GameWithSingleDeveloper (necessary, maxCardinality 1) -->
+    <owl:Class rdf:about="#GameWithSingleDeveloper">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Game with Single Developer</rdfs:label>
+        <rdfs:comment>A video game developed by at most one developer studio. Necessary condition only (subClassOf, not equivalentClass).</rdfs:comment>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#developedBy"/>
+                <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <!-- ExclusiveRelease (necessary, maxCardinality 1 on availableOn) -->
+    <owl:Class rdf:about="#ExclusiveRelease">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Exclusive Release</rdfs:label>
+        <rdfs:comment>A video game available on at most one platform. Necessary condition only (subClassOf, not equivalentClass).</rdfs:comment>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#availableOn"/>
+                <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+</rdf:RDF>

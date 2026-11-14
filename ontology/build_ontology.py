@@ -38,6 +38,7 @@ sys.path.insert(0, str(HERE / "scripts"))
 import construct_reasoner as cr  # noqa: E402
 import enrich_owl as eo  # noqa: E402
 import populate_wikidata as pw  # noqa: E402
+import schema_loader  # noqa: E402
 import schema_ttl  # noqa: E402
 import validate_tbox as vt  # noqa: E402
 
@@ -87,13 +88,13 @@ def _clean_tbox(g: Graph, keep_dl: bool) -> None:
     """owlrl expands every class expression into extra anonymous classes, list
     fragments and self-equivalent restrictions. The ABox has no blank nodes, so
     drop all triples touching one and put back the schema exactly as authored
-    (videogames.owl; without the DL-only axioms unless keep_dl)."""
+    (schema/ modules; without the DL-only axioms unless keep_dl)."""
     junk = [
         t for t in g if isinstance(t[0], (BNode, Literal)) or isinstance(t[2], BNode)
     ]
     for t in junk:
         g.remove(t)
-    tbox = Graph().parse(str(HERE / "videogames.owl"))
+    tbox = schema_loader.load_tbox()
     if not keep_dl:
         eo.strip_dl_only_axioms(tbox)
     for t in tbox:
@@ -196,8 +197,7 @@ def stage_reason(g: Graph, max_group: int, keep_dl: bool, out: Path) -> Graph:
 
 
 def stage_validate(g: Graph) -> None:
-    tbox = Graph()
-    tbox.parse(str(HERE / "videogames.owl"))
+    tbox = schema_loader.load_tbox()
     findings = vt.validate(tbox)
     errors = [f for f in findings if f.severity == "ERROR"]
     tqdm.write(f"TBox validation: {len(errors)} errors, {len(findings)} findings")

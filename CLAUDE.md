@@ -27,7 +27,7 @@ uv run python ontology/build_ontology.py --years 2024         # quick subset
 uv run python ontology/build_ontology.py --from-stage reason  # reuse the checkpointed fetch
 ```
 
-Fetch is checkpointed per query x month in `ontology/.cache/` (restart resumes; Wikidata 429s are waited out). Stages: `populate_wikidata.py` (fetch + V2 subclass typing + dedup) -> `enrich_owl.py` (V2 axioms, strip DL-only axioms, `_materialise`) with owlrl in between -> `scripts/construct_reasoner.py` (CONSTRUCT rules) -> `validate_tbox`. Output: `ontology/videogames_full.owl` (loaded by the backend) and `.ttl` (readable copy). `ontology/scripts/` is also a standalone uv project; see its README.
+Fetch is checkpointed per query x month in `ontology/.cache/` (restart resumes; Wikidata 429s are waited out). Stages: `populate_wikidata.py` (fetch + V2 subclass typing + dedup) -> `enrich_owl.py` (V2 axioms, strip DL-only axioms, `_materialise`) with owlrl in between -> `scripts/construct_reasoner.py` (CONSTRUCT rules, one `.rq` per file in `ontology/rules/`) -> `validate_tbox`. The schema is modular: `ontology/videogames.owl` only `owl:imports` the modules in `ontology/schema/` (resolved through `catalog-v001.xml` by `ontology/schema_loader.py`). Output: `ontology/videogames_full.owl` (loaded by the backend) and `.ttl` (readable copy). `ontology/scripts/` is also a standalone uv project; see its README.
 
 Config comes from the root `.env` (see `.env.example`): `LLM_MODEL` as `provider:model` (`openai:gpt-4.1-mini`, `anthropic:haiku5.5`), `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`, `ALLOWED_ORIGINS`, `VITE_API_URL`.
 

@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns="http://www.videogame-ontology.org/ontology#"
+     xml:base="http://www.videogame-ontology.org/ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:wd="http://www.wikidata.org/entity/"
+     xmlns:dcterms="http://purl.org/dc/terms/">
+
+    <owl:Ontology rdf:about="http://www.videogame-ontology.org/ontology/alignments">
+        <rdfs:label>Video Game Ontology: external alignments</rdfs:label>
+        <rdfs:comment>Alignment of classes and properties with Wikidata and Dublin Core.</rdfs:comment>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/classes"/>
+    </owl:Ontology>
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////
+External Alignment (Wikidata + Dublin Core)
+///////////////////////////////////////////////////////////////////////////////////////
+-->
+
+    <!-- Class alignments -->
+    <rdf:Description rdf:about="#VideoGame">
+        <owl:equivalentClass rdf:resource="http://www.wikidata.org/entity/Q7889"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="#Developer">
+        <owl:equivalentClass rdf:resource="http://www.wikidata.org/entity/Q210167"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="#GameEngine">
+        <owl:equivalentClass rdf:resource="http://www.wikidata.org/entity/Q193564"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="#Genre">
+        <owl:equivalentClass rdf:resource="http://www.wikidata.org/entity/Q65956376"/>
+    </rdf:Description>
+
+    <!-- Property alignments -->
+    <rdf:Description rdf:about="#releaseDate">
+        <owl:equivalentProperty rdf:resource="http://purl.org/dc/terms/issued"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="#gameName">
+        <owl:equivalentProperty rdf:resource="http://purl.org/dc/terms/title"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="#gameDescription">
+        <owl:equivalentProperty rdf:resource="http://purl.org/dc/terms/description"/>
+    </rdf:Description>
+
+</rdf:RDF>

@@ -1,0 +1,9 @@
+# Classify games available on at least three platforms as MultiPlatformGame
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+CONSTRUCT { ?g a vg:MultiPlatformGame . }
+WHERE {
+    { SELECT ?g WHERE { ?g vg:availableOn ?p } GROUP BY ?g HAVING (COUNT(DISTINCT ?p) >= 3) }
+}

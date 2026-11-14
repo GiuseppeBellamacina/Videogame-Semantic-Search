@@ -49,229 +49,30 @@ class Rule:
 
 
 # ---------------------------------------------------------------------------
-# Common SPARQL prefix block
+# Rule definitions: one SPARQL CONSTRUCT query per file in ontology/rules/, run
+# in file-name order. First line = description; a "# high-volume" line marks the
+# pairwise rules that are capped and skipped by the build pipeline.
 # ---------------------------------------------------------------------------
-_PREFIXES = """
-PREFIX vg: <http://www.videogame-ontology.org/ontology#>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-"""
-
-# ---------------------------------------------------------------------------
-# Rule definitions
-# ---------------------------------------------------------------------------
+RULES_DIR = Path(__file__).resolve().parent.parent / "rules"
 
 
-def _q(body: str) -> str:
-    """Return a CONSTRUCT query with standard prefixes prepended."""
-    return _PREFIXES + body
+def load_rules(directory: Path = RULES_DIR) -> list[Rule]:
+    rules = []
+    for f in sorted(directory.glob("*.rq")):
+        text = f.read_text(encoding="utf-8")
+        comments = [ln[1:].strip() for ln in text.splitlines() if ln.startswith("#")]
+        rules.append(
+            Rule(
+                name=f.stem.split("_", 1)[1],
+                description=comments[0] if comments else f.stem,
+                query=text,
+                high_volume=any(c.startswith("high-volume") for c in comments),
+            )
+        )
+    return rules
 
 
-RULES: list[Rule] = [
-    # ── R1 : HighlyRatedGame ──────────────────────────────────────────────
-    Rule(
-        name="classify_highly_rated",
-        description="Classify games with metacriticScore >= 85 as HighlyRatedGame",
-        query=_q("""CONSTRUCT { ?g a vg:HighlyRatedGame . }
-WHERE { ?g a vg:VideoGame . ?g vg:metacriticScore ?s . FILTER(?s >= 85) }"""),
-    ),
-    # ── R2 : RecentGame ───────────────────────────────────────────────────
-    Rule(
-        name="classify_recent",
-        description="Classify games with releaseDate >= 2020-01-01 as RecentGame",
-        query=_q("""CONSTRUCT { ?g a vg:RecentGame . }
-WHERE {
-    ?g a vg:VideoGame .
-    ?g vg:releaseDate ?d .
-    FILTER(?d >= "2020-01-01"^^xsd:date)
-}"""),
-    ),
-    # ── MultiConsoleGame : >= 2 distinct console platforms ────────────────
-    Rule(
-        name="classify_multi_console_game",
-        description="Classify games available on at least two console platforms as MultiConsoleGame",
-        query=_q("""CONSTRUCT { ?g a vg:MultiConsoleGame . }
-WHERE {
-    ?g vg:availableOn ?p1 , ?p2 .
-    ?p1 a vg:ConsolePlatform .
-    ?p2 a vg:ConsolePlatform .
-    FILTER(?p1 != ?p2)
-}"""),
-    ),
-    # ── MultiPlatformGame : >= 3 distinct platforms ───────────────────────
-    Rule(
-        name="classify_multi_platform_game",
-        description="Classify games available on at least three platforms as MultiPlatformGame",
-        query=_q(
-            """CONSTRUCT { ?g a vg:MultiPlatformGame . }
-WHERE {
-    { SELECT ?g WHERE { ?g vg:availableOn ?p } GROUP BY ?g HAVING (COUNT(DISTINCT ?p) >= 3) }
-}"""
-        ),
-    ),
-    # ── R3 : StandaloneGame ───────────────────────────────────────────────
-    Rule(
-        name="classify_standalone",
-        description="Classify games without any sequelOf link as StandaloneGame",
-        query=_q("""CONSTRUCT { ?g a vg:StandaloneGame . }
-WHERE { ?g a vg:VideoGame . FILTER NOT EXISTS { ?g vg:sequelOf ?any } }"""),
-    ),
-    # ── R4 : SequelGame ───────────────────────────────────────────────────
-    Rule(
-        name="classify_sequel",
-        description="Classify games that have a sequelOf link as SequelGame",
-        query=_q("""CONSTRUCT { ?g a vg:SequelGame . }
-WHERE { ?g vg:sequelOf ?any . }"""),
-    ),
-    # ── R5a : PCGame ──────────────────────────────────────────────────────
-    Rule(
-        name="classify_pc_game",
-        description="Classify games available on a PCPlatform as PCGame",
-        query=_q("""CONSTRUCT { ?g a vg:PCGame . }
-WHERE { ?g vg:availableOn ?p . ?p a vg:PCPlatform . }"""),
-    ),
-    # ── R5b : ConsoleGame ─────────────────────────────────────────────────
-    Rule(
-        name="classify_console_game",
-        description="Classify games available on a ConsolePlatform as ConsoleGame",
-        query=_q("""CONSTRUCT { ?g a vg:ConsoleGame . }
-WHERE { ?g vg:availableOn ?p . ?p a vg:ConsolePlatform . }"""),
-    ),
-    # ── R5c : MobileGame ──────────────────────────────────────────────────
-    Rule(
-        name="classify_mobile_game",
-        description="Classify games available on a MobilePlatform as MobileGame",
-        query=_q("""CONSTRUCT { ?g a vg:MobileGame . }
-WHERE { ?g vg:availableOn ?p . ?p a vg:MobilePlatform . }"""),
-    ),
-    # ── R5d : NintendoGame ────────────────────────────────────────────────
-    Rule(
-        name="classify_nintendo_game",
-        description="Classify games available on a NintendoPlatform as NintendoGame",
-        query=_q("""CONSTRUCT { ?g a vg:NintendoGame . }
-WHERE { ?g vg:availableOn ?p . ?p a vg:NintendoPlatform . }"""),
-    ),
-    # ── R5e : PlayStationGame ─────────────────────────────────────────────
-    Rule(
-        name="classify_playstation_game",
-        description="Classify games on a PlayStationPlatform as PlayStationGame",
-        query=_q("""CONSTRUCT { ?g a vg:PlayStationGame . }
-WHERE { ?g vg:availableOn ?p . ?p a vg:PlayStationPlatform . }"""),
-    ),
-    # ── R5f : XboxGame ────────────────────────────────────────────────────
-    Rule(
-        name="classify_xbox_game",
-        description="Classify games available on an XboxPlatform as XboxGame",
-        query=_q("""CONSTRUCT { ?g a vg:XboxGame . }
-WHERE { ?g vg:availableOn ?p . ?p a vg:XboxPlatform . }"""),
-    ),
-    # ── R6a : MultiplayerGame ─────────────────────────────────────────────
-    Rule(
-        name="classify_multiplayer_game",
-        description="Classify games with MultiplayerMode as MultiplayerGame",
-        query=_q("""CONSTRUCT { ?g a vg:MultiplayerGame . }
-WHERE { ?g vg:hasGameMode ?m . ?m a vg:MultiplayerMode . }"""),
-    ),
-    # ── R6b : SinglePlayerGame ────────────────────────────────────────────
-    Rule(
-        name="classify_singleplayer_game",
-        description="Classify games with SinglePlayerMode as SinglePlayerGame",
-        query=_q("""CONSTRUCT { ?g a vg:SinglePlayerGame . }
-WHERE { ?g vg:hasGameMode ?m . ?m a vg:SinglePlayerMode . }"""),
-    ),
-    # ── R6c : CoopGame ────────────────────────────────────────────────────
-    Rule(
-        name="classify_coop_game",
-        description="Classify games with CoopMode as CoopGame",
-        query=_q("""CONSTRUCT { ?g a vg:CoopGame . }
-WHERE { ?g vg:hasGameMode ?m . ?m a vg:CoopMode . }"""),
-    ),
-    # ── R7 : Inverse hasSequel ────────────────────────────────────────────
-    Rule(
-        name="inverse_has_sequel",
-        description="Complete inverse: if A sequelOf B then B hasSequel A",
-        query=_q("""CONSTRUCT { ?b vg:hasSequel ?a . }
-WHERE {
-    ?a vg:sequelOf ?b .
-    FILTER NOT EXISTS { ?b vg:hasSequel ?a }
-}"""),
-    ),
-    # ── R8 : Inverse awardWonBy ───────────────────────────────────────────
-    Rule(
-        name="inverse_award_won_by",
-        description="Complete inverse: if G wonAward A then A awardWonBy G",
-        query=_q("""CONSTRUCT { ?a vg:awardWonBy ?g . }
-WHERE {
-    ?g vg:wonAward ?a .
-    FILTER NOT EXISTS { ?a vg:awardWonBy ?g }
-}"""),
-    ),
-    # ── R9a : Inverse genreOf ─────────────────────────────────────────────
-    Rule(
-        name="inverse_genre_of",
-        description="Complete inverse: if G hasGenre Gen then Gen genreOf G",
-        query=_q("""CONSTRUCT { ?genre vg:genreOf ?g . }
-WHERE {
-    ?g vg:hasGenre ?genre .
-    FILTER NOT EXISTS { ?genre vg:genreOf ?g }
-}"""),
-    ),
-    # ── R9b : Inverse platformFor ─────────────────────────────────────────
-    Rule(
-        name="inverse_platform_for",
-        description="Complete inverse: if G availableOn P then P platformFor G",
-        query=_q("""CONSTRUCT { ?p vg:platformFor ?g . }
-WHERE {
-    ?g vg:availableOn ?p .
-    FILTER NOT EXISTS { ?p vg:platformFor ?g }
-}"""),
-    ),
-    # ── R9c : Inverse engineUsedIn ────────────────────────────────────────
-    Rule(
-        name="inverse_engine_used_in",
-        description="Complete inverse: if G madeWith E then E engineUsedIn G",
-        query=_q("""CONSTRUCT { ?e vg:engineUsedIn ?g . }
-WHERE {
-    ?g vg:madeWith ?e .
-    FILTER NOT EXISTS { ?e vg:engineUsedIn ?g }
-}"""),
-    ),
-    # ── R9d : Inverse modeInGame ──────────────────────────────────────────
-    Rule(
-        name="inverse_mode_in_game",
-        description="Complete inverse: if G hasGameMode M then M modeInGame G",
-        query=_q("""CONSTRUCT { ?m vg:modeInGame ?g . }
-WHERE {
-    ?g vg:hasGameMode ?m .
-    FILTER NOT EXISTS { ?m vg:modeInGame ?g }
-}"""),
-    ),
-    # ── R10 : sharedGenreWith ─────────────────────────────────────────────
-    Rule(
-        name="shared_genre_with",
-        description="Pairwise: games with same genre → sharedGenreWith",
-        query=_q("""CONSTRUCT { ?g1 vg:sharedGenreWith ?g2 . }
-WHERE {
-    ?g1 vg:hasGenre ?gen .
-    ?g2 vg:hasGenre ?gen .
-    FILTER(STR(?g1) < STR(?g2))
-}"""),
-        high_volume=True,
-    ),
-    # ── R11 : sharedEngineWith ────────────────────────────────────────────
-    Rule(
-        name="shared_engine_with",
-        description="Pairwise: games with same engine → sharedEngineWith",
-        query=_q("""CONSTRUCT { ?g1 vg:sharedEngineWith ?g2 . }
-WHERE {
-    ?g1 vg:madeWith ?e .
-    ?g2 vg:madeWith ?e .
-    FILTER(STR(?g1) < STR(?g2))
-}"""),
-        high_volume=True,
-    ),
-]
+RULES: list[Rule] = load_rules()
 
 # Set of rule names considered "high volume" (for cap enforcement)
 _HIGH_VOLUME_NAMES: set[str] = {r.name for r in RULES if r.high_volume}

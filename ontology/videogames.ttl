@@ -8,7 +8,18 @@
 
 <http://www.videogame-ontology.org/ontology> a owl:Ontology ;
     rdfs:label "Video Game Ontology" ;
-    rdfs:comment "An ontology for describing video games, their developers, publishers, genres, platforms, characters, franchises, awards, game engines, game modes, reviews, and events. Covers games from 2010 onwards. Aligned with Wikidata and Dublin Core." .
+    rdfs:comment "An ontology for describing video games, their developers, publishers, genres, platforms, characters, franchises, awards, game engines, game modes, reviews, and events. Covers games from 2010 onwards. Aligned with Wikidata and Dublin Core. This file only imports the modules in schema/ (see catalog-v001.xml); the CONSTRUCT classification rules are in rules/." ;
+    owl:imports <http://www.videogame-ontology.org/ontology/alignments>,
+        <http://www.videogame-ontology.org/ontology/classes>,
+        <http://www.videogame-ontology.org/ontology/data-properties>,
+        <http://www.videogame-ontology.org/ontology/defined-classes>,
+        <http://www.videogame-ontology.org/ontology/dl-axioms>,
+        <http://www.videogame-ontology.org/ontology/individuals>,
+        <http://www.videogame-ontology.org/ontology/object-properties> .
+
+<http://www.videogame-ontology.org/ontology/classes> a owl:Ontology ;
+    rdfs:label "Video Game Ontology: classes and class partitions" ;
+    rdfs:comment "The class hierarchy and the disjoint partitions (OWL 2 DL)." .
 
 vg:VideoGame a owl:Class ;
     rdfs:label "Video Game" ;
@@ -359,6 +370,11 @@ vg:GameOfTheYearAward a owl:Class ;
     rdfs:comment "An award named Game of the Year (including genre- and platform-specific ones)" ;
     rdfs:subClassOf vg:Award .
 
+<http://www.videogame-ontology.org/ontology/object-properties> a owl:Ontology ;
+    rdfs:label "Video Game Ontology: object properties" ;
+    rdfs:comment "Object properties with domains, ranges, inverses, characteristics and property chains." ;
+    owl:imports <http://www.videogame-ontology.org/ontology/classes> .
+
 vg:developedBy a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
         owl:ObjectProperty ;
@@ -592,6 +608,11 @@ vg:hasEvent a owl:ObjectProperty ;
     rdfs:range vg:GameEvent ;
     owl:inverseOf vg:eventFor .
 
+<http://www.videogame-ontology.org/ontology/data-properties> a owl:Ontology ;
+    rdfs:label "Video Game Ontology: data properties" ;
+    rdfs:comment "Datatype properties with domains and ranges." ;
+    owl:imports <http://www.videogame-ontology.org/ontology/classes> .
+
 vg:name a owl:DatatypeProperty ;
     rdfs:label "name" ;
     rdfs:range xsd:string .
@@ -752,6 +773,11 @@ vg:playerCount a owl:DatatypeProperty ;
     rdfs:comment "The estimated total number of players for this game" ;
     rdfs:domain vg:VideoGame ;
     rdfs:range xsd:integer .
+
+<http://www.videogame-ontology.org/ontology/defined-classes> a owl:Ontology ;
+    rdfs:label "Video Game Ontology: defined classes" ;
+    rdfs:comment "Classes defined by equivalence (restrictions, nominals, qualified cardinality, datatype restrictions); classified by the CONSTRUCT rules in rules/." ;
+    owl:imports <http://www.videogame-ontology.org/ontology/classes> .
 
 vg:AwardWinningGame a owl:Class ;
     rdfs:label "Award Winning Game" ;
@@ -1217,6 +1243,11 @@ vg:ExclusiveRelease a owl:Class ;
             owl:onProperty vg:availableOn ],
         vg:VideoGame .
 
+<http://www.videogame-ontology.org/ontology/individuals> a owl:Ontology ;
+    rdfs:label "Video Game Ontology: named individuals" ;
+    rdfs:comment "The few individuals that the schema itself refers to (nominals of the defined classes)." ;
+    owl:imports <http://www.videogame-ontology.org/ontology/classes> .
+
 <http://www.videogame-ontology.org/ontology#pub/Nintendo> a vg:Publisher,
         owl:NamedIndividual ;
     vg:publisherName "Nintendo"^^xsd:string .
@@ -1249,39 +1280,49 @@ vg:ExclusiveRelease a owl:Class ;
         owl:NamedIndividual ;
     vg:publisherName "Capcom"^^xsd:string .
 
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
+<http://www.videogame-ontology.org/ontology/alignments> a owl:Ontology ;
+    rdfs:label "Video Game Ontology: external alignments" ;
+    rdfs:comment "Alignment of classes and properties with Wikidata and Dublin Core." ;
+    owl:imports <http://www.videogame-ontology.org/ontology/classes> .
 
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:VideoGame vg:Developer vg:Publisher vg:Genre vg:Platform vg:Character vg:Franchise vg:Award vg:GameEngine vg:GameMode vg:Review vg:GameEvent ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
+<http://www.videogame-ontology.org/ontology/dl-axioms> a owl:Ontology ;
+    rdfs:label "Video Game Ontology: dl-only axioms" ;
+    rdfs:comment "Functional data properties and keys: valid OWL 2 DL for a DL reasoner (HermiT, Pellet), removed before the owlrl closure." ;
+    owl:imports <http://www.videogame-ontology.org/ontology/classes> .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:IndieGame vg:AAAGame ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:PlayerCharacter vg:NonPlayerCharacter ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
+    owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:ReleasedGame vg:EarlyAccessGame vg:CancelledGame vg:DelistedGame ) .
 
 [] a owl:AllDisjointClasses ;
+    owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:VideoGame vg:Developer vg:Publisher vg:Genre vg:Platform vg:Character vg:Franchise vg:Award vg:GameEngine vg:GameMode vg:Review vg:GameEvent ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
+
+[] a owl:AllDisjointClasses ;
     owl:members ( vg:SinglePlayerMode vg:MultiplayerMode vg:CoopMode vg:MMOMode ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
+    owl:members ( vg:PlayerCharacter vg:NonPlayerCharacter ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
+    owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
 

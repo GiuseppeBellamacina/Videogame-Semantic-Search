@@ -1,0 +1,10 @@
+# Complete inverse: if G wonAward A then A awardWonBy G
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+CONSTRUCT { ?a vg:awardWonBy ?g . }
+WHERE {
+    ?g vg:wonAward ?a .
+    FILTER NOT EXISTS { ?a vg:awardWonBy ?g }
+}

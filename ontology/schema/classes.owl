@@ -1,0 +1,580 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns="http://www.videogame-ontology.org/ontology#"
+     xml:base="http://www.videogame-ontology.org/ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:wd="http://www.wikidata.org/entity/"
+     xmlns:dcterms="http://purl.org/dc/terms/">
+
+    <owl:Ontology rdf:about="http://www.videogame-ontology.org/ontology/classes">
+        <rdfs:label>Video Game Ontology: classes and class partitions</rdfs:label>
+        <rdfs:comment>The class hierarchy and the disjoint partitions (OWL 2 DL).</rdfs:comment>
+    </owl:Ontology>
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////
+Classes
+///////////////////////////////////////////////////////////////////////////////////////
+-->
+
+    <owl:Class rdf:about="#VideoGame">
+        <rdfs:label>Video Game</rdfs:label>
+        <rdfs:comment>A video game product</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Developer">
+        <rdfs:label>Developer</rdfs:label>
+        <rdfs:comment>A company or studio that develops video games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Publisher">
+        <rdfs:label>Publisher</rdfs:label>
+        <rdfs:comment>A company that publishes video games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Genre">
+        <rdfs:label>Genre</rdfs:label>
+        <rdfs:comment>A category or genre of video games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Platform">
+        <rdfs:label>Platform</rdfs:label>
+        <rdfs:comment>A hardware or software platform on which a game can be played</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Character">
+        <rdfs:label>Character</rdfs:label>
+        <rdfs:comment>A fictional character appearing in a video game</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Franchise">
+        <rdfs:label>Franchise</rdfs:label>
+        <rdfs:comment>A series or franchise of video games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Award">
+        <rdfs:label>Award</rdfs:label>
+        <rdfs:comment>An award or recognition given to a video game</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#GameEngine">
+        <rdfs:label>Game Engine</rdfs:label>
+        <rdfs:comment>A software framework used to develop video games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#GameMode">
+        <rdfs:label>Game Mode</rdfs:label>
+        <rdfs:comment>A mode of play available in a video game</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Review">
+        <rdfs:label>Review</rdfs:label>
+        <rdfs:comment>A review or critical assessment of a video game</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#GameEvent">
+        <rdfs:label>Game Event</rdfs:label>
+        <rdfs:comment>A lifecycle event pertaining to a video game (announcement, release, update, delisting, etc.)</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ReleasedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Released Game</rdfs:label>
+        <rdfs:comment>A video game that has been officially released to the public</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#EarlyAccessGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Early Access Game</rdfs:label>
+        <rdfs:comment>A video game available in early access before full release</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#CancelledGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Cancelled Game</rdfs:label>
+        <rdfs:comment>A video game whose development was cancelled before release</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#DelistedGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Delisted Game</rdfs:label>
+        <rdfs:comment>A video game that has been removed from digital storefronts</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#IndieGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>Indie Game</rdfs:label>
+        <rdfs:comment>A video game with a relatively small development budget, typically by independent developers</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#AAAGame">
+        <rdfs:subClassOf rdf:resource="#VideoGame"/>
+        <rdfs:label>AAA Game</rdfs:label>
+        <rdfs:comment>A video game produced with a large budget by a major publisher</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#GOTYWinner">
+        <rdfs:subClassOf rdf:resource="#AwardWinningGame"/>
+        <rdfs:label>Game of the Year Winner</rdfs:label>
+        <rdfs:comment>A video game that has won a Game of the Year award</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#VideoGame"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#wonAward"/>
+                        <owl:someValuesFrom rdf:resource="#GameOfTheYearAward"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ConsolePlatform">
+        <rdfs:subClassOf rdf:resource="#Platform"/>
+        <rdfs:label>Console Platform</rdfs:label>
+        <rdfs:comment>A dedicated video game console hardware platform</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#PlayStationPlatform">
+        <rdfs:subClassOf rdf:resource="#ConsolePlatform"/>
+        <rdfs:label>PlayStation Platform</rdfs:label>
+        <rdfs:comment>A platform in the Sony PlayStation family of consoles</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#XboxPlatform">
+        <rdfs:subClassOf rdf:resource="#ConsolePlatform"/>
+        <rdfs:label>Xbox Platform</rdfs:label>
+        <rdfs:comment>A platform in the Microsoft Xbox family of consoles</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#NintendoPlatform">
+        <rdfs:subClassOf rdf:resource="#ConsolePlatform"/>
+        <rdfs:label>Nintendo Platform</rdfs:label>
+        <rdfs:comment>A platform in the Nintendo family of consoles</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#PCPlatform">
+        <rdfs:subClassOf rdf:resource="#Platform"/>
+        <rdfs:label>PC Platform</rdfs:label>
+        <rdfs:comment>A personal computer platform</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#WindowsPlatform">
+        <rdfs:subClassOf rdf:resource="#PCPlatform"/>
+        <rdfs:label>Windows Platform</rdfs:label>
+        <rdfs:comment>A platform running the Microsoft Windows operating system</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#MacOSPlatform">
+        <rdfs:subClassOf rdf:resource="#PCPlatform"/>
+        <rdfs:label>macOS Platform</rdfs:label>
+        <rdfs:comment>A platform running the Apple macOS operating system</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#LinuxPlatform">
+        <rdfs:subClassOf rdf:resource="#PCPlatform"/>
+        <rdfs:label>Linux Platform</rdfs:label>
+        <rdfs:comment>A platform running a Linux-based operating system</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#MobilePlatform">
+        <rdfs:subClassOf rdf:resource="#Platform"/>
+        <rdfs:label>Mobile Platform</rdfs:label>
+        <rdfs:comment>A mobile device platform (phone or tablet)</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#IOSPlatform">
+        <rdfs:subClassOf rdf:resource="#MobilePlatform"/>
+        <rdfs:label>iOS Platform</rdfs:label>
+        <rdfs:comment>A platform running Apple iOS</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#AndroidPlatform">
+        <rdfs:subClassOf rdf:resource="#MobilePlatform"/>
+        <rdfs:label>Android Platform</rdfs:label>
+        <rdfs:comment>A platform running the Android operating system</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ActionGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Action Genre</rdfs:label>
+        <rdfs:comment>A genre emphasizing physical challenges and hand-eye coordination</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#RPGGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>RPG Genre</rdfs:label>
+        <rdfs:comment>A role-playing game genre with character progression and narrative focus</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#StrategyGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Strategy Genre</rdfs:label>
+        <rdfs:comment>A genre emphasizing tactical and strategic thinking</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#PuzzleGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Puzzle Genre</rdfs:label>
+        <rdfs:comment>A genre centred on logic puzzles and problem-solving</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#SimulationGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Simulation Genre</rdfs:label>
+        <rdfs:comment>A genre that simulates real-world or fictional systems</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#SportsGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Sports Genre</rdfs:label>
+        <rdfs:comment>A genre simulating traditional sports and athletic competitions</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#RacingGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Racing Genre</rdfs:label>
+        <rdfs:comment>A genre focusing on vehicle-based competition and racing</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#AdventureGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Adventure Genre</rdfs:label>
+        <rdfs:comment>A genre emphasizing exploration and narrative-driven gameplay</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#HorrorGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Horror Genre</rdfs:label>
+        <rdfs:comment>A genre designed to evoke fear, dread, and suspense</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#PlatformerGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Platformer Genre</rdfs:label>
+        <rdfs:comment>A genre focused on navigating platforms and obstacles</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#FirstPartyDeveloper">
+        <rdfs:subClassOf rdf:resource="#Developer"/>
+        <rdfs:label>First-Party Developer</rdfs:label>
+        <rdfs:comment>A development studio owned by or exclusive to a platform holder</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ThirdPartyDeveloper">
+        <rdfs:subClassOf rdf:resource="#Developer"/>
+        <rdfs:label>Third-Party Developer</rdfs:label>
+        <rdfs:comment>An independent development studio not tied to a specific platform holder</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#IndieDeveloper">
+        <rdfs:subClassOf rdf:resource="#Developer"/>
+        <rdfs:label>Indie Developer</rdfs:label>
+        <rdfs:comment>A small independent developer without publisher backing</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#FirstPartyPublisher">
+        <rdfs:subClassOf rdf:resource="#Publisher"/>
+        <rdfs:label>First-Party Publisher</rdfs:label>
+        <rdfs:comment>A publishing division of a platform holder</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ThirdPartyPublisher">
+        <rdfs:subClassOf rdf:resource="#Publisher"/>
+        <rdfs:label>Third-Party Publisher</rdfs:label>
+        <rdfs:comment>An independent publishing company not owned by a platform holder</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ProprietaryEngine">
+        <rdfs:subClassOf rdf:resource="#GameEngine"/>
+        <rdfs:label>Proprietary Engine</rdfs:label>
+        <rdfs:comment>A game engine that is privately owned and not publicly licensed</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#OpenSourceEngine">
+        <rdfs:subClassOf rdf:resource="#GameEngine"/>
+        <rdfs:label>Open-Source Engine</rdfs:label>
+        <rdfs:comment>A game engine whose source code is publicly available</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#IndustryAward">
+        <rdfs:subClassOf rdf:resource="#Award"/>
+        <rdfs:label>Industry Award</rdfs:label>
+        <rdfs:comment>An award granted by an industry body or trade association</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#EditorialAward">
+        <rdfs:subClassOf rdf:resource="#Award"/>
+        <rdfs:label>Editorial Award</rdfs:label>
+        <rdfs:comment>An award granted by an editorial outlet or publication</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#UserAward">
+        <rdfs:subClassOf rdf:resource="#Award"/>
+        <rdfs:label>User Award</rdfs:label>
+        <rdfs:comment>An award determined by popular user vote</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#PlayerCharacter">
+        <rdfs:subClassOf rdf:resource="#Character"/>
+        <rdfs:label>Player Character</rdfs:label>
+        <rdfs:comment>A character directly controlled by the player</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#NonPlayerCharacter">
+        <rdfs:subClassOf rdf:resource="#Character"/>
+        <rdfs:label>Non-Player Character</rdfs:label>
+        <rdfs:comment>A character controlled by the game's AI, not by the player</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#SubFranchise">
+        <rdfs:subClassOf rdf:resource="#Franchise"/>
+        <rdfs:label>Sub-Franchise</rdfs:label>
+        <rdfs:comment>A spin-off or sub-series within a larger franchise</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#SinglePlayerMode">
+        <rdfs:subClassOf rdf:resource="#GameMode"/>
+        <rdfs:label>Single-Player Mode</rdfs:label>
+        <rdfs:comment>A game mode designed for a single player</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#MultiplayerMode">
+        <rdfs:subClassOf rdf:resource="#GameMode"/>
+        <rdfs:label>Multiplayer Mode</rdfs:label>
+        <rdfs:comment>A game mode supporting multiple simultaneous players</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#CoopMode">
+        <rdfs:subClassOf rdf:resource="#GameMode"/>
+        <rdfs:label>Co-op Mode</rdfs:label>
+        <rdfs:comment>A game mode supporting cooperative play among players</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#MMOMode">
+        <rdfs:subClassOf rdf:resource="#GameMode"/>
+        <rdfs:label>MMO Mode</rdfs:label>
+        <rdfs:comment>A massively multiplayer online game mode supporting large concurrent player counts</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#AnnouncementEvent">
+        <rdfs:subClassOf rdf:resource="#GameEvent"/>
+        <rdfs:label>Announcement Event</rdfs:label>
+        <rdfs:comment>An event marking the public announcement of a video game</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ReleaseEvent">
+        <rdfs:subClassOf rdf:resource="#GameEvent"/>
+        <rdfs:label>Release Event</rdfs:label>
+        <rdfs:comment>An event marking the official release of a video game</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#UpdateEvent">
+        <rdfs:subClassOf rdf:resource="#GameEvent"/>
+        <rdfs:label>Update Event</rdfs:label>
+        <rdfs:comment>An event marking a major update or patch to a video game</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#DelistingEvent">
+        <rdfs:subClassOf rdf:resource="#GameEvent"/>
+        <rdfs:label>Delisting Event</rdfs:label>
+        <rdfs:comment>An event marking the removal of a video game from digital storefronts</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#BrowserPlatform">
+        <rdfs:subClassOf rdf:resource="#Platform"/>
+        <rdfs:label>Browser Platform</rdfs:label>
+        <rdfs:comment>A web browser or web-based platform</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ArcadePlatform">
+        <rdfs:subClassOf rdf:resource="#Platform"/>
+        <rdfs:label>Arcade Platform</rdfs:label>
+        <rdfs:comment>An arcade machine</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#RetroComputerPlatform">
+        <rdfs:subClassOf rdf:resource="#Platform"/>
+        <rdfs:label>Retro Computer Platform</rdfs:label>
+        <rdfs:comment>A home computer of the 1980s and early 1990s (Commodore 64, ZX Spectrum, Atari ST, MSX...)</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#VRPlatform">
+        <rdfs:subClassOf rdf:resource="#Platform"/>
+        <rdfs:label>VR Platform</rdfs:label>
+        <rdfs:comment>A virtual or mixed reality platform</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#CasualGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Casual Genre</rdfs:label>
+        <rdfs:comment>Casual and hidden-object games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#VisualNovelGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Visual Novel Genre</rdfs:label>
+        <rdfs:comment>Visual novels and eroge</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ShooterGenre">
+        <rdfs:subClassOf rdf:resource="#Genre"/>
+        <rdfs:label>Shooter Genre</rdfs:label>
+        <rdfs:comment>First-person, third-person and shoot 'em up games</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#UnrealEngineFamily">
+        <rdfs:subClassOf rdf:resource="#GameEngine"/>
+        <rdfs:label>Unreal Engine Family</rdfs:label>
+        <rdfs:comment>Any version of Unreal Engine</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#GameOfTheYearAward">
+        <rdfs:subClassOf rdf:resource="#Award"/>
+        <rdfs:label>Game of the Year Award</rdfs:label>
+        <rdfs:comment>An award named Game of the Year (including genre- and platform-specific ones)</rdfs:comment>
+    </owl:Class>
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////
+Disjointness (AllDisjointClasses)
+///////////////////////////////////////////////////////////////////////////////////////
+-->
+
+    <!-- Top entity classes -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#VideoGame"/>
+            <rdf:Description rdf:about="#Developer"/>
+            <rdf:Description rdf:about="#Publisher"/>
+            <rdf:Description rdf:about="#Genre"/>
+            <rdf:Description rdf:about="#Platform"/>
+            <rdf:Description rdf:about="#Character"/>
+            <rdf:Description rdf:about="#Franchise"/>
+            <rdf:Description rdf:about="#Award"/>
+            <rdf:Description rdf:about="#GameEngine"/>
+            <rdf:Description rdf:about="#GameMode"/>
+            <rdf:Description rdf:about="#Review"/>
+            <rdf:Description rdf:about="#GameEvent"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- Platform partition -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#ConsolePlatform"/>
+            <rdf:Description rdf:about="#PCPlatform"/>
+            <rdf:Description rdf:about="#MobilePlatform"/>
+            <rdf:Description rdf:about="#BrowserPlatform"/>
+            <rdf:Description rdf:about="#ArcadePlatform"/>
+            <rdf:Description rdf:about="#RetroComputerPlatform"/>
+            <rdf:Description rdf:about="#VRPlatform"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- ConsolePlatform sub-partition -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#PlayStationPlatform"/>
+            <rdf:Description rdf:about="#XboxPlatform"/>
+            <rdf:Description rdf:about="#NintendoPlatform"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- PCPlatform sub-partition -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#WindowsPlatform"/>
+            <rdf:Description rdf:about="#MacOSPlatform"/>
+            <rdf:Description rdf:about="#LinuxPlatform"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- MobilePlatform sub-partition -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#IOSPlatform"/>
+            <rdf:Description rdf:about="#AndroidPlatform"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- Award partition -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#IndustryAward"/>
+            <rdf:Description rdf:about="#EditorialAward"/>
+            <rdf:Description rdf:about="#UserAward"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- Character partition -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#PlayerCharacter"/>
+            <rdf:Description rdf:about="#NonPlayerCharacter"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- GameEngine partition -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#ProprietaryEngine"/>
+            <rdf:Description rdf:about="#OpenSourceEngine"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- Lifecycle states -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#ReleasedGame"/>
+            <rdf:Description rdf:about="#EarlyAccessGame"/>
+            <rdf:Description rdf:about="#CancelledGame"/>
+            <rdf:Description rdf:about="#DelistedGame"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- Budget scope -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#IndieGame"/>
+            <rdf:Description rdf:about="#AAAGame"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- GameMode partition -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#SinglePlayerMode"/>
+            <rdf:Description rdf:about="#MultiplayerMode"/>
+            <rdf:Description rdf:about="#CoopMode"/>
+            <rdf:Description rdf:about="#MMOMode"/>
+        </owl:members>
+    </rdf:Description>
+
+    <!-- GameEvent partition -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="#AnnouncementEvent"/>
+            <rdf:Description rdf:about="#ReleaseEvent"/>
+            <rdf:Description rdf:about="#UpdateEvent"/>
+            <rdf:Description rdf:about="#DelistingEvent"/>
+        </owl:members>
+    </rdf:Description>
+
+</rdf:RDF>

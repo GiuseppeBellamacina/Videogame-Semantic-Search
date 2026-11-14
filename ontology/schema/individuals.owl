@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns="http://www.videogame-ontology.org/ontology#"
+     xml:base="http://www.videogame-ontology.org/ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:wd="http://www.wikidata.org/entity/"
+     xmlns:dcterms="http://purl.org/dc/terms/">
+
+    <owl:Ontology rdf:about="http://www.videogame-ontology.org/ontology/individuals">
+        <rdfs:label>Video Game Ontology: named individuals</rdfs:label>
+        <rdfs:comment>The few individuals that the schema itself refers to (nominals of the defined classes).</rdfs:comment>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/classes"/>
+    </owl:Ontology>
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////
+Named individuals
+///////////////////////////////////////////////////////////////////////////////////////
+-->
+
+    <owl:NamedIndividual rdf:about="#pub/Nintendo">
+        <rdf:type rdf:resource="#Publisher"/>
+        <publisherName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nintendo</publisherName>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#pub/Sony_Interactive_Entertainment">
+        <rdf:type rdf:resource="#Publisher"/>
+        <publisherName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sony Interactive Entertainment</publisherName>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#pub/Xbox_Game_Studios">
+        <rdf:type rdf:resource="#Publisher"/>
+        <publisherName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Xbox Game Studios</publisherName>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#pub/Bandai_Namco_Entertainment">
+        <rdf:type rdf:resource="#Publisher"/>
+        <publisherName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bandai Namco Entertainment</publisherName>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#pub/Square_Enix">
+        <rdf:type rdf:resource="#Publisher"/>
+        <publisherName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Square Enix</publisherName>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#pub/Electronic_Arts">
+        <rdf:type rdf:resource="#Publisher"/>
+        <publisherName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Electronic Arts</publisherName>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#pub/Konami">
+        <rdf:type rdf:resource="#Publisher"/>
+        <publisherName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Konami</publisherName>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#pub/Capcom">
+        <rdf:type rdf:resource="#Publisher"/>
+        <publisherName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Capcom</publisherName>
+    </owl:NamedIndividual>
+
+</rdf:RDF>

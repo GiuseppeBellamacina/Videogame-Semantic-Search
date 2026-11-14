@@ -1,0 +1,325 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns="http://www.videogame-ontology.org/ontology#"
+     xml:base="http://www.videogame-ontology.org/ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:wd="http://www.wikidata.org/entity/"
+     xmlns:dcterms="http://purl.org/dc/terms/">
+
+    <owl:Ontology rdf:about="http://www.videogame-ontology.org/ontology/object-properties">
+        <rdfs:label>Video Game Ontology: object properties</rdfs:label>
+        <rdfs:comment>Object properties with domains, ranges, inverses, characteristics and property chains.</rdfs:comment>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/classes"/>
+    </owl:Ontology>
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////
+Object Properties
+///////////////////////////////////////////////////////////////////////////////////////
+-->
+
+    <!-- developedBy / developerOf -->
+    <owl:ObjectProperty rdf:about="#developedBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#Developer"/>
+        <owl:inverseOf rdf:resource="#developerOf"/>
+        <rdfs:label>developed by</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#developerOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#Developer"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#developedBy"/>
+        <rdfs:label>developer of</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- publishedBy / publisherOf -->
+    <owl:ObjectProperty rdf:about="#publishedBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#Publisher"/>
+        <owl:inverseOf rdf:resource="#publisherOf"/>
+        <rdfs:label>published by</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#publisherOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#Publisher"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#publishedBy"/>
+        <rdfs:label>publisher of</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- hasGenre / genreOf -->
+    <owl:ObjectProperty rdf:about="#hasGenre">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#Genre"/>
+        <owl:inverseOf rdf:resource="#genreOf"/>
+        <rdfs:label>has genre</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#genreOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#Genre"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#hasGenre"/>
+        <rdfs:label>genre of</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- availableOn / platformFor -->
+    <owl:ObjectProperty rdf:about="#availableOn">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#Platform"/>
+        <owl:inverseOf rdf:resource="#platformFor"/>
+        <rdfs:label>available on</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#platformFor">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#Platform"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#availableOn"/>
+        <rdfs:label>platform for</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- hasCharacter / appearsIn -->
+    <owl:ObjectProperty rdf:about="#hasCharacter">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#Character"/>
+        <owl:inverseOf rdf:resource="#appearsIn"/>
+        <rdfs:label>has character</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#appearsIn">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#Character"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#hasCharacter"/>
+        <rdfs:label>appears in</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- belongsTo / includes (Franchise) -->
+    <owl:ObjectProperty rdf:about="#belongsTo">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#Franchise"/>
+        <owl:inverseOf rdf:resource="#includes"/>
+        <rdfs:label>belongs to</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#includes">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#Franchise"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#belongsTo"/>
+        <rdfs:label>includes</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- wonAward / awardWonBy -->
+    <owl:ObjectProperty rdf:about="#wonAward">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#Award"/>
+        <owl:inverseOf rdf:resource="#awardWonBy"/>
+        <rdfs:label>won award</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#awardWonBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#Award"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#wonAward"/>
+        <rdfs:label>award won by</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- sequelOf / hasSequel -->
+    <owl:ObjectProperty rdf:about="#sequelOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#hasSequel"/>
+        <rdfs:label>sequel of</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#hasSequel">
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#sequelOf"/>
+        <rdfs:label>has sequel</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- hasGameMode / modeInGame -->
+    <owl:ObjectProperty rdf:about="#hasGameMode">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#GameMode"/>
+        <owl:inverseOf rdf:resource="#modeInGame"/>
+        <rdfs:label>has game mode</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#modeInGame">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#GameMode"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#hasGameMode"/>
+        <rdfs:label>mode in game</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- madeWith / engineUsedIn -->
+    <owl:ObjectProperty rdf:about="#madeWith">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#GameEngine"/>
+        <owl:inverseOf rdf:resource="#engineUsedIn"/>
+        <rdfs:label>made with</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#engineUsedIn">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="#GameEngine"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#madeWith"/>
+        <rdfs:label>engine used in</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- partOfFranchise (SubFranchise -> Franchise, transitive) -->
+    <owl:ObjectProperty rdf:about="#partOfFranchise">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:domain rdf:resource="#Franchise"/>
+        <rdfs:range rdf:resource="#Franchise"/>
+        <rdfs:label>part of franchise</rdfs:label>
+        <rdfs:comment>Relates a sub-franchise to its parent franchise. Transitive for deep franchise hierarchies.</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#subsidiaryOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#Developer"/>
+                    <rdf:Description rdf:about="#Publisher"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#Developer"/>
+                    <rdf:Description rdf:about="#Publisher"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:range>
+        <rdfs:label>subsidiary of</rdfs:label>
+        <rdfs:comment>Relates a subsidiary company (developer or publisher) to its parent organisation</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- sharedFranchiseWith: chain belongsTo ∘ includes -->
+    <owl:ObjectProperty rdf:about="#sharedFranchiseWith">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <rdfs:label>shared franchise with</rdfs:label>
+        <rdfs:comment>Links two games that belong to the same franchise/series. Inferred via property chain.</rdfs:comment>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="#belongsTo"/>
+            <rdf:Description rdf:about="#includes"/>
+        </owl:propertyChainAxiom>
+    </owl:ObjectProperty>
+
+    <!-- sharesDeveloperWith: chain developedBy ∘ developerOf -->
+    <owl:ObjectProperty rdf:about="#sharesDeveloperWith">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <rdfs:label>shares developer with</rdfs:label>
+        <rdfs:comment>Links two games developed by the same studio. Inferred via property chain.</rdfs:comment>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="#developedBy"/>
+            <rdf:Description rdf:about="#developerOf"/>
+        </owl:propertyChainAxiom>
+    </owl:ObjectProperty>
+
+    <!-- sharesPublisherWith: chain publishedBy ∘ publisherOf -->
+    <owl:ObjectProperty rdf:about="#sharesPublisherWith">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <rdfs:label>shares publisher with</rdfs:label>
+        <rdfs:comment>Links two games published by the same company. Inferred via property chain.</rdfs:comment>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="#publishedBy"/>
+            <rdf:Description rdf:about="#publisherOf"/>
+        </owl:propertyChainAxiom>
+    </owl:ObjectProperty>
+
+    <!-- reviewer / hasReview / reviewOf / reviewedGame -->
+    <owl:ObjectProperty rdf:about="#reviewer">
+        <rdfs:domain rdf:resource="#Review"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:label>reviewer</rdfs:label>
+        <rdfs:comment>The reviewer or outlet that authored the review</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#reviewedGame">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Review"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#hasReview"/>
+        <rdfs:label>reviewed game</rdfs:label>
+        <rdfs:comment>The video game that this review evaluates</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#hasReview">
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#Review"/>
+        <owl:inverseOf rdf:resource="#reviewedGame"/>
+        <rdfs:label>has review</rdfs:label>
+        <rdfs:comment>A review written about this video game</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#reviewOf">
+        <rdfs:domain rdf:resource="#Review"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <rdfs:label>review of</rdfs:label>
+        <rdfs:comment>The video game this review is about (alias of reviewedGame)</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- eventFor / hasEvent -->
+    <owl:ObjectProperty rdf:about="#eventFor">
+        <rdfs:domain rdf:resource="#GameEvent"/>
+        <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:inverseOf rdf:resource="#hasEvent"/>
+        <rdfs:label>event for</rdfs:label>
+        <rdfs:comment>The video game this event pertains to</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#hasEvent">
+        <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:range rdf:resource="#GameEvent"/>
+        <owl:inverseOf rdf:resource="#eventFor"/>
+        <rdfs:label>has event</rdfs:label>
+        <rdfs:comment>A lifecycle event associated with this video game</rdfs:comment>
+    </owl:ObjectProperty>
+
+</rdf:RDF>

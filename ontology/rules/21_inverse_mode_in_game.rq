@@ -1,0 +1,10 @@
+# Complete inverse: if G hasGameMode M then M modeInGame G
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+CONSTRUCT { ?m vg:modeInGame ?g . }
+WHERE {
+    ?g vg:hasGameMode ?m .
+    FILTER NOT EXISTS { ?m vg:modeInGame ?g }
+}

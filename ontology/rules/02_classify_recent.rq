@@ -1,0 +1,11 @@
+# Classify games with releaseDate >= 2020-01-01 as RecentGame
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+CONSTRUCT { ?g a vg:RecentGame . }
+WHERE {
+    ?g a vg:VideoGame .
+    ?g vg:releaseDate ?d .
+    FILTER(?d >= "2020-01-01"^^xsd:date)
+}

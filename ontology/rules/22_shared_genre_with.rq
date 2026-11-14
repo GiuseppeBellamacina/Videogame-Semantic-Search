@@ -1,0 +1,12 @@
+# Pairwise: games with same genre → sharedGenreWith
+# high-volume: pairwise rule, capped by --max-pairs and skipped by the build pipeline
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+CONSTRUCT { ?g1 vg:sharedGenreWith ?g2 . }
+WHERE {
+    ?g1 vg:hasGenre ?gen .
+    ?g2 vg:hasGenre ?gen .
+    FILTER(STR(?g1) < STR(?g2))
+}

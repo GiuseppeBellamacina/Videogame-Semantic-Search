@@ -15,7 +15,7 @@ uv sync
 
 ## Scripts
 
-- `construct_reasoner.py` — Custom SPARQL CONSTRUCT rules that complement owlrl for inferences outside OWL 2 RL (sequel/prequel inverse completion, indie classification, co-occurrence relations).
+- `construct_reasoner.py` — Runs the SPARQL CONSTRUCT rules stored one per file in `../rules/*.rq`; they complement owlrl for inferences outside OWL 2 RL (sequel/prequel inverse completion, indie classification, co-occurrence relations).
 - `validate_tbox.py` — Validates the TBox: checks disjointness violations, unsatisfiable classes, missing domain/range, dangling references.
 
 ## Usage

@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns="http://www.videogame-ontology.org/ontology#"
+     xml:base="http://www.videogame-ontology.org/ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:wd="http://www.wikidata.org/entity/"
+     xmlns:dcterms="http://purl.org/dc/terms/">
+
+    <owl:Ontology rdf:about="http://www.videogame-ontology.org/ontology/dl-axioms">
+        <rdfs:label>Video Game Ontology: dl-only axioms</rdfs:label>
+        <rdfs:comment>Functional data properties and keys: valid OWL 2 DL for a DL reasoner (HermiT, Pellet), removed before the owlrl closure.</rdfs:comment>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/classes"/>
+    </owl:Ontology>
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////
+Keys and functional data properties
+
+Valid OWL 2 DL, meant for a DL reasoner (HermiT, Pellet). They are removed
+before the owlrl closure, which would turn them into spurious owl:sameAs
+between distinct games, and are not part of the serialised data.
+///////////////////////////////////////////////////////////////////////////////////////
+-->
+
+    <!-- Functional data properties -->
+    <owl:DatatypeProperty rdf:about="#gameName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#developerName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#publisherName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#genreName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#platformName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#characterName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#franchiseName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#awardName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#engineName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#releaseDate">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#metacriticScore">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#hasSteamAppId">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#reviewScore">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+
+    <!-- Keys -->
+    <owl:Class rdf:about="#VideoGame">
+        <owl:hasKey rdf:parseType="Collection">
+            <owl:DatatypeProperty rdf:about="#hasWikidataId"/>
+        </owl:hasKey>
+    </owl:Class>
+    <owl:Class rdf:about="#VideoGame">
+        <owl:hasKey rdf:parseType="Collection">
+            <owl:DatatypeProperty rdf:about="#hasSteamAppId"/>
+        </owl:hasKey>
+    </owl:Class>
+    <owl:Class rdf:about="#Review">
+        <owl:hasKey rdf:parseType="Collection">
+            <owl:ObjectProperty rdf:about="#reviewedGame"/>
+            <owl:DatatypeProperty rdf:about="#reviewerName"/>
+        </owl:hasKey>
+    </owl:Class>
+
+</rdf:RDF>

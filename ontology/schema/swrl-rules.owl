@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns="http://www.videogame-ontology.org/ontology#"
+     xml:base="http://www.videogame-ontology.org/ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#">
+
+    <owl:Ontology rdf:about="http://www.videogame-ontology.org/ontology/swrl-rules">
+        <rdfs:label>Video Game Ontology: SWRL rules</rdfs:label>
+        <rdfs:comment>SWRL rules for a rule-aware DL reasoner (HermiT, Pellet). Documentation only: the application does not run them (no SWRL engine in owlrl/pyoxigraph, and HermiT is too slow on the full data); the same inferences are computed by the CONSTRUCT rules in rules/. This module imports the whole schema and is not imported by it, so it never reaches the build pipeline.</rdfs:comment>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology"/>
+    </owl:Ontology>
+
+    <swrl:Variable rdf:about="http://www.videogame-ontology.org/ontology/swrl#d"/>
+    <swrl:Variable rdf:about="http://www.videogame-ontology.org/ontology/swrl#p"/>
+    <swrl:Variable rdf:about="http://www.videogame-ontology.org/ontology/swrl#s"/>
+    <swrl:Variable rdf:about="http://www.videogame-ontology.org/ontology/swrl#x"/>
+    <swrl:Variable rdf:about="http://www.videogame-ontology.org/ontology/swrl#y"/>
+
+    <swrl:Imp rdf:about="http://www.videogame-ontology.org/ontology/swrl#SequelInverse">
+        <rdfs:label>SequelInverse</rdfs:label>
+        <rdfs:comment>A game that is a sequel of another game: the other game has it as sequel.</rdfs:comment>
+        <swrl:body>
+            <swrl:AtomList>
+                <rdf:first><swrl:IndividualPropertyAtom><swrl:propertyPredicate rdf:resource="#sequelOf"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/><swrl:argument2 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#y"/></swrl:IndividualPropertyAtom></rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </swrl:AtomList>
+        </swrl:body>
+        <swrl:head>
+            <swrl:AtomList>
+                <rdf:first><swrl:IndividualPropertyAtom><swrl:propertyPredicate rdf:resource="#hasSequel"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#y"/><swrl:argument2 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/></swrl:IndividualPropertyAtom></rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </swrl:AtomList>
+        </swrl:head>
+    </swrl:Imp>
+
+    <swrl:Imp rdf:about="http://www.videogame-ontology.org/ontology/swrl#SharedDeveloper">
+        <rdfs:label>SharedDeveloper</rdfs:label>
+        <rdfs:comment>Two different games with the same developer share a developer.</rdfs:comment>
+        <swrl:body>
+            <swrl:AtomList>
+                <rdf:first><swrl:IndividualPropertyAtom><swrl:propertyPredicate rdf:resource="#developedBy"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/><swrl:argument2 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#d"/></swrl:IndividualPropertyAtom></rdf:first>
+                <rdf:rest>
+                    <swrl:AtomList>
+                        <rdf:first><swrl:IndividualPropertyAtom><swrl:propertyPredicate rdf:resource="#developedBy"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#y"/><swrl:argument2 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#d"/></swrl:IndividualPropertyAtom></rdf:first>
+                        <rdf:rest>
+                            <swrl:AtomList>
+                                <rdf:first><swrl:DifferentIndividualsAtom><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/><swrl:argument2 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#y"/></swrl:DifferentIndividualsAtom></rdf:first>
+                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                            </swrl:AtomList>
+                        </rdf:rest>
+                    </swrl:AtomList>
+                </rdf:rest>
+            </swrl:AtomList>
+        </swrl:body>
+        <swrl:head>
+            <swrl:AtomList>
+                <rdf:first><swrl:IndividualPropertyAtom><swrl:propertyPredicate rdf:resource="#sharesDeveloperWith"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/><swrl:argument2 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#y"/></swrl:IndividualPropertyAtom></rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </swrl:AtomList>
+        </swrl:head>
+    </swrl:Imp>
+
+    <swrl:Imp rdf:about="http://www.videogame-ontology.org/ontology/swrl#ConsoleGameRule">
+        <rdfs:label>ConsoleGameRule</rdfs:label>
+        <rdfs:comment>A game available on a console platform is a ConsoleGame.</rdfs:comment>
+        <swrl:body>
+            <swrl:AtomList>
+                <rdf:first><swrl:ClassAtom><swrl:classPredicate rdf:resource="#VideoGame"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/></swrl:ClassAtom></rdf:first>
+                <rdf:rest>
+                    <swrl:AtomList>
+                        <rdf:first><swrl:IndividualPropertyAtom><swrl:propertyPredicate rdf:resource="#availableOn"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/><swrl:argument2 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#p"/></swrl:IndividualPropertyAtom></rdf:first>
+                        <rdf:rest>
+                            <swrl:AtomList>
+                                <rdf:first><swrl:ClassAtom><swrl:classPredicate rdf:resource="#ConsolePlatform"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#p"/></swrl:ClassAtom></rdf:first>
+                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                            </swrl:AtomList>
+                        </rdf:rest>
+                    </swrl:AtomList>
+                </rdf:rest>
+            </swrl:AtomList>
+        </swrl:body>
+        <swrl:head>
+            <swrl:AtomList>
+                <rdf:first><swrl:ClassAtom><swrl:classPredicate rdf:resource="#ConsoleGame"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/></swrl:ClassAtom></rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </swrl:AtomList>
+        </swrl:head>
+    </swrl:Imp>
+
+    <swrl:Imp rdf:about="http://www.videogame-ontology.org/ontology/swrl#HighlyRatedRule">
+        <rdfs:label>HighlyRatedRule</rdfs:label>
+        <rdfs:comment>A game with Metacritic score of at least 85 is a HighlyRatedGame.</rdfs:comment>
+        <swrl:body>
+            <swrl:AtomList>
+                <rdf:first><swrl:ClassAtom><swrl:classPredicate rdf:resource="#VideoGame"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/></swrl:ClassAtom></rdf:first>
+                <rdf:rest>
+                    <swrl:AtomList>
+                        <rdf:first><swrl:DatavaluedPropertyAtom><swrl:propertyPredicate rdf:resource="#metacriticScore"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/><swrl:argument2 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#s"/></swrl:DatavaluedPropertyAtom></rdf:first>
+                        <rdf:rest>
+                            <swrl:AtomList>
+                                <rdf:first><swrl:BuiltinAtom><swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThanOrEqual"/><swrl:arguments><rdf:List><rdf:first rdf:resource="http://www.videogame-ontology.org/ontology/swrl#s"/><rdf:rest><rdf:List><rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">85</rdf:first><rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/></rdf:List></rdf:rest></rdf:List></swrl:arguments></swrl:BuiltinAtom></rdf:first>
+                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                            </swrl:AtomList>
+                        </rdf:rest>
+                    </swrl:AtomList>
+                </rdf:rest>
+            </swrl:AtomList>
+        </swrl:body>
+        <swrl:head>
+            <swrl:AtomList>
+                <rdf:first><swrl:ClassAtom><swrl:classPredicate rdf:resource="#HighlyRatedGame"/><swrl:argument1 rdf:resource="http://www.videogame-ontology.org/ontology/swrl#x"/></swrl:ClassAtom></rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </swrl:AtomList>
+        </swrl:head>
+    </swrl:Imp>
+
+</rdf:RDF>

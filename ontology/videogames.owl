@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:39ca8fc61f133a675449781b3cbaa58b3b3dc034225559a07b74f0e56a0c1b0d
-size 95592
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns="http://www.videogame-ontology.org/ontology#"
+     xml:base="http://www.videogame-ontology.org/ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:wd="http://www.wikidata.org/entity/"
+     xmlns:dcterms="http://purl.org/dc/terms/">
+
+    <owl:Ontology rdf:about="http://www.videogame-ontology.org/ontology">
+        <rdfs:label>Video Game Ontology</rdfs:label>
+        <rdfs:comment>An ontology for describing video games, their developers, publishers, genres, platforms, characters, franchises, awards, game engines, game modes, reviews, and events. Covers games from 2010 onwards. Aligned with Wikidata and Dublin Core. This file only imports the modules in schema/ (see catalog-v001.xml); the CONSTRUCT classification rules are in rules/.</rdfs:comment>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/classes"/>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/object-properties"/>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/data-properties"/>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/defined-classes"/>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/individuals"/>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/alignments"/>
+        <owl:imports rdf:resource="http://www.videogame-ontology.org/ontology/dl-axioms"/>
+    </owl:Ontology>
+
+</rdf:RDF>

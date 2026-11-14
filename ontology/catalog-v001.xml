@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri name="http://www.videogame-ontology.org/ontology/classes" uri="schema/classes.owl"/>
+    <uri name="http://www.videogame-ontology.org/ontology/object-properties" uri="schema/object-properties.owl"/>
+    <uri name="http://www.videogame-ontology.org/ontology/data-properties" uri="schema/data-properties.owl"/>
+    <uri name="http://www.videogame-ontology.org/ontology/defined-classes" uri="schema/defined-classes.owl"/>
+    <uri name="http://www.videogame-ontology.org/ontology/individuals" uri="schema/individuals.owl"/>
+    <uri name="http://www.videogame-ontology.org/ontology/alignments" uri="schema/alignments.owl"/>
+    <uri name="http://www.videogame-ontology.org/ontology/dl-axioms" uri="schema/dl-axioms.owl"/>
+    <uri name="http://www.videogame-ontology.org/ontology/swrl-rules" uri="schema/swrl-rules.owl"/>
+    <uri name="http://www.videogame-ontology.org/ontology" uri="videogames.owl"/>
+</catalog>

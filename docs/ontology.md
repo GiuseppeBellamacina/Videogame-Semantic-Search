@@ -6,7 +6,7 @@ L'ontologia **Video Game Ontology** (`vg:`) modella il dominio dei videogiochi p
 
 - **Namespace:** `http://www.videogame-ontology.org/ontology#`
 - **Prefisso:** `vg:`
-- **File schema:** `ontology/videogames.owl`
+- **File schema:** `ontology/videogames.owl` (radice che importa i moduli in `ontology/schema/`, vedi sotto)
 - **File popolato:** `ontology/videogames_full.owl` (generato da `ontology/build_ontology.py`, caricato a runtime) e la copia leggibile `ontology/videogames_full.ttl`
 
 ---
@@ -15,7 +15,11 @@ L'ontologia **Video Game Ontology** (`vg:`) modella il dominio dei videogiochi p
 
 | File                    | Ruolo                                                                                    | Cancellabile?                                |
 | ----------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `videogames.owl`        | **Schema/TBox** — definisce classi, proprietà e assiomi. NON contiene dati.              | ❌ Mai cancellare                            |
+| `videogames.owl`        | **Schema/TBox** — radice con `owl:imports` dei moduli in `schema/`. NON contiene dati.   | ❌ Mai cancellare                            |
+| `schema/*.owl`          | Moduli dello schema: `classes` (gerarchia e disgiunzioni), `object-properties`, `data-properties`, `defined-classes`, `individuals` (nominali), `alignments` (Wikidata, Dublin Core), `dl-axioms` (funzionali e chiavi, solo OWL 2 DL). | ❌ Mai cancellare |
+| `rules/*.rq`            | Le 23 regole di classificazione e inferenza, una query SPARQL CONSTRUCT per file (ordine = prefisso numerico). | ❌ Mai cancellare |
+| `schema/swrl-rules.owl` | 4 regole SWRL (inverso di sequel, sviluppatore condiviso, ConsoleGame, HighlyRatedGame) per un reasoner DL come HermiT. Solo documentazione: importa lo schema ma non è importato, e l'app non le esegue (le stesse inferenze le fanno le regole CONSTRUCT). | ❌ Mai cancellare |
+| `catalog-v001.xml`      | Catalogo Protégé: associa l'IRI di ogni modulo al file (apri `videogames.owl` e gli import si risolvono). | ❌ Mai cancellare |
 | `videogames_full.owl`   | **TBox + ABox + inferenze** (RDF/XML) — l'unico file caricato dal backend a runtime.     | ✅ Si rigenera con `build_ontology.py`       |
 | `videogames_full.ttl`   | Stessa ontologia in Turtle, per la lettura umana.                                        | ✅ Si rigenera con `build_ontology.py`       |
 | `.cache/`               | Checkpoint del fetch (un JSON per query × mese) e stati intermedi della pipeline.        | ✅ Cancellare per rifare il fetch da zero    |

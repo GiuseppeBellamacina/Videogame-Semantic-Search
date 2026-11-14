@@ -4,9 +4,11 @@ Fetches video games released from 2010 onwards with their developers, publishers
 genres, platforms, and characters.
 """
 
+import hashlib
 import json
 import logging
 import re
+import shutil
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -14,6 +16,8 @@ from pathlib import Path
 from rdflib import RDF, RDFS, XSD, Graph, Literal, Namespace, URIRef
 from SPARQLWrapper import JSON, POST, SPARQLWrapper
 from tqdm import tqdm
+
+import schema_loader
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +27,9 @@ WD = Namespace("http://www.wikidata.org/entity/")
 
 WIKIDATA_ENDPOINT = "https://query.wikidata.org/sparql"
 
+# Wikidata keeps a single "mul" label (no "en") on items whose name is the same in
+# every language (Fallout 4, PlayStation 5...): labels are read as en *or* mul,
+# otherwise those games and platforms come back as bare QIDs / vanish from the join.
 # We split into multiple queries to avoid Wikidata timeout (60s limit)
 # Query 1: Core game data (name, release date, developer, publisher)
 GAMES_CORE_QUERY = """
@@ -31,10 +38,10 @@ SELECT DISTINCT ?game ?gameLabel ?releaseDate ?devLabel ?pubLabel ?dev ?pub WHER
   ?game wdt:P577 ?releaseDate .      # publication date
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   
-  OPTIONAL {{ ?game wdt:P178 ?dev . ?dev rdfs:label ?devLabel . FILTER(LANG(?devLabel) = "en") }}
-  OPTIONAL {{ ?game wdt:P123 ?pub . ?pub rdfs:label ?pubLabel . FILTER(LANG(?pubLabel) = "en") }}
+  OPTIONAL {{ ?game wdt:P178 ?dev . ?dev rdfs:label ?devLabel . FILTER(LANG(?devLabel) IN ("en", "mul")) }}
+  OPTIONAL {{ ?game wdt:P123 ?pub . ?pub rdfs:label ?pubLabel . FILTER(LANG(?pubLabel) IN ("en", "mul")) }}
   
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -46,8 +53,8 @@ SELECT DISTINCT ?game ?gameLabel ?genreLabel ?genre WHERE {{
   ?game wdt:P577 ?releaseDate .
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P136 ?genre .
-  ?genre rdfs:label ?genreLabel . FILTER(LANG(?genreLabel) = "en")
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  ?genre rdfs:label ?genreLabel . FILTER(LANG(?genreLabel) IN ("en", "mul"))
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -59,8 +66,8 @@ SELECT DISTINCT ?game ?gameLabel ?platformLabel ?platform WHERE {{
   ?game wdt:P577 ?releaseDate .
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P400 ?platform .
-  ?platform rdfs:label ?platformLabel . FILTER(LANG(?platformLabel) = "en")
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  ?platform rdfs:label ?platformLabel . FILTER(LANG(?platformLabel) IN ("en", "mul"))
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -72,8 +79,8 @@ SELECT DISTINCT ?game ?gameLabel ?charLabel ?char WHERE {{
   ?game wdt:P577 ?releaseDate .
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P674 ?char .
-  ?char rdfs:label ?charLabel . FILTER(LANG(?charLabel) = "en")
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  ?char rdfs:label ?charLabel . FILTER(LANG(?charLabel) IN ("en", "mul"))
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -85,8 +92,8 @@ SELECT DISTINCT ?game ?gameLabel ?seriesLabel ?series WHERE {{
   ?game wdt:P577 ?releaseDate .
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P179 ?series .
-  ?series rdfs:label ?seriesLabel . FILTER(LANG(?seriesLabel) = "en")
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  ?series rdfs:label ?seriesLabel . FILTER(LANG(?seriesLabel) IN ("en", "mul"))
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -98,8 +105,8 @@ SELECT DISTINCT ?game ?gameLabel ?modeLabel WHERE {{
   ?game wdt:P577 ?releaseDate .
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P404 ?mode .
-  ?mode rdfs:label ?modeLabel . FILTER(LANG(?modeLabel) = "en")
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  ?mode rdfs:label ?modeLabel . FILTER(LANG(?modeLabel) IN ("en", "mul"))
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -113,7 +120,7 @@ SELECT DISTINCT ?game ?gameLabel ?score WHERE {{
   ?game p:P444 ?reviewStatement .
   ?reviewStatement ps:P444 ?score .
   ?reviewStatement pq:P447 wd:Q150248 .  # Metacritic
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -125,8 +132,8 @@ SELECT DISTINCT ?game ?gameLabel ?engine ?engineLabel WHERE {{
   ?game wdt:P577 ?releaseDate .
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P408 ?engine .
-  ?engine rdfs:label ?engineLabel . FILTER(LANG(?engineLabel) = "en")
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  ?engine rdfs:label ?engineLabel . FILTER(LANG(?engineLabel) IN ("en", "mul"))
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -138,8 +145,8 @@ SELECT DISTINCT ?game ?gameLabel ?countryLabel WHERE {{
   ?game wdt:P577 ?releaseDate .
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P495 ?country .
-  ?country rdfs:label ?countryLabel . FILTER(LANG(?countryLabel) = "en")
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  ?country rdfs:label ?countryLabel . FILTER(LANG(?countryLabel) IN ("en", "mul"))
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -151,8 +158,8 @@ SELECT DISTINCT ?game ?gameLabel ?award ?awardLabel WHERE {{
   ?game wdt:P577 ?releaseDate .
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P166 ?award .
-  ?award rdfs:label ?awardLabel . FILTER(LANG(?awardLabel) = "en")
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  ?award rdfs:label ?awardLabel . FILTER(LANG(?awardLabel) IN ("en", "mul"))
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -165,8 +172,8 @@ SELECT DISTINCT ?game ?gameLabel ?prevLabel WHERE {{
   FILTER(YEAR(?releaseDate) = {year} && MONTH(?releaseDate) = {month})
   ?game wdt:P155 ?prev .
   ?prev wdt:P31 wd:Q7889 .
-  ?prev rdfs:label ?prevLabel . FILTER(LANG(?prevLabel) = "en")
-  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+  ?prev rdfs:label ?prevLabel . FILTER(LANG(?prevLabel) IN ("en", "mul"))
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
 }}
 LIMIT 5000
 """
@@ -234,6 +241,23 @@ MONTHS = list(range(1, 13))
 CACHE_DIR = Path(__file__).parent / ".cache" / "wikidata"
 
 
+def sync_query_cache(cache_dir: Path, key: str, template: str) -> None:
+    """A checkpoint is only valid for the query that produced it: when the query
+    text changed, move the old months to <key>.stale and fetch again."""
+    d = cache_dir / key
+    mark = d / "_query.sha1"
+    digest = hashlib.sha1(template.encode()).hexdigest()
+    if mark.exists() and mark.read_text().strip() == digest:
+        return
+    if d.exists() and any(d.glob("*.json")):
+        stale = cache_dir / f"{key}.stale"
+        shutil.rmtree(stale, ignore_errors=True)
+        d.rename(stale)
+        tqdm.write(f"  query '{key}' changed: old checkpoints moved to {stale.name}")
+    d.mkdir(parents=True, exist_ok=True)
+    mark.write_text(digest)
+
+
 def run_per_year_month_queries(
     sparql: SPARQLWrapper,
     query_template: str,
@@ -248,6 +272,7 @@ def run_per_year_month_queries(
     Each month is checkpointed in cache_dir/<key>/<year>-<month>.json.
     """
     all_bindings = []
+    sync_query_cache(cache_dir, key, query_template)
     pairs = [(y, m) for y in years for m in MONTHS]
     with tqdm(pairs, desc=description, unit="month") as pbar:
         for year, month in pbar:
@@ -524,7 +549,7 @@ def populate_from_wikidata(
 
     g = Graph()
     g.bind("vg", VG)
-    g.parse(str(Path(__file__).parent / "videogames.owl"))
+    g += schema_loader.load_tbox()
 
     games_seen: set[str] = set()
     game_earliest_date: dict[str, str] = {}
@@ -533,6 +558,7 @@ def populate_from_wikidata(
 
     # --- Step 1: Core game data ---
     logger.info("STEP 1: core game data (year x month)")
+    sync_query_cache(cache_dir, "core", GAMES_CORE_QUERY)
     pairs = [(y, m) for y in years for m in MONTHS]
     with tqdm(pairs, desc="Core game data", unit="month") as pbar:
         for year, month in pbar:
