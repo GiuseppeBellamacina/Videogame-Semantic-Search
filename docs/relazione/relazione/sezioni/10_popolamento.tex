@@ -47,14 +47,33 @@ $\rightarrow$ \texttt{RPGGenre}, ``single-player video game'' $\rightarrow$ \tex
 
 Wikidata pu\`o restituire la stessa entit\`a con URI diversi ma stesso nome
 normalizzato. La pipeline applica una normalizzazione del nome (trim degli spazi e lowercase)
-e, per ciascun nome, mantiene l'URI con il maggior numero di triple associate.
+e, per ciascun nome, mantiene l'URI con il maggior numero di triple associate. Il confronto
+ignora anche gli spazi multipli e il simbolo \&; per sviluppatori e publisher ignora inoltre
+punteggiatura e forma legale (\emph{Netflix, Inc.} $=$ \emph{Netflix}), mentre parole come
+\emph{Games} o \emph{Studios} restano, perch\'e \emph{Rockstar Games} e \emph{Rockstar Studios}
+sono entit\`a diverse. La fusione avviene solo tra entit\`a dello stesso tipo, perch\'e le classi
+principali sono disgiunte.
+
+I giochi fusi per titolo (un remake o un porting ha lo stesso titolo dell'originale) ricevevano
+pi\`u valori per le propriet\`a funzionali (311 date di uscita, 90 punteggi, 99 nomi): la pipeline
+tiene la data pi\`u antica, il punteggio pi\`u alto e un solo nome, e toglie i \texttt{sequelOf}
+che puntano al gioco stesso. Restano invece fusi i 921 titoli condivisi da pi\`u elementi di
+Wikidata, perch\'e gli URI dei giochi sono costruiti dal nome: \`e un limite noto.
+
+\subsubsection{Aziende che sviluppano e pubblicano}
+
+Un'azienda che \`e sia sviluppatore sia publisher (3.360 nomi, ad esempio FromSoftware) ha due
+individui, \texttt{dev/X} e \texttt{pub/X}. Non si possono dichiarare \texttt{owl:sameAs}: le classi
+\texttt{Developer} e \texttt{Publisher} sono disgiunte e il reasoner dichiarerebbe l'ontologia
+inconsistente. Il popolamento li collega con la propriet\`a simmetrica \texttt{sameCompanyAs}
+(6.720 triple); in 10.232 giochi lo stesso nome sviluppa e pubblica.
 
 \subsubsection{Reasoning}
 
 Dopo il fetch e gli assiomi V2 viene eseguito il reasoning (cfr.\ Sezione~\ref{sec:reasoning}):
 chiusura OWL 2 RL tramite \texttt{owlrl}, materializzazione mirata delle classi definite e
-regole SPARQL CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} richiede circa 42 minuti e aggiunge 5,16 milioni di triple
-al grafo di 939.995 (la successiva pulizia toglie i messaggi di errore di \texttt{owlrl}, 255.142 triple riflessive e 1,31 milioni di triple con nodi anonimi, sostituiti dallo schema originale); la materializzazione mirata aggiunge 178.725 triple e
+regole SPARQL CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} richiede circa 45 minuti e aggiunge 5,18 milioni di triple
+al grafo di circa 946.000 (la successiva pulizia toglie i messaggi di errore di \texttt{owlrl}, 255.048 triple riflessive e 1,33 milioni di triple con nodi anonimi, sostituiti dallo schema originale); la materializzazione mirata aggiunge 178.581 triple e
 le regole CONSTRUCT 26.841 (tra cui \texttt{MultiConsoleGame} e \texttt{MultiPlatformGame}). Nelle relazioni \texttt{sharesDeveloperWith} e
 \texttt{sharesPublisherWith} i gruppi con pi\`u di 50 giochi (19 sviluppatori e 66 publisher) sono esclusi
 per limitare la crescita quadratica delle coppie. I conteggi finali sono in Tabella~\ref{tab:abox}
@@ -69,12 +88,12 @@ e Tabella~\ref{tab:inferite}.
 \toprule
 \textbf{Metrica} & \textbf{Valore} \\
 \midrule
-Triple scaricate da Wikidata & 940.011 \\
-Triple nel file finale (dopo il reasoning) & 4.741.351 \\
-Videogiochi & 107.523 \\
+Triple scaricate da Wikidata & 945.767 \\
+Triple nel file finale (dopo il reasoning) & 4.746.848 \\
+Videogiochi & 107.522 \\
 Sviluppatori / Publisher & 5.945 / 4.158 \\
 Generi / Piattaforme & 605 / 311 \\
-Franchise / Motori / Personaggi / Premi & 1.841 / 344 / 4.884 / 448 \\
+Franchise / Motori / Personaggi / Premi & 1.840 / 344 / 4.884 / 448 \\
 Modalit\`a di gioco (individui) & 40 \\
 \bottomrule
 \end{tabular}
@@ -90,17 +109,17 @@ Modalit\`a di gioco (individui) & 40 \\
 \textbf{Classe} & \textbf{Istanze} & \textbf{Classe} & \textbf{Istanze} \\
 \midrule
 StandaloneGame & 106.926 & SportsGame & 3.399 \\
-PCGame & 100.337 & RacingGame & 3.365 \\
-WindowsGame & 100.100 & AmericanGame & 3.085 \\
-SinglePlayerGame & 95.724 & VisualNovelGame & 2.368 \\
-RecentGame & 71.692 & ShooterGame & 1.971 \\
+PCGame & 100.336 & RacingGame & 3.365 \\
+WindowsGame & 100.099 & AmericanGame & 3.085 \\
+SinglePlayerGame & 95.723 & VisualNovelGame & 2.368 \\
+RecentGame & 71.548 & ShooterGame & 1.971 \\
 ActionGame & 32.828 & PuzzleGame & 1.839 \\
 CasualGame & 32.634 & UnrealEngineGame & 1.783 \\
 AdventureGame & 30.568 & PlatformerGame & 1.429 \\
 MacOSGame & 20.126 & AwardWinningGame & 931 \\
 MultiPlatformGame & 19.138 & HorrorGame & 862 \\
 MultiplayerGame & 17.142 & BrowserGame & 737 \\
-SimulationGame & 16.444 & SequelGame & 597 \\
+SimulationGame & 16.444 & SequelGame & 596 \\
 StrategyGame & 15.386 & NintendoPublishedGame & 409 \\
 LinuxGame & 14.767 & BandaiNamcoPublishedGame & 342 \\
 RPGGame & 14.622 & ArcadeGame & 267 \\

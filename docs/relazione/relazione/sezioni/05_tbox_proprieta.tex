@@ -43,6 +43,7 @@ madeWith           & VideoGame & GameEngine  & Asym, Irr, inv engineUsedIn      
 engineUsedIn       & GameEngine& VideoGame   & Asym, Irr                             & engine used in \\
 partOfFranchise    & Franchise & Franchise   & Trans                                 & part of franchise \\
 subsidiaryOf       & ---       & ---         & Trans                                 & subsidiary of \\
+sameCompanyAs      & Dev/Pub   & Dev/Pub     & Sym                                   & same company as \\
 sharedFranchiseWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shared franchise with \\
 sharesDeveloperWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shares developer with \\
 sharesPublisherWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shares publisher with \\
@@ -60,7 +61,7 @@ hasEvent           & VideoGame & GameEvent   & ---                              
 Sym = SymmetricProperty, Trans = TransitiveProperty, Funct = FunctionalProperty,
 inv = inverseOf, chain = propertyChainAxiom.
 
-In totale lo schema dichiara 13 propriet\`a asimmetriche, 18 irriflessive, 3 simmetriche,
+In totale lo schema dichiara 13 propriet\`a asimmetriche, 18 irriflessive, 4 simmetriche,
 3 transitive e 1 object property funzionale (\texttt{reviewedGame}).
 Le caratteristiche sono assegnate nel rispetto dei \textbf{vincoli globali di OWL 2 DL}:
 le propriet\`a \emph{non semplici} --- le transitive (\texttt{sequelOf},

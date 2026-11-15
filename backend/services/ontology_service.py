@@ -18,6 +18,12 @@ MAX_CONSTRUCT_TRIPLES = 3000
 RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 
 
+def _derived_first(quad) -> bool:
+    """Sort key: False (a real relation) before True (derived by the reasoner: shares.../shared...)."""
+    local = quad.predicate.value.rsplit("#", 1)[-1]
+    return local.startswith(("shares", "shared"))
+
+
 class OntologyService:
     """Singleton service that holds the loaded RDF graph using pyoxigraph."""
 
@@ -191,7 +197,9 @@ class OntologyService:
         seen_out: set[tuple] = set()
         seen_in: set[tuple] = set()
 
-        for quad in store.quads_for_pattern(node, None, None):
+        # the real relations (publishedBy...) come first: the derived ones (sharesPublisherWith...) are
+        # hundreds for a famous game and must not fill the cap before them
+        for quad in sorted(store.quads_for_pattern(node, None, None), key=_derived_first):
             p_str = quad.predicate.value
             pred_label = cls._get_local_name(p_str)
             if p_str in _SKIP_PREDICATES or any(
@@ -223,7 +231,7 @@ class OntologyService:
 
         # Triples where this node is the object
         total_incoming = 0
-        for quad in store.quads_for_pattern(None, None, node):
+        for quad in sorted(store.quads_for_pattern(None, None, node), key=_derived_first):
             p_str = quad.predicate.value
             pred_label = cls._get_local_name(p_str)
             if p_str in _SKIP_PREDICATES or any(
@@ -531,6 +539,8 @@ OBJECT PROPERTIES (domain → range) and their inverses:
 - vg:hasGameMode (VideoGame → GameMode individual, NOT a string) — inverse: vg:modeInGame
 - vg:sequelOf (VideoGame → VideoGame) — transitive; inverse: vg:hasSequel
   (sequelOf is transitive: a game is a sequelOf all its predecessors)
+
+- vg:sameCompanyAs (Developer <-> Publisher) — symmetric: the developer node and the publisher node of the same company (e.g. FromSoftware as developer and as publisher)
 
 INFERRED OBJECT PROPERTIES (materialised; symmetric links between two games):
 - vg:sharedFranchiseWith — same franchise (chain belongsTo ∘ includes)

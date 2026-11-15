@@ -336,13 +336,56 @@ _ALIASES = {
 
 
 def dedup_name(prop_local: str, name: str) -> str:
-    low = name.strip().lower()
+    low = " ".join(name.lower().split())  # case and runs of spaces never make a different entity
     low = _ALIASES.get(prop_local, {}).get(low, low)
     if prop_local not in ("developerName", "publisherName"):
-        return low
+        # "Talking Tom & Friends" = "Talking Tom and Friends" (not for games: "&" can be part of a title)
+        return low if prop_local == "gameName" else low.replace(" & ", " and ")
     n = unicodedata.normalize("NFKC", low).replace("&", " and ")
     n = _LEGAL.sub(" ", re.sub(r"[^\w ]", " ", n))
     return "".join(n.split()) or low
+
+
+def clean_functional(g: Graph) -> int:
+    """Games merged by name (a remake or a port shares the title of the original) end up with several
+    values for the functional properties: keep one release date (the earliest), one Metacritic score
+    (the highest) and one name; drop the sequelOf that points a game to itself (same cause)."""
+    fixed = 0
+    pick = {VG.releaseDate: min, VG.metacriticScore: max, VG.gameName: min}
+    for prop, choose in pick.items():
+        by_game: dict = defaultdict(list)
+        for subj, _, obj in g.triples((None, prop, None)):
+            by_game[subj].append(obj)
+        for subj, values in by_game.items():
+            if len(values) > 1:
+                keep = choose(values, key=lambda v: (int(v) if prop == VG.metacriticScore else str(v)))
+                for v in values:
+                    if v != keep:
+                        g.remove((subj, prop, v))
+                fixed += 1
+    for subj, _, obj in list(g.triples((None, VG.sequelOf, None))):
+        if subj == obj:
+            g.remove((subj, VG.sequelOf, obj))
+            fixed += 1
+    return fixed
+
+
+def link_same_company(g: Graph) -> int:
+    """A developer and a publisher with the same (normalised) name are one company wearing two hats.
+    Developer and Publisher are disjoint classes, so they cannot be owl:sameAs: link the two nodes with
+    the symmetric property sameCompanyAs instead."""
+    by_name: dict[str, dict[str, list]] = defaultdict(lambda: {"dev": [], "pub": []})
+    for kind, prop in (("dev", VG.developerName), ("pub", VG.publisherName)):
+        for subj, _, obj in g.triples((None, prop, None)):
+            by_name[dedup_name(prop.split("#")[-1], str(obj))][kind].append(subj)
+    n = 0
+    for sides in by_name.values():
+        for d in sides["dev"]:
+            for p in sides["pub"]:
+                g.add((d, VG.sameCompanyAs, p))
+                g.add((p, VG.sameCompanyAs, d))
+                n += 1
+    return n
 
 
 def deduplicate_graph(g: Graph) -> int:
@@ -809,4 +852,6 @@ def populate_from_wikidata(
     # --- Deduplication pass ---
     removed = deduplicate_graph(g)
     logger.info(f"DEDUP: removed {removed} duplicates, graph has {len(g)} triples")
+    logger.info(f"CLEAN: {clean_functional(g)} functional values / self-sequels fixed")
+    logger.info(f"COMPANIES: {link_same_company(g)} developer/publisher pairs linked with sameCompanyAs")
     return g

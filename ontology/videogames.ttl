@@ -543,6 +543,15 @@ vg:subsidiaryOf a owl:ObjectProperty,
     rdfs:range [ a owl:Class ;
             owl:unionOf ( vg:Developer vg:Publisher ) ] .
 
+vg:sameCompanyAs a owl:ObjectProperty,
+        owl:SymmetricProperty ;
+    rdfs:label "same company as" ;
+    rdfs:comment "Links the Developer and the Publisher individuals of one company (same name). They cannot be owl:sameAs: Developer and Publisher are disjoint classes." ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( vg:Developer vg:Publisher ) ] ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( vg:Developer vg:Publisher ) ] .
+
 vg:sharedFranchiseWith a owl:ObjectProperty,
         owl:SymmetricProperty ;
     rdfs:label "shared franchise with" ;
@@ -1291,38 +1300,38 @@ vg:ExclusiveRelease a owl:Class ;
     owl:imports <http://www.videogame-ontology.org/ontology/classes> .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:IndieGame vg:AAAGame ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:SinglePlayerMode vg:MultiplayerMode vg:CoopMode vg:MMOMode ) .
-
-[] a owl:AllDisjointClasses ;
     owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:ReleasedGame vg:EarlyAccessGame vg:CancelledGame vg:DelistedGame ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:PlayerCharacter vg:NonPlayerCharacter ) .
+    owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:VideoGame vg:Developer vg:Publisher vg:Genre vg:Platform vg:Character vg:Franchise vg:Award vg:GameEngine vg:GameMode vg:Review vg:GameEvent ) .
 
 [] a owl:AllDisjointClasses ;
+    owl:members ( vg:PlayerCharacter vg:NonPlayerCharacter ) .
+
+[] a owl:AllDisjointClasses ;
     owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:IndieGame vg:AAAGame ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:SinglePlayerMode vg:MultiplayerMode vg:CoopMode vg:MMOMode ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:ReleasedGame vg:EarlyAccessGame vg:CancelledGame vg:DelistedGame ) .
 

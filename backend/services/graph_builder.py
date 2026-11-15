@@ -307,7 +307,10 @@ def find_cross_links(
     new_set = set(new_uris)
     all_set = existing_set | new_set
 
+    # the inverse side of a property pair: the pair is drawn once, with the game as the subject
     _SKIP_PREDS = {
+        "developerOf", "publisherOf", "genreOf", "platformFor", "includes", "engineUsedIn",
+        "modeInGame", "awardWonBy", "appearsIn", "hasSequel",
         "type",
         "label",
         "subClassOf",

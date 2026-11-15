@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { Code2, List, Network, Sparkles, SlidersHorizontal } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
 import { QueryBuilder } from "@/components/QueryBuilder";
@@ -113,6 +113,8 @@ export default function App() {
     [selectedNode],
   );
 
+  const sceneIds = useRef<string[]>([]);
+
   const handleGraphExpand = useCallback(async (newGraph: GraphData) => {
     // Un-hide any node being re-added (e.g. previously removed, now re-expanded)
     const incomingIds = new Set(newGraph.nodes.map((n) => n.id));
@@ -123,15 +125,15 @@ export default function App() {
     setHiddenNodeIds(without);
     setDeletedNodeIds(without);
 
-    let existingNodeIds: string[] = [];
-    let addedNodeIds: string[] = [];
+    // everything on the scene (the search result too, not only what was added by hand)
+    const existingNodeIds = sceneIds.current;
+    const onScene = new Set(existingNodeIds);
+    const addedNodeIds = newGraph.nodes.map((n) => n.id).filter((id) => !onScene.has(id));
 
     setExtraGraph((prev) => {
       const existingIds = new Set(prev.nodes.map((n) => n.id));
-      existingNodeIds = [...existingIds];
       const existingLinkKeys = new Set(prev.links.map(linkKey));
       const addedNodes = newGraph.nodes.filter((n) => !existingIds.has(n.id));
-      addedNodeIds = addedNodes.map((n) => n.id);
       const addedLinks = newGraph.links.filter((l) => !existingLinkKeys.has(linkKey(l)));
       return {
         nodes: [...prev.nodes, ...addedNodes],
@@ -217,6 +219,10 @@ export default function App() {
     ].filter((l) => visible.has(endId(l.source)) && visible.has(endId(l.target)));
     return { nodes, links };
   }, [data, extraGraph, hiddenNodeIds, deletedNodeIds]);
+
+  useEffect(() => {
+    sceneIds.current = mergedGraph.nodes.map((n) => n.id);
+  }, [mergedGraph]);
 
   // Isolate: keep only the given nodes (the rest is hidden; "Mostra tutto" brings it back)
   const handleClear = useCallback(() => {
@@ -437,6 +443,7 @@ export default function App() {
             highlightNode={highlightNode}
             onNodeRightClick={handleNodeRightClick}
             onBackgroundClick={clearFocus}
+            onExpand={handleGraphExpand}
             hiddenCount={hiddenNodeIds.size}
             onRestoreHidden={() => setHiddenNodeIds(new Set())}
             onKeepOnly={handleKeepOnly}

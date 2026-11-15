@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect, useState, useMemo } from "react";
 import ForceGraph2D from "react-force-graph-2d";
-import { Crosshair, Eraser, Eye, EyeOff, Focus, LayoutGrid, Link2, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
+import { Crosshair, Eraser, Eye, EyeOff, Focus, LayoutGrid, Link2, Locate, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
 import type { GraphData, GraphNode } from "@/types";
 import { GAME_TYPES, IMAGE_TYPES, typeColor, typeLabel } from "@/lib/theme";
 import { onImagesChanged, peekImage, requestImage } from "@/lib/imageQueue";
@@ -14,6 +14,8 @@ interface KnowledgeGraphProps {
   onNodeRightClick?: (node: GraphNode, x: number, y: number) => void;
   /** Click on the empty canvas. */
   onBackgroundClick?: () => void;
+  /** Add nodes and links to the scene (the thing two games have in common, from a derived relation). */
+  onExpand?: (graph: GraphData) => void;
   /** Nodes hidden one by one from the context menu, and how to bring them back. */
   hiddenCount?: number;
   onRestoreHidden?: () => void;
@@ -37,7 +39,8 @@ const BIG_GRAPH = 150;
 
 const endId = (e: string | GraphNode) => (typeof e === "string" ? e : e.id);
 /** Relations the reasoner derives (sharesDeveloperWith...): drawn dashed, never labelled. */
-const isDerived = (label?: string) => /^shar(e|ed)/.test(label ?? "");
+// derived or symmetric links (shared developer, same company...): dashed, no arrow
+const isDerived = (label?: string) => /^(shar(e|ed)|sameCompany)/.test(label ?? "");
 /** Fitting a single node would otherwise zoom it to the whole screen. */
 const MAX_FIT_ZOOM = 1.8;
 /** When something is added to the scene, show its connected group, at most this many nodes (nearest first). */
@@ -56,6 +59,7 @@ const CELL_W = 80;
 const CELL_H = 96;
 
 const REL_VERB: Record<string, string> = {
+  sameCompanyAs: "è la stessa azienda di",
   developedBy: "è sviluppato da",
   developerOf: "ha sviluppato",
   publishedBy: "è pubblicato da",
@@ -127,6 +131,7 @@ export function KnowledgeGraph({
   highlightNode,
   onNodeRightClick,
   onBackgroundClick,
+  onExpand,
   hiddenCount = 0,
   onRestoreHidden,
   onKeepOnly,
@@ -1028,10 +1033,17 @@ export function KnowledgeGraph({
                 </div>
                 <p className="font-serif text-[17px] leading-snug">
                   {a.label}
-                  <span className="text-mute">{derived ? " e " : ` ${REL_VERB[label] ?? label} `}</span>
+                  <span className="text-mute">
+                    {derived && label !== "sameCompanyAs" ? " e " : ` ${REL_VERB[label] ?? label} `}
+                  </span>
                   {b.label}
                 </p>
-                {derived && (
+                {label === "sameCompanyAs" && (
+                  <p className="mt-3 border-t border-rule pt-2.5 text-[12px] text-mute">
+                    Stesso nome come sviluppatore e come publisher: sono due nodi (le classi sono disgiunte) della stessa azienda.
+                  </p>
+                )}
+                {derived && label !== "sameCompanyAs" && (
                   <div className="mt-3 border-t border-rule pt-2.5">
                     <p className="label mb-1.5">{SHARED_TEXT[label] ?? "In comune"}</p>
                     {info === "loading" || info === null ? (
@@ -1043,9 +1055,20 @@ export function KnowledgeGraph({
                         {info.shared.map((s) => (
                           <li key={s.uri}>
                             <button
-                              onClick={() => onNodeClick(s.uri)}
+                              onClick={() => {
+                                // put the shared thing on the scene, linked to both nodes, and open it
+                                if (onExpand && info.via) {
+                                  onExpand({
+                                    nodes: [
+                                      { id: s.uri, label: s.label, type: s.type, color: typeColor(s.type), size: 8 },
+                                    ],
+                                    links: [a, b].map((n: any) => ({ source: n.id, target: s.uri, label: info.via! })),
+                                  });
+                                }
+                                onNodeClick(s.uri);
+                              }}
                               className="inline-flex items-center gap-1.5 rounded-sm border border-rule px-2 py-1 text-[13px] hover:border-brick hover:text-brick"
-                              title="Apri la scheda"
+                              title="Aggiungi al grafo, collegato a entrambi"
                             >
                               <span className="h-2 w-2 rounded-full" style={{ background: typeColor(s.type) }} />
                               {s.label}
@@ -1083,8 +1106,22 @@ export function KnowledgeGraph({
               return [...keep];
             };
             const done = () => setSelected(new Set());
+            // frame the node(s) and their direct neighbours (the nearest MAX_FOCUS_NODES), without hiding anything
+            const frame = () => {
+              const nb = withNeighbours().filter((id) => !ids.includes(id));
+              const byId = new Map(filtered.nodes.map((n) => [n.id, n]));
+              const order = [...ids, ...nb].slice(0, MAX_FOCUS_NODES).map((id) => byId.get(id)).filter(Boolean);
+              fit(500, order);
+            };
             return (
               <>
+                <button
+                  className="btn !px-2.5 !py-1"
+                  title="Inquadra questi nodi e i loro vicini diretti"
+                  onClick={frame}
+                >
+                  <Locate className="h-3.5 w-3.5" /> Inquadra
+                </button>
                 <button
                   className="btn !px-2.5 !py-1"
                   title="Tieni solo questi nodi e nascondi tutti gli altri"
