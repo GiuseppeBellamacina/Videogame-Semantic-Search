@@ -1,7 +1,7 @@
 \section{Sintassi DL delle Classi Definite}
 \label{sec:app_dl}
 
-Di seguito si riporta la sintassi DL compatta delle 50 classi definite
+Di seguito si riporta la sintassi DL compatta delle 52 classi definite
 dell'ontologia e delle 2 classi con vincolo di cardinalit\`a. La notazione $\sqcap$ indica intersezione ($\mathtt{owl:intersectionOf}$),
 $\exists$ indica restrizione esistenziale ($\mathtt{owl:someValuesFrom}$),
 $\neg$ indica complemento ($\mathtt{owl:complementOf}$), $\leq$ indica
@@ -61,6 +61,8 @@ cardinalit\`a massima ($\mathtt{owl:maxCardinality}$).
 \text{AmericanGame} &\equiv \text{VideoGame} \sqcap \exists\text{countryOfOrigin.}\{\text{United States}\} \\
 \text{MultiPlatformGame} &\equiv \text{VideoGame} \sqcap \mathopen{\geq}3\,\text{availableOn.Platform} \\
 \text{GOTYWinner} &\equiv \text{VideoGame} \sqcap \exists\text{wonAward.GameOfTheYearAward} \\[4pt]
+\text{Developer}           &\equiv \text{Company} \sqcap \exists\text{developerOf.VideoGame} \\
+\text{Publisher}           &\equiv \text{Company} \sqcap \exists\text{publisherOf.VideoGame} \\
 \text{GameWithSingleDeveloper} &\sqsubseteq \text{VideoGame} \sqcap \mathopen{\leq}1\,\text{developedBy} \\
 \text{ExclusiveRelease}     &\sqsubseteq \text{VideoGame} \sqcap \mathopen{\leq}1\,\text{availableOn}
 \end{align*}
@@ -68,6 +70,6 @@ cardinalit\`a massima ($\mathtt{owl:maxCardinality}$).
 
 \vspace{8pt}
 \noindent
-Le prime 50 classi utilizzano $\equiv$ (condizioni necessarie e sufficienti,
+Le prime 52 classi utilizzano $\equiv$ (condizioni necessarie e sufficienti,
 \texttt{owl:equivalentClass}); le ultime due usano $\sqsubseteq$ (sole condizioni
 necessarie, \texttt{rdfs:subClassOf}).

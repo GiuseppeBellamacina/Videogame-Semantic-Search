@@ -9,9 +9,9 @@ l'asserzione esplicita \texttt{rdf:type}, le classi definite specificano
 condizioni necessarie e sufficienti (\texttt{owl:equivalentClass}) che permettono
 a un reasoner di \textbf{inferire automaticamente} l'appartenenza di un'istanza.
 
-L'ontologia definisce \textbf{50 classi definite}, raggruppabili in categorie
+L'ontologia definisce \textbf{52 classi definite}, raggruppabili in categorie
 logiche, a cui si affiancano \textbf{2 classi con vincolo di cardinalit\`a} dotate di
-sole condizioni necessarie. La Tabella~\ref{tab:definite} le elenca tutte e 52 con la
+sole condizioni necessarie. La Tabella~\ref{tab:definite} le elenca tutte e 54 con la
 sintassi DL e il tipo di condizione.
 
 \begingroup\footnotesize\setlength{\tabcolsep}{2.5pt}
@@ -86,6 +86,8 @@ JapaneseGame          & S/N & VideoGame $\sqcap$ $\exists$ countryOfOrigin.\{Jap
 AmericanGame          & S/N & VideoGame $\sqcap$ $\exists$ countryOfOrigin.\{United States\} & intersectionOf, hasValue (valore) \\
 MultiPlatformGame     & S/N & VideoGame $\sqcap$ $\geq3$\,availableOn.Platform & intersectionOf, minQualifiedCardinality \\
 GOTYWinner          & S/N & VideoGame $\sqcap$ $\exists$ wonAward.GameOfTheYearAward & intersectionOf, someValuesFrom \\
+Developer           & S/N & Company $\sqcap$ $\exists$ developerOf.VideoGame & intersectionOf, someValuesFrom \\
+Publisher           & S/N & Company $\sqcap$ $\exists$ publisherOf.VideoGame & intersectionOf, someValuesFrom \\
 % Cardinality (solo necessarie)
 GameWithSingleDeveloper & N & $\sqsubseteq$ VideoGame $\sqcap$ $\leq1$developedBy     & subClassOf, maxCardinality \\
 ExclusiveRelease    & N & $\sqsubseteq$ VideoGame $\sqcap$ $\leq1$availableOn        & subClassOf, maxCardinality \\
@@ -148,7 +150,7 @@ con \texttt{xsd:minInclusive}, un costrutto OWL 2 DL non coperto da OWL 2 RL
 
 \begin{itemize}[nosep]
   \item \texttt{HighlyRatedGame} $\equiv$ VideoGame $\sqcap$ $\exists$\texttt{metacriticScore.xsd:integer}[$\geq 85$]
-    --- giochi con Metacritic $\geq$ 85;
+    --- giochi con Metacritic $\geq$ 85 (la classe contiene solo i giochi che hanno un punteggio);
   \item \texttt{RecentGame} $\equiv$ VideoGame $\sqcap$ $\exists$\texttt{releaseDate.xsd:date}[$\geq$ 2020-01-01]
     --- giochi rilasciati dal 2020.
 \end{itemize}
@@ -158,35 +160,25 @@ con \texttt{xsd:minInclusive}, un costrutto OWL 2 DL non coperto da OWL 2 RL
 \subsubsection{Award e Franchise (preesistenti)}
 
 \texttt{AwardWinningGame} e \texttt{FranchiseGame} sono le due classi definite
-originali (V1), preservate nell'estensione V2:
+della prima versione dell'ontologia, mantenute nella versione attuale:
 \begin{itemize}[nosep]
   \item \texttt{AwardWinningGame}: giochi con almeno un premio (\texttt{wonAward});
   \item \texttt{FranchiseGame}: giochi appartenenti a una serie (\texttt{belongsTo}).
 \end{itemize}
 
-\subsubsection{Cardinality (solo necessarie)}
+\subsubsection{Cardinality (solo condizioni necessarie)}
 
-\texttt{GameWithSingleDeveloper} e \texttt{ExclusiveRelease} sono caratterizzate da
-\textbf{sole condizioni necessarie} (\texttt{rdfs:subClassOf} verso una restrizione
-\texttt{owl:maxCardinality} non qualificata, anzich\'e \texttt{owl:equivalentClass}):
-non sono quindi classi definite in senso stretto. Questa scelta \`e deliberata:
-\begin{itemize}[nosep]
-  \item \texttt{GameWithSingleDeveloper}: $\leq 1$ \texttt{developedBy}.
-    Una condizione sufficiente sarebbe di scarsa utilit\`a: per la
-    \textit{Open World Assumption} un reasoner pu\`o concludere $\leq 1$
-    \texttt{developedBy} solo in presenza di assiomi di chiusura espliciti, per cui
-    la classe non classificherebbe quasi mai alcun gioco;
-  \item \texttt{ExclusiveRelease}: $\leq 1$ \texttt{availableOn}.
-    Analogo ragionamento: un gioco esclusiva \textit{ha al massimo} 1 piattaforma,
-    ma non tutti i giochi con $\leq$ 1 piattaforma sono necessariamente esclusive.
-\end{itemize}
+\texttt{GameWithSingleDeveloper} (${\le}1$ \texttt{developedBy}) ed \texttt{ExclusiveRelease}
+(${\le}1$ \texttt{availableOn}) sono dichiarate con \texttt{rdfs:subClassOf} verso una restrizione
+\texttt{owl:maxCardinality} non qualificata, e non con \texttt{owl:equivalentClass}. Una definizione
+sufficiente sarebbe poco utile sotto la \textit{Open World Assumption}: dall'assenza di un secondo
+sviluppatore (o di una seconda piattaforma) un reasoner non pu\`o concludere che il gioco ne abbia uno
+solo, e la classe non classificherebbe praticamente alcun gioco.
 
-Queste classi non sono vincoli di integrit\`a e non classificano automaticamente.
-Sotto la \textit{Open World Assumption} una restrizione ${\le}1$ non rifiuta un'ontologia
-con due valori: un reasoner OWL 2 RL, con la regola \texttt{cls-maxc2}, concluderebbe
-invece che i due valori sono lo stesso individuo (\texttt{owl:sameAs}). Sono quindi
-condizioni necessarie, utili alla documentazione dello schema; un vincolo vero, che
-segnali l'errore, richiede SHACL (cfr.~Sezione~\ref{sec:conclusione}).
+Per lo stesso motivo le due classi non sono vincoli di integrit\`a: una restrizione ${\le}1$ non rende
+inconsistente un'ontologia con due valori, e un reasoner OWL 2 RL (regola \texttt{cls-maxc2}) conclude
+che i due valori coincidono (\texttt{owl:sameAs}). Le classi documentano quindi la cardinalit\`a
+attesa; un controllo effettivo richiede SHACL (cfr.~Sezione~\ref{sec:conclusione}).
 
 \subsection{Costrutti OWL 2 Utilizzati}
 
@@ -204,8 +196,8 @@ nell'Appendice~\ref{sec:app_turtle}.
 \toprule
 \textbf{Costrutto}          & \textbf{Classi}                                & \textbf{Rif. Lezione} \\
 \midrule
-\texttt{owl:someValuesFrom}& 38: 36 su object property, 2 su datatype property & Lez.~15 (esistenziale) \\
-\texttt{owl:intersectionOf}& Tutte le 50 classi definite                      & Lez.~16 (intersezione) \\
+\texttt{owl:someValuesFrom}& 40: 38 su object property, 2 su datatype property & Lez.~15 (esistenziale) \\
+\texttt{owl:intersectionOf}& Tutte le 52 classi definite                      & Lez.~16 (intersezione) \\
 \texttt{owl:complementOf}  & StandaloneGame                                   & Lez.~16 (complemento) \\
 \texttt{owl:maxCardinality}& GameWithSingleDeveloper, ExclusiveRelease        & Lez.~17--18 \\
 \texttt{owl:minQualified-}\newline\texttt{Cardinality}& MultiConsoleGame, MultiPlatformGame                  & Lez.~17--18 \\

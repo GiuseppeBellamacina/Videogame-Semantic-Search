@@ -23,6 +23,21 @@ $\texttt{PlayStationGame} \equiv \texttt{VideoGame} \sqcap \exists\,\texttt{avai
 L'intersezione \`e una lista RDF di due elementi: la classe \texttt{VideoGame} e
 una restrizione anonima.
 
+\subsection*{Ruolo di un'azienda come classe definita}
+
+\begin{lstlisting}[style=turtle]
+vg:Developer a owl:Class ;
+    rdfs:subClassOf vg:Company ;
+    owl:equivalentClass [ a owl:Class ;
+        owl:intersectionOf ( vg:Company
+            [ a owl:Restriction ;
+              owl:onProperty vg:developerOf ;
+              owl:someValuesFrom vg:VideoGame ] ) ] .
+\end{lstlisting}
+
+$\texttt{Developer} \equiv \texttt{Company} \sqcap \exists\,\texttt{developerOf.VideoGame}$; \texttt{Publisher} \`e
+definita allo stesso modo con \texttt{publisherOf}, e le due classi non sono disgiunte.
+
 \subsection*{Classe definita con datatype restriction}
 
 \begin{lstlisting}[style=turtle]

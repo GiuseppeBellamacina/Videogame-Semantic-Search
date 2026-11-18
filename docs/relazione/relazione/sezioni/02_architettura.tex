@@ -73,7 +73,7 @@ Il flusso di una tipica interrogazione \`e il seguente:
   \item Il frontend invia la domanda al backend via HTTP POST su \texttt{/api/query};
   \item Lo \textbf{SPARQL Agent} (modello scelto con \texttt{LLM\_MODEL}, OpenAI o Anthropic) genera una query SPARQL a partire dalla domanda NL, utilizzando il contesto dell'ontologia (classi, propriet\`a, esempi);
   \item Il \textbf{SPARQL Validator} controlla con rdflib la correttezza sintattica della query generata; se la query \`e invalida, fallisce in esecuzione o restituisce zero risultati, l'agente ritenta (fino a 3 retry, quindi al massimo 4 tentativi);
-  \item La query viene eseguita su \textbf{pyoxigraph} contro il file OWL;
+  \item La query viene eseguita su \textbf{pyoxigraph} contro il file OWL, con un tetto di 1000 righe e un timeout di 30 secondi;
   \item Il \textbf{GraphBuilder} trasforma i risultati SPARQL in nodi e archi per il frontend (con metadati di tipo, label, colore);
   \item Il frontend riceve i risultati e li visualizza nella ResultList e nel Knowledge Graph 2D interattivo.
 \end{enumerate}
@@ -102,7 +102,8 @@ La Tabella~\ref{tab:componenti} elenca i principali componenti software con le r
 \texttt{sparql\_validator.py}& Validazione sintattica SPARQL pre-esecuzione                     \\
 \texttt{ontology\_service.py}& Caricamento OWL, esecuzione query via pyoxigraph                 \\
 \texttt{graph\_builder.py}   & Costruzione nodi/archi da risultati RDF per il frontend          \\
-\texttt{image\_cache.py}     & Recupero e cache immagini da Wikipedia API                       \\
+\texttt{image\_store.py}     & Recupero delle immagini da Wikipedia e Wikidata, con code a frequenza limitata \\
+\texttt{image\_cache.py}     & Cache di etichette e tipi dei nodi                               \\
 \texttt{cache.py}           & Cache SQLite locale con TTL                                      \\
 \texttt{search\_index.py}    & Indice dei nomi per l'autosuggest                                \\
 \texttt{query\_builder.py}   & Generazione SPARQL da filtri strutturati (query builder)         \\
@@ -125,7 +126,8 @@ La Tabella~\ref{tab:endpoint} riassume gli endpoint REST esposti dal backend.
 \centering
 \caption{Endpoint API}
 \label{tab:endpoint}
-\begin{tabular}{lll}
+\small
+\begin{tabular}{llp{7.2cm}}
 \toprule
 \textbf{Metodo} & \textbf{Endpoint}             & \textbf{Descrizione}                     \\
 \midrule

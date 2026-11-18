@@ -271,6 +271,7 @@ class OntologyService:
                     if isinstance(q.object, ox.NamedNode) and q.object.value not in seen:
                         seen.add(q.object.value)
                         todo.append(q.object)
+            seen.discard(c.value)  # a reflexive subClassOf must not hide the class itself
             return seen
 
         types = {
@@ -430,8 +431,6 @@ class OntologyService:
 
     # Map predicate → expected type of target (outgoing) or source (incoming)
     _PRED_TO_TYPE = {
-        "developedBy": "Developer",
-        "publishedBy": "Publisher",
         "hasGenre": "Genre",
         "availableOn": "Platform",
         "hasCharacter": "Character",
@@ -459,8 +458,6 @@ class OntologyService:
         "modeInGame": "VideoGame",
     }
     _PRED_TO_SOURCE_TYPE = {
-        "developerOf": "Developer",
-        "publisherOf": "Publisher",
         "appearsIn": "Character",
         "includes": "Franchise",
         "genreOf": "Genre",
@@ -508,8 +505,10 @@ ONTOLOGY SCHEMA (namespace prefix: vg = <http://www.videogame-ontology.org/ontol
 
 BASE CLASSES:
 - vg:VideoGame — A video game
-- vg:Developer — A game development studio
-- vg:Publisher — A game publisher company
+- vg:Company — A company or studio; Developer and Publisher are ROLES of the same individual (a company
+  that develops and publishes, like FromSoftware, is ONE individual typed vg:Developer and vg:Publisher)
+- vg:Developer — Role of a company that develops games (has vg:developerName)
+- vg:Publisher — Role of a company that publishes games (has vg:publisherName)
 - vg:Genre — A game genre (e.g., RPG, FPS, Action)
 - vg:Platform — A gaming platform (e.g., PlayStation 5, PC, Nintendo Switch)
 - vg:Character — A character in a game
@@ -565,7 +564,7 @@ OBJECT PROPERTIES (domain → range) and their inverses:
 - vg:sequelOf (VideoGame → VideoGame) — transitive; inverse: vg:hasSequel
   (sequelOf is transitive: a game is a sequelOf all its predecessors)
 
-- vg:sameCompanyAs (Developer <-> Publisher) — symmetric: the developer node and the publisher node of the same company (e.g. FromSoftware as developer and as publisher)
+- vg:subsidiaryOf (Company -> Company) — transitive: a company that belongs to a parent company
 
 INFERRED OBJECT PROPERTIES (materialised; symmetric links between two games):
 - vg:sharedFranchiseWith — same franchise (chain belongsTo ∘ includes)

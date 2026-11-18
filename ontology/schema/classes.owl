@@ -25,14 +25,43 @@ Classes
         <rdfs:comment>A video game product</rdfs:comment>
     </owl:Class>
 
+    <owl:Class rdf:about="#Company">
+        <rdfs:label>Company</rdfs:label>
+        <rdfs:comment>A company or studio. One individual per company: Developer and Publisher are roles it can play, not separate entities</rdfs:comment>
+    </owl:Class>
+
     <owl:Class rdf:about="#Developer">
+        <rdfs:subClassOf rdf:resource="#Company"/>
         <rdfs:label>Developer</rdfs:label>
-        <rdfs:comment>A company or studio that develops video games</rdfs:comment>
+        <rdfs:comment>A company that has developed at least one video game. Not disjoint from the other role: one company can be both</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#Company"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#developerOf"/>
+                        <owl:someValuesFrom rdf:resource="#VideoGame"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
     </owl:Class>
 
     <owl:Class rdf:about="#Publisher">
+        <rdfs:subClassOf rdf:resource="#Company"/>
         <rdfs:label>Publisher</rdfs:label>
-        <rdfs:comment>A company that publishes video games</rdfs:comment>
+        <rdfs:comment>A company that has published at least one video game. Not disjoint from the other role: one company can be both</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#Company"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#publisherOf"/>
+                        <owl:someValuesFrom rdf:resource="#VideoGame"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
     </owl:Class>
 
     <owl:Class rdf:about="#Genre">
@@ -450,8 +479,7 @@ Disjointness (AllDisjointClasses)
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
         <owl:members rdf:parseType="Collection">
             <rdf:Description rdf:about="#VideoGame"/>
-            <rdf:Description rdf:about="#Developer"/>
-            <rdf:Description rdf:about="#Publisher"/>
+            <rdf:Description rdf:about="#Company"/>
             <rdf:Description rdf:about="#Genre"/>
             <rdf:Description rdf:about="#Platform"/>
             <rdf:Description rdf:about="#Character"/>

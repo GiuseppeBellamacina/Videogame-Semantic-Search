@@ -46,6 +46,8 @@ Lo script mostra barre `tqdm` per ogni fase. Fasi:
 3. **validate**: controlli sulla TBox (`validate_tbox.py`) e conteggio delle istanze delle classi inferite; le classi vuote sono segnalate con `EMPTY`.
 4. **write**: scrive `videogames_full.owl` e `videogames_full.ttl`.
 
+Per portare un `videogames_full.owl` già costruito allo schema e al modello `Company` correnti senza rifare il fetch: `uv run python ontology/scripts/retrofit_full.py` (`--dry-run` per vedere cosa cambia; gli originali vanno in `ontology/.cache/retrofit-backup/`). Fa le stesse modifiche che farebbe la build: schema nuovo, niente triple derivate dai vecchi allineamenti, un solo individuo per azienda con entrambi i ruoli, `rdf:type Company`.
+
 Opzioni: `--cache-dir`, `--output`, `--max-group N` (limite ai gruppi per i link pairwise `shared*With`, evita esplosioni combinatorie), `--keep-dl-axioms`.
 
 `enrich_owl.py` può essere usato anche da solo su un file OWL (idempotente, `--reason` per materializzare, salta `videogames.owl`).
@@ -61,8 +63,9 @@ La tabella elenca le classi base e le principali classi definite. La TBox includ
 | Classe               | Tipo       | Descrizione                                                             | URI                   |
 | -------------------- | ---------- | ----------------------------------------------------------------------- | --------------------- |
 | **VideoGame**        | Primitiva  | Un videogioco                                                           | `vg:VideoGame`        |
-| **Developer**        | Primitiva  | Uno studio di sviluppo                                                  | `vg:Developer`        |
-| **Publisher**        | Primitiva  | Un editore/distributore                                                 | `vg:Publisher`        |
+| **Company**          | Primitiva  | Un'azienda: un solo individuo, con i ruoli Developer e/o Publisher       | `vg:Company`          |
+| **Developer**        | Definita   | Company ⊓ ∃developerOf.VideoGame: azienda che ha sviluppato un gioco     | `vg:Developer`        |
+| **Publisher**        | Definita   | Company ⊓ ∃publisherOf.VideoGame: azienda che ha pubblicato un gioco     | `vg:Publisher`        |
 | **Genre**            | Primitiva  | Un genere videoludico (RPG, FPS, ecc.)                                  | `vg:Genre`            |
 | **Platform**         | Primitiva  | Una piattaforma di gioco (PS5, PC, Switch, ecc.)                        | `vg:Platform`         |
 | **Character**        | Primitiva  | Un personaggio di un videogioco                                         | `vg:Character`        |
@@ -83,10 +86,10 @@ La tabella elenca le classi base e le principali classi definite. La TBox includ
 
 | Proprietà                  | Dominio → Range           | Inversa / Chain             | Caratteristiche                                       |
 | -------------------------- | ------------------------- | --------------------------- | ----------------------------------------------------- |
-| `vg:developedBy`           | VideoGame → Developer     | `vg:developerOf`            | Asimmetrica, Irriflessiva                             |
-| `vg:developerOf`           | Developer → VideoGame     | `vg:developedBy`            | Asimmetrica, Irriflessiva                             |
-| `vg:publishedBy`           | VideoGame → Publisher     | `vg:publisherOf`            | Asimmetrica, Irriflessiva                             |
-| `vg:publisherOf`           | Publisher → VideoGame     | `vg:publishedBy`            | Asimmetrica, Irriflessiva                             |
+| `vg:developedBy`           | VideoGame → Company       | `vg:developerOf`            | Asimmetrica, Irriflessiva                             |
+| `vg:developerOf`           | Company → VideoGame       | `vg:developedBy`            | Asimmetrica, Irriflessiva                             |
+| `vg:publishedBy`           | VideoGame → Company       | `vg:publisherOf`            | Asimmetrica, Irriflessiva                             |
+| `vg:publisherOf`           | Company → VideoGame       | `vg:publishedBy`            | Asimmetrica, Irriflessiva                             |
 | `vg:hasGenre`              | VideoGame → Genre         | `vg:genreOf`                         | Irriflessiva                                          |
 | `vg:availableOn`           | VideoGame → Platform      | `vg:platformFor`                         | Irriflessiva                                          |
 | `vg:hasCharacter`          | VideoGame → Character     | `vg:appearsIn`              | Asimmetrica, Irriflessiva                             |
@@ -97,7 +100,6 @@ La tabella elenca le classi base e le principali classi definite. La TBox includ
 | `vg:sequelOf`              | VideoGame → VideoGame     | `vg:hasSequel`              | Transitiva, Asimmetrica, Irriflessiva                           |
 | `vg:madeWith`              | VideoGame → GameEngine    | `vg:engineUsedIn`                         | Irriflessiva                                          |
 | `vg:hasGameMode`           | VideoGame → GameMode      | `vg:modeInGame`             | Irriflessiva (individui `GameMode`, non stringhe)     |
-| `vg:sameCompanyAs`         | Developer ↔ Publisher     | —                           | Simmetrica (3.360 aziende, 6.720 triple)              |
 | `vg:sharedFranchiseWith` ² | VideoGame ↔ VideoGame     | `belongsTo ∘ includes`      | Simmetrica, property chain inferita                   |
 | `vg:sharesDeveloperWith` ² | VideoGame ↔ VideoGame     | `developedBy ∘ developerOf` | Simmetrica, property chain inferita                   |
 | `vg:sharesPublisherWith` ² | VideoGame ↔ VideoGame     | `publishedBy ∘ publisherOf` | Simmetrica, property chain inferita                   |
@@ -137,8 +139,8 @@ Le URI delle istanze seguono questo pattern:
 
 ```text
 http://www.videogame-ontology.org/ontology#<NomeGioco>          → VideoGame
-http://www.videogame-ontology.org/ontology#dev/<NomeStudio>     → Developer
-http://www.videogame-ontology.org/ontology#pub/<NomeEditore>    → Publisher
+http://www.videogame-ontology.org/ontology#dev/<NomeStudio>     → Developer (e Publisher, se la stessa azienda pubblica)
+http://www.videogame-ontology.org/ontology#pub/<NomeEditore>    → Publisher (e Developer, se la stessa azienda sviluppa)
 http://www.videogame-ontology.org/ontology#genre/<NomeGenere>   → Genre
 http://www.videogame-ontology.org/ontology#platform/<NomePlatf> → Platform
 http://www.videogame-ontology.org/ontology#char/<NomePersonaggio> → Character
@@ -248,11 +250,12 @@ Le URI sono generate deterministicamente dal nome dell'entità (via `make_uri()`
 
 ### 11. Classi definite e proprietà inferite
 
-L'ontologia include 50 classi **definite** (OWL 2 `equivalentClass` + `intersectionOf` con una restrizione), tutte non vuote sulla build completa:
+L'ontologia include 52 classi **definite** (OWL 2 `equivalentClass` + `intersectionOf` con una restrizione), tutte non vuote sulla build completa:
 
 - **Modalità**: `SinglePlayerGame`, `MultiplayerGame`, `CoopGame`
 - **Piattaforma**: `PCGame`, `ConsoleGame`, `MobileGame`, `NintendoGame`, `PlayStationGame`, `XboxGame`; per sistema operativo `WindowsGame`, `MacOSGame`, `LinuxGame`, `AndroidGame`; per altre famiglie `BrowserGame`, `ArcadeGame`, `RetroComputerGame`, `VRGame`
 - **Genere** (un genere può appartenere a più famiglie): `ActionGame`, `RPGGame`, `StrategyGame`, `SimulationGame`, `AdventureGame`, `SportsGame`, `RacingGame`, `PuzzleGame`, `HorrorGame`, `PlatformerGame`, `ShooterGame`, `CasualGame`, `VisualNovelGame`
+- **Ruoli delle aziende**: `Developer` (`Company ⊓ ∃developerOf.VideoGame`) e `Publisher` (`Company ⊓ ∃publisherOf.VideoGame`); non sono disgiunti
 - **Publisher** (nominali, `publishedBy value <publisher>`): `NintendoPublishedGame`, `SonyPublishedGame`, `XboxPublishedGame`, `BandaiNamcoPublishedGame`, `SquareEnixPublishedGame`, `ElectronicArtsPublishedGame`, `KonamiPublishedGame`, `CapcomPublishedGame`; ogni publisher è un individuo dichiarato nello schema con lo stesso URI generato dal fetch
 - **Paese** (valore letterale): `JapaneseGame`, `AmericanGame`
 - **Altro**: `AwardWinningGame`, `GOTYWinner` (vincitore di un premio `GameOfTheYearAward`: il Game of the Year di The Game Awards dal 2014 e, per il 2010-2013, quello degli Spike Video Game Awards; non le categorie né i GOTY di altri enti), `FranchiseGame`, `UnrealEngineGame` (motore di tipo `UnrealEngineFamily`), `HighlyRatedGame` (`metacriticScore ≥ 85`), `RecentGame` (`releaseDate ≥ 2020-01-01`), `SequelGame`, `StandaloneGame`
@@ -309,13 +312,13 @@ Questa architettura evita chiamate HTTP ripetitive mantenendo bassa la RAM.
 | Metrica                               | Valore             |
 | ------------------------------------- | ------------------ |
 | Triple scaricate da Wikidata          | 945.767            |
-| Triple nel file finale                | 4.746.848          |
+| Triple nel file finale                | 4.410.582          |
 | Videogiochi                           | 107.522            |
 | Sviluppatori / Publisher              | 5.945 / 4.158      |
 | Generi / Piattaforme                  | 605 / 311          |
 | Franchise / Motori / Personaggi / Premi | 1.840 / 344 / 4.884 / 448 |
 | Modalità di gioco (individui)         | 40                 |
 
-Istanze delle 50 classi definite (tutte non vuote): `StandaloneGame` 106.926, `PCGame` 100.336, `WindowsGame` 100.099, `SinglePlayerGame` 95.723, `RecentGame` 71.548, `ActionGame` 32.828, `CasualGame` 32.634, `AdventureGame` 30.568, `MacOSGame` 20.126, `MultiPlatformGame` 19.138, `MultiplayerGame` 17.142, `SimulationGame` 16.444, `StrategyGame` 15.386, `LinuxGame` 14.767, `RPGGame` 14.622, `ConsoleGame` 13.885, `CoopGame` 9.079, `NintendoGame` 8.853, `PlayStationGame` 8.546, `MultiConsoleGame` 7.703, `FranchiseGame` 5.646, `XboxGame` 5.623, `MobileGame` 5.253, `JapaneseGame` 4.089, `AndroidGame` 3.941, `SportsGame` 3.399, `RacingGame` 3.365, `AmericanGame` 3.085, `VisualNovelGame` 2.368, `ShooterGame` 1.971, `PuzzleGame` 1.839, `UnrealEngineGame` 1.783, `PlatformerGame` 1.429, `AwardWinningGame` 931, `HorrorGame` 862, `BrowserGame` 737, `SequelGame` 596, `NintendoPublishedGame` 409, `BandaiNamcoPublishedGame` 342, `ArcadeGame` 267, `SquareEnixPublishedGame` 243, `SonyPublishedGame` 242, `ElectronicArtsPublishedGame` 202, `XboxPublishedGame` 186, `RetroComputerGame` 177, `KonamiPublishedGame` 166, `CapcomPublishedGame` 119, `HighlyRatedGame` 107, `VRGame` 60, `GOTYWinner` 16.
+Istanze delle 52 classi definite (tutte non vuote): `StandaloneGame` 106.926, `PCGame` 100.336, `WindowsGame` 100.099, `SinglePlayerGame` 95.723, `RecentGame` 71.548, `ActionGame` 32.828, `CasualGame` 32.634, `AdventureGame` 30.568, `MacOSGame` 20.126, `MultiPlatformGame` 19.138, `MultiplayerGame` 17.142, `SimulationGame` 16.444, `StrategyGame` 15.386, `LinuxGame` 14.767, `RPGGame` 14.622, `ConsoleGame` 13.885, `CoopGame` 9.079, `NintendoGame` 8.853, `PlayStationGame` 8.546, `MultiConsoleGame` 7.703, `FranchiseGame` 5.646, `XboxGame` 5.623, `MobileGame` 5.253, `JapaneseGame` 4.089, `AndroidGame` 3.941, `SportsGame` 3.399, `RacingGame` 3.365, `AmericanGame` 3.085, `VisualNovelGame` 2.368, `ShooterGame` 1.971, `PuzzleGame` 1.839, `UnrealEngineGame` 1.783, `PlatformerGame` 1.429, `AwardWinningGame` 931, `HorrorGame` 862, `BrowserGame` 737, `SequelGame` 596, `NintendoPublishedGame` 409, `BandaiNamcoPublishedGame` 342, `ArcadeGame` 267, `SquareEnixPublishedGame` 243, `SonyPublishedGame` 242, `ElectronicArtsPublishedGame` 202, `XboxPublishedGame` 186, `RetroComputerGame` 177, `KonamiPublishedGame` 166, `CapcomPublishedGame` 119, `HighlyRatedGame` 107, `VRGame` 60, `GOTYWinner` 16.
 
-Il reasoning sulla build completa: `owlrl` aggiunge 5,18 milioni di triple a circa 946.000 in circa 45 minuti (la pulizia successiva toglie i nodi `ErrorMessage`, 255.048 triple riflessive e 1,33 milioni di triple con nodi anonimi, sostituiti dallo schema originale), la materializzazione mirata aggiunge 178.581 triple, le regole CONSTRUCT 26.841. La fusione dei duplicati avviene solo tra entità dello stesso tipo (confronto per nome, senza maiuscole, spazi multipli e `&`; per sviluppatori e publisher anche senza punteggiatura e forma legale: «Netflix, Inc.» = «Netflix»), e i giochi fusi per titolo (remake, porting) tengono una sola data di uscita (la più antica), un solo punteggio (il più alto) e un solo nome, così le proprietà funzionali non hanno più valori multipli (prima 311 date, 90 punteggi e 99 nomi doppi). I 10.232 giochi sviluppati e pubblicati dalla stessa azienda si riconoscono dal collegamento `sameCompanyAs`. così un gioco e il franchise omonimo restano individui distinti. Le relazioni `sharesDeveloperWith` / `sharesPublisherWith` escludono i gruppi con più di 50 giochi (23 sviluppatori, 77 publisher). Lo stesso riepilogo, per le classi principali, è disponibile a runtime su `GET /api/stats`.
+Il reasoning sulla build completa: `owlrl` aggiunge 5,18 milioni di triple a circa 946.000 in circa 45 minuti (la pulizia successiva toglie i nodi `ErrorMessage`, 255.048 triple riflessive e 1,33 milioni di triple con nodi anonimi, sostituiti dallo schema originale), la materializzazione mirata aggiunge 178.581 triple, le regole CONSTRUCT 26.841. La fusione dei duplicati avviene solo tra entità dello stesso tipo (confronto per nome, senza maiuscole, spazi multipli e `&`; per sviluppatori e publisher anche senza punteggiatura e forma legale: «Netflix, Inc.» = «Netflix»), e i giochi fusi per titolo (remake, porting) tengono una sola data di uscita (la più antica), un solo punteggio (il più alto) e un solo nome, così le proprietà funzionali non hanno più valori multipli (prima 311 date, 90 punteggi e 99 nomi doppi). Uno sviluppatore e un publisher con lo stesso nome (3.360 aziende, 10.232 giochi sviluppati e pubblicati dalla stessa azienda) sono un solo individuo `Company` con entrambi i ruoli. così un gioco e il franchise omonimo restano individui distinti. Il tetto di 50 giochi per gruppo vale solo per la materializzazione mirata: le catene `sharesDeveloperWith` / `sharesPublisherWith` sono già derivate da `owlrl` per tutti i gruppi. Lo stesso riepilogo, per le classi principali, è disponibile a runtime su `GET /api/stats`.
