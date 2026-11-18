@@ -9,9 +9,9 @@ l'asserzione esplicita \texttt{rdf:type}, le classi definite specificano
 condizioni necessarie e sufficienti (\texttt{owl:equivalentClass}) che permettono
 a un reasoner di \textbf{inferire automaticamente} l'appartenenza di un'istanza.
 
-L'ontologia definisce \textbf{50 classi definite}, raggruppabili in categorie
+L'ontologia definisce \textbf{52 classi definite}, raggruppabili in categorie
 logiche, a cui si affiancano \textbf{2 classi con vincolo di cardinalit\`a} dotate di
-sole condizioni necessarie. La Tabella~\ref{tab:definite} le elenca tutte e 52 con la
+sole condizioni necessarie. La Tabella~\ref{tab:definite} le elenca tutte e 54 con la
 sintassi DL e il tipo di condizione.
 
 \begingroup\footnotesize\setlength{\tabcolsep}{2.5pt}
@@ -86,6 +86,8 @@ JapaneseGame          & S/N & VideoGame $\sqcap$ $\exists$ countryOfOrigin.\{Jap
 AmericanGame          & S/N & VideoGame $\sqcap$ $\exists$ countryOfOrigin.\{United States\} & intersectionOf, hasValue (valore) \\
 MultiPlatformGame     & S/N & VideoGame $\sqcap$ $\geq3$\,availableOn.Platform & intersectionOf, minQualifiedCardinality \\
 GOTYWinner          & S/N & VideoGame $\sqcap$ $\exists$ wonAward.GameOfTheYearAward & intersectionOf, someValuesFrom \\
+Developer           & S/N & Company $\sqcap$ $\exists$ developerOf.VideoGame & intersectionOf, someValuesFrom \\
+Publisher           & S/N & Company $\sqcap$ $\exists$ publisherOf.VideoGame & intersectionOf, someValuesFrom \\
 % Cardinality (solo necessarie)
 GameWithSingleDeveloper & N & $\sqsubseteq$ VideoGame $\sqcap$ $\leq1$developedBy     & subClassOf, maxCardinality \\
 ExclusiveRelease    & N & $\sqsubseteq$ VideoGame $\sqcap$ $\leq1$availableOn        & subClassOf, maxCardinality \\
@@ -204,8 +206,8 @@ nell'Appendice~\ref{sec:app_turtle}.
 \toprule
 \textbf{Costrutto}          & \textbf{Classi}                                & \textbf{Rif. Lezione} \\
 \midrule
-\texttt{owl:someValuesFrom}& 38: 36 su object property, 2 su datatype property & Lez.~15 (esistenziale) \\
-\texttt{owl:intersectionOf}& Tutte le 50 classi definite                      & Lez.~16 (intersezione) \\
+\texttt{owl:someValuesFrom}& 40: 38 su object property, 2 su datatype property & Lez.~15 (esistenziale) \\
+\texttt{owl:intersectionOf}& Tutte le 52 classi definite                      & Lez.~16 (intersezione) \\
 \texttt{owl:complementOf}  & StandaloneGame                                   & Lez.~16 (complemento) \\
 \texttt{owl:maxCardinality}& GameWithSingleDeveloper, ExclusiveRelease        & Lez.~17--18 \\
 \texttt{owl:minQualified-}\newline\texttt{Cardinality}& MultiConsoleGame, MultiPlatformGame                  & Lez.~17--18 \\

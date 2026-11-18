@@ -76,10 +76,14 @@ schema (\texttt{pub/Nintendo}), resta quello. Le propriet\`a \texttt{developedBy
 dei giochi puntano allo stesso nodo e nel grafo dell'applicazione l'azienda compare una volta sola, con
 entrambi i ruoli nella scheda di dettaglio. Le versioni precedenti usavano due individui
 (\texttt{dev/X} e \texttt{pub/X}) legati da una propriet\`a \texttt{sameCompanyAs}, ora rimossa: in 10.232
-giochi lo stesso nome sviluppa e pubblica. I ruoli sono asseriti dal popolamento come le altre
-sottoclassi di tipo; definirli per assiomi
-($\mathit{Developer} \equiv \mathit{Company} \sqcap \exists\,\mathit{developerOf}.\mathit{VideoGame}$)
-sarebbe un'alternativa, non adottata per mantenere semplice il popolamento.
+giochi lo stesso nome sviluppa e pubblica. I ruoli sono classi definite:
+$\mathit{Developer} \equiv \mathit{Company} \sqcap \exists\,\mathit{developerOf}.\mathit{VideoGame}$ e,
+in modo analogo, $\mathit{Publisher}$ con $\mathit{publisherOf}$; \texttt{developedBy}, \texttt{developerOf},
+\texttt{publishedBy} e \texttt{publisherOf} hanno \texttt{Company} come dominio o range. Il popolamento
+asserisce comunque anche il tipo, ridondante ma utile a chi legge il file senza un reasoner. Il file dati
+consegnato \`e stato portato a questo modello con lo script \texttt{retrofit\_full.py}, che applica sul file
+esistente le stesse modifiche della pipeline (schema, fusione delle aziende, rimozione delle triple
+derivate dai vecchi allineamenti) senza ripetere il fetch.
 
 \subsubsection{Reasoning}
 
@@ -92,7 +96,7 @@ materializzazione mirata, non per il risultato: le catene \texttt{sharesDevelope
 \texttt{sharesPublisherWith} sono gi\`a derivate per ogni gruppo dalla chiusura \texttt{owlrl}, che le
 esegue prima (verificato su un developer sintetico con 60 giochi: tutte le 3.540 coppie). Il tetto
 resta quindi una protezione ridondante, e il grafo finale contiene anche le coppie dei gruppi pi\`u
-grandi, che sono quelle che pesano di pi\`u sulla dimensione (circa l'80\% delle triple finali \`e inferito). I conteggi finali sono in Tabella~\ref{tab:abox}
+grandi, che sono quelle che pesano di pi\`u sulla dimensione (circa il 78\% delle triple finali \`e inferito). I conteggi finali sono in Tabella~\ref{tab:abox}
 e Tabella~\ref{tab:inferite}.
 
 \begin{table}[h]
@@ -105,7 +109,7 @@ e Tabella~\ref{tab:inferite}.
 \textbf{Metrica} & \textbf{Valore} \\
 \midrule
 Triple scaricate da Wikidata & 945.767 \\
-Triple nel file finale (dopo il reasoning) & 4.746.848 \\
+Triple nel file finale (dopo il reasoning) & 4.410.582 \\
 Videogiochi & 107.522 \\
 Sviluppatori / Publisher & 5.945 / 4.158 \\
 Generi / Piattaforme & 605 / 311 \\

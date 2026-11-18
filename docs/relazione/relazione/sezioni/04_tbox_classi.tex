@@ -5,7 +5,7 @@
 
 L'ontologia definisce \textbf{11 classi top-level}, ciascuna corrispondente a
 un'entit\`a fondamentale del dominio, pi\`u un ricco albero di sottoclassi che
-raggiunge un totale di \textbf{122 classi}: 70 primitive, 50 definite tramite
+raggiunge un totale di \textbf{122 classi}: 68 primitive, 52 definite tramite
 \texttt{owl:equivalentClass} e 2 caratterizzate da un vincolo di cardinalit\`a massima
 (condizione solo necessaria).
 
@@ -13,7 +13,8 @@ Le 11 classi top-level sono:
 \begin{enumerate}[nosep]
   \item \texttt{vg:VideoGame} --- il videogioco, classe centrale dell'ontologia;
   \item \texttt{vg:Company} --- l'azienda: un solo individuo per azienda, che ha i ruoli
-    \texttt{vg:Developer} (sviluppatore) e \texttt{vg:Publisher} (editore), sottoclassi non disgiunte;
+    \texttt{vg:Developer} (sviluppatore) e \texttt{vg:Publisher} (editore), classi definite dalle relazioni
+    \texttt{developerOf} e \texttt{publisherOf} e non disgiunte;
   \item \texttt{vg:Genre} --- il genere videoludico;
   \item \texttt{vg:Platform} --- la piattaforma hardware/software;
   \item \texttt{vg:Character} --- il personaggio (giocante o non);
@@ -27,7 +28,7 @@ Le 11 classi top-level sono:
 
 \subsection{Tabella Completa delle Classi Primitive}
 
-La Tabella~\ref{tab:classi} elenca tutte le 70 classi primitive (escluse le 50
+La Tabella~\ref{tab:classi} elenca tutte le 68 classi primitive (escluse le 52
 definite e le 2 con vincolo di cardinalit\`a, trattate nella Sezione~\ref{sec:classi_definite}), raggruppate per
 classe top-level di appartenenza.
 
@@ -64,11 +65,9 @@ AAAGame             & VideoGame       & Gioco ad alto budget, grande publisher \
 \multicolumn{3}{c}{\textbf{Company (classe top-level)}} \\
 \midrule
 Company             & owl:Thing       & Azienda (un individuo per azienda) \\
-Developer           & Company         & Ruolo: sviluppa videogiochi \\
 FirstPartyDeveloper & Developer       & Studio proprietario di un platform holder \\
 ThirdPartyDeveloper & Developer       & Studio indipendente \\
 IndieDeveloper      & Developer       & Piccolo sviluppatore senza publisher \\
-Publisher           & Company         & Ruolo: pubblica videogiochi \\
 FirstPartyPublisher & Publisher       & Divisione editoriale di un platform holder \\
 ThirdPartyPublisher & Publisher       & Casa editrice indipendente \\
 \midrule

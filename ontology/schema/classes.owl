@@ -33,13 +33,35 @@ Classes
     <owl:Class rdf:about="#Developer">
         <rdfs:subClassOf rdf:resource="#Company"/>
         <rdfs:label>Developer</rdfs:label>
-        <rdfs:comment>Role of a company that develops video games (not disjoint from Publisher: one company can be both)</rdfs:comment>
+        <rdfs:comment>A company that has developed at least one video game. Not disjoint from the other role: one company can be both</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#Company"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#developerOf"/>
+                        <owl:someValuesFrom rdf:resource="#VideoGame"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
     </owl:Class>
 
     <owl:Class rdf:about="#Publisher">
         <rdfs:subClassOf rdf:resource="#Company"/>
         <rdfs:label>Publisher</rdfs:label>
-        <rdfs:comment>Role of a company that publishes video games (not disjoint from Developer: one company can be both)</rdfs:comment>
+        <rdfs:comment>A company that has published at least one video game. Not disjoint from the other role: one company can be both</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#Company"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#publisherOf"/>
+                        <owl:someValuesFrom rdf:resource="#VideoGame"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
     </owl:Class>
 
     <owl:Class rdf:about="#Genre">

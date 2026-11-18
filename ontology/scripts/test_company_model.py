@@ -58,3 +58,15 @@ def test_both_roles_are_consistent_under_the_schema_and_owlrl():
     # owlrl reports an inconsistency (disjoint classes, ...) as agent-ont:error triples
     assert not list(g.triples((None, URIRef("http://www.daml.org/2002/03/agents/agent-ont#error"), None)))
     assert not vt.check_unsatisfiable_disjoint(schema_loader.load_tbox())
+
+
+def test_developer_and_publisher_are_derived_from_the_roles():
+    g = schema_loader.load_tbox()
+    eo.strip_dl_only_axioms(g)
+    c, game = VG["company/X"], VG["game/X"]
+    g.add((c, RDF.type, VG.Company))
+    g.add((game, RDF.type, VG.VideoGame))
+    g.add((c, VG.developerOf, game))  # no asserted Developer type
+    owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
+    assert (c, RDF.type, VG.Developer) in g
+    assert (c, RDF.type, VG.Publisher) not in g  # only the roles it plays

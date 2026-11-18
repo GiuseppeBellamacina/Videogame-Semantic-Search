@@ -26,7 +26,7 @@ Object Properties
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdfs:domain rdf:resource="#VideoGame"/>
-        <rdfs:range rdf:resource="#Developer"/>
+        <rdfs:range rdf:resource="#Company"/>
         <owl:inverseOf rdf:resource="#developerOf"/>
         <rdfs:label>developed by</rdfs:label>
     </owl:ObjectProperty>
@@ -34,7 +34,7 @@ Object Properties
     <owl:ObjectProperty rdf:about="#developerOf">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
-        <rdfs:domain rdf:resource="#Developer"/>
+        <rdfs:domain rdf:resource="#Company"/>
         <rdfs:range rdf:resource="#VideoGame"/>
         <owl:inverseOf rdf:resource="#developedBy"/>
         <rdfs:label>developer of</rdfs:label>
@@ -45,7 +45,7 @@ Object Properties
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdfs:domain rdf:resource="#VideoGame"/>
-        <rdfs:range rdf:resource="#Publisher"/>
+        <rdfs:range rdf:resource="#Company"/>
         <owl:inverseOf rdf:resource="#publisherOf"/>
         <rdfs:label>published by</rdfs:label>
     </owl:ObjectProperty>
@@ -53,7 +53,7 @@ Object Properties
     <owl:ObjectProperty rdf:about="#publisherOf">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
-        <rdfs:domain rdf:resource="#Publisher"/>
+        <rdfs:domain rdf:resource="#Company"/>
         <rdfs:range rdf:resource="#VideoGame"/>
         <owl:inverseOf rdf:resource="#publishedBy"/>
         <rdfs:label>publisher of</rdfs:label>
