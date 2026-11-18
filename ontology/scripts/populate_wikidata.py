@@ -370,30 +370,17 @@ def clean_functional(g: Graph) -> int:
     return fixed
 
 
-def link_same_company(g: Graph) -> int:
-    """A developer and a publisher with the same (normalised) name are one company wearing two hats.
-    Developer and Publisher are disjoint classes, so they cannot be owl:sameAs: link the two nodes with
-    the symmetric property sameCompanyAs instead."""
-    by_name: dict[str, dict[str, list]] = defaultdict(lambda: {"dev": [], "pub": []})
-    for kind, prop in (("dev", VG.developerName), ("pub", VG.publisherName)):
-        for subj, _, obj in g.triples((None, prop, None)):
-            by_name[dedup_name(prop.split("#")[-1], str(obj))][kind].append(subj)
-    n = 0
-    for sides in by_name.values():
-        for d in sides["dev"]:
-            for p in sides["pub"]:
-                g.add((d, VG.sameCompanyAs, p))
-                g.add((p, VG.sameCompanyAs, d))
-                n += 1
-    return n
+_COMPANY_NAME_PROPS = ("developerName", "publisherName")
+_NAME_PROP_URIS = {VG[n] for n in _NAME_PROPS}
 
 
 def deduplicate_graph(g: Graph) -> int:
     """
     Merge duplicate entities that share the same normalised name *and the same
-    kind* (same name property): a game and its franchise, or a developer and a
-    publisher with the same name, are different individuals and must stay apart
-    (the top classes are pairwise disjoint).
+    kind* (same name property): a game and its franchise are different individuals
+    and must stay apart (the top classes are pairwise disjoint). A developer and a
+    publisher with the same name are ONE company (Company model): they share a kind,
+    and the merged individual keeps both roles (types and name properties).
     For each group of URIs with the same name (case-insensitive, stripped),
     keep the URI with the most triples (subject + object) and redirect all
     references to the others to the canonical URI.
@@ -405,7 +392,8 @@ def deduplicate_graph(g: Graph) -> int:
         prop = VG[prop_local]
         for subj, _, obj in g.triples((None, prop, None)):
             if isinstance(obj, Literal) and isinstance(subj, URIRef):
-                key = (prop_local, dedup_name(prop_local, str(obj)))
+                kind = "company" if prop_local in _COMPANY_NAME_PROPS else prop_local
+                key = (kind, dedup_name(prop_local, str(obj)))
                 if subj not in name_to_uris[key]:
                     name_to_uris[key].append(subj)
 
@@ -429,6 +417,9 @@ def deduplicate_graph(g: Graph) -> int:
         )
         canonical = uris_sorted[0]
 
+        def canonical_has(pred: URIRef, canonical=canonical) -> bool:
+            return any(True for _ in g.objects(canonical, pred))
+
         for duplicate in uris_sorted[1:]:
             if duplicate == canonical:
                 continue
@@ -436,8 +427,8 @@ def deduplicate_graph(g: Graph) -> int:
             # Re-point all triples where duplicate is the subject
             for pred, obj in list(g.predicate_objects(duplicate)):
                 g.remove((duplicate, pred, obj))
-                if pred == VG[name_key[0]]:
-                    continue  # keep a single name: the canonical one
+                if pred in _NAME_PROP_URIS and canonical_has(pred):
+                    continue  # keep a single name per property: the canonical one
                 # Add to canonical only if not already present
                 if (canonical, pred, obj) not in g:
                     g.add((canonical, pred, obj))
@@ -858,5 +849,4 @@ def populate_from_wikidata(
     removed = deduplicate_graph(g)
     logger.info(f"DEDUP: removed {removed} duplicates, graph has {len(g)} triples")
     logger.info(f"CLEAN: {clean_functional(g)} functional values / self-sequels fixed")
-    logger.info(f"COMPANIES: {link_same_company(g)} developer/publisher pairs linked with sameCompanyAs")
     return g

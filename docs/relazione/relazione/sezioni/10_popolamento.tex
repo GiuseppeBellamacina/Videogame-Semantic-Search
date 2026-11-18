@@ -52,7 +52,8 @@ ignora anche gli spazi multipli e il simbolo \&; per sviluppatori e publisher ig
 punteggiatura e forma legale (\emph{Netflix, Inc.} $=$ \emph{Netflix}), mentre parole come
 \emph{Games} o \emph{Studios} restano, perch\'e \emph{Rockstar Games} e \emph{Rockstar Studios}
 sono entit\`a diverse. La fusione avviene solo tra entit\`a dello stesso tipo, perch\'e le classi
-principali sono disgiunte.
+principali sono disgiunte; fanno eccezione sviluppatore e publisher, che sono ruoli della stessa
+azienda (si veda sotto).
 
 I giochi fusi per titolo (un remake o un porting ha lo stesso titolo dell'originale) ricevevano
 pi\`u valori per le propriet\`a funzionali (311 date di uscita, 90 punteggi, 99 nomi): la pipeline
@@ -66,13 +67,19 @@ quasi tutto, ma richiede di rigenerare l'intero popolamento (Sezione~\ref{sec:co
 
 \subsubsection{Aziende che sviluppano e pubblicano}
 
-Un'azienda che \`e sia sviluppatore sia publisher (3.360 nomi, ad esempio FromSoftware) ha due
-individui, \texttt{dev/X} e \texttt{pub/X}. Non si possono dichiarare \texttt{owl:sameAs}: le classi
-\texttt{Developer} e \texttt{Publisher} sono disgiunte e il reasoner dichiarerebbe l'ontologia
-inconsistente. Il popolamento li collega con la propriet\`a simmetrica \texttt{sameCompanyAs}
-(6.720 triple); in 10.232 giochi lo stesso nome sviluppa e pubblica. \`E un aggiramento: il modello pi\`u
-pulito \`e una classe \texttt{Company} con ruoli, e \texttt{Developer} e \texttt{Publisher} come classi definite da
-\texttt{developerOf} e \texttt{publisherOf}; non \`e stato adottato per non rifare il popolamento.
+\texttt{Developer} e \texttt{Publisher} sono \emph{ruoli} della classe \texttt{Company}, non classi disgiunte.
+Un'azienda che sviluppa e pubblica (3.360 nomi, ad esempio FromSoftware) \`e un solo individuo, tipizzato
+\texttt{Developer} e \texttt{Publisher}, con sia \texttt{developerName} sia \texttt{publisherName}. La
+deduplicazione confronta i nomi di sviluppatori e publisher con la stessa normalizzazione (senza
+punteggiatura e forma legale) e fonde le coppie; se uno dei due URI \`e un nominale dichiarato nello
+schema (\texttt{pub/Nintendo}), resta quello. Le propriet\`a \texttt{developedBy} e \texttt{publishedBy}
+dei giochi puntano allo stesso nodo e nel grafo dell'applicazione l'azienda compare una volta sola, con
+entrambi i ruoli nella scheda di dettaglio. Le versioni precedenti usavano due individui
+(\texttt{dev/X} e \texttt{pub/X}) legati da una propriet\`a \texttt{sameCompanyAs}, ora rimossa: in 10.232
+giochi lo stesso nome sviluppa e pubblica. I ruoli sono asseriti dal popolamento come le altre
+sottoclassi di tipo; definirli per assiomi
+($\mathit{Developer} \equiv \mathit{Company} \sqcap \exists\,\mathit{developerOf}.\mathit{VideoGame}$)
+sarebbe un'alternativa, non adottata per mantenere semplice il popolamento.
 
 \subsubsection{Reasoning}
 

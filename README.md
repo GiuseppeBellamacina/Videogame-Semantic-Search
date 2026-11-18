@@ -42,7 +42,7 @@ Il fetch interroga Wikidata per anno × mese (per evitare i timeout) con checkpo
 ┌──────────────────────────────▼──────────────────────────────────┐
 │  Ontologia (videogames_full.owl / .ttl)                         │
 │  Store: pyoxigraph (Rust) · reasoning materializzato            │
-│  Classi: VideoGame, Developer, Publisher, Genre, Platform,      │
+│  Classi: VideoGame, Company(Developer,Publisher), Genre, Platform,      │
 │          Character, Franchise, Award, GameEngine                │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -173,8 +173,9 @@ Terza modalità accanto a «Fai una domanda» e «Usa i filtri»: si scrive una 
 | Classe       | Descrizione                            |
 | ------------ | -------------------------------------- |
 | `VideoGame`  | Un videogioco                          |
-| `Developer`  | Studio di sviluppo                     |
-| `Publisher`  | Editore                                |
+| `Company`    | Azienda (un individuo per azienda)     |
+| `Developer`  | Ruolo: sviluppa giochi                 |
+| `Publisher`  | Ruolo: pubblica giochi                 |
 | `Genre`      | Genere (RPG, FPS, Action...)           |
 | `Platform`   | Piattaforma (PS5, PC, Switch...)       |
 | `Character`  | Personaggio nel gioco                  |

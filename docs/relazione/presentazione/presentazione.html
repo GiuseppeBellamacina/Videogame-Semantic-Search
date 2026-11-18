@@ -140,7 +140,7 @@ code,pre,.dl{font-variant-ligatures:none}
   <div class="body">
     <div class="col stack">
       <ul class="b sm">
-        <li><b>12 classi top-level</b>: VideoGame, Developer, Publisher, Genre, Platform, Character, Franchise, Award, GameEngine, GameMode, Review, GameEvent</li>
+        <li><b>11 classi top-level</b>: VideoGame, Company (con i ruoli Developer e Publisher), Genre, Platform, Character, Franchise, Award, GameEngine, GameMode, Review, GameEvent</li>
         <li>Namespace <code>http://www.videogame-ontology.org/ontology#</code>, prefisso <code>vg:</code></li>
         <li><b>Schema</b>: classi, proprietà, assiomi e otto publisher usati come nominali. <b>Istanze</b>: giochi, studi, piattaforme… in un grafo separato</li>
         <li>Popolamento da <b>Wikidata</b> via SPARQL: le sue proprietà (P31, P136, P400, P577…) sono mappate su quelle di <code>vg:</code></li>
@@ -148,9 +148,9 @@ code,pre,.dl{font-variant-ligatures:none}
     </div>
     <div class="col">
       <div class="grid3" style="gap:22px 18px">
-        <div class="stat"><div class="big">121</div><span>classi (69 primitive)</span></div>
+        <div class="stat"><div class="big">122</div><span>classi (70 primitive)</span></div>
         <div class="stat"><div class="big">50</div><span>classi definite</span></div>
-        <div class="stat"><div class="big">58</div><span>proprietà (32 object, 26 datatype)</span></div>
+        <div class="stat"><div class="big">58</div><span>proprietà (31 object, 26 datatype)</span></div>
         <div class="stat"><div class="big">12</div><span>coppie inverse</span></div>
         <div class="stat"><div class="big">12</div><span>blocchi AllDisjointClasses</span></div>
         <div class="stat"><div class="big">3</div><span>property chain</span></div>
@@ -253,9 +253,9 @@ code,pre,.dl{font-variant-ligatures:none}
         <tr><th>Caratteristica</th><th style="text-align:right">N.</th><th>Esempi</th></tr>
         <tr><td><code>owl:inverseOf</code></td><td class="n">12</td><td>developedBy / developerOf, belongsTo / includes, sequelOf / hasSequel</td></tr>
         <tr><td>Transitive</td><td class="n">3</td><td>sequelOf, partOfFranchise, subsidiaryOf</td></tr>
-        <tr><td>Symmetric</td><td class="n">4</td><td>sharedFranchiseWith, sharesDeveloperWith, sharesPublisherWith, sameCompanyAs</td></tr>
-        <tr><td>Asymmetric</td><td class="n">13</td><td>developedBy, hasGenre, belongsTo…</td></tr>
-        <tr><td>Irreflexive</td><td class="n">18</td><td>availableOn, wonAward, hasGameMode…</td></tr>
+        <tr><td>Symmetric</td><td class="n">3</td><td>sharedFranchiseWith, sharesDeveloperWith, sharesPublisherWith</td></tr>
+        <tr><td>Asymmetric</td><td class="n">22</td><td>developedBy, hasGenre, belongsTo…</td></tr>
+        <tr><td>Irreflexive</td><td class="n">22</td><td>availableOn, wonAward, hasGameMode…</td></tr>
         <tr><td>Functional</td><td class="n">14</td><td>reviewedGame (object) + 13 datatype: releaseDate, metacriticScore…</td></tr>
         <tr><td><code>subPropertyOf name</code></td><td class="n">9</td><td>gameName, developerName… → una query su <code>name</code> trova ogni nome</td></tr>
       </table>
@@ -421,23 +421,25 @@ code,pre,.dl{font-variant-ligatures:none}
 </section>
 
 <section class="slide">
-  <div class="kicker">Esempi dal TBox · Unione</div>
-  <h2>Unione: Developer ⊔ Publisher</h2>
-  <p class="lead">Quando una proprietà vale per più classi alternative, dominio e range diventano un <code>owl:unionOf</code>. Nel progetto serve per le aziende.</p>
+  <div class="kicker">Esempi dal TBox · Aziende</div>
+  <h2>Company e i suoi ruoli</h2>
+  <p class="lead">Un'azienda è un solo individuo; sviluppatore e publisher sono ruoli che può avere insieme. Così lo stesso nodo ha <code>developedBy</code> e <code>publishedBy</code>.</p>
   <div class="body">
     <div class="col">
-<pre><span class="c"># un'azienda può essere sussidiaria di un'altra azienda,</span>
-<span class="c"># sia sviluppatore sia publisher</span>
+<pre><span class="p">vg:Company</span> <span class="k">a</span> owl:Class .
+<span class="p">vg:Developer</span> <span class="k">a</span> owl:Class ;
+  rdfs:subClassOf <span class="p">vg:Company</span> .
+<span class="p">vg:Publisher</span> <span class="k">a</span> owl:Class ;
+  rdfs:subClassOf <span class="p">vg:Company</span> .
+
+<span class="c"># non disgiunte: FromSoftware ha entrambi i ruoli</span>
 <span class="p">vg:subsidiaryOf</span> <span class="k">a</span> owl:ObjectProperty,
     owl:TransitiveProperty ;
-  rdfs:label <span class="s">"subsidiary of"</span> ;
-  rdfs:domain [ <span class="k">a</span> owl:Class ;
-    owl:unionOf ( <span class="p">vg:Developer</span> <span class="p">vg:Publisher</span> ) ] ;
-  rdfs:range [ <span class="k">a</span> owl:Class ;
-    owl:unionOf ( <span class="p">vg:Developer</span> <span class="p">vg:Publisher</span> ) ] .</pre>
+  rdfs:domain <span class="p">vg:Company</span> ;
+  rdfs:range <span class="p">vg:Company</span> .</pre>
     </div>
     <div class="col stack">
-      <div class="card"><h3>Come si legge</h3><p><span class="dl">dominio = range = Developer ⊔ Publisher</span><br>Chi ha una capogruppo è uno sviluppatore <b>o</b> un publisher; lo stesso vale per la capogruppo. Con due classi separate la proprietà sarebbe incoerente: Developer e Publisher sono <b>disgiunte</b>.</p></div>
+      <div class="card"><h3>Come si legge</h3><p><span class="dl">Developer ⊑ Company · Publisher ⊑ Company</span><br>Una sola entità per azienda, con i ruoli che le servono. In una versione precedente erano due individui distinti, legati da <code>sameCompanyAs</code>, perché le due classi erano disgiunte.</p></div>
       <p class="note">È uno schema senza istanze nei dati: il nostro scarico da Wikidata non include relazioni di controllo tra aziende. La proprietà è pronta per i dati futuri.</p>
     </div>
   </div>
@@ -572,7 +574,7 @@ code,pre,.dl{font-variant-ligatures:none}
     <div class="col" style="flex:1.2">
       <table style="font-size:15px">
         <tr><th>Blocco</th><th style="text-align:right">Classi</th></tr>
-        <tr><td>Le 12 classi top-level</td><td class="n">12</td></tr>
+        <tr><td>Le 11 classi top-level</td><td class="n">11</td></tr>
         <tr><td>Console / PC / Mobile / Browser / Arcade / Retro / VR</td><td class="n">7</td></tr>
         <tr><td>PlayStation / Xbox / Nintendo · Windows / MacOS / Linux · iOS / Android</td><td class="n">3·3·2</td></tr>
         <tr><td>Industry / Editorial / User Award</td><td class="n">3</td></tr>
@@ -589,6 +591,7 @@ code,pre,.dl{font-variant-ligatures:none}
     <span class="p">vg:MobilePlatform</span> <span class="p">vg:BrowserPlatform</span>
     <span class="p">vg:ArcadePlatform</span> <span class="p">vg:RetroComputerPlatform</span>
     <span class="p">vg:VRPlatform</span> ) .</pre>
+      <div class="card"><h3>Developer e Publisher</h3><p>Non sono in questo blocco: sono <b>ruoli</b> di <code>Company</code>, non disgiunti. FromSoftware, che sviluppa e pubblica, è un solo individuo con entrambi i tipi.</p></div>
       <div class="card"><h3>Errori che emergono</h3><p>Una prima build segnalava 589 individui sia <code>VideoGame</code> sia <code>Franchise</code>: la deduplicazione per nome fondeva «Homefront» gioco e «Homefront» franchise. Ora si fondono solo entità dello stesso tipo.</p></div>
       <p class="note">Le <b>modalità</b> sono disgiunte, i <b>giochi</b> per modalità no: un gioco può avere campagna e multiplayer.</p>
     </div>
@@ -674,7 +677,7 @@ code,pre,.dl{font-variant-ligatures:none}
   <div class="body">
     <div class="col">
       <ul class="b">
-        <li>Da 11 a <b>121 classi</b>: 50 definite e 2 con vincolo di cardinalità</li>
+        <li>Da 11 a <b>122 classi</b>: 50 definite e 2 con vincolo di cardinalità</li>
         <li>Inverse, transitive, catene e chiavi: navigazione bidirezionale e relazioni derivate</li>
         <li>12 blocchi di disjointness per far emergere i dati incoerenti</li>
       </ul>

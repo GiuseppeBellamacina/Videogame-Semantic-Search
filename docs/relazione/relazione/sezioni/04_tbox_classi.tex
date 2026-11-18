@@ -3,17 +3,17 @@
 
 \subsection{Gerarchia delle Classi}
 
-L'ontologia definisce \textbf{12 classi top-level}, ciascuna corrispondente a
+L'ontologia definisce \textbf{11 classi top-level}, ciascuna corrispondente a
 un'entit\`a fondamentale del dominio, pi\`u un ricco albero di sottoclassi che
-raggiunge un totale di \textbf{121 classi}: 69 primitive, 50 definite tramite
+raggiunge un totale di \textbf{122 classi}: 70 primitive, 50 definite tramite
 \texttt{owl:equivalentClass} e 2 caratterizzate da un vincolo di cardinalit\`a massima
 (condizione solo necessaria).
 
-Le 12 classi top-level sono:
+Le 11 classi top-level sono:
 \begin{enumerate}[nosep]
   \item \texttt{vg:VideoGame} --- il videogioco, classe centrale dell'ontologia;
-  \item \texttt{vg:Developer} --- lo studio di sviluppo;
-  \item \texttt{vg:Publisher} --- l'editore;
+  \item \texttt{vg:Company} --- l'azienda: un solo individuo per azienda, che ha i ruoli
+    \texttt{vg:Developer} (sviluppatore) e \texttt{vg:Publisher} (editore), sottoclassi non disgiunte;
   \item \texttt{vg:Genre} --- il genere videoludico;
   \item \texttt{vg:Platform} --- la piattaforma hardware/software;
   \item \texttt{vg:Character} --- il personaggio (giocante o non);
@@ -27,7 +27,7 @@ Le 12 classi top-level sono:
 
 \subsection{Tabella Completa delle Classi Primitive}
 
-La Tabella~\ref{tab:classi} elenca tutte le 69 classi primitive (escluse le 50
+La Tabella~\ref{tab:classi} elenca tutte le 70 classi primitive (escluse le 50
 definite e le 2 con vincolo di cardinalit\`a, trattate nella Sezione~\ref{sec:classi_definite}), raggruppate per
 classe top-level di appartenenza.
 
@@ -60,19 +60,15 @@ IndieGame           & VideoGame       & Gioco a budget ridotto, sviluppatore ind
 AAAGame             & VideoGame       & Gioco ad alto budget, grande publisher \\
 \midrule
 
-% ── Developer ──
-\multicolumn{3}{c}{\textbf{Developer (classe top-level)}} \\
+% ── Company ──
+\multicolumn{3}{c}{\textbf{Company (classe top-level)}} \\
 \midrule
-Developer           & owl:Thing       & Studio di sviluppo \\
+Company             & owl:Thing       & Azienda (un individuo per azienda) \\
+Developer           & Company         & Ruolo: sviluppa videogiochi \\
 FirstPartyDeveloper & Developer       & Studio proprietario di un platform holder \\
 ThirdPartyDeveloper & Developer       & Studio indipendente \\
 IndieDeveloper      & Developer       & Piccolo sviluppatore senza publisher \\
-\midrule
-
-% ── Publisher ──
-\multicolumn{3}{c}{\textbf{Publisher (classe top-level)}} \\
-\midrule
-Publisher           & owl:Thing       & Casa editrice \\
+Publisher           & Company         & Ruolo: pubblica videogiochi \\
 FirstPartyPublisher & Publisher       & Divisione editoriale di un platform holder \\
 ThirdPartyPublisher & Publisher       & Casa editrice indipendente \\
 \midrule

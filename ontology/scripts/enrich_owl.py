@@ -1346,8 +1346,7 @@ def _add_v2_disjointness(g: Graph) -> None:
         # Top entity classes
         [
             VG.VideoGame,
-            VG.Developer,
-            VG.Publisher,
+            VG.Company,
             VG.Genre,
             VG.Platform,
             VG.Character,

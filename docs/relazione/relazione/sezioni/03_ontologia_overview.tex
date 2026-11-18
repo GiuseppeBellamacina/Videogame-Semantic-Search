@@ -7,7 +7,7 @@ L'ontologia modella il dominio dei \textbf{videogiochi} nel periodo 2010--2026,
 coprendo le seguenti entit\`a principali:
 \begin{itemize}[nosep]
   \item \textbf{VideoGame} --- il prodotto videoludico con i suoi attributi (nome, data rilascio, punteggio Metacritic, paese d'origine);
-  \item \textbf{Developer / Publisher} --- gli studi di sviluppo e le case editrici;
+  \item \textbf{Company} --- le aziende, con i ruoli \texttt{Developer} (sviluppatore) e \texttt{Publisher} (editore) che una stessa azienda pu\`o avere insieme;
   \item \textbf{Genre} --- il genere (Action, RPG, Strategy, \dots{});
   \item \textbf{Platform} --- la piattaforma di esecuzione (PS5, PC, Switch, \dots{});
   \item \textbf{Character} --- i personaggi (giocanti e non);
@@ -87,15 +87,15 @@ La Tabella~\ref{tab:ontostats} riassume le principali metriche dello schema dell
 \toprule
 \textbf{Metrica}                & \textbf{Valore} \\
 \midrule
-Classi totali                   & 121             \\
-Classi primitive                & 69              \\
+Classi totali                   & 122             \\
+Classi primitive                & 70              \\
 Classi definite (equivalentClass) & 50            \\
 Classi con vincolo di cardinalit\`a & 2           \\
-Object Property                 & 32              \\
+Object Property                 & 31              \\
 Datatype Property               & 26              \\
 Property chain axioms           & 3               \\
 Propriet\`a transitive          & 3               \\
-Propriet\`a simmetriche         & 4               \\
+Propriet\`a simmetriche         & 3               \\
 Coppie inverse                  & 12              \\
 Blocchi AllDisjointClasses      & 12              \\
 Vincoli hasKey                  & 3               \\

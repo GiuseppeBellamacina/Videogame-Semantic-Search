@@ -3,7 +3,7 @@
 
 \subsection{Object Property}
 
-La Tabella~\ref{tab:objprop} elenca tutte le 32 object property definite nell'ontologia,
+La Tabella~\ref{tab:objprop} elenca tutte le 31 object property definite nell'ontologia,
 incluse le inverse; la colonna \textbf{Assiomi} indica le caratteristiche OWL 2 aggiuntive.
 
 \begingroup\footnotesize\setlength{\tabcolsep}{3pt}
@@ -42,8 +42,7 @@ modeInGame         & GameMode  & VideoGame   & Asym, Irr                        
 madeWith           & VideoGame & GameEngine  & Asym, Irr, inv engineUsedIn           & made with \\
 engineUsedIn       & GameEngine& VideoGame   & Asym, Irr                             & engine used in \\
 partOfFranchise    & Franchise & Franchise   & Trans                                 & part of franchise \\
-subsidiaryOf       & ---       & ---         & Trans                                 & subsidiary of \\
-sameCompanyAs      & Dev/Pub   & Dev/Pub     & Sym                                   & same company as \\
+subsidiaryOf       & Company   & Company     & Trans                                 & subsidiary of \\
 sharedFranchiseWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shared franchise with \\
 sharesDeveloperWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shares developer with \\
 sharesPublisherWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shares publisher with \\
@@ -61,7 +60,7 @@ hasEvent           & VideoGame & GameEvent   & Asym, Irr, inv eventFor          
 Sym = SymmetricProperty, Trans = TransitiveProperty, Funct = FunctionalProperty,
 inv = inverseOf, equiv = equivalentProperty, chain = propertyChainAxiom.
 
-In totale lo schema dichiara 22 propriet\`a asimmetriche, 22 irriflessive, 4 simmetriche,
+In totale lo schema dichiara 22 propriet\`a asimmetriche, 22 irriflessive, 3 simmetriche,
 3 transitive e 1 object property funzionale (\texttt{reviewedGame}).
 Le caratteristiche sono assegnate nel rispetto dei \textbf{vincoli globali di OWL 2 DL}:
 le propriet\`a \emph{non semplici} --- le transitive (\texttt{sequelOf},

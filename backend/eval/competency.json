@@ -1,12 +1,52 @@
 [
-  {"question": "Esistono giochi classificati dal reasoner come PlayStationGame?", "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?g) AS ?n) WHERE { ?g a vg:PlayStationGame }", "min_value": 1},
-  {"question": "Quanti giochi sono sequel (sequelOf popolata da P155)?", "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?g) AS ?n) WHERE { ?g a vg:SequelGame }", "min_value": 1},
-  {"question": "Quali giochi hanno vinto un premio?", "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT ?g WHERE { ?g a vg:AwardWinningGame } LIMIT 20", "min_rows": 1},
-  {"question": "Ogni gioco della classe VideoGame ha un gameName?", "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?g) AS ?n) WHERE { ?g a vg:VideoGame FILTER NOT EXISTS { ?g vg:gameName ?x } }", "max_value": 0},
-  {"question": "Esistono aziende sia sviluppatrici sia publisher collegate da sameCompanyAs?", "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT ?a ?b WHERE { ?a vg:sameCompanyAs ?b } LIMIT 5", "min_rows": 1},
-  {"question": "Developer e Publisher sono disgiunti: nessun individuo è di entrambi i tipi", "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?x) AS ?n) WHERE { ?x a vg:Developer, vg:Publisher }", "max_value": 0},
-  {"question": "Nessun gioco ha due date di uscita (releaseDate funzionale)", "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?g) AS ?n) WHERE { ?g vg:releaseDate ?a, ?b FILTER(?a != ?b) }", "max_value": 0},
-  {"question": "Nessun owl:sameAs tra giochi (il bug del reasoner è corretto)", "sparql": "PREFIX owl: <http://www.w3.org/2002/07/owl#> SELECT (COUNT(*) AS ?n) WHERE { ?a owl:sameAs ?b FILTER(?a != ?b) }", "max_value": 0},
-  {"question": "Quali giochi condividono lo sviluppatore con Dark Souls?", "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT DISTINCT ?other WHERE { ?g vg:gameName \"Dark Souls\" ; vg:sharesDeveloperWith ?other } LIMIT 20", "min_rows": 1},
-  {"question": "Review e GameEvent sono modellati ma non popolati", "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?x) AS ?n) WHERE { { ?x a vg:Review } UNION { ?x a vg:GameEvent } }", "max_value": 0}
+  {
+    "question": "Esistono giochi classificati dal reasoner come PlayStationGame?",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?g) AS ?n) WHERE { ?g a vg:PlayStationGame }",
+    "min_value": 1
+  },
+  {
+    "question": "Quanti giochi sono sequel (sequelOf popolata da P155)?",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?g) AS ?n) WHERE { ?g a vg:SequelGame }",
+    "min_value": 1
+  },
+  {
+    "question": "Quali giochi hanno vinto un premio?",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT ?g WHERE { ?g a vg:AwardWinningGame } LIMIT 20",
+    "min_rows": 1
+  },
+  {
+    "question": "Ogni gioco della classe VideoGame ha un gameName?",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?g) AS ?n) WHERE { ?g a vg:VideoGame FILTER NOT EXISTS { ?g vg:gameName ?x } }",
+    "max_value": 0
+  },
+  {
+    "question": "Nessun gioco ha due date di uscita (releaseDate funzionale)",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?g) AS ?n) WHERE { ?g vg:releaseDate ?a, ?b FILTER(?a != ?b) }",
+    "max_value": 0
+  },
+  {
+    "question": "Nessun owl:sameAs tra giochi (il bug del reasoner è corretto)",
+    "sparql": "PREFIX owl: <http://www.w3.org/2002/07/owl#> SELECT (COUNT(*) AS ?n) WHERE { ?a owl:sameAs ?b FILTER(?a != ?b) }",
+    "max_value": 0
+  },
+  {
+    "question": "Quali giochi condividono lo sviluppatore con Dark Souls?",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT DISTINCT ?other WHERE { ?g vg:gameName \"Dark Souls\" ; vg:sharesDeveloperWith ?other } LIMIT 20",
+    "min_rows": 1
+  },
+  {
+    "question": "Review e GameEvent sono modellati ma non popolati",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(?x) AS ?n) WHERE { { ?x a vg:Review } UNION { ?x a vg:GameEvent } }",
+    "max_value": 0
+  },
+  {
+    "question": "Esistono aziende che sviluppano e pubblicano, come un solo individuo con entrambi i ruoli?",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT ?c WHERE { ?c a vg:Developer, vg:Publisher } LIMIT 5",
+    "min_rows": 1
+  },
+  {
+    "question": "Non esistono due individui distinti per la stessa azienda (nessun sameCompanyAs)",
+    "sparql": "PREFIX vg: <http://www.videogame-ontology.org/ontology#> SELECT (COUNT(*) AS ?n) WHERE { ?a vg:sameCompanyAs ?b }",
+    "max_value": 0
+  }
 ]

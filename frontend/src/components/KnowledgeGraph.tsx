@@ -39,8 +39,8 @@ const BIG_GRAPH = 150;
 
 const endId = (e: string | GraphNode) => (typeof e === "string" ? e : e.id);
 /** Relations the reasoner derives (sharesDeveloperWith...): drawn dashed, never labelled. */
-// derived or symmetric links (shared developer, same company...): dashed, no arrow
-const isDerived = (label?: string) => /^(shar(e|ed)|sameCompany)/.test(label ?? "");
+// derived or symmetric links (shared developer, franchise...): dashed, no arrow
+const isDerived = (label?: string) => /^shar(e|ed)/.test(label ?? "");
 /** Fitting a single node would otherwise zoom it to the whole screen. */
 const MAX_FIT_ZOOM = 1.8;
 /** When something is added to the scene, show its connected group, at most this many nodes (nearest first). */
@@ -59,7 +59,6 @@ const CELL_W = 80;
 const CELL_H = 96;
 
 const REL_VERB: Record<string, string> = {
-  sameCompanyAs: "è la stessa azienda di",
   developedBy: "è sviluppato da",
   developerOf: "ha sviluppato",
   publishedBy: "è pubblicato da",
@@ -1041,16 +1040,11 @@ export function KnowledgeGraph({
                 <p className="font-serif text-[17px] leading-snug">
                   {a.label}
                   <span className="text-mute">
-                    {derived && label !== "sameCompanyAs" ? " e " : ` ${REL_VERB[label] ?? label} `}
+                    {derived ? " e " : ` ${REL_VERB[label] ?? label} `}
                   </span>
                   {b.label}
                 </p>
-                {label === "sameCompanyAs" && (
-                  <p className="mt-3 border-t border-rule pt-2.5 text-[12px] text-mute">
-                    Stesso nome come sviluppatore e come publisher: sono due nodi (le classi sono disgiunte) della stessa azienda.
-                  </p>
-                )}
-                {derived && label !== "sameCompanyAs" && (
+                {derived && (
                   <div className="mt-3 border-t border-rule pt-2.5">
                     <p className="label mb-1.5">{SHARED_TEXT[label] ?? "In comune"}</p>
                     {info === "loading" || info === null ? (

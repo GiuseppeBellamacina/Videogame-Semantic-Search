@@ -25,14 +25,21 @@ Classes
         <rdfs:comment>A video game product</rdfs:comment>
     </owl:Class>
 
+    <owl:Class rdf:about="#Company">
+        <rdfs:label>Company</rdfs:label>
+        <rdfs:comment>A company or studio. One individual per company: Developer and Publisher are roles it can play, not separate entities</rdfs:comment>
+    </owl:Class>
+
     <owl:Class rdf:about="#Developer">
+        <rdfs:subClassOf rdf:resource="#Company"/>
         <rdfs:label>Developer</rdfs:label>
-        <rdfs:comment>A company or studio that develops video games</rdfs:comment>
+        <rdfs:comment>Role of a company that develops video games (not disjoint from Publisher: one company can be both)</rdfs:comment>
     </owl:Class>
 
     <owl:Class rdf:about="#Publisher">
+        <rdfs:subClassOf rdf:resource="#Company"/>
         <rdfs:label>Publisher</rdfs:label>
-        <rdfs:comment>A company that publishes video games</rdfs:comment>
+        <rdfs:comment>Role of a company that publishes video games (not disjoint from Developer: one company can be both)</rdfs:comment>
     </owl:Class>
 
     <owl:Class rdf:about="#Genre">
@@ -450,8 +457,7 @@ Disjointness (AllDisjointClasses)
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
         <owl:members rdf:parseType="Collection">
             <rdf:Description rdf:about="#VideoGame"/>
-            <rdf:Description rdf:about="#Developer"/>
-            <rdf:Description rdf:about="#Publisher"/>
+            <rdf:Description rdf:about="#Company"/>
             <rdf:Description rdf:about="#Genre"/>
             <rdf:Description rdf:about="#Platform"/>
             <rdf:Description rdf:about="#Character"/>

@@ -219,47 +219,10 @@ Object Properties
 
     <owl:ObjectProperty rdf:about="#subsidiaryOf">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
-        <rdfs:domain>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="#Developer"/>
-                    <rdf:Description rdf:about="#Publisher"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:domain>
-        <rdfs:range>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="#Developer"/>
-                    <rdf:Description rdf:about="#Publisher"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:range>
+        <rdfs:domain rdf:resource="#Company"/>
+        <rdfs:range rdf:resource="#Company"/>
         <rdfs:label>subsidiary of</rdfs:label>
-        <rdfs:comment>Relates a subsidiary company (developer or publisher) to its parent organisation</rdfs:comment>
-    </owl:ObjectProperty>
-
-    <!-- sameCompanyAs: the developer node and the publisher node of the same company -->
-    <owl:ObjectProperty rdf:about="#sameCompanyAs">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
-        <rdfs:domain>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="#Developer"/>
-                    <rdf:Description rdf:about="#Publisher"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:domain>
-        <rdfs:range>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="#Developer"/>
-                    <rdf:Description rdf:about="#Publisher"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:range>
-        <rdfs:label>same company as</rdfs:label>
-        <rdfs:comment>Links the Developer and the Publisher individuals of one company (same name). They cannot be owl:sameAs: Developer and Publisher are disjoint classes.</rdfs:comment>
+        <rdfs:comment>Relates a subsidiary company to its parent company</rdfs:comment>
     </owl:ObjectProperty>
 
     <!-- sharedFranchiseWith: chain belongsTo ∘ includes -->
