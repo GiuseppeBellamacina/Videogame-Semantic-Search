@@ -259,10 +259,35 @@ class OntologyService:
                         }
                     )
 
+        # most specific classes only: drop any class that is an ancestor of another one the node has
+        # (the store holds the closure of the instance types, not of the authored TBox)
+        sub = ox.NamedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf")
+
+        def ancestors(c: ox.NamedNode) -> set[str]:
+            seen: set[str] = set()
+            todo = [c]
+            while todo:
+                for q in store.quads_for_pattern(todo.pop(), sub, None):
+                    if isinstance(q.object, ox.NamedNode) and q.object.value not in seen:
+                        seen.add(q.object.value)
+                        todo.append(q.object)
+            return seen
+
+        types = {
+            q.object
+            for q in store.quads_for_pattern(node, ox.NamedNode(RDF_TYPE), None)
+            if isinstance(q.object, ox.NamedNode) and q.object.value.startswith(VG_NS)
+        }
+        covered = set().union(*(ancestors(t) for t in types)) if types else set()
+        classes = sorted(
+            cls._get_local_name(t.value) for t in types if t.value not in covered
+        )
+
         return {
             "uri": uri,
             "label": cls._get_node_label(uri),
             "type": cls._get_node_type(uri),
+            "classes": classes,
             "properties": properties,
             "outgoing_relations": outgoing_relations,
             "incoming_relations": incoming_relations,

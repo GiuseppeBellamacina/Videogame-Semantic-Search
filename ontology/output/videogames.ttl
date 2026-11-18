@@ -423,7 +423,8 @@ vg:genreOf a owl:AsymmetricProperty,
     rdfs:range vg:VideoGame ;
     owl:inverseOf vg:hasGenre .
 
-vg:availableOn a owl:IrreflexiveProperty,
+vg:availableOn a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
         owl:ObjectProperty ;
     rdfs:label "available on" ;
     rdfs:domain vg:VideoGame ;
@@ -470,14 +471,16 @@ vg:includes a owl:AsymmetricProperty,
     rdfs:range vg:VideoGame ;
     owl:inverseOf vg:belongsTo .
 
-vg:wonAward a owl:IrreflexiveProperty,
+vg:wonAward a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
         owl:ObjectProperty ;
     rdfs:label "won award" ;
     rdfs:domain vg:VideoGame ;
     rdfs:range vg:Award ;
     owl:inverseOf vg:awardWonBy .
 
-vg:awardWonBy a owl:IrreflexiveProperty,
+vg:awardWonBy a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
         owl:ObjectProperty ;
     rdfs:label "award won by" ;
     rdfs:domain vg:Award ;
@@ -497,14 +500,16 @@ vg:hasSequel a owl:ObjectProperty ;
     rdfs:range vg:VideoGame ;
     owl:inverseOf vg:sequelOf .
 
-vg:hasGameMode a owl:IrreflexiveProperty,
+vg:hasGameMode a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
         owl:ObjectProperty ;
     rdfs:label "has game mode" ;
     rdfs:domain vg:VideoGame ;
     rdfs:range vg:GameMode ;
     owl:inverseOf vg:modeInGame .
 
-vg:modeInGame a owl:IrreflexiveProperty,
+vg:modeInGame a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
         owl:ObjectProperty ;
     rdfs:label "mode in game" ;
     rdfs:domain vg:GameMode ;
@@ -582,7 +587,9 @@ vg:reviewer a owl:ObjectProperty ;
     rdfs:domain vg:Review ;
     rdfs:range owl:Thing .
 
-vg:reviewedGame a owl:FunctionalProperty,
+vg:reviewedGame a owl:AsymmetricProperty,
+        owl:FunctionalProperty,
+        owl:IrreflexiveProperty,
         owl:ObjectProperty ;
     rdfs:label "reviewed game" ;
     rdfs:comment "The video game that this review evaluates" ;
@@ -590,7 +597,9 @@ vg:reviewedGame a owl:FunctionalProperty,
     rdfs:range vg:VideoGame ;
     owl:inverseOf vg:hasReview .
 
-vg:hasReview a owl:ObjectProperty ;
+vg:hasReview a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
     rdfs:label "has review" ;
     rdfs:comment "A review written about this video game" ;
     rdfs:domain vg:VideoGame ;
@@ -601,16 +610,21 @@ vg:reviewOf a owl:ObjectProperty ;
     rdfs:label "review of" ;
     rdfs:comment "The video game this review is about (alias of reviewedGame)" ;
     rdfs:domain vg:Review ;
-    rdfs:range vg:VideoGame .
+    rdfs:range vg:VideoGame ;
+    owl:equivalentProperty vg:reviewedGame .
 
-vg:eventFor a owl:ObjectProperty ;
+vg:eventFor a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
     rdfs:label "event for" ;
     rdfs:comment "The video game this event pertains to" ;
     rdfs:domain vg:GameEvent ;
     rdfs:range vg:VideoGame ;
     owl:inverseOf vg:hasEvent .
 
-vg:hasEvent a owl:ObjectProperty ;
+vg:hasEvent a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
     rdfs:label "has event" ;
     rdfs:comment "A lifecycle event associated with this video game" ;
     rdfs:domain vg:VideoGame ;
@@ -639,6 +653,7 @@ vg:gameDescription a owl:DatatypeProperty ;
     rdfs:label "game description" ;
     rdfs:domain vg:VideoGame ;
     rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:description ;
     owl:equivalentProperty dcterms:description .
 
 vg:releaseDate a owl:DatatypeProperty,
@@ -766,7 +781,8 @@ vg:reviewerName a owl:DatatypeProperty ;
     rdfs:label "reviewer name" ;
     rdfs:comment "The name of the reviewer or outlet that wrote this review" ;
     rdfs:domain vg:Review ;
-    rdfs:range xsd:string .
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf vg:name .
 
 vg:eventDate a owl:DatatypeProperty ;
     rdfs:label "event date" ;
@@ -1303,19 +1319,31 @@ vg:ExclusiveRelease a owl:Class ;
     owl:imports <http://www.videogame-ontology.org/ontology/classes> .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:PlayerCharacter vg:NonPlayerCharacter ) .
+    owl:members ( vg:VideoGame vg:Developer vg:Publisher vg:Genre vg:Platform vg:Character vg:Franchise vg:Award vg:GameEngine vg:GameMode vg:Review vg:GameEvent ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:IndieGame vg:AAAGame ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
+    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:ReleasedGame vg:EarlyAccessGame vg:CancelledGame vg:DelistedGame ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:PlayerCharacter vg:NonPlayerCharacter ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
@@ -1325,16 +1353,4 @@ vg:ExclusiveRelease a owl:Class ;
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:VideoGame vg:Developer vg:Publisher vg:Genre vg:Platform vg:Character vg:Franchise vg:Award vg:GameEngine vg:GameMode vg:Review vg:GameEvent ) .
 

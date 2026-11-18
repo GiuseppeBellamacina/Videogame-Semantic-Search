@@ -38,6 +38,7 @@ export interface NodeDetails {
   uri: string;
   label: string;
   type: string;
+  classes?: string[];
   properties: Record<string, string>;
   outgoing_relations: {
     predicate: string;

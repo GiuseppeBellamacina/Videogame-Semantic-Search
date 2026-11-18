@@ -186,6 +186,15 @@ export function NodeDetail({ uri, onClose, onNavigate, onGraphExpand }: NodeDeta
               <Thumb type={details.type} name={details.label} size={112} urgent />
               <div className="min-w-0 pb-1">
                 <h2 className="font-serif text-[28px] leading-[1.1]">{details.label}</h2>
+                {!!details.classes?.length && (
+                  <div className="mt-2 flex flex-wrap gap-1.5" title="Classi più specifiche nell'ontologia">
+                    {details.classes.map((c) => (
+                      <span key={c} className="label rounded-sm border border-rule px-1.5 py-0.5">
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
                   <a
                     href={`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(wikiQuery(details))}`}

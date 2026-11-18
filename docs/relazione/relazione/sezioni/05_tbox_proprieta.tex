@@ -27,18 +27,18 @@ publishedBy        & VideoGame & Publisher   & Asym, Irr, inv publisherOf       
 publisherOf        & Publisher & VideoGame   & Asym, Irr                             & publisher of \\
 hasGenre           & VideoGame & Genre       & Asym, Irr, inv genreOf                & has genre \\
 genreOf            & Genre     & VideoGame   & Asym, Irr                             & genre of \\
-availableOn        & VideoGame & Platform    & Irr, inv platformFor                  & available on \\
+availableOn        & VideoGame & Platform    & Asym, Irr, inv platformFor            & available on \\
 platformFor        & Platform  & VideoGame   & Asym, Irr                             & platform for \\
 hasCharacter       & VideoGame & Character   & Asym, Irr, inv appearsIn              & has character \\
 appearsIn          & Character & VideoGame   & Asym, Irr                             & appears in \\
 belongsTo          & VideoGame & Franchise   & Asym, Irr, inv includes               & belongs to \\
 includes           & Franchise & VideoGame   & Asym, Irr                             & includes \\
-wonAward           & VideoGame & Award       & Irr, inv awardWonBy                   & won award \\
-awardWonBy         & Award     & VideoGame   & Irr                                   & award won by \\
+wonAward           & VideoGame & Award       & Asym, Irr, inv awardWonBy             & won award \\
+awardWonBy         & Award     & VideoGame   & Asym, Irr                             & award won by \\
 sequelOf           & VideoGame & VideoGame   & Trans, inv hasSequel                  & sequel of \\
 hasSequel          & VideoGame & VideoGame   & ---                                   & has sequel \\
-hasGameMode        & VideoGame & GameMode    & Irr, inv modeInGame                   & has game mode \\
-modeInGame         & GameMode  & VideoGame   & Irr                                   & mode in game \\
+hasGameMode        & VideoGame & GameMode    & Asym, Irr, inv modeInGame             & has game mode \\
+modeInGame         & GameMode  & VideoGame   & Asym, Irr                             & mode in game \\
 madeWith           & VideoGame & GameEngine  & Asym, Irr, inv engineUsedIn           & made with \\
 engineUsedIn       & GameEngine& VideoGame   & Asym, Irr                             & engine used in \\
 partOfFranchise    & Franchise & Franchise   & Trans                                 & part of franchise \\
@@ -48,20 +48,20 @@ sharedFranchiseWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) &
 sharesDeveloperWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shares developer with \\
 sharesPublisherWith& VideoGame & VideoGame   & Sym, chain (\S\ref{sec:chains}) & shares publisher with \\
 reviewer           & Review    & ---         & ---                                   & reviewer \\
-reviewedGame       & Review    & VideoGame   & Funct, inv hasReview                  & reviewed game \\
-hasReview          & VideoGame & Review      & ---                                   & has review \\
-reviewOf           & Review    & VideoGame   & ---                                   & review of \\
-eventFor           & GameEvent & VideoGame   & inv hasEvent                          & event for \\
-hasEvent           & VideoGame & GameEvent   & ---                                   & has event \\
+reviewedGame       & Review    & VideoGame   & Asym, Irr, Funct, inv hasReview       & reviewed game \\
+hasReview          & VideoGame & Review      & Asym, Irr, inv reviewedGame           & has review \\
+reviewOf           & Review    & VideoGame   & equiv reviewedGame                    & review of \\
+eventFor           & GameEvent & VideoGame   & Asym, Irr, inv hasEvent               & event for \\
+hasEvent           & VideoGame & GameEvent   & Asym, Irr, inv eventFor               & has event \\
 \bottomrule
 \end{longtable}
 \endgroup
 
 \textit{Legenda}: Asym = AsymmetricProperty, Irr = IrreflexiveProperty,
 Sym = SymmetricProperty, Trans = TransitiveProperty, Funct = FunctionalProperty,
-inv = inverseOf, chain = propertyChainAxiom.
+inv = inverseOf, equiv = equivalentProperty, chain = propertyChainAxiom.
 
-In totale lo schema dichiara 13 propriet\`a asimmetriche, 18 irriflessive, 4 simmetriche,
+In totale lo schema dichiara 22 propriet\`a asimmetriche, 22 irriflessive, 4 simmetriche,
 3 transitive e 1 object property funzionale (\texttt{reviewedGame}).
 Le caratteristiche sono assegnate nel rispetto dei \textbf{vincoli globali di OWL 2 DL}:
 le propriet\`a \emph{non semplici} --- le transitive (\texttt{sequelOf},
@@ -92,32 +92,32 @@ il nome di qualsiasi entit\`a.
 \bottomrule
 \endlastfoot
 
-name              & owl:Thing   & xsd:string  & ---     & name \\
-gameName          & VideoGame   & xsd:string  & name    & game name \\
-gameDescription   & VideoGame   & xsd:string  & ---     & game description \\
-releaseDate       & VideoGame   & xsd:date    & ---     & release date \\
-metacriticScore   & VideoGame   & xsd:integer & ---     & Metacritic score \\
-developerName     & Developer   & xsd:string  & name    & developer name \\
-publisherName     & Publisher   & xsd:string  & name    & publisher name \\
-genreName         & Genre       & xsd:string  & name    & genre name \\
-platformName      & Platform    & xsd:string  & name    & platform name \\
-characterName     & Character   & xsd:string  & name    & character name \\
-franchiseName     & Franchise   & xsd:string  & name    & franchise name \\
-awardName         & Award       & xsd:string  & name    & award name \\
-awardYear         & Award       & xsd:integer & ---     & award year \\
-description       & owl:Thing   & xsd:string  & ---     & description \\
-officialWebsite   & VideoGame   & xsd:anyURI  & ---     & official website \\
-countryOfOrigin   & VideoGame   & xsd:string  & ---     & country of origin \\
-engineName        & GameEngine  & xsd:string  & name    & engine name \\
-hasSteamAppId     & VideoGame   & xsd:string  & ---     & Steam App ID \\
-hasWikidataId     & owl:Thing   & xsd:string  & ---     & Wikidata ID \\
-hasIGDBId         & VideoGame   & xsd:string  & ---     & IGDB ID \\
-reviewScore       & Review      & xsd:integer & ---     & review score \\
-reviewDate        & Review      & xsd:date    & ---     & review date \\
-reviewerName      & Review      & xsd:string  & ---     & reviewer name \\
-eventDate         & GameEvent   & xsd:date    & ---     & event date \\
-budgetTier        & VideoGame   & xsd:string  & ---     & budget tier \\
-playerCount       & VideoGame   & xsd:integer & ---     & player count \\
+name              & owl:Thing   & xsd:string  & ---         & name \\
+gameName          & VideoGame   & xsd:string  & name        & game name \\
+gameDescription   & VideoGame   & xsd:string  & description & game description \\
+releaseDate       & VideoGame   & xsd:date    & ---         & release date \\
+metacriticScore   & VideoGame   & xsd:integer & ---         & Metacritic score \\
+developerName     & Developer   & xsd:string  & name        & developer name \\
+publisherName     & Publisher   & xsd:string  & name        & publisher name \\
+genreName         & Genre       & xsd:string  & name        & genre name \\
+platformName      & Platform    & xsd:string  & name        & platform name \\
+characterName     & Character   & xsd:string  & name        & character name \\
+franchiseName     & Franchise   & xsd:string  & name        & franchise name \\
+awardName         & Award       & xsd:string  & name        & award name \\
+awardYear         & Award       & xsd:integer & ---         & award year \\
+description       & owl:Thing   & xsd:string  & ---         & description \\
+officialWebsite   & VideoGame   & xsd:anyURI  & ---         & official website \\
+countryOfOrigin   & VideoGame   & xsd:string  & ---         & country of origin \\
+engineName        & GameEngine  & xsd:string  & name        & engine name \\
+hasSteamAppId     & VideoGame   & xsd:string  & ---         & Steam App ID \\
+hasWikidataId     & owl:Thing   & xsd:string  & ---         & Wikidata ID \\
+hasIGDBId         & VideoGame   & xsd:string  & ---         & IGDB ID \\
+reviewScore       & Review      & xsd:integer & ---         & review score \\
+reviewDate        & Review      & xsd:date    & ---         & review date \\
+reviewerName      & Review      & xsd:string  & name        & reviewer name \\
+eventDate         & GameEvent   & xsd:date    & ---         & event date \\
+budgetTier        & VideoGame   & xsd:string  & ---         & budget tier \\
+playerCount       & VideoGame   & xsd:integer & ---         & player count \\
 \bottomrule
 \end{longtable}
 

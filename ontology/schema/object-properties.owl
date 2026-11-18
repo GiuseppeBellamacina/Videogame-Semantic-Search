@@ -80,6 +80,7 @@ Object Properties
 
     <!-- availableOn / platformFor -->
     <owl:ObjectProperty rdf:about="#availableOn">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdfs:domain rdf:resource="#VideoGame"/>
         <rdfs:range rdf:resource="#Platform"/>
@@ -136,6 +137,7 @@ Object Properties
 
     <!-- wonAward / awardWonBy -->
     <owl:ObjectProperty rdf:about="#wonAward">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdfs:domain rdf:resource="#VideoGame"/>
         <rdfs:range rdf:resource="#Award"/>
@@ -144,6 +146,7 @@ Object Properties
     </owl:ObjectProperty>
 
     <owl:ObjectProperty rdf:about="#awardWonBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdfs:domain rdf:resource="#Award"/>
         <rdfs:range rdf:resource="#VideoGame"/>
@@ -169,6 +172,7 @@ Object Properties
 
     <!-- hasGameMode / modeInGame -->
     <owl:ObjectProperty rdf:about="#hasGameMode">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdfs:domain rdf:resource="#VideoGame"/>
         <rdfs:range rdf:resource="#GameMode"/>
@@ -177,6 +181,7 @@ Object Properties
     </owl:ObjectProperty>
 
     <owl:ObjectProperty rdf:about="#modeInGame">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdfs:domain rdf:resource="#GameMode"/>
         <rdfs:range rdf:resource="#VideoGame"/>
@@ -305,6 +310,8 @@ Object Properties
     </owl:ObjectProperty>
 
     <owl:ObjectProperty rdf:about="#reviewedGame">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="#Review"/>
         <rdfs:range rdf:resource="#VideoGame"/>
@@ -314,6 +321,8 @@ Object Properties
     </owl:ObjectProperty>
 
     <owl:ObjectProperty rdf:about="#hasReview">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdfs:domain rdf:resource="#VideoGame"/>
         <rdfs:range rdf:resource="#Review"/>
         <owl:inverseOf rdf:resource="#reviewedGame"/>
@@ -324,12 +333,15 @@ Object Properties
     <owl:ObjectProperty rdf:about="#reviewOf">
         <rdfs:domain rdf:resource="#Review"/>
         <rdfs:range rdf:resource="#VideoGame"/>
+        <owl:equivalentProperty rdf:resource="#reviewedGame"/>
         <rdfs:label>review of</rdfs:label>
         <rdfs:comment>The video game this review is about (alias of reviewedGame)</rdfs:comment>
     </owl:ObjectProperty>
 
     <!-- eventFor / hasEvent -->
     <owl:ObjectProperty rdf:about="#eventFor">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdfs:domain rdf:resource="#GameEvent"/>
         <rdfs:range rdf:resource="#VideoGame"/>
         <owl:inverseOf rdf:resource="#hasEvent"/>
@@ -338,6 +350,8 @@ Object Properties
     </owl:ObjectProperty>
 
     <owl:ObjectProperty rdf:about="#hasEvent">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
         <rdfs:domain rdf:resource="#VideoGame"/>
         <rdfs:range rdf:resource="#GameEvent"/>
         <owl:inverseOf rdf:resource="#eventFor"/>

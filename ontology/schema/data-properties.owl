@@ -37,6 +37,7 @@ Data Properties
 
     <owl:DatatypeProperty rdf:about="#gameDescription">
         <rdfs:domain rdf:resource="#VideoGame"/>
+        <rdfs:subPropertyOf rdf:resource="#description"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
         <rdfs:label>game description</rdfs:label>
     </owl:DatatypeProperty>
@@ -171,6 +172,7 @@ Data Properties
 
     <owl:DatatypeProperty rdf:about="#reviewerName">
         <rdfs:domain rdf:resource="#Review"/>
+        <rdfs:subPropertyOf rdf:resource="#name"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
         <rdfs:label>reviewer name</rdfs:label>
         <rdfs:comment>The name of the reviewer or outlet that wrote this review</rdfs:comment>
