@@ -24,7 +24,7 @@ Ontology pipeline (offline, run once; several hours for the full fetch):
 ```bash
 uv run python ontology/build_ontology.py                      # fetch -> reason -> validate -> write .owl + .ttl (no-op if the .owl exists)
 uv run python ontology/build_ontology.py --force              # rebuild anyway
-./setup.ps1 [-Force]                                          # uv sync + bun install + the build above (setup.bat wraps it)
+./setup.ps1 [-Force]                                          # uv sync + bun install + the build above
 uv run python ontology/build_ontology.py --years 2024         # quick subset
 uv run python ontology/build_ontology.py --from-stage reason  # reuse the checkpointed fetch
 ```
