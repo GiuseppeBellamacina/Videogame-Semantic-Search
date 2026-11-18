@@ -64,9 +64,9 @@ L'allineamento esterno, noto in letteratura come \textbf{ontology alignment}
     il principio \textit{Linked Data} di riusare URI esistenti.
 \end{enumerate}
 
-\subsection{Limitazione Attuale}
+\subsection{Portata degli Allineamenti}
 
-L'allineamento \`e dichiarato a livello dello schema ma non viene sfruttato dal
-reasoner OWL 2 RL, poich\'e \texttt{owlrl} opera solo sul namespace locale.
-Per sfruttare appieno questi assiomi, sarebbe necessario un reasoner DL completo
-(HermiT, Pellet) che possa importare anche le definizioni di classe da Wikidata.
+\texttt{skos:closeMatch} non ha semantica OWL: gli allineamenti sono annotazioni di corrispondenza e non
+producono inferenze n\'e sul grafo locale n\'e su quello di Wikidata. Un'equivalenza logica richiederebbe
+un reasoner che importi anche le definizioni di classe esterne (HermiT, Pellet) e comporterebbe gli
+impegni ontologici descritti sopra.

@@ -1,0 +1,33 @@
+@prefix vg: <http://www.videogame-ontology.org/ontology#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+vg:GameA  a vg:VideoGame ;
+    vg:gameName "Elden Ring" ;
+    vg:releaseDate "2022-02-25"^^xsd:date ;
+    vg:metacriticScore 96 ;
+    vg:developedBy vg:Dev1 ;
+    vg:hasGenre vg:RPGGenreInstance ;
+    vg:hasGameMode vg:SinglePlayer, vg:OnlineMultiplayer ;
+    vg:availableOn vg:PS5, vg:PC_Windows ;
+    vg:wonAward vg:TGAAward2022 .
+
+vg:GameB  a vg:VideoGame ;
+    vg:gameName "Hollow Knight" ;
+    vg:releaseDate "2017-02-24"^^xsd:date ;
+    vg:metacriticScore 87 ;
+    vg:developedBy vg:Dev2 ;
+    vg:availableOn vg:NintendoSwitch ;
+    vg:hasGameMode vg:SinglePlayer .
+
+vg:GameC  a vg:VideoGame ;
+    vg:gameName "Dark Souls III" ;
+    vg:sequelOf vg:GameX ;
+    vg:developedBy vg:Dev1 .
+
+# individui tipizzati (necessari per le restrizioni esistenziali)
+vg:PS5               a vg:PlayStationPlatform .
+vg:PC_Windows        a vg:WindowsPlatform .
+vg:NintendoSwitch    a vg:NintendoPlatform .
+vg:SinglePlayer      a vg:SinglePlayerMode .
+vg:OnlineMultiplayer a vg:MultiplayerMode .
+vg:TGAAward2022      a vg:IndustryAward .

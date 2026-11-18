@@ -7,53 +7,58 @@ L'interfaccia utente \`e un'applicazione single-page costruita con \textbf{React
 \textbf{TypeScript}, \textbf{Vite} e \textbf{Tailwind CSS} \citep{react}. Il
 componente centrale \`e il \textbf{Knowledge Graph 2D}, realizzato con la libreria
 \texttt{react-force-graph-2d}, che visualizza i risultati delle query come un
-grafo interattivo physics-based.
+grafo interattivo con layout a forze.
 
 \subsubsection{Componenti Principali}
 
-I sei componenti React che compongono l'interfaccia sono:
+I componenti principali dell'interfaccia sono:
 
 \begin{itemize}[nosep]
-  \item \textbf{SearchBar} --- input di ricerca in linguaggio naturale, con un
-    elenco di domande suggerite mostrato al focus;
-  \item \textbf{ResultList} --- tabella dei risultati della query, con una colonna
-    per ogni variabile SPARQL. I valori URI sono cliccabili: aprono il dettaglio
-    del nodo e centrano il grafo su di esso;
-  \item \textbf{KnowledgeGraph} --- il grafo interattivo 2D con force-directed
-    layout. Supporta zoom, pan, hover (alone sul nodo ed etichette degli archi
-    a zoom elevato) e un pulsante ``recentra'' per zoom-to-fit;
-  \item \textbf{NodeDetail} --- pannello laterale che mostra tutte le propriet\`a
-    e relazioni del nodo selezionato. Include link cliccabili per espandere
-    altri nodi nel grafo;
-  \item \textbf{NodeContextMenu} --- menu contestuale al click destro (o long-press)
-    su un nodo: relazioni raggruppate per predicato e direzione, espansione di un
-    singolo vicino, di un gruppo o di tutti, apertura nella sidebar e rimozione
-    (nascondimento) del nodo dal grafo;
-  \item \textbf{SparqlViewer} --- pannello espandibile che mostra la query SPARQL
-    generata dall'agente, utile per debugging e trasparenza.
+  \item \textbf{SearchBar} --- input di ricerca in linguaggio naturale, con un elenco di domande suggerite
+    mostrato al focus e l'indicazione in tempo reale dello stato dell'elaborazione;
+  \item \textbf{QueryBuilder} --- costruzione assistita della query come una frase di campi selezionabili,
+    con il conteggio dei risultati aggiornato a ogni modifica;
+  \item \textbf{ResultList} --- tabella dei risultati, con una colonna per ogni variabile SPARQL; i valori
+    URI aprono il dettaglio del nodo e centrano il grafo su di esso;
+  \item \textbf{KnowledgeGraph} --- il grafo interattivo 2D (si veda sotto);
+  \item \textbf{NodeDetail} --- pannello laterale con propriet\`a, classi pi\`u specifiche (ad esempio
+    \texttt{Developer} e \texttt{Publisher} per un'azienda che ha entrambi i ruoli) e relazioni del nodo
+    selezionato, con collegamenti per espandere altri nodi nel grafo;
+  \item \textbf{NodeContextMenu} --- menu contestuale al clic destro (o pressione prolungata) su un nodo:
+    relazioni raggruppate per predicato e direzione, espansione di un vicino, di un gruppo o di tutti,
+    apertura del dettaglio e nascondimento del nodo;
+  \item \textbf{SparqlViewer} e \textbf{SparqlEditor} --- visualizzazione della query eseguita e editor di
+    query SPARQL libere in sola lettura, con prefissi standard aggiunti automaticamente e limiti di
+    1000 righe e 30 secondi.
 \end{itemize}
 
 \subsubsection{Caratteristiche del Grafo Interattivo}
 
-Il Knowledge Graph offre un'esperienza di navigazione ricca:
-
 \begin{itemize}[nosep]
-  \item \textbf{Nodi colorati per tipo}: VideoGame (indaco), Developer (ambra),
-    Publisher (verde), Genre (rosso), Platform (blu), Franchise (viola),
-    Award (arancione), ecc.;
-  \item \textbf{VideoGame come rettangoli portrait}: i nodi gioco sono visualizzati
-    come riquadri verticali con immagine di copertina (da Wikipedia) o emoji
-    placeholder, differenziandosi dagli altri nodi circolari;
-  \item \textbf{Animazione physics-based}: forza di attrazione/repulsione tra i
-    nodi con smorzamento progressivo;
-  \item \textbf{Long-press su mobile}: supporto touch per dispositivi mobili;
-  \item \textbf{Filtro per tipo}: legenda interattiva che permette di
-    nascondere/mostrare intere categorie di nodi con un click;
-  \item \textbf{Selezione}: il nodo cliccato viene evidenziato e portato in primo
-    piano (z-order);
-  \item \textbf{Cross-link}: dopo ogni query o espansione il backend
-    (\texttt{/api/cross-links}) individua gli archi tra i nodi gi\`a presenti e
-    quelli nuovi, mantenendo il grafo connesso.
+  \item \textbf{Nodi colorati per tipo}: ogni tipo (VideoGame, Developer, Publisher, Genre, Platform,
+    Franchise, Award, \dots) ha un colore definito in un'unica tabella del tema, usata anche da legenda e
+    filtri;
+  \item \textbf{Giochi con copertina}: i giochi sono riquadri verticali con l'immagine di copertina, le altre
+    entit\`a sono cerchi con il logo o l'immagine disponibile; in attesa dell'immagine compare l'iniziale
+    con un indicatore di caricamento. Le immagini sono richieste in batch, a frequenza limitata, e se
+    Wikimedia risponde con un limite di richieste la richiesta \`e ripetuta in seguito;
+  \item \textbf{Un arco per relazione}: tra due nodi una stessa relazione compare una sola volta, anche
+    quando i dati contengono sia la relazione sia la sua inversa (\texttt{developedBy} e
+    \texttt{developerOf}); il verso \`e letto dal nodo selezionato (selezionando un gioco si legge
+    \texttt{publishedBy}, selezionando l'azienda \texttt{publisherOf}) e il pulsante \emph{Inverti} legge
+    al contrario tutte le relazioni invertibili. Relazioni diverse tra gli stessi due nodi, come
+    \texttt{developedBy} e \texttt{publishedBy} di un'azienda con entrambi i ruoli, sono disegnate come
+    curve parallele;
+  \item \textbf{Relazioni derivate}: le relazioni prodotte dal reasoner (stesso sviluppatore, publisher o
+    serie) sono tratteggiate, senza freccia, attivabili con un interruttore e interattive solo per il nodo
+    selezionato; cliccando una relazione si vede che cosa accomuna i due nodi;
+  \item \textbf{Selezione e confronto}: il nodo cliccato \`e evidenziato e i vicini sono messi in
+    risalto; con un secondo clic si vedono le relazioni tra due nodi, con Maiusc{+}clic si seleziona un
+    insieme di nodi da isolare, nascondere o eliminare;
+  \item \textbf{Disposizione}: un pannello permette di fissare i nodi per tipo su una griglia o in una fascia
+    per ciascun tipo; la legenda interattiva nasconde o mostra intere categorie;
+  \item \textbf{Cross-link}: dopo ogni query o espansione il backend (\texttt{/api/cross-links}) individua
+    gli archi tra i nodi gi\`a presenti e quelli nuovi, mantenendo il grafo connesso.
 \end{itemize}
 
 \subsection{Backend: FastAPI Async}
@@ -64,72 +69,77 @@ Sezione~\ref{sec:architettura}). I componenti chiave sono:
 
 \subsubsection{SPARQL Agent}
 
-Il cuore intelligente del sistema \`e lo \texttt{sparql\_agent.py}, che utilizza
-un LLM, scelto con la variabile \texttt{LLM\_MODEL} nel formato \texttt{provider:modello}
-(es.\ \texttt{openai:gpt-4.1-mini} \citep{openai} oppure \texttt{anthropic:haiku5.5}), per tradurre
-domande in linguaggio naturale (italiano o inglese) in query SPARQL. Il client \`e in \texttt{llm.py}. Il prompt include:
+\begingroup\sloppy
+Il cuore del sistema \`e \texttt{sparql\_agent.py}, che utilizza un LLM, scelto con la variabile
+\texttt{LLM\_MODEL} nel formato \texttt{provider:modello} (es.\ \texttt{openai:gpt-4.1-mini}
+\citep{openai} oppure \texttt{anthropic:haiku5.5}), per tradurre domande in linguaggio naturale (italiano o
+inglese) in query SPARQL. Il client \`e in \texttt{llm.py}. Il prompt include:\par\endgroup
 \begin{itemize}[nosep]
-  \item Un riassunto dello schema dell'ontologia (classi principali, classi
-    definite, propriet\`a e catene rilevanti per l'interrogazione);
-  \item I prefissi SPARQL (\texttt{vg:}, \texttt{rdf:}, \texttt{rdfs:}, \texttt{xsd:});
-  \item Esempi di domande e query corrispondenti (\textit{few-shot prompting}), con \texttt{CONSTRUCT} per le domande sulle relazioni (restituiscono un grafo) e \texttt{SELECT} per classifiche, conteggi ed elenchi;
-  \item Istruzioni per generare solo la query SPARQL, senza testo aggiuntivo.
+  \item un riassunto dello schema dell'ontologia (classi principali, classi definite, propriet\`a e catene
+    rilevanti per l'interrogazione);
+  \item i prefissi SPARQL (\texttt{vg:}, \texttt{rdf:}, \texttt{rdfs:}, \texttt{xsd:});
+  \item esempi di domande e query corrispondenti (\textit{few-shot prompting}), con \texttt{CONSTRUCT} per
+    le domande sulle relazioni (restituiscono un grafo) e \texttt{SELECT} per classifiche, conteggi ed elenchi;
+  \item l'istruzione di generare solo la query SPARQL, senza testo aggiuntivo.
 \end{itemize}
 
-Il flusso include un meccanismo di \textbf{retry automatico} (fino a 3 retry,
-cio\`e al massimo 4 tentativi):
+Il flusso prevede un meccanismo di \textbf{ritento automatico} (fino a 3 ritenti, cio\`e al massimo 4
+tentativi):
 \begin{enumerate}[nosep]
-  \item L'agente genera una query SPARQL;
-  \item Il \texttt{sparql\_validator} (rdflib) ne verifica la correttezza sintattica;
-    la query viene poi eseguita su pyoxigraph;
-  \item Se la query \`e sintatticamente invalida, fallisce in esecuzione o produce
-    zero risultati, l'agente riceve il messaggio di errore e le query fallite
-    precedenti, e ritenta con un prompt correttivo.
+  \item l'agente genera una query SPARQL;
+  \item il \texttt{sparql\_validator} (rdflib) ne verifica la correttezza sintattica; la query \`e poi
+    eseguita su pyoxigraph con un tetto di 1000 righe e un timeout di 30 secondi;
+  \item se la query \`e sintatticamente invalida, fallisce in esecuzione, supera il timeout o produce zero
+    risultati, l'agente riceve il messaggio di errore e le query precedenti e ritenta con un prompt
+    correttivo.
 \end{enumerate}
+
+Le domande pi\`u comuni (26 query predefinite, in \texttt{presets.json}) sono risolte senza il modello,
+con la query SPARQL memorizzata, e tollerano errori di battitura fino a due modifiche.
 
 \subsubsection{GraphBuilder}
 
-Il \texttt{graph\_builder.py} trasforma i risultati SPARQL (binding di variabili)
-in una struttura JSON adatta al frontend:
+Il \texttt{graph\_builder.py} trasforma i risultati SPARQL in una struttura JSON adatta al frontend:
 \begin{itemize}[nosep]
   \item \textbf{Nodi}: URI, label, tipo (classe OWL), colore e dimensione;
   \item \textbf{Archi}: sorgente, destinazione e label (nome locale del predicato).
 \end{itemize}
 
-La forma dei nodi \`e decisa dal frontend in base al tipo, e le immagini di
-copertina sono richieste separatamente tramite \texttt{/api/image-search}.
+Il tipo di un nodo \`e ricavato dalle sue classi: ogni classe (anche una sottoclasse specializzata o una
+classe definita) \`e ricondotta al tipo di base attraverso la gerarchia \texttt{rdfs:subClassOf}; un'azienda
+con i due ruoli \`e un solo nodo, del tipo \texttt{Developer}. La label proviene dalle propriet\`a
+\texttt{*Name}. Le immagini di copertina sono richieste separatamente, tramite \texttt{/api/images}.
 
-Il builder arricchisce i nodi con metadati derivati dal grafo RDF (tipo tramite
-\texttt{rdf:type}, label tramite le propriet\`a \texttt{*Name}).
+\subsubsection{Autosuggest, query builder e relazioni}
 
-\subsubsection{Autosuggest e query builder}
-
-Oltre alla ricerca via LLM, il backend offre due funzioni che non richiedono il modello:
+Oltre alla ricerca via LLM, il backend offre funzioni che non richiedono il modello:
 \begin{itemize}[nosep]
-  \item \textbf{Autosuggest} (\texttt{/api/suggest}): un indice in memoria dei nomi di giochi, studi,
-    publisher, generi, piattaforme, serie, personaggi, premi, engine e modalit\`a, costruito al caricamento
+  \item \textbf{Autosuggest} (\texttt{/api/suggest}): un indice in memoria dei nomi di giochi, aziende,
+    generi, piattaforme, serie, personaggi, premi, motori e modalit\`a, costruito al caricamento
     dell'ontologia; propone completamenti sulle ultime parole digitate;
-  \item \textbf{Query builder assistito} (\texttt{/api/builder/*}): l'utente compone filtri su
-    sviluppatore, genere, piattaforma, modalit\`a, anno, punteggio Metacritic o categorie inferite
-    (es.\ \texttt{Highly\-Rated\-Game}) o mese di uscita; il backend genera il SPARQL da una whitelist di campi, con
-    escaping dei valori, e lo esegue restituendo risultati e grafo come per la ricerca libera. Un endpoint di conteggio
-    mostra in tempo reale quanti giochi corrispondono ai filtri;
-  \item \textbf{Relazioni derivate} (\texttt{/api/relation}): cliccando una relazione del grafo il frontend
-    chiede quale elemento accomuna i due nodi (lo stesso sviluppatore, publisher o serie nel caso delle catene di propriet\`a);
-    \texttt{/api/images/retry} propone un'altra copertina quando quella trovata manca o \`e sbagliata.
+  \item \textbf{Query builder assistito} (\texttt{/api/builder/*}): l'utente compone filtri su sviluppatore,
+    genere, piattaforma, modalit\`a, anno, mese di uscita, punteggio Metacritic o categorie inferite (es.\
+    \texttt{HighlyRatedGame}); il backend genera il SPARQL da una whitelist di campi, con escaping dei valori,
+    e restituisce risultati e grafo come per la ricerca libera; un endpoint di conteggio mostra quanti giochi
+    corrispondono ai filtri;
+  \item \textbf{Relazioni derivate} (\texttt{/api/relation}): cliccando una relazione derivata il frontend
+    chiede quale elemento accomuna i due nodi (lo stesso sviluppatore, publisher o serie);
+  \item \textbf{Immagini} (\texttt{/api/images}, \texttt{/api/images/\allowbreak retry}): le copertine sono cercate su
+    Wikipedia e, per aziende, piattaforme e serie, sul logo di Wikidata; il pulsante di ripetizione propone
+    un'altra immagine quando quella trovata manca o non \`e corretta.
 \end{itemize}
 
 \subsubsection{Cache}
 
 \begin{itemize}[nosep]
-  \item \textbf{SQLite}: cache locale persistente per i
-    risultati delle query (TTL 14 giorni, invalidati quando l'ontologia viene rigenerata) e gli URL delle immagini (TTL 6 mesi);
-  \item \textbf{Cache in-memory}: dizionari Python per label e tipi, popolati
-    al primo accesso e consultabili in O(1); fungono anche da fallback per
-    risultati e immagini quando il database SQLite non \`e disponibile.
+  \item \textbf{SQLite}: cache locale persistente per i risultati delle query (TTL 14 giorni, invalidati
+    quando l'ontologia viene rigenerata) e gli URL delle immagini (TTL 6 mesi);
+  \item \textbf{Cache in memoria}: dizionari Python per label e tipi, popolati al primo accesso e
+    consultabili in $O(1)$; fungono anche da alternativa per risultati e immagini quando il database SQLite
+    non \`e disponibile.
 \end{itemize}
 
 \subsection{Endpoint API}
 
-Si rimanda alla Tabella~\ref{tab:endpoint} nella Sezione~\ref{sec:architettura}
-per l'elenco completo degli endpoint REST.
+Si rimanda alla Tabella~\ref{tab:endpoint} nella Sezione~\ref{sec:architettura} per l'elenco completo
+degli endpoint REST.

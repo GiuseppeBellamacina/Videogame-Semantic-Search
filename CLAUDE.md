@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Semantic Web university project (docs/README in Italian): an OWL ontology of video games (from Wikidata, 2010–2026) queried through natural language. A FastAPI backend turns the question into SPARQL with an OpenAI LLM, runs it on an in-memory pyoxigraph store, and a React frontend shows results as an interactive force graph. There is no test suite.
+Semantic Web university project (docs/README in Italian): an OWL ontology of video games (from Wikidata, 2010–2026) queried through natural language. A FastAPI backend turns the question into SPARQL with an OpenAI LLM, runs it on an in-memory pyoxigraph store, and a React frontend shows results as an interactive force graph. The ontology scripts have small pytest checks (`uv run --with pytest python -m pytest ontology/scripts`: schema validator, company model, reasoning on `ontology/tests/test_abox.ttl`); the frontend has `bun run src/lib/relations.check.ts`; `backend/eval/run_presets.py` runs the stored queries on the real store.
 
 ## Commands
 

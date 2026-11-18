@@ -15,11 +15,12 @@ di ricerca semantica che integra:
     del progetto; la conformit\`a non \`e stata controllata con un reasoner DL (HermiT, ROBOT), il file
     prodotto \`e RL-safe e senza gli assiomi solo-DL, e \texttt{xsd:date} \`e fuori dalla datatype map di OWL 2;
   \item \textbf{Un sistema di reasoning a due livelli} (OWL 2 RL + 23 regole
-    CONSTRUCT) funzionante end-to-end, con 0 falsi \texttt{owl:sameAs} dopo
-    il fix del bug critico degli assiomi DL-only;
+    CONSTRUCT) funzionante end-to-end, senza \texttt{owl:sameAs} spuri grazie
+    alla separazione degli assiomi DL-only;
   \item \textbf{Un knowledge graph popolato} da Wikidata (2010--2026), con 107.522 videogiochi e
     4,41 milioni di triple dopo il reasoning, costruito da una pipeline unica, riprendibile e con
-    checkpoint, che integra fetch, reasoning e validazione;
+    checkpoint, che integra fetch, reasoning e validazione; le aziende sono modellate come
+    \texttt{Company} con i ruoli \texttt{Developer} e \texttt{Publisher};
   \item \textbf{Un'interfaccia web interattiva} con ricerca in linguaggio naturale (OpenAI o
     Anthropic), query builder assistito, autosuggest, grafo 2D navigabile e filtri per tipo;
   \item \textbf{Un backend locale} basato su pyoxigraph, con cache SQLite persistente.
@@ -36,21 +37,26 @@ Il sistema offre numerose direzioni di sviluppo futuro:
     \texttt{hasKey}) senza bisogno delle regole CONSTRUCT compensative, previa
     migrazione delle date a \texttt{xsd:dateTime} (cfr.~Sezione~\ref{sec:profilo_dl}). Questo abiliterebbe anche la rilevazione
     automatica di inconsistenze tra le istanze;
-  \item \textbf{Valutazione dell'agente NL $\rightarrow$ SPARQL} --- oggi non sono misurate
-    accuratezza su un insieme di domande, latenza e casi di fallimento, e non esistono competency question
-    con risultati attesi sui dati (il test di istanze ha solo 3 giochi). Esiste un controllo senza LLM,
-    \texttt{backend/eval/run\_presets.py}, che esegue sullo store le 26 query predefinite e 10 competency
-    question (36 su 36 rispondono), ma non misura la qualit\`a delle query generate dall'agente. Il retry su un risultato vuoto \`e
-    problematico: una risposta legittimamente vuota fa ritentare e pu\`o produrre una query allargata;
+  \item \textbf{Valutazione dell'agente NL $\rightarrow$ SPARQL} --- accuratezza su un insieme di
+    domande, latenza e casi di fallimento non sono ancora misurati. Il controllo disponibile,
+    \texttt{backend/eval/\allowbreak run\_presets.py}, esegue sullo store le 26 query predefinite e 10 competency
+    question, tutte con esito positivo, ma non valuta le query generate dall'agente. Inoltre il ritento su
+    risultato vuoto tratta come errore anche una risposta legittimamente vuota e pu\`o produrre query pi\`u
+    ampie di quanto richiesto;
   \item \textbf{Validazione delle istanze con SHACL} --- definire SHACL shapes per
     validare la conformit\`a delle istanze (es. ogni VideoGame deve avere
     almeno un \texttt{gameName}, le date devono essere nel formato corretto);
   \item \textbf{SWRL rules reali} --- sostituire le 23 regole CONSTRUCT con
     autentiche SWRL rules, sfruttando un reasoner che le supporti nativamente;
   \item \textbf{Estensione della pipeline Wikidata} --- aggiungere query per
-    recuperare \texttt{hasSteamAppId}, \texttt{budgetTier} e \texttt{playerCount},
-    attualmente non popolate dai dati Wikidata (come le classi \texttt{Review} e \texttt{GameEvent}, modellate ma
-    senza istanze: il pattern n-ario non \`e quindi dimostrato sui dati);
+    recuperare \texttt{hasSteamAppId}, \texttt{budgetTier} e \texttt{playerCount}, oggi non popolate
+    (come altre 18 propriet\`a e 28 classi, tra cui \texttt{Review} e \texttt{GameEvent}: il pattern
+    n-ario non \`e quindi dimostrato sui dati), e le relazioni di controllo tra aziende (propriet\`a P749 e P127), oggi
+    assenti: reparti come Nintendo Entertainment Analysis \& Development non risultano collegati alla
+    capogruppo tramite \texttt{subsidiaryOf};
+  \item \textbf{Identificatori stabili} --- costruire gli URI dei giochi dal QID di Wikidata e
+    popolare \texttt{hasWikidataId}, in modo che le chiavi dichiarate abbiano effetto sui dati ed
+    evitando la fusione dei titoli omonimi;
   \item \textbf{Internazionalizzazione del frontend} --- supporto multilingua
     per l'interfaccia (oggi in italiano) ed estensione delle query in linguaggio
     naturale oltre italiano e inglese (francese, spagnolo, \dots{});

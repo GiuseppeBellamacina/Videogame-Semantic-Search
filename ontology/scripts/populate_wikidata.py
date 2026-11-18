@@ -180,10 +180,28 @@ LIMIT 5000
 """
 
 
+_RESERVED: set[str] | None = None
+
+
+def _reserved() -> set[str]:
+    """Local names of the schema terms (classes, properties, individuals)."""
+    global _RESERVED
+    if _RESERVED is None:
+        _RESERVED = {
+            str(s).split("#")[-1]
+            for s in set(schema_loader.load_tbox().subjects())
+            if isinstance(s, URIRef) and str(s).startswith(str(VG))
+        }
+    return _RESERVED
+
+
 def make_uri(base: str, label: str) -> URIRef:
-    """Create a safe URI from a label."""
+    """Create a safe URI from a label. A game whose title is a schema term (the game "Platform" would
+    be the class vg:Platform) gets the suffix _Game."""
     safe = label.strip().replace(" ", "_").replace("'", "").replace('"', "")
     safe = "".join(c for c in safe if c.isalnum() or c in "_-.")
+    if base == str(VG) and safe in _reserved():
+        safe += "_Game"
     return URIRef(f"{base}{safe}")
 
 

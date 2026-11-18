@@ -38,10 +38,10 @@ nello stesso blocco.
 e non sono disgiunti, perch\'e una stessa azienda pu\`o avere entrambi i ruoli (FromSoftware sviluppa e pubblica).
 La disgiunzione resta tra \texttt{Company} e le altre classi top-level.
 
-Il blocco 9 modella stati del ciclo di vita come classi statiche e disgiunte. \`E una semplificazione:
-un gioco delistato \`e stato rilasciato, e uno in accesso anticipato poi esce, quindi nel tempo gli stati
-non si escludono. Le quattro classi sono segnaposto che il popolamento non usa (gli stati temporali sono
-modellati da \texttt{GameEvent}) e l'ontologia pubblicata non le popola.
+Il blocco 9 rappresenta stati del ciclo di vita come classi statiche e disgiunte. La scelta \`e una
+semplificazione: un gioco rimosso dagli store \`e stato rilasciato, e uno in accesso anticipato
+successivamente esce, quindi nel tempo gli stati non si escludono. Le quattro classi non sono popolate
+dal popolamento, che rappresenta gli eventi temporali con \texttt{GameEvent}.
 
 \subsection{Importanza delle Disjointness}
 
@@ -63,7 +63,7 @@ Le dichiarazioni di disjointness svolgono due ruoli fondamentali:
 \subsection{Nota su SinglePlayerGame e MultiplayerGame}
 
 Si noti che \texttt{SinglePlayerGame} e \texttt{MultiplayerGame} \textbf{non}
-compaiono in alcun blocco di disjointness. La scelta \`e deliberata: nel dominio
+compaiono in alcun blocco di disjointness. La scelta \`e intenzionale: nel dominio
 dei videogiochi, \`e comune che un gioco supporti sia la modalit\`a single-player
 che multiplayer (es. Grand Theft Auto V, Elden Ring, Call of Duty). Dichiararle
 disgiunte produrrebbe inconsistenze su una porzione significativa delle istanze.

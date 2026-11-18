@@ -23,8 +23,8 @@ nel grafo RDF. I costrutti supportati includono:
   \item \texttt{owl:propertyChainAxiom} --- catene di propriet\`a.
 \end{itemize}
 
-Sull'insieme di istanze di test (3 giochi + 2 developer + piattaforme), \texttt{owlrl} produce
-un incremento da $\sim$997 a $\sim$2680 triple.
+Sull'insieme di istanze di test (3 giochi + 2 developer + piattaforme), \texttt{owlrl} e le regole successive portano
+il grafo (schema compreso) da 1.609 a 2.135 triple.
 
 \subsubsection{Livello 2: construct\_reasoner.py (SPARQL CONSTRUCT)}
 
@@ -66,7 +66,10 @@ Solo R1--R3, R4b e R4c coprono costrutti realmente esterni a OWL 2 RL. Le regole
 (classificazione per sequel, piattaforma e modalit\`a, completamento delle inverse)
 ripetono inferenze che il livello 1 gi\`a produce: sono mantenute perch\'e il livello 2
 possa essere eseguito anche da solo, senza dipendere dalla chiusura \texttt{owlrl}.
-R10 e R11 aggiungono relazioni di comodo tra giochi con lo stesso genere o motore; poich'e il numero di coppie cresce col quadrato dei giochi per genere o motore, nella costruzione dell'ontologia completa non vengono eseguite. Le propriet\`a \texttt{sharedGenreWith} e \texttt{sharedEngineWith} sono quindi propriet\`a di comodo \emph{non dichiarate} tra le 32 object property dello schema: esistono solo se le due regole vengono lanciate a mano.
+R10 e R11 aggiungono relazioni di comodo tra giochi con lo stesso genere o motore. Poich\'e il numero di coppie
+cresce col quadrato dei giochi per genere o motore, non vengono eseguite nella costruzione dell'ontologia
+completa; le propriet\`a \texttt{sharedGenreWith} e \texttt{sharedEngineWith} non sono dichiarate tra le 31 object
+property dello schema ed esistono solo se le due regole vengono lanciate a mano.
 
 \subsection{Perch\'e Alcuni Costrutti Non Sono in OWL 2 RL}
 
@@ -129,6 +132,7 @@ La Tabella~\ref{tab:inferenza} riporta le conclusioni, il motivo e il livello ch
 \texttt{StandaloneGame} & nessun \texttt{sequelOf} noto (negation-as-failure) & 2 \\
 \midrule
 \texttt{Dev1 developerOf GameA} & inversa di \texttt{developedBy} & 1 \\
+\texttt{Dev1} \texttt{a} \texttt{Company}, \texttt{Developer} & dominio di \texttt{developerOf}; definizione $\exists$\texttt{developerOf.VideoGame} & 1 \\
 \texttt{GameA sharesDeveloperWith GameC} & catena \texttt{developedBy} $\circ$ \texttt{developerOf} e simmetria & 1 \\
 \bottomrule
 \end{tabularx}
@@ -138,16 +142,15 @@ L'esempio mostra la divisione dei compiti: il livello 1 (\texttt{owlrl}) copre
 gerarchie, restrizioni esistenziali, inverse e catene; il livello 2 (CONSTRUCT)
 interviene solo dove servono confronti tra literal o negazione.
 
-\subsection{Bug Critico: owl:sameAs Falsi e Soluzione}
+\subsection{Identit\`a degli Individui e owl:sameAs Spuri}
 
 \subsubsection{Il Problema}
 
-Durante lo sviluppo \`e emerso un bug critico: \texttt{owlrl} inferiva
-\texttt{owl:sameAs} falsi tra giochi distinti a causa degli assiomi di
-identit\`a (\texttt{FunctionalProperty}, \texttt{InverseFunctionalProperty},
-\texttt{hasKey}) dichiarati su \textbf{DatatypeProperty}.
+Nelle prime versioni dell'ontologia \texttt{owlrl} derivava \texttt{owl:sameAs} errati tra giochi
+distinti, a causa degli assiomi di identit\`a (\texttt{FunctionalProperty},
+\texttt{InverseFunctionalProperty}, \texttt{hasKey}) dichiarati su \textbf{DatatypeProperty}.
 
-\textbf{Meccanismo del bug}: nel profilo OWL 2 RL le uguaglianze tra individui
+\textbf{Meccanismo}: nel profilo OWL 2 RL le uguaglianze tra individui
 sono prodotte da tre regole:
 \begin{itemize}[nosep]
   \item \texttt{prp-fp} (FunctionalProperty) --- se lo \emph{stesso soggetto} ha due
@@ -164,14 +167,12 @@ produce uguaglianze tra literal diversi dello stesso gioco (es.\ due date di ril
 regionali). Ogni \texttt{owl:sameAs} spurio propaga poi tipi e propriet\`a tra gli
 individui unificati (regole \texttt{eq-rep-*}), falsando la classificazione.
 
-\textbf{Esempio}: nel test delle istanze (Appendice~\ref{sec:app_abox}) due
-\texttt{owl:sameAs} spuri collegavano \texttt{GameA} agli altri due giochi,
-propagando loro l'asserzione \texttt{wonAward}: prima del fix tutti e tre i giochi
-risultavano \texttt{AwardWinningGame}; dopo il fix solo \texttt{GameA}, l'unico con
-\texttt{wonAward} asserito, viene classificato come tale. I tre giochi di test non condividono per\`o alcun valore di
-\texttt{hasWikidataId} o \texttt{hasSteamAppId}: con lo schema attuale e \texttt{owlrl} 7.1.4 il
-risultato non \`e riproducibile su quel grafo, per cui l'esempio va letto come la cronaca del bug nella
-versione di sviluppo di allora, non come un test di regressione. Il fix resta una precauzione valida.
+\textbf{Esempio}: nel test delle istanze (Appendice~\ref{sec:app_abox}), nella versione iniziale dello
+schema, due \texttt{owl:sameAs} spuri collegavano \texttt{GameA} agli altri due giochi e propagavano loro
+l'asserzione \texttt{wonAward}: tutti e tre i giochi risultavano \texttt{AwardWinningGame}, mentre solo
+\texttt{GameA} ha un premio asserito. Con la configurazione attuale (schema e \texttt{owlrl} 7.1.4) il
+grafo di test non produce pi\`u l'uguaglianza: l'esempio documenta il comportamento osservato in
+origine, e la configurazione descritta di seguito ne previene la ricomparsa.
 
 \subsubsection{La Soluzione}
 
@@ -203,8 +204,9 @@ il valore dichiarativo per l'uso con reasoner DL completi (HermiT, Pellet).
 
 \subsubsection{Impatto}
 
-Dopo il fix: 0 \texttt{owl:sameAs} falsi su tutto l'insieme di istanze di test (2715 triple finali,
-nessun gioco unificato erroneamente). Le 12 famiglie di regole Python dirette in
+Con la configurazione descritta non si ottiene alcun \texttt{owl:sameAs} tra individui distinti: n\'e
+sull'insieme di istanze di test (2.135 triple finali) n\'e sul knowledge graph completo, dove la
+verifica \`e una delle competency question del progetto (Sezione~\ref{sec:conclusione}). Le 12 famiglie di regole Python dirette in
 \texttt{enrich\_owl.py} (\texttt{\_materialise}) classificano correttamente tutti
 i giochi senza produrre falsi positivi.
 
@@ -230,7 +232,7 @@ dimensioni:
   \item StandaloneGame $\leftarrow$ VideoGame senza \texttt{sequelOf}
 \end{enumerate}
 
-Le regole pairwise (3--5) sono protette dal cap \texttt{-{}-max-group} (default 50)
-per evitare esplosioni combinatorie su franchise con migliaia di giochi. Il cap vale per il passo di
-materializzazione mirata: la chiusura \texttt{owlrl}, eseguita prima, deriva comunque le catene
-(\texttt{prp-spo2}) per tutti i gruppi, quindi il risultato finale non ne \`e limitato.
+Le regole pairwise (3--5) sono protette dal tetto \texttt{-{}-max-group} (default 50), che evita la
+crescita quadratica su franchise con migliaia di giochi. Il tetto vale per questo passo: la chiusura
+\texttt{owlrl}, eseguita prima, deriva comunque le catene (\texttt{prp-spo2}) per tutti i gruppi, per cui
+il risultato finale non ne \`e limitato.

@@ -36,68 +36,71 @@ mancanti. In caso di rate limit (HTTP 429) lo script attende il tempo richiesto 
 una query che fallisce definitivamente interrompe l'esecuzione invece di salvare un mese vuoto.
 Il tempo totale dipende dai limiti di Wikidata (alcune ore).
 
-\subsubsection{Tipizzazione con le sottoclassi V2}
+\subsubsection{Tipizzazione con sottoclassi specializzate}
 
 Per rendere inferibili classi come \texttt{PlayStationGame} o \texttt{SinglePlayerGame}, le
-istanze di piattaforme, generi e modalit\`a ricevono la sottoclasse V2 corrispondente in base
+istanze di piattaforme, generi e modalit\`a ricevono la sottoclasse specializzata corrispondente in base
 all'etichetta (es.\ ``PlayStation 5'' $\rightarrow$ \texttt{PlayStationPlatform}, ``role-playing''
 $\rightarrow$ \texttt{RPGGenre}, ``single-player video game'' $\rightarrow$ \texttt{SinglePlayerMode}).
 
 \subsubsection{Deduplicazione}
 
-Wikidata pu\`o restituire la stessa entit\`a con URI diversi ma stesso nome
-normalizzato. La pipeline applica una normalizzazione del nome (trim degli spazi e lowercase)
-e, per ciascun nome, mantiene l'URI con il maggior numero di triple associate. Il confronto
-ignora anche gli spazi multipli e il simbolo \&; per sviluppatori e publisher ignora inoltre
-punteggiatura e forma legale (\emph{Netflix, Inc.} $=$ \emph{Netflix}), mentre parole come
-\emph{Games} o \emph{Studios} restano, perch\'e \emph{Rockstar Games} e \emph{Rockstar Studios}
-sono entit\`a diverse. La fusione avviene solo tra entit\`a dello stesso tipo, perch\'e le classi
-principali sono disgiunte; fanno eccezione sviluppatore e publisher, che sono ruoli della stessa
-azienda (si veda sotto).
+Wikidata pu\`o restituire la stessa entit\`a con URI diversi ma nome equivalente. La pipeline normalizza
+i nomi (spazi multipli, maiuscole, simbolo \&; per sviluppatori e publisher anche punteggiatura e forma
+legale, ad esempio \emph{Netflix, Inc.} $=$ \emph{Netflix}) e per ciascun nome mantiene un solo URI: quello
+dichiarato nello schema, se presente, altrimenti quello con il maggior numero di triple. I riferimenti agli
+altri URI sono riportati su quello mantenuto. Parole come \emph{Games} o \emph{Studios} sono conservate,
+perch\'e distinguono entit\`a diverse (\emph{Rockstar Games} e \emph{Rockstar Studios}). La fusione \`e
+limitata a entit\`a dello stesso tipo, poich\'e le classi principali sono disgiunte; fanno eccezione
+sviluppatori e publisher, che sono ruoli della stessa azienda (si veda oltre).
 
-I giochi fusi per titolo (un remake o un porting ha lo stesso titolo dell'originale) ricevevano
-pi\`u valori per le propriet\`a funzionali (311 date di uscita, 90 punteggi, 99 nomi): la pipeline
-tiene la data pi\`u antica, il punteggio pi\`u alto e un solo nome, e toglie i \texttt{sequelOf}
-che puntano al gioco stesso. Restano invece fusi i 921 titoli condivisi da pi\`u elementi di
-Wikidata, perch\'e gli URI dei giochi sono costruiti dal nome: \`e un limite noto. La regola
-\guillemotleft data pi\`u antica, punteggio pi\`u alto\guillemotright{} \`e inoltre una perdita di informazione, e il
-legame con Wikidata non \`e salvato: la pipeline non scrive \texttt{hasWikidataId}, per cui l'assioma
-\texttt{owl:hasKey} su di esso \`e vuoto sui dati. Costruire gli URI dal QID di Wikidata risolverebbe
-quasi tutto, ma richiede di rigenerare l'intero popolamento (Sezione~\ref{sec:conclusione}).
+I giochi fusi per titolo (un remake o un porting ha lo stesso titolo dell'originale) accumulavano pi\`u
+valori per le propriet\`a funzionali (311 date di uscita, 90 punteggi, 99 nomi): la pipeline conserva la
+data pi\`u antica, il punteggio pi\`u alto e un solo nome, ed elimina i \texttt{sequelOf} che puntano al gioco
+stesso. Gli URI dei giochi derivano dal nome, quindi i 921 titoli condivisi da pi\`u elementi di Wikidata
+risultano fusi, e la scelta di data e punteggio comporta una perdita di informazione. Un titolo che
+coincide con un termine dello schema (il gioco \emph{Platform}) riceve il suffisso \texttt{\_Game}, per non
+condividere l'IRI con la classe omonima. La pipeline inoltre non
+scrive \texttt{hasWikidataId}: l'assioma \texttt{owl:hasKey} su questa propriet\`a non ha quindi effetto sui
+dati. Costruire gli URI a partire dal QID di Wikidata eliminerebbe queste limitazioni, ma richiede di
+rigenerare il popolamento; \`e indicato tra gli sviluppi futuri (Sezione~\ref{sec:conclusione}).
 
 \subsubsection{Aziende che sviluppano e pubblicano}
 
-\texttt{Developer} e \texttt{Publisher} sono \emph{ruoli} della classe \texttt{Company}, non classi disgiunte.
-Un'azienda che sviluppa e pubblica (3.360 nomi, ad esempio FromSoftware) \`e un solo individuo, tipizzato
-\texttt{Developer} e \texttt{Publisher}, con sia \texttt{developerName} sia \texttt{publisherName}. La
-deduplicazione confronta i nomi di sviluppatori e publisher con la stessa normalizzazione (senza
-punteggiatura e forma legale) e fonde le coppie; se uno dei due URI \`e un nominale dichiarato nello
-schema (\texttt{pub/Nintendo}), resta quello. Le propriet\`a \texttt{developedBy} e \texttt{publishedBy}
-dei giochi puntano allo stesso nodo e nel grafo dell'applicazione l'azienda compare una volta sola, con
-entrambi i ruoli nella scheda di dettaglio. Le versioni precedenti usavano due individui
-(\texttt{dev/X} e \texttt{pub/X}) legati da una propriet\`a \texttt{sameCompanyAs}, ora rimossa: in 10.232
-giochi lo stesso nome sviluppa e pubblica. I ruoli sono classi definite:
+\texttt{Developer} e \texttt{Publisher} sono ruoli della classe \texttt{Company}: due classi definite e non
+disgiunte,
 $\mathit{Developer} \equiv \mathit{Company} \sqcap \exists\,\mathit{developerOf}.\mathit{VideoGame}$ e,
-in modo analogo, $\mathit{Publisher}$ con $\mathit{publisherOf}$; \texttt{developedBy}, \texttt{developerOf},
-\texttt{publishedBy} e \texttt{publisherOf} hanno \texttt{Company} come dominio o range. Il popolamento
-asserisce comunque anche il tipo, ridondante ma utile a chi legge il file senza un reasoner. Il file dati
-consegnato \`e stato portato a questo modello con lo script \texttt{retrofit\_full.py}, che applica sul file
-esistente le stesse modifiche della pipeline (schema, fusione delle aziende, rimozione delle triple
-derivate dai vecchi allineamenti) senza ripetere il fetch.
+in modo analogo, $\mathit{Publisher}$ con $\mathit{publisherOf}$. Le propriet\`a \texttt{developedBy},
+\texttt{developerOf}, \texttt{publishedBy} e \texttt{publisherOf} hanno \texttt{Company} come dominio o range.
+Un'azienda che sviluppa e pubblica (3.360 aziende, ad esempio FromSoftware; 10.232 giochi hanno lo stesso
+nome come sviluppatore e come publisher) \`e quindi un solo individuo, con entrambi i tipi e con sia
+\texttt{developerName} sia \texttt{publisherName}. Le propriet\`a \texttt{developedBy} e \texttt{publishedBy}
+dei suoi giochi puntano allo stesso nodo, che nell'applicazione compare una sola volta e mostra entrambi i
+ruoli nella scheda di dettaglio. Il popolamento asserisce comunque anche i tipi, ridondanti rispetto alle
+definizioni ma utili a chi legge il file senza un reasoner.
+
+Una versione precedente del modello rappresentava l'azienda con due individui distinti (\texttt{dev/X} e
+\texttt{pub/X}) legati dalla propriet\`a \texttt{sameCompanyAs}, che \`e stata rimossa. L'ontologia
+consegnata \`e stata portata al modello corrente con lo script \texttt{retrofit\_full.py}, che applica al
+file gi\`a costruito le stesse trasformazioni della pipeline (nuovo schema, fusione delle aziende, rimozione
+delle triple derivate dai precedenti allineamenti) senza ripetere il fetch.
 
 \subsubsection{Reasoning}
 
-Dopo il fetch e gli assiomi V2 viene eseguito il reasoning (cfr.\ Sezione~\ref{sec:reasoning}):
-chiusura OWL 2 RL tramite \texttt{owlrl}, materializzazione mirata delle classi definite e
-regole SPARQL CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} richiede circa 45 minuti e aggiunge 5,18 milioni di triple
-al grafo di circa 946.000 (la successiva pulizia toglie i messaggi di errore di \texttt{owlrl}, 255.048 triple riflessive e 1,33 milioni di triple con nodi anonimi, sostituiti dallo schema originale); la materializzazione mirata aggiunge 178.581 triple e
-le regole CONSTRUCT 26.841 (tra cui \texttt{MultiConsoleGame} e \texttt{MultiPlatformGame}). Il tetto di 50 giochi per gruppo (19 sviluppatori e 66 publisher lo superano) vale solo per il passo di
-materializzazione mirata, non per il risultato: le catene \texttt{sharesDeveloperWith} e
-\texttt{sharesPublisherWith} sono gi\`a derivate per ogni gruppo dalla chiusura \texttt{owlrl}, che le
-esegue prima (verificato su un developer sintetico con 60 giochi: tutte le 3.540 coppie). Il tetto
-resta quindi una protezione ridondante, e il grafo finale contiene anche le coppie dei gruppi pi\`u
-grandi, che sono quelle che pesano di pi\`u sulla dimensione (circa il 78\% delle triple finali \`e inferito). I conteggi finali sono in Tabella~\ref{tab:abox}
-e Tabella~\ref{tab:inferite}.
+Dopo il fetch e gli assiomi aggiuntivi viene eseguito il reasoning (cfr.\ Sezione~\ref{sec:reasoning}):
+chiusura OWL 2 RL con \texttt{owlrl}, materializzazione mirata delle classi definite e regole SPARQL
+CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} richiede circa 45 minuti e aggiunge 5,18 milioni
+di triple a un grafo di circa 946.000; la successiva pulizia rimuove i messaggi di errore di \texttt{owlrl},
+255.048 triple riflessive e 1,33 milioni di triple con nodi anonimi, sostituiti dallo schema originale. La
+materializzazione mirata aggiunge 178.581 triple e le regole CONSTRUCT 26.841 (tra cui \texttt{MultiConsoleGame}
+e \texttt{MultiPlatformGame}).
+
+Il tetto di 50 giochi per gruppo (superato da 19 sviluppatori e 66 publisher) riguarda soltanto la
+materializzazione mirata: la chiusura \texttt{owlrl} deriva le catene \texttt{sharesDeveloperWith} e
+\texttt{sharesPublisherWith} per ogni gruppo, come verificato su un grafo sintetico con uno sviluppatore da
+60 giochi (tutte le 3.540 coppie). Il grafo finale contiene quindi anche le coppie dei gruppi pi\`u grandi,
+che incidono maggiormente sulla dimensione: circa il 78\% delle triple finali \`e inferito. I conteggi sono
+riportati nelle Tabelle~\ref{tab:abox} e~\ref{tab:inferite}.
 
 \begin{table}[h]
 \centering
@@ -119,12 +122,12 @@ Modalit\`a di gioco (individui) & 40 \\
 \end{tabular}
 \end{table}
 
-Le cifre vanno lette con la semantica di chiusura del secondo livello. \texttt{StandaloneGame}
-(106.926 giochi su 107.522) significa \emph{nessun predecessore noto}: dipende dalla scarsit\`a
-di \texttt{sequelOf} nei dati (596 \texttt{SequelGame}), non da un fatto del mondo.
-\texttt{HighlyRatedGame} (107 giochi) richiede un \texttt{metacriticScore} $\geq$ 85 e vale solo
-per i giochi che hanno un punteggio, sparso in Wikidata, con il punteggio pi\`u alto tenuto nella
-fusione dei titoli omonimi. \texttt{RecentGame} usa una soglia fissa (2020-01-01) e invecchia.
+Le classi definite per negazione o per soglia vanno lette con la semantica di chiusura del secondo
+livello. \texttt{StandaloneGame} (106.926 giochi su 107.522) indica l'assenza di un predecessore noto e
+riflette la scarsit\`a di \texttt{sequelOf} nei dati (596 \texttt{SequelGame}). \texttt{HighlyRatedGame}
+(107 giochi) richiede un \texttt{metacriticScore} $\geq$ 85 e comprende solo i giochi con punteggio, non
+sempre presente in Wikidata; nella fusione dei titoli omonimi si conserva il punteggio pi\`u alto.
+\texttt{RecentGame} usa la soglia fissa 2020-01-01.
 
 \begin{table}[h]
 \centering
@@ -163,6 +166,15 @@ AndroidGame & 3.941 & GOTYWinner & 16 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Sul file finale un controllo di coerenza non rileva violazioni delle disgiunzioni tra classi principali,
+\texttt{owl:sameAs} tra individui distinti, giochi privi di nome o con pi\`u nomi o date, n\'e termini usati
+nei dati senza dichiarazione nello schema. Il popolamento non usa tutte le classi e le propriet\`a
+dichiarate: 28 classi (stati di rilascio, budget, sviluppatori e publisher di tipo first-party o indie,
+tipologie di personaggio, motore e premio, \texttt{Review}, \texttt{GameEvent}) e 21 propriet\`a
+(tra cui \texttt{hasWikidataId}, \texttt{hasSteamAppId}, \texttt{budgetTier}, \texttt{playerCount},
+\texttt{partOfFranchise}, \texttt{subsidiaryOf} e quelle di \texttt{Review} e \texttt{GameEvent}) sono
+modellate ma senza istanze.
 
 \subsection{Store RDF a runtime: pyoxigraph}
 

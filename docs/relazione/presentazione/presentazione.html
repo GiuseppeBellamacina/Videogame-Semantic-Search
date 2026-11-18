@@ -149,7 +149,7 @@ code,pre,.dl{font-variant-ligatures:none}
     <div class="col">
       <div class="grid3" style="gap:22px 18px">
         <div class="stat"><div class="big">122</div><span>classi (68 primitive)</span></div>
-        <div class="stat"><div class="big">50</div><span>classi definite</span></div>
+        <div class="stat"><div class="big">52</div><span>classi definite</span></div>
         <div class="stat"><div class="big">58</div><span>proprietà (31 object, 26 datatype)</span></div>
         <div class="stat"><div class="big">12</div><span>coppie inverse</span></div>
         <div class="stat"><div class="big">12</div><span>blocchi AllDisjointClasses</span></div>
@@ -335,8 +335,8 @@ code,pre,.dl{font-variant-ligatures:none}
     </div>
     <div class="col">
       <ul class="b sm">
-        <li><b>Ben tipata</b>: VideoGame → Developer → VideoGame, quindi la super-proprietà ha dominio e range <code>VideoGame</code></li>
-        <li><b>Coppia riflessiva</b>: poiché <code>developerOf</code> è l'inversa, la catena deriva anche <span class="dl">(g, g)</span>. Non è un errore: nelle query si esclude con <code>FILTER(?g != ?altro)</code></li>
+        <li><b>Ben tipata</b>: VideoGame → Company → VideoGame, quindi la super-proprietà ha dominio e range <code>VideoGame</code></li>
+        <li><b>Coppia riflessiva</b>: poiché <code>developerOf</code> è l'inversa, la catena deriva anche <span class="dl">(g, g)</span>. La proprietà non è irriflessiva: le query escludono il caso con <code>FILTER(?g != ?altro)</code></li>
       </ul>
     </div>
   </div>
@@ -440,7 +440,7 @@ code,pre,.dl{font-variant-ligatures:none}
     </div>
     <div class="col stack">
       <div class="card"><h3>Come si legge</h3><p><span class="dl">Developer ≡ Company ⊓ ∃developerOf.VideoGame</span><br>Un'azienda è sviluppatore se ha sviluppato almeno un gioco, publisher se ne ha pubblicato uno: può essere entrambe. Le quattro relazioni <code>developedBy</code>, <code>developerOf</code>, <code>publishedBy</code>, <code>publisherOf</code> hanno <code>Company</code> come dominio o range. In una versione precedente erano due individui, legati da <code>sameCompanyAs</code>.</p></div>
-      <p class="note">È uno schema senza istanze nei dati: il nostro scarico da Wikidata non include relazioni di controllo tra aziende. La proprietà è pronta per i dati futuri.</p>
+      <p class="note"><code>subsidiaryOf</code> (Company → Company) è dichiarata ma priva di istanze: lo scarico da Wikidata non include le relazioni di controllo tra aziende, per cui reparti come Nintendo EAD non risultano collegati a Nintendo.</p>
     </div>
   </div>
   <div class="foot"><span>Videogame Semantic Search</span><span>12</span></div>
@@ -460,7 +460,7 @@ code,pre,.dl{font-variant-ligatures:none}
         owl:complementOf [ <span class="k">a</span> owl:Restriction ;
           owl:onProperty <span class="p">vg:sequelOf</span> ;
           owl:someValuesFrom <span class="p">vg:VideoGame</span> ] ] ) ] .</pre>
-      <p class="note" style="margin-top:14px">Open world assumption: «nessun sequel noto» non basta a OWL. Si classifica con una regola SPARQL (<code>FILTER NOT EXISTS</code>): 105.330 giochi.</p>
+      <p class="note" style="margin-top:14px">Open world assumption: «nessun sequel noto» non basta a OWL. Si classifica con una regola SPARQL (<code>FILTER NOT EXISTS</code>): 106.926 giochi, cioè nessun predecessore noto.</p>
     </div>
     <div class="col">
 <pre><span class="c"># KonamiPublishedGame ≡ VideoGame ⊓ ∃publishedBy.{Konami}</span>
@@ -558,7 +558,7 @@ code,pre,.dl{font-variant-ligatures:none}
       <tr><td>ExclusiveRelease</td><td class="dl">⊑ VideoGame ⊓ ≤1 availableOn</td><td><code>owl:maxCardinality</code>, solo necessaria</td></tr>
     </table>
     <div class="grid2">
-      <div class="card"><h3>Open World</h3><p>Che un gioco abbia <b>≤1</b> sviluppatore si deduce solo con assiomi di chiusura: le due classi di cardinalità sono <b>vincoli di integrità</b>, non classificatori.</p></div>
+      <div class="card"><h3>Open World</h3><p>Che un gioco abbia <b>≤1</b> sviluppatore si deduce solo con assiomi di chiusura: le due classi di cardinalità non classificano e non sono vincoli di integrità (un secondo valore produrrebbe un <code>owl:sameAs</code>, non un errore). Un controllo vero richiede SHACL.</p></div>
       <div class="card"><h3>Fuori da OWL 2 RL</h3><p>Complemento, datatype restriction e cardinalità minima richiedono regole SPARQL. Il nominale lo classifica già owlrl.</p></div>
     </div>
   </div>
@@ -614,7 +614,7 @@ code,pre,.dl{font-variant-ligatures:none}
         <tr><td>Genre</td><td><code>wd:Q65956376</code></td><td>video game genre</td></tr>
       </table>
       <table style="font-size:17px">
-        <tr><th>vg:</th><th>≡ Dublin Core</th></tr>
+        <tr><th>vg:</th><th>≈ Dublin Core</th></tr>
         <tr><td>releaseDate</td><td><code>dcterms:issued</code></td></tr>
         <tr><td>gameName</td><td><code>dcterms:title</code></td></tr>
         <tr><td>gameDescription</td><td><code>dcterms:description</code></td></tr>
@@ -623,7 +623,7 @@ code,pre,.dl{font-variant-ligatures:none}
     <div class="col stack">
       <div class="card"><h3>Interoperabilità</h3><p>Chi consuma Dublin Core legge <code>vg:releaseDate</code> come vicina a <code>dcterms:issued</code> (<code>skos:closeMatch</code>), senza equivalenza logica.</p></div>
       <div class="card"><h3>Nessun linkage automatico</h3><p><code>closeMatch</code> è solo un'annotazione: Wikidata usa <code>P31</code>, non <code>rdf:type</code>; il collegamento avviene nel popolamento.</p></div>
-      <p class="note">Servono reasoner che importino anche le definizioni esterne: le entità <code>wd:*</code> e <code>dcterms:*</code> non hanno una dichiarazione di tipo propria.</p>
+      <p class="note"><code>skos:closeMatch</code> non ha semantica OWL: gli allineamenti sono annotazioni e non producono inferenze.</p>
     </div>
   </div>
   <div class="foot"><span>Videogame Semantic Search</span><span>18</span></div>
@@ -684,7 +684,7 @@ code,pre,.dl{font-variant-ligatures:none}
     </div>
     <div class="col">
       <ul class="b">
-        <li>Tutto OWL 2 DL, 0 violazioni dei vincoli globali</li>
+        <li>Vincoli globali di OWL 2 DL verificati con uno script (0 violazioni); nessun reasoner DL eseguito</li>
         <li>Reasoning RL + regole per ciò che il profilo non copre, con la distinzione OWA / CWA esplicita</li>
         <li>Query SPARQL più semplici grazie a classi e relazioni inferite</li>
       </ul>

@@ -77,6 +77,31 @@ def new_schema() -> Graph:
     return g
 
 
+def separate_colliding_games(st: ox.Store) -> None:
+    """A game titled like a schema term shares its IRI with the class (the game "Platform" is vg:Platform):
+    move its data to <IRI>_Game, as populate_wikidata.make_uri does for new builds."""
+    game = ox.NamedNode(VG + "VideoGame")
+    as_class = {s for (s,) in st.query(f"SELECT DISTINCT ?s WHERE {{ ?s a <{OWL}Class> }}")}
+    moved = 0
+    for c in as_class:
+        if not isinstance(c, ox.NamedNode) or not any(True for _ in st.quads_for_pattern(c, RDF_TYPE, game)):
+            continue
+        new = ox.NamedNode(c.value + "_Game")
+        for q in list(st.quads_for_pattern(c, None, None)):
+            if q.predicate.value.startswith(VG) or (
+                q.predicate == RDF_TYPE and isinstance(q.object, ox.NamedNode) and q.object.value.startswith(VG)
+            ):
+                st.remove(q)
+                st.add(ox.Quad(new, q.predicate, q.object))
+                moved += 1
+        for q in list(st.quads_for_pattern(None, None, c)):
+            if q.predicate.value.startswith(VG):
+                st.remove(q)
+                st.add(ox.Quad(q.subject, q.predicate, new))
+                moved += 1
+    log(f"games sharing an IRI with a schema term: {moved} triples moved")
+
+
 def replace_schema(st: ox.Store, schema: Graph) -> None:
     """Drop every class/property/ontology/blank-node triple of the store, then add the new schema."""
     kinds = ("Class", "ObjectProperty", "DatatypeProperty", "Ontology", "AnnotationProperty")
@@ -197,6 +222,7 @@ def main() -> int:
     log(f"before: {before}")
 
     schema = new_schema()
+    separate_colliding_games(st)
     replace_schema(st, schema)
     drop_alignment_noise(st)
     merge_companies(st)

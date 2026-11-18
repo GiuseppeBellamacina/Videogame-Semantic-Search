@@ -1,11 +1,12 @@
 \section{Esempio di Istanze di Test}
 \label{sec:app_abox}
 
-Per la verifica end-to-end del sistema di reasoning, \`e stato utilizzato un
-insieme di istanze di test minimale (\texttt{test\_abox.ttl}, non incluso nel repository: l'estratto
-qui sotto \`e la sola copia) contenente 3 giochi, 2 developer e alcune piattaforme. Il seguente estratto in Turtle illustra la struttura:
+Per la verifica end-to-end del sistema di reasoning \`e utilizzato un insieme di istanze di test minimale
+(\texttt{ontology/tests/test\_abox.ttl}, 28 triple) con 3 giochi, 2 sviluppatori e alcune piattaforme. Il file
+\`e riportato per intero in Turtle; \texttt{ontology/scripts/test\_abox\_reasoning.py} lo sottopone alla stessa fase
+di reasoning della pipeline e verifica le conclusioni elencate di seguito:
 
-\begin{lstlisting}[style=turtle, caption={Estratto del test delle istanze (Turtle)}, label={lst:testabox}]
+\begin{lstlisting}[style=turtle, caption={Istanze di test (Turtle)}, label={lst:testabox}]
 @prefix vg: <http://www.videogame-ontology.org/ontology#> .
 
 vg:GameA  a vg:VideoGame ;
@@ -45,13 +46,13 @@ vg:TGAAward2022      a vg:IndustryAward .
 Dopo il reasoning completo (owlrl + CONSTRUCT), il grafo di test produce:
 
 \begin{itemize}[nosep]
-  \item \textbf{2.715 triple finali} (dalle $\sim$997 iniziali);
-  \item \textbf{0 \texttt{owl:sameAs} falsi} --- il fix degli assiomi DL-only
-    previene l'unificazione errata dei giochi;
+  \item \textbf{2.135 triple finali}, schema compreso (1.609 prima del reasoning);
+  \item \textbf{nessun \texttt{owl:sameAs} tra individui distinti}, grazie alla rimozione degli assiomi
+    DL-only prima della chiusura;
   \item \textbf{Classificazioni corrette}:
     \begin{itemize}[nosep]
       \item \texttt{GameA} $\rightarrow$ MultiplayerGame, SinglePlayerGame,
-        ConsoleGame, PlayStationGame, PCGame, HighlyRatedGame, RecentGame,
+        ConsoleGame, PlayStationGame, PCGame, WindowsGame, HighlyRatedGame, RecentGame,
         AwardWinningGame, StandaloneGame;
       \item \texttt{GameB} $\rightarrow$ SinglePlayerGame, ConsoleGame,
         NintendoGame, HighlyRatedGame, StandaloneGame (non RecentGame: 2017);
@@ -62,7 +63,8 @@ Dopo il reasoning completo (owlrl + CONSTRUCT), il grafo di test produce:
   \item \textbf{Propriet\`a derivate}:
     \begin{itemize}[nosep]
       \item \texttt{Dev1} \texttt{developerOf} \texttt{GameA}, \texttt{GameC}
-        (per l'inversa di \texttt{developedBy});
+        (per l'inversa di \texttt{developedBy}); \texttt{Dev1} e \texttt{Dev2}, mai tipizzati, risultano
+        \texttt{Company} (dominio di \texttt{developerOf}) e \texttt{Developer} (definizione per ruolo);
       \item \texttt{GameA} \texttt{sharesDeveloperWith} \texttt{GameC} e viceversa
         (catena \texttt{developedBy} $\circ$ \texttt{developerOf} e simmetria);
       \item \texttt{GameX} \texttt{hasSequel} \texttt{GameC} (inversa); \texttt{GameX}

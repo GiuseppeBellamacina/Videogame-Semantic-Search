@@ -70,3 +70,9 @@ def test_developer_and_publisher_are_derived_from_the_roles():
     owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
     assert (c, RDF.type, VG.Developer) in g
     assert (c, RDF.type, VG.Publisher) not in g  # only the roles it plays
+
+
+def test_a_game_titled_like_a_schema_term_gets_its_own_iri():
+    assert pw.make_uri(str(VG), "Platform") == VG["Platform_Game"]
+    assert pw.make_uri(str(VG), "Elden Ring") == VG["Elden_Ring"]
+    assert pw.make_uri(str(VG) + "dev/", "Platform") == VG["dev/Platform"]  # other namespaces are not affected

@@ -75,6 +75,20 @@ I dati asseriscono solo \texttt{developedBy} (dal gioco allo studio): la query p
 dallo studio grazie all'inversa \texttt{developerOf} e usa la classe definita
 \texttt{AwardWinningGame} invece di un join esplicito con i premi.
 
+\subsection{Aziende con pi\`u ruoli}
+
+\begin{lstlisting}[style=sparql, caption={Aziende che sviluppano e pubblicano}, label={lst:q_company}]
+PREFIX vg: <http://www.videogame-ontology.org/ontology#>
+SELECT ?name WHERE {
+  ?c a vg:Developer , vg:Publisher ;
+     vg:developerName ?name .
+}
+ORDER BY ?name LIMIT 10
+\end{lstlisting}
+
+Un'azienda che sviluppa e pubblica \`e un solo individuo con i due ruoli (Sezione~\ref{sec:popolamento}):
+la query non richiede alcun join tra individui distinti e riconosce le aziende dal tipo.
+
 \subsection{Open World e Negazione}
 
 Una domanda come \textless{}giochi senza sequel\textgreater{} mette in luce la differenza
