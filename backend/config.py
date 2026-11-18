@@ -13,8 +13,8 @@ load_dotenv(Path(__file__).parent.parent / ".env")
 # Paths
 BASE_DIR = Path(__file__).parent.parent
 ONTOLOGY_DIR = BASE_DIR / "ontology"
-# Produced by ontology/build_ontology.py (the .ttl copy is the readable version)
-ONTOLOGY_FILE = ONTOLOGY_DIR / "videogames_full.owl"
+# Produced by ontology/build_ontology.py into ontology/output/ (the .ttl copy is the readable version)
+ONTOLOGY_FILE = ONTOLOGY_DIR / "output" / "videogames_full.owl"
 
 # LLM: "<provider>:<model>", e.g. openai:gpt-4.1-mini or anthropic:haiku5.5
 LLM_MODEL = os.getenv("LLM_MODEL") or "openai:gpt-4.1-mini"  # empty counts as unset

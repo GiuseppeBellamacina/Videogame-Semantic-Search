@@ -7,7 +7,7 @@ L'ontologia **Video Game Ontology** (`vg:`) modella il dominio dei videogiochi p
 - **Namespace:** `http://www.videogame-ontology.org/ontology#`
 - **Prefisso:** `vg:`
 - **File schema:** `ontology/videogames.owl` (radice che importa i moduli in `ontology/schema/`, vedi sotto)
-- **File popolato:** `ontology/videogames_full.owl` (generato da `ontology/build_ontology.py`, caricato a runtime) e la copia leggibile `ontology/videogames_full.ttl`
+- **File popolato:** `ontology/output/videogames_full.owl` (generato da `ontology/build_ontology.py`, caricato a runtime) e la copia leggibile `ontology/output/videogames_full.ttl`
 
 ---
 
@@ -20,8 +20,10 @@ L'ontologia **Video Game Ontology** (`vg:`) modella il dominio dei videogiochi p
 | `rules/*.rq`            | Le 23 regole di classificazione e inferenza, una query SPARQL CONSTRUCT per file (ordine = prefisso numerico). | ❌ Mai cancellare |
 | `schema/swrl-rules.owl` | 4 regole SWRL (inverso di sequel, sviluppatore condiviso, ConsoleGame, HighlyRatedGame) per un reasoner DL come HermiT. Solo documentazione: importa lo schema ma non è importato, e l'app non le esegue (le stesse inferenze le fanno le regole CONSTRUCT). | ❌ Mai cancellare |
 | `catalog-v001.xml`      | Catalogo Protégé: associa l'IRI di ogni modulo al file (apri `videogames.owl` e gli import si risolvono). | ❌ Mai cancellare |
-| `videogames_full.owl`   | **TBox + ABox + inferenze** (RDF/XML) — l'unico file caricato dal backend a runtime.     | ✅ Si rigenera con `build_ontology.py`       |
-| `videogames_full.ttl`   | Stessa ontologia in Turtle, per la lettura umana.                                        | ✅ Si rigenera con `build_ontology.py`       |
+| `output/videogames_full.owl` | **TBox + ABox + inferenze** (RDF/XML) — l'unico file caricato dal backend a runtime.     | ✅ Si rigenera con `build_ontology.py`       |
+| `output/videogames_full.ttl` | Stessa ontologia in Turtle, per la lettura umana.                                        | ✅ Si rigenera con `build_ontology.py`       |
+| `output/videogames.ttl`, `output/tbox_validation_report.json` | Copia Turtle leggibile dello schema e report di validazione. | ✅ Si rigenerano |
+| `scripts/`              | Moduli della pipeline (`populate_wikidata`, `enrich_owl`, `construct_reasoner`, `validate_tbox`, `schema_loader`, `schema_ttl`). | ❌ Mai cancellare |
 | `.cache/`               | Checkpoint del fetch (un JSON per query × mese) e stati intermedi della pipeline.        | ✅ Cancellare per rifare il fetch da zero    |
 
 ### Workflow di rigenerazione

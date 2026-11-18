@@ -140,7 +140,6 @@ def _is_vg_entity(uri: URIRef) -> bool:
 def load_graph(path: Path) -> Graph:
     """Load an RDF graph with auto-detected format (xml, turtle, nt)."""
     if path.name == "videogames.owl":  # root: follow owl:imports (schema/ modules)
-        sys.path.insert(0, str(path.parent))
         from schema_loader import load_tbox
 
         g = load_tbox(path)

@@ -4,5 +4,5 @@
 *.owl linguist-language=Web-Ontology-Language
 *.ttl linguist-language=Turtle
 
-ontology/videogames_full.owl filter=lfs diff=lfs merge=lfs -text
-ontology/videogames_full.ttl filter=lfs diff=lfs merge=lfs -text
+ontology/output/videogames_full.owl filter=lfs diff=lfs merge=lfs -text
+ontology/output/videogames_full.ttl filter=lfs diff=lfs merge=lfs -text

@@ -10,7 +10,7 @@ from rdflib.plugins.serializers.turtle import TurtleSerializer
 
 import schema_loader
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).resolve().parent.parent  # ontology/
 BASE = "http://www.videogame-ontology.org/ontology"
 
 
@@ -30,8 +30,9 @@ def _owl_order(owl: Path) -> dict[str, int]:
 
 
 def write(
-    owl: Path = HERE / "videogames.owl", ttl: Path = HERE / "videogames.ttl"
+    owl: Path = HERE / "videogames.owl", ttl: Path = HERE / "output" / "videogames.ttl"
 ) -> None:
+    ttl.parent.mkdir(parents=True, exist_ok=True)
     g = schema_loader.load_tbox(owl)
     g.bind("vg", BASE + "#")
     pos = _owl_order(owl)

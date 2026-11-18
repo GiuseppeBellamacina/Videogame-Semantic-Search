@@ -6,7 +6,7 @@ Un progetto di Semantic Web che costruisce e interroga un'ontologia OWL sui vide
 
 ## Ontologia
 
-L'ontologia (TBox in `ontology/videogames.owl`, che importa i moduli di `ontology/schema/`; regole CONSTRUCT in `ontology/rules/`; descritta nella relazione in `docs/relazione`) viene popolata con i dati di Wikidata dal 2010 ad oggi e arricchita da una pipeline di reasoning in un unico script: `ontology/build_ontology.py`. L'output è `ontology/videogames_full.owl` (caricato dal backend) e `ontology/videogames_full.ttl` (stessa ontologia in Turtle, più leggibile).
+L'ontologia (TBox in `ontology/videogames.owl`, che importa i moduli di `ontology/schema/`; regole CONSTRUCT in `ontology/rules/`; descritta nella relazione in `docs/relazione`) viene popolata con i dati di Wikidata dal 2010 ad oggi e arricchita da una pipeline di reasoning in un unico script: `ontology/build_ontology.py`. L'output è `ontology/output/videogames_full.owl` (caricato dal backend) e `ontology/output/videogames_full.ttl` (stessa ontologia in Turtle, più leggibile).
 
 Build completa: **107.522 videogiochi**, 5.945 sviluppatori, 4.158 publisher, 605 generi, 311 piattaforme; 945.767 triple scaricate, **4,75 milioni** nel file finale dopo il reasoning (circa 45 minuti per la chiusura OWL-RL). Il dettaglio per classe è in `docs/ontology.md`.
 

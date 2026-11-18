@@ -2106,7 +2106,7 @@ def _add_axioms_v1_only(g: Graph) -> int:
 def main() -> None:
     import argparse
 
-    ontology_dir = Path(__file__).parent
+    ontology_dir = Path(__file__).resolve().parent.parent / "output"
 
     parser = argparse.ArgumentParser(
         description="Enrich OWL files with advanced ontology constructs."

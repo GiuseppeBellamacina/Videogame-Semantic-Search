@@ -13,7 +13,8 @@ in ontology/.cache/wikidata, so an interrupted run resumes where it stopped):
   4. write     videogames_full.owl (RDF/XML) and videogames_full.ttl (Turtle)
 
 Usage (from the repo root):
-    uv run python ontology/build_ontology.py                    # everything
+    uv run python ontology/build_ontology.py                    # everything (no-op if the .owl exists)
+    uv run python ontology/build_ontology.py --force            # rebuild anyway
     uv run python ontology/build_ontology.py --years 2024       # quick smoke test
     uv run python ontology/build_ontology.py --from-stage reason  # reuse stage 1
 """
@@ -32,7 +33,6 @@ from rdflib import OWL, RDF, RDFS, BNode, Graph, Literal, Namespace
 from tqdm import tqdm
 
 HERE = Path(__file__).parent
-sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE / "scripts"))
 
 import construct_reasoner as cr  # noqa: E402
@@ -243,7 +243,7 @@ def main() -> None:
     ap.add_argument(
         "--output",
         type=Path,
-        default=HERE / "videogames_full",
+        default=HERE / "output" / "videogames_full",
         help="output path without extension",
     )
     ap.add_argument(
@@ -257,7 +257,18 @@ def main() -> None:
         action="store_true",
         help="restore DL-only axioms in the output (not owlrl-safe)",
     )
+    ap.add_argument(
+        "--force",
+        action="store_true",
+        help="regenerate even if the output already exists (the fetch cache is still reused)",
+    )
     args = ap.parse_args()
+
+    # an explicit --from-stage also means "rebuild"
+    out_owl = args.output.with_suffix(".owl")
+    if out_owl.exists() and not args.force and args.from_stage == "fetch":
+        print(f"{out_owl.name} already exists: nothing to do (use --force to rebuild)")
+        return
 
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s  %(message)s")
     logging.getLogger("populate_wikidata").setLevel(logging.WARNING)
@@ -268,6 +279,7 @@ def main() -> None:
         years = list(range(int(a), int(b or a) + 1))
 
     args.cache_dir.mkdir(parents=True, exist_ok=True)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
     f1 = args.cache_dir / "stage1_fetched.nt"
     f2 = args.cache_dir / "stage2_reasoned.nt"
     start = STAGES.index(args.from_stage)

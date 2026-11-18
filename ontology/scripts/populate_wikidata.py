@@ -239,7 +239,7 @@ QID_PATTERN = re.compile(r"^Q\d+$")
 
 YEARS = list(range(2010, 2027))
 MONTHS = list(range(1, 13))
-CACHE_DIR = Path(__file__).parent / ".cache" / "wikidata"
+CACHE_DIR = Path(__file__).resolve().parent.parent / ".cache" / "wikidata"
 
 
 def sync_query_cache(cache_dir: Path, key: str, template: str) -> None:

@@ -6,12 +6,7 @@ Both are normally run for you by `ontology/build_ontology.py` (the single fetch 
 
 ## Setup
 
-Uses a local `.venv` managed by `uv`. Does NOT touch the global environment or the backend dependencies.
-
-```bash
-cd ontology/scripts
-uv sync
-```
+Usa l'ambiente del progetto (`uv sync` dalla root); nessun ambiente separato.
 
 ## Scripts
 
@@ -22,8 +17,8 @@ uv sync
 
 ```bash
 # Validate the schema
-uv run python validate_tbox.py ../videogames.owl
+uv run python ontology/scripts/validate_tbox.py ontology/videogames.owl
 
 # Run custom CONSTRUCT reasoning on a populated ontology
-uv run python construct_reasoner.py ../videogames_full.owl --output ../videogames_inferred.owl
+uv run python ontology/scripts/construct_reasoner.py ontology/output/videogames_full.owl --output ontology/output/videogames_inferred.owl
 ```

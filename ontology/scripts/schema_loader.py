@@ -7,7 +7,7 @@ from pathlib import Path
 
 from rdflib import OWL, Graph
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).resolve().parent.parent  # ontology/
 ROOT = HERE / "videogames.owl"
 MODULES_DIR = HERE / "schema"
 
