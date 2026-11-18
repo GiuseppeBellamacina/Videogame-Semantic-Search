@@ -13,6 +13,29 @@ interface NodeDetailProps {
   onGraphExpand?: (graph: GraphData) => void;
 }
 
+// Colour a class chip by what it describes, using the node colours; the rest stays neutral.
+const CLASS_KIND: [RegExp, string][] = [
+  [/^(SinglePlayer|Multiplayer|Coop|MMO)/, "GameMode"],
+  [/Published(Game)?$/, "Publisher"],
+  [/^(Action|Adventure|Casual|Horror|Platformer|Puzzle|RPG|Racing|Shooter|Simulation|Sports|Strategy|VisualNovel)Game$/, "Genre"],
+  [/^(Android|Arcade|Browser|Console|Linux|MacOS|Mobile|MultiConsole|MultiPlatform|Nintendo|PC|PlayStation|RetroComputer|VR|Windows|Xbox)Game$/, "Platform"],
+  [/^(UnrealEngineGame)$/, "GameEngine"],
+  [/^(AwardWinningGame|GOTYWinner)$/, "Award"],
+];
+
+function classColor(c: string, nodeType: string): string {
+  if (nodeType !== "VideoGame") return typeColor(nodeType); // a Developer's, Platform's... own classes
+  const kind = CLASS_KIND.find(([re]) => re.test(c));
+  return kind ? typeColor(kind[1]) : "#9a958a";
+}
+
+function classLabel(c: string): string {
+  return c
+    .replace(/(Game|Genre|Platform|Mode)$/, "")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2");
+}
+
 const makeNode = (uri: string, label: string, type: string): GraphNode => ({
   id: uri,
   label,
@@ -186,15 +209,6 @@ export function NodeDetail({ uri, onClose, onNavigate, onGraphExpand }: NodeDeta
               <Thumb type={details.type} name={details.label} size={112} urgent />
               <div className="min-w-0 pb-1">
                 <h2 className="font-serif text-[28px] leading-[1.1]">{details.label}</h2>
-                {!!details.classes?.length && (
-                  <div className="mt-2 flex flex-wrap gap-1.5" title="Classi più specifiche nell'ontologia">
-                    {details.classes.map((c) => (
-                      <span key={c} className="label rounded-sm border border-rule px-1.5 py-0.5">
-                        {c}
-                      </span>
-                    ))}
-                  </div>
-                )}
                 <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
                   <a
                     href={`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(wikiQuery(details))}`}
@@ -222,6 +236,24 @@ export function NodeDetail({ uri, onClose, onNavigate, onGraphExpand }: NodeDeta
                 </div>
               </div>
             </header>
+
+            {!!details.classes?.length && (
+              <div className="flex flex-wrap justify-center gap-1.5" title="Classi più specifiche nell'ontologia">
+                {details.classes.map((c) => {
+                  const color = classColor(c, details.type);
+                  return (
+                    <span
+                      key={c}
+                      title={c}
+                      className="rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider"
+                      style={{ color, borderColor: `${color}66` }}
+                    >
+                      {classLabel(c)}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
 
             {Object.keys(details.properties).length > 0 && (
               <section>

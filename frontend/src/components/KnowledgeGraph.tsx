@@ -542,7 +542,9 @@ export function KnowledgeGraph({
       // relations derived by the reasoner (sharesDeveloperWith...) are many: dashed, labelled only for a pair
       const derived = isDerived(link.label);
       const hov = link === hoverLink;
-      ctx.globalAlpha = pair || hov ? 1 : neighbours && !on ? 0.06 : derived && !on ? 0.5 : 1;
+      // derived links light up only for the selected node, not while merely hovering over one
+      const shown = derived ? !!highlightNode && (a.id === highlightNode || b.id === highlightNode) : on;
+      ctx.globalAlpha = pair || hov ? 1 : neighbours && !shown ? 0.06 : derived && !shown ? 0.5 : 1;
       ctx.beginPath();
       if (derived) ctx.setLineDash([4 / k, 3 / k]);
       ctx.moveTo(a.x, a.y);
@@ -871,6 +873,11 @@ export function KnowledgeGraph({
           const a = link.source;
           const b = link.target;
           if (a?.x === undefined || b?.x === undefined) return;
+          // with a node selected only its own links can be hovered or clicked (the compared pair included);
+          // with none, derived links (shared developer...) stay inert so they are not ghost arcs
+          if (highlightNode) {
+            if (a.id !== highlightNode && b.id !== highlightNode) return;
+          } else if (isDerived(link.label)) return;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
