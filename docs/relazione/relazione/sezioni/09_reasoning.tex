@@ -66,7 +66,7 @@ Solo R1--R3, R4b e R4c coprono costrutti realmente esterni a OWL 2 RL. Le regole
 (classificazione per sequel, piattaforma e modalit\`a, completamento delle inverse)
 ripetono inferenze che il livello 1 gi\`a produce: sono mantenute perch\'e il livello 2
 possa essere eseguito anche da solo, senza dipendere dalla chiusura \texttt{owlrl}.
-R10 e R11 aggiungono relazioni di comodo tra giochi con lo stesso genere o motore; poich'e il numero di coppie cresce col quadrato dei giochi per genere o motore, nella costruzione dell'ontologia completa non vengono eseguite.
+R10 e R11 aggiungono relazioni di comodo tra giochi con lo stesso genere o motore; poich'e il numero di coppie cresce col quadrato dei giochi per genere o motore, nella costruzione dell'ontologia completa non vengono eseguite. Le propriet\`a \texttt{sharedGenreWith} e \texttt{sharedEngineWith} sono quindi propriet\`a di comodo \emph{non dichiarate} tra le 32 object property dello schema: esistono solo se le due regole vengono lanciate a mano.
 
 \subsection{Perch\'e Alcuni Costrutti Non Sono in OWL 2 RL}
 
@@ -85,15 +85,17 @@ costrutti esulano dal profilo, mentre la quarta vi rientra ma non produce classi
     \textit{negation-as-failure} con \texttt{FILTER NOT EXISTS}, assumendo la
     completezza dei dati (closed-world assumption sulla propriet\`a \texttt{sequelOf});
   \item \textbf{minQualifiedCardinality} (\texttt{MultiConsoleGame}, \texttt{MultiPlatformGame}). Una cardinalit\`a minima non \`e ammessa
-    in RL in posizione di sottoclasse; le regole R4b e R4c contano le console e le piattaforme distinte di ciascun gioco.
+    in RL in posizione di sottoclasse; le regole R4b e R4c contano le console e le piattaforme distinte di ciascun gioco. Contare IRI distinti assume la
+    \textit{Unique Name Assumption}: due piattaforme con IRI diversi sono considerate diverse, cosa che OWL non garantisce senza assiomi \texttt{owl:differentFrom}.
     Le classi per publisher e per paese (\texttt{owl:hasValue}), al contrario, rientra nel
     profilo e viene classificata da \texttt{owlrl} (regola \texttt{cls-hv});
   \item \textbf{maxCardinality} (\texttt{GameWithSingleDeveloper}, \texttt{ExclusiveRelease}).
     Una restrizione ${\le}1$ in posizione di superclasse \`e ammessa in OWL 2 RL
     (regola \texttt{cls-maxc2}: se un'istanza ha due valori, questi vengono identificati
     con \texttt{owl:sameAs}). Poich\'e le due classi hanno sole condizioni necessarie
-    (\texttt{rdfs:subClassOf}), per\`o, nessun gioco viene classificato in esse: fungono
-    da vincoli di integrit\`a, e nessuna regola CONSTRUCT \`e necessaria.
+    (\texttt{rdfs:subClassOf}), per\`o, nessun gioco viene classificato in esse e nessuna
+    regola CONSTRUCT \`e necessaria. Non sono vincoli di integrit\`a: per la \textit{Open World Assumption}
+    un valore in pi\`u produrrebbe un \texttt{owl:sameAs}, non un errore.
 \end{enumerate}
 
 \subsection{Esempio di Inferenza a Due Livelli}
@@ -166,7 +168,10 @@ individui unificati (regole \texttt{eq-rep-*}), falsando la classificazione.
 \texttt{owl:sameAs} spuri collegavano \texttt{GameA} agli altri due giochi,
 propagando loro l'asserzione \texttt{wonAward}: prima del fix tutti e tre i giochi
 risultavano \texttt{AwardWinningGame}; dopo il fix solo \texttt{GameA}, l'unico con
-\texttt{wonAward} asserito, viene classificato come tale.
+\texttt{wonAward} asserito, viene classificato come tale. I tre giochi di test non condividono per\`o alcun valore di
+\texttt{hasWikidataId} o \texttt{hasSteamAppId}: con lo schema attuale e \texttt{owlrl} 7.1.4 il
+risultato non \`e riproducibile su quel grafo, per cui l'esempio va letto come la cronaca del bug nella
+versione di sviluppo di allora, non come un test di regressione. Il fix resta una precauzione valida.
 
 \subsubsection{La Soluzione}
 
@@ -226,4 +231,6 @@ dimensioni:
 \end{enumerate}
 
 Le regole pairwise (3--5) sono protette dal cap \texttt{-{}-max-group} (default 50)
-per evitare esplosioni combinatorie su franchise con migliaia di giochi.
+per evitare esplosioni combinatorie su franchise con migliaia di giochi. Il cap vale per il passo di
+materializzazione mirata: la chiusura \texttt{owlrl}, eseguita prima, deriva comunque le catene
+(\texttt{prp-spo2}) per tutti i gruppi, quindi il risultato finale non ne \`e limitato.

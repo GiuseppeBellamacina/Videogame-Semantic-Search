@@ -70,7 +70,7 @@ uv sync
 
 ### 3. Costruisci l'ontologia (una volta sola)
 
-`./setup.ps1` (o `setup.bat`) esegue i passi 2 e 3 più `bun install`; `-Force` rigenera l'ontologia.
+`./setup.ps1` esegue i passi 2 e 3 più `bun install`; `-Force` rigenera l'ontologia.
 
 ```bash
 uv run python ontology/build_ontology.py
@@ -237,4 +237,9 @@ Tutto è eseguito da `ontology/build_ontology.py` (vedi Setup):
 | GET    | `/api/suggest`      | Autosuggest su nomi ed entità  |
 | GET    | `/api/builder/schema` | Campi e operatori del builder |
 | POST   | `/api/builder/query` | Query builder → SPARQL → grafo |
+| POST   | `/api/query/stream` | Come `/api/query`, con avanzamento in streaming (SSE) |
+| POST   | `/api/cross-links`  | Archi tra nodi già presenti e nuovi nodi |
+| POST   | `/api/images`       | Immagini di più entità in una richiesta |
+| GET    | `/api/image-file/{file}` | File immagine in cache locale |
+| POST   | `/api/builder/count` | Conteggio dei risultati del builder |
 | GET    | `/api/health`       | Health check                   |

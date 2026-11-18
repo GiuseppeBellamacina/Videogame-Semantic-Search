@@ -36,6 +36,11 @@ separazione schema/istanze:
     (giochi, developer, publisher, generi, piattaforme, \dots{}) per il periodo 2010--2026 e le triple
     materializzate dal reasoning. \`E l'unico file caricato dal backend.
 \end{itemize}
+La separazione ha un'eccezione voluta: gli otto publisher usati come nominali nelle classi
+\texttt{*PublishedGame} sono individui dichiarati nello schema (\texttt{schema/individuals.owl}), perch\'e un
+nominale richiede un individuo nominato. La deduplicazione tiene, per ogni nome, l'URI con pi\`u triple:
+non \`e garantito che coincida con quello dichiarato, per cui un publisher fuso con una variante del nome
+potrebbe lasciare il nominale dello schema scollegato dai suoi giochi.
 
 \subsection{Fonte Dati: Wikidata}
 
@@ -94,8 +99,8 @@ Propriet\`a simmetriche         & 4               \\
 Coppie inverse                  & 12              \\
 Blocchi AllDisjointClasses      & 12              \\
 Vincoli hasKey                  & 3               \\
-Allineamenti equivalentClass    & 4 (Wikidata)    \\
-Allineamenti equivalentProperty & 3 (Dublin Core) \\
+Allineamenti closeMatch          & 4 (Wikidata)    \\
+Allineamenti closeMatch          & 3 (Dublin Core) \\
 Triple dello schema totali      & $\sim$ 934      \\
 \bottomrule
 \end{tabular}

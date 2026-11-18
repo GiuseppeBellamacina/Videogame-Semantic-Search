@@ -37,7 +37,7 @@ uv run python ontology/build_ontology.py --from-stage reason  # riusa il fetch g
 uv run python ontology/build_ontology.py --force              # rigenera anche se il .owl esiste
 ```
 
-Senza `--force` lo script non fa nulla se `output/videogames_full.owl` esiste già. `./setup.ps1` (o `setup.bat`) esegue `uv sync`, `bun install` e questo script; `-Force` rigenera.
+Senza `--force` lo script non fa nulla se `output/videogames_full.owl` esiste già. `./setup.ps1` esegue `uv sync`, `bun install` e questo script; `-Force` rigenera.
 
 Lo script mostra barre `tqdm` per ogni fase. Fasi:
 

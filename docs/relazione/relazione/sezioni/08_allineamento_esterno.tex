@@ -1,14 +1,16 @@
 \section{Allineamento Esterno}
 \label{sec:allineamento}
 
-\subsection{equivalentClass verso Wikidata}
+\subsection{closeMatch verso Wikidata}
 
-L'ontologia dichiara 4 allineamenti \texttt{owl:equivalentClass} verso entit\`a
-Wikidata, riportati nella Tabella~\ref{tab:align_class}.
+L'ontologia dichiara 4 allineamenti \texttt{skos:closeMatch} verso entit\`a
+Wikidata, riportati nella Tabella~\ref{tab:align_class}. Si \`e scelto \texttt{closeMatch} e non
+\texttt{owl:equivalentClass}: le classi di Wikidata hanno un perimetro proprio e curato da altri, e
+un'equivalenza logica fonderebbe le due ontologie, ereditando ogni sua modifica.
 
 \begin{table}[h]
 \centering
-\caption{Allineamenti equivalentClass verso Wikidata}
+\caption{Allineamenti closeMatch verso Wikidata}
 \label{tab:align_class}
 \begin{tabular}{lll}
 \toprule
@@ -22,14 +24,15 @@ Genre     & wd:Q65956376  & Video game genre \\
 \end{tabular}
 \end{table}
 
-\subsection{equivalentProperty verso Dublin Core}
+\subsection{closeMatch verso Dublin Core}
 
 Tre datatype property sono allineate con il vocabolario Dublin Core \citep{dublincore}
-tramite \texttt{owl:equivalentProperty} (Tabella~\ref{tab:align_prop}).
+tramite \texttt{skos:closeMatch} (Tabella~\ref{tab:align_prop}); anche qui non si impone
+un'equivalenza.
 
 \begin{table}[h]
 \centering
-\caption{Allineamenti equivalentProperty verso Dublin Core}
+\caption{Allineamenti closeMatch verso Dublin Core}
 \label{tab:align_prop}
 \begin{tabular}{lll}
 \toprule
@@ -49,11 +52,12 @@ L'allineamento esterno, noto in letteratura come \textbf{ontology alignment}
 
 \begin{enumerate}[nosep]
   \item \textbf{Interoperabilit\`a}. Un'applicazione che consuma dati Dublin Core
-    pu\`o automaticamente interpretare \texttt{vg:releaseDate} come sinonimo di
-    \texttt{dcterms:issued}, senza bisogno di mapping manuali;
-  \item \textbf{Linkage automatico}. Le entit\`a Wikidata esterne referenziate
-    tra le istanze (es. \texttt{wd:Q12345}) sono automaticamente riconosciute come
-    istanze di \texttt{vg:VideoGame} se Wikidata le classifica come Q7889;
+    trova in \texttt{vg:releaseDate} una propriet\`a vicina a \texttt{dcterms:issued}, e il mapping
+    resta esplicito invece che implicito;
+  \item \textbf{Nessun linkage automatico}. \texttt{closeMatch} \`e solo un'annotazione di
+    corrispondenza: un'entit\`a Wikidata con \texttt{wdt:P31 wd:Q7889} non diventa un
+    \texttt{vg:VideoGame}, perch\'e Wikidata usa \texttt{P31} e non \texttt{rdf:type}. Il collegamento
+    avviene solo nel popolamento, che interroga Wikidata con \texttt{P31};
   \item \textbf{Riuso di standard consolidati}. Anzich\'e reinventare vocabolari,
     l'ontologia si appoggia a standard ampiamente adottati (Dublin Core per
     metadati bibliografici, Wikidata per identificazione entit\`a), seguendo

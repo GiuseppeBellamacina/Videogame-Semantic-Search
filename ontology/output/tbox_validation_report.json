@@ -1,9 +1,21 @@
 {
   "file": "ontology\\videogames.owl",
-  "findings": [],
+  "findings": [
+    {
+      "severity": "WARNING",
+      "code": "DATATYPE_OUTSIDE_OWL2_MAP",
+      "message": "<http://www.w3.org/2001/XMLSchema#date> is not in the OWL 2 datatype map (used by owl:onDatatype restriction, vg:eventDate, vg:releaseDate, vg:reviewDate)",
+      "subjects": [
+        "owl:onDatatype restriction",
+        "vg:eventDate",
+        "vg:releaseDate",
+        "vg:reviewDate"
+      ]
+    }
+  ],
   "summary": {
     "errors": 0,
-    "warnings": 0,
+    "warnings": 1,
     "info": 0
   }
 }

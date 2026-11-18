@@ -291,7 +291,7 @@ code,pre,.dl{font-variant-ligatures:none}
 <span class="p">vg:gameName</span> <span class="k">a</span> owl:DatatypeProperty, owl:FunctionalProperty ;
   rdfs:domain <span class="p">vg:VideoGame</span> ; rdfs:range xsd:string ;
   rdfs:subPropertyOf <span class="p">vg:name</span> ;
-  owl:equivalentProperty <span class="p">dcterms:title</span> .</pre>
+  skos:closeMatch <span class="p">dcterms:title</span> .</pre>
     </div>
     <div class="col stack">
       <div class="card"><h3>Inversa</h3><p>Il dato dice solo <code>Witcher3 developedBy CDProjektRED</code>. Il reasoner aggiunge <code>CDProjektRED developerOf Witcher3</code>: ogni relazione è navigabile nei due versi.</p></div>
@@ -604,7 +604,7 @@ code,pre,.dl{font-variant-ligatures:none}
   <div class="body">
     <div class="col stack">
       <table style="font-size:17px">
-        <tr><th>vg:</th><th>≡ Wikidata</th><th></th></tr>
+        <tr><th>vg:</th><th>≈ Wikidata</th><th></th></tr>
         <tr><td>VideoGame</td><td><code>wd:Q7889</code></td><td>video game</td></tr>
         <tr><td>Developer</td><td><code>wd:Q210167</code></td><td>video game developer</td></tr>
         <tr><td>GameEngine</td><td><code>wd:Q193564</code></td><td>game engine</td></tr>
@@ -618,8 +618,8 @@ code,pre,.dl{font-variant-ligatures:none}
       </table>
     </div>
     <div class="col stack">
-      <div class="card"><h3>Interoperabilità</h3><p>Chi consuma Dublin Core legge <code>vg:releaseDate</code> come <code>dcterms:issued</code> senza mapping manuali (<code>owl:equivalentProperty</code>).</p></div>
-      <div class="card"><h3>Linkage</h3><p>Le entità che Wikidata classifica come Q7889 sono riconosciute come <code>vg:VideoGame</code> (<code>owl:equivalentClass</code>).</p></div>
+      <div class="card"><h3>Interoperabilità</h3><p>Chi consuma Dublin Core legge <code>vg:releaseDate</code> come vicina a <code>dcterms:issued</code> (<code>skos:closeMatch</code>), senza equivalenza logica.</p></div>
+      <div class="card"><h3>Nessun linkage automatico</h3><p><code>closeMatch</code> è solo un'annotazione: Wikidata usa <code>P31</code>, non <code>rdf:type</code>; il collegamento avviene nel popolamento.</p></div>
       <p class="note">Servono reasoner che importino anche le definizioni esterne: le entità <code>wd:*</code> e <code>dcterms:*</code> non hanno una dichiarazione di tipo propria.</p>
     </div>
   </div>
@@ -670,7 +670,7 @@ code,pre,.dl{font-variant-ligatures:none}
 <section class="slide summary">
   <div class="kicker">Conclusioni</div>
   <h2>Risultati</h2>
-  <p class="lead">Un'ontologia OWL 2 DL espressiva, conforme ai vincoli globali, allineata a Wikidata e Dublin Core e interrogabile sulla conoscenza inferita.</p>
+  <p class="lead">Un'ontologia espressiva, progettata verso OWL 2 DL (vincoli globali verificati con uno script, non con un reasoner DL), allineata a Wikidata e Dublin Core e interrogabile sulla conoscenza inferita.</p>
   <div class="body">
     <div class="col">
       <ul class="b">

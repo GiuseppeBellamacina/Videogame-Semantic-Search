@@ -1,4 +1,5 @@
 # Classify games without any sequelOf link as StandaloneGame
+# Semantics: closed-world (NOT EXISTS) on sequelOf: "no known predecessor", which is true of almost every game because sequelOf is sparse in the data.
 PREFIX vg: <http://www.videogame-ontology.org/ontology#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

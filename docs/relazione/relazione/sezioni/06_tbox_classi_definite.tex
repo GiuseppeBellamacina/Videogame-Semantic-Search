@@ -181,8 +181,12 @@ non sono quindi classi definite in senso stretto. Questa scelta \`e deliberata:
     ma non tutti i giochi con $\leq$ 1 piattaforma sono necessariamente esclusive.
 \end{itemize}
 
-Queste classi forniscono vincoli di integrit\`a piuttosto che meccanismi di
-classificazione automatica.
+Queste classi non sono vincoli di integrit\`a e non classificano automaticamente.
+Sotto la \textit{Open World Assumption} una restrizione ${\le}1$ non rifiuta un'ontologia
+con due valori: un reasoner OWL 2 RL, con la regola \texttt{cls-maxc2}, concluderebbe
+invece che i due valori sono lo stesso individuo (\texttt{owl:sameAs}). Sono quindi
+condizioni necessarie, utili alla documentazione dello schema; un vincolo vero, che
+segnali l'errore, richiede SHACL (cfr.~Sezione~\ref{sec:conclusione}).
 
 \subsection{Costrutti OWL 2 Utilizzati}
 
@@ -200,12 +204,12 @@ nell'Appendice~\ref{sec:app_turtle}.
 \toprule
 \textbf{Costrutto}          & \textbf{Classi}                                & \textbf{Rif. Lezione} \\
 \midrule
-\texttt{owl:someValuesFrom}& 14: 12 su object property, 2 su datatype property & Lez.~15 (esistenziale) \\
+\texttt{owl:someValuesFrom}& 38: 36 su object property, 2 su datatype property & Lez.~15 (esistenziale) \\
 \texttt{owl:intersectionOf}& Tutte le 50 classi definite                      & Lez.~16 (intersezione) \\
 \texttt{owl:complementOf}  & StandaloneGame                                   & Lez.~16 (complemento) \\
 \texttt{owl:maxCardinality}& GameWithSingleDeveloper, ExclusiveRelease        & Lez.~17--18 \\
-\texttt{owl:minQualified-}\newline\texttt{Cardinality}& MultiConsoleGame                  & Lez.~17--18 \\
-\texttt{owl:hasValue}       & NintendoPublishedGame                            & nominale \\
+\texttt{owl:minQualified-}\newline\texttt{Cardinality}& MultiConsoleGame, MultiPlatformGame                  & Lez.~17--18 \\
+\texttt{owl:hasValue}       & 10: 8 su \texttt{publishedBy} (tra cui NintendoPublishedGame), JapaneseGame e AmericanGame su \texttt{countryOfOrigin} & nominale \\
 \texttt{owl:withRestrictions} & HighlyRatedGame, RecentGame                   & Lez.~17--18 (datatype) \\
 \texttt{xsd:minInclusive}  & HighlyRatedGame, RecentGame                      & Lez.~17--18 \\
 \bottomrule

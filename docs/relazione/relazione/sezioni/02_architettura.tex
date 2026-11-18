@@ -137,6 +137,13 @@ GET    & \texttt{/api/stats}         & Statistiche ontologia                    
 GET    & \texttt{/api/suggest}       & Autosuggest su nomi di entit\`a           \\
 GET    & \texttt{/api/builder/schema} & Campi e operatori del query builder       \\
 POST   & \texttt{/api/builder/query}  & Query builder $\rightarrow$ SPARQL + grafo \\
+POST   & \texttt{/api/query/stream}  & Come \texttt{/api/query}, con avanzamento in streaming (SSE) \\
+GET    & \texttt{/api/relation}     & Cosa hanno in comune due nodi collegati da una relazione \\
+POST   & \texttt{/api/images}       & Immagini di pi\`u entit\`a in un'unica richiesta \\
+POST   & \texttt{/api/images/retry} & Un'altra copertina per un'entit\`a   \\
+GET    & \texttt{/api/image-file/\{file\}} & File immagine in cache locale        \\
+POST   & \texttt{/api/builder/count} & Conteggio dei risultati del query builder \\
+POST   & \texttt{/api/sparql}       & Query SPARQL libera, sola lettura          \\
 GET    & \texttt{/api/health}        & Health check                              \\
 \bottomrule
 \end{tabular}

@@ -21,7 +21,7 @@ Enrich existing OWL files with advanced ontology constructs:
     SequelGame, StandaloneGame, HighlyRatedGame, RecentGame,
     GameWithSingleDeveloper, ExclusiveRelease)
   - 12 AllDisjointClasses blocks
-  - External alignment (Wikidata + Dublin Core equivalentClass/equivalentProperty)
+  - External alignment (Wikidata + Dublin Core, skos:closeMatch)
   - 3 owl:hasKey constraints
 
 These axioms enable OWL-RL reasoning to automatically infer:
@@ -64,6 +64,7 @@ logger = logging.getLogger(__name__)
 VG = Namespace("http://www.videogame-ontology.org/ontology#")
 WD = Namespace("http://www.wikidata.org/entity/")
 DCT = Namespace("http://purl.org/dc/terms/")
+SKOS = Namespace("http://www.w3.org/2004/02/skos/core#")
 
 
 # ---------------------------------------------------------------------------
@@ -1404,7 +1405,7 @@ def _add_v2_alignment(g: Graph) -> None:
         (VG.Genre, WD.Q65956376),
     ]
     for vg_cls, wd_entity in alignments:
-        t = (vg_cls, OWL.equivalentClass, wd_entity)
+        t = (vg_cls, SKOS.closeMatch, wd_entity)
         if t not in g:
             g.add(t)
             added += 1
@@ -1416,7 +1417,7 @@ def _add_v2_alignment(g: Graph) -> None:
         (VG.gameDescription, DCT.description),
     ]
     for vg_prop, dc_prop in prop_align:
-        t = (vg_prop, OWL.equivalentProperty, dc_prop)
+        t = (vg_prop, SKOS.closeMatch, dc_prop)
         if t not in g:
             g.add(t)
             added += 1
@@ -1943,6 +1944,7 @@ def enrich_file(
     g.bind("owl", OWL)
     g.bind("wd", WD)
     g.bind("dcterms", DCT)
+    g.bind("skos", SKOS)
     g.parse(str(path), format="xml")
     before = len(g)
     logger.info(f"  Loaded {before} triples")
