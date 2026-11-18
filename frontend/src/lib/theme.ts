@@ -1,6 +1,7 @@
 // Single source of truth for entity colours, sizes and labels (canvas + components).
 export const NODE_COLORS: Record<string, string> = {
   VideoGame: "#d4573b",
+  Company: "#d9a441",
   Developer: "#d9a441",
   Publisher: "#7fae7a",
   Genre: "#c98f7a",
@@ -15,6 +16,7 @@ export const NODE_COLORS: Record<string, string> = {
 
 export const NODE_SIZES: Record<string, number> = {
   VideoGame: 9,
+  Company: 8,
   Developer: 8,
   Publisher: 8,
   Genre: 6,
@@ -29,6 +31,7 @@ export const NODE_SIZES: Record<string, number> = {
 
 export const TYPE_LABELS: Record<string, string> = {
   VideoGame: "Videogioco",
+  Company: "Azienda",
   Developer: "Sviluppatore",
   Publisher: "Publisher",
   Genre: "Genere",
@@ -53,6 +56,7 @@ export const IMAGE_TYPES = new Set([
   "VideoGame",
   "AwardWinningGame",
   "FranchiseGame",
+  "Company",
   "Developer",
   "Publisher",
   "Platform",

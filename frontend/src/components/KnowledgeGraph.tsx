@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect, useState, useMemo } from "react";
 import ForceGraph2D from "react-force-graph-2d";
-import { ArrowLeftRight, Crosshair, Eraser, Eye, EyeOff, Focus, LayoutGrid, Link2, Locate, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
+import { ArrowLeftRight, Check, Crosshair, Eraser, Eye, EyeOff, Focus, LayoutGrid, Link2, Locate, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
 import { controlPoint, curvatures, dedupeLinks, isInvertible, orient } from "@/lib/relations";
 import type { GraphData, GraphNode } from "@/types";
 import { GAME_TYPES, IMAGE_TYPES, typeColor, typeLabel } from "@/lib/theme";
@@ -51,7 +51,7 @@ const MIN_FOCUS_ZOOM = 0.5;
 
 /** Games of every defined class count as one group when laying nodes out. */
 const groupOf = (t: string) => (GAME_TYPES.has(t) ? "VideoGame" : t);
-const GROUP_ORDER = ["VideoGame", "Franchise", "Developer", "Publisher", "Platform", "GameEngine", "Genre", "Character", "Award", "GameMode"];
+const GROUP_ORDER = ["VideoGame", "Franchise", "Company", "Developer", "Publisher", "Platform", "GameEngine", "Genre", "Character", "Award", "GameMode"];
 const groupRank = (g: string) => {
   const i = GROUP_ORDER.indexOf(g);
   return i < 0 ? GROUP_ORDER.length : i;
@@ -107,6 +107,7 @@ function decode(url: string, onLoaded: () => void): HTMLImageElement | null {
 function shape(type: string) {
   if (GAME_TYPES.has(type)) return { w: 34, h: 46, r: 0 };
   switch (type) {
+    case "Company":
     case "Developer":
     case "Publisher":
     case "Platform":
@@ -953,10 +954,10 @@ export function KnowledgeGraph({
             </button>
           </div>
           <p className="mb-1.5 text-[12px] text-mute">Quali tipi mettere in ordine</p>
-          <ul className="mb-2 space-y-0.5">
+          <ul className="mb-3 space-y-1">
             {groupCounts.map(([grp, count]) => (
               <li key={grp}>
-                <label className="flex cursor-pointer items-center gap-2 rounded-sm px-1 py-1 hover:bg-raised">
+                <label className="group flex cursor-pointer items-center gap-3 rounded-sm border border-transparent px-2.5 py-1.5 transition-colors hover:bg-raised has-[:checked]:border-rule has-[:checked]:bg-raised">
                   <input
                     type="checkbox"
                     checked={layoutGroups.has(grp)}
@@ -968,11 +969,14 @@ export function KnowledgeGraph({
                         return n;
                       })
                     }
-                    className="accent-[#d4573b]"
+                    className="peer sr-only"
                   />
-                  <span className="h-2 w-2 rounded-full" style={{ background: typeColor(grp) }} />
-                  <span>{typeLabel(grp)}</span>
-                  <span className="ml-auto font-mono text-[11px] text-mute">{count}</span>
+                  <span className="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-[4px] border border-mute/60 bg-transparent text-paper transition-colors group-hover:border-ink peer-checked:border-brick peer-checked:bg-brick peer-focus-visible:ring-2 peer-focus-visible:ring-brick/50 [&>svg]:opacity-0 peer-checked:[&>svg]:opacity-100">
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </span>
+                  <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ background: typeColor(grp) }} />
+                  <span className="text-[14px] text-mute transition-colors group-hover:text-ink peer-checked:text-ink">{typeLabel(grp)}</span>
+                  <span className="ml-auto rounded-full bg-panel px-2 py-0.5 font-mono text-[11px] text-mute">{count}</span>
                 </label>
               </li>
             ))}
@@ -981,7 +985,7 @@ export function KnowledgeGraph({
             {(
               [
                 ["Giochi", ["VideoGame"]],
-                ["Sviluppatori e publisher", ["Developer", "Publisher"]],
+                ["Aziende", ["Company"]],
                 ["Tutti", groupCounts.map(([g]) => g)],
               ] as const
             ).map(([label, list]) => (
