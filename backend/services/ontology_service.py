@@ -48,8 +48,7 @@ class OntologyService:
     # Base types shown in the graph, in priority order (most specific entity first)
     BASE_TYPES = [
         "VideoGame",
-        "Developer",
-        "Publisher",
+        "Company",  # Developer and Publisher are roles of the same individual
         "Genre",
         "Platform",
         "Character",

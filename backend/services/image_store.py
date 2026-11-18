@@ -106,7 +106,9 @@ _HINT = {
 
 
 def _norm_type(t: str) -> str:
-    return "VideoGame" if t in ("AwardWinningGame", "FranchiseGame") else t
+    if t in ("AwardWinningGame", "FranchiseGame"):
+        return "VideoGame"
+    return "Developer" if t == "Company" else t  # a company is searched as the developer was
 
 
 def key_for(name: str, etype: str) -> str:

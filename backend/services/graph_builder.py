@@ -8,7 +8,8 @@ from typing import Any
 # Color palette for node types
 NODE_COLORS = {
     "VideoGame": "#6366f1",  # Indigo
-    "Developer": "#f59e0b",  # Amber
+    "Company": "#f59e0b",  # Amber
+    "Developer": "#f59e0b",
     "Publisher": "#10b981",  # Emerald
     "Genre": "#ef4444",  # Red
     "Platform": "#3b82f6",  # Blue
@@ -25,6 +26,7 @@ NODE_COLORS = {
 
 NODE_SIZES = {
     "VideoGame": 9,
+    "Company": 8,
     "Developer": 8,
     "Publisher": 8,
     "Genre": 6,
