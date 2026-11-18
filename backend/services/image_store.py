@@ -17,6 +17,7 @@ import json
 import logging
 import re
 import time
+import unicodedata
 from pathlib import Path
 from urllib.parse import quote
 
@@ -259,13 +260,37 @@ async def _title_thumbs(titles: list[str], etype: str) -> list[str | None]:
     return out
 
 
-async def _search_thumb(name: str, etype: str, years: list[str]) -> str | None:
+_STOP = {"the", "a", "an", "of", "and", "video", "game", "games", "series"}
+
+
+def _words(text: str) -> set[str]:
+    ascii_text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower()
+    return {w for w in re.findall(r"[a-z0-9]+", ascii_text) if w not in _STOP and not re.fullmatch(r"(?:19|20)\d\d", w)}
+
+
+def match(name: str, title: str) -> tuple[bool, float]:
+    """How a Wikipedia title relates to an entity name: (related, similarity).
+
+    Related = the words of one contain the words of the other (the page of "Grand Theft Auto: San Andreas"
+    for the game "Grand Theft Auto: San Andreas - The Definitive Edition"); the similarity (Jaccard of the
+    words) ranks the related pages, so a sibling page ("Grand Theft Auto III") comes after the right one.
+    """
+    a, b = _words(name), _words(title)
+    if not a or not b:  # names in another script: plain containment
+        low = name.lower().split(" (")[0]
+        hit = bool(low) and low in title.lower()
+        return hit, 1.0 if hit else 0.0
+    return (a <= b or b <= a), len(a & b) / len(a | b)
+
+
+async def _search_ranked(name: str, etype: str, years: list[str]) -> list[tuple[bool, str]]:
+    """Search hits with a picture, best match first: [(related, thumbnail url)]."""
     resp = await _get(
         "https://en.wikipedia.org/w/api.php",
         params={
             "action": "query",
             "generator": "search",
-            "gsrlimit": 1,
+            "gsrlimit": 6,
             "format": "json",
             "gsrsearch": f"{name} {years[0] if years else ''} {_HINT.get(etype, '')}".strip(),
             "prop": "pageimages",
@@ -275,14 +300,22 @@ async def _search_thumb(name: str, etype: str, years: list[str]) -> str | None:
         },
     )
     if resp.status_code != 200:
-        return None
+        return []
     pages = (resp.json().get("query") or {}).get("pages") or {}
-    for page in pages.values():
-        thumb = (page.get("thumbnail") or {}).get("source")
-        # accept only a page whose title is close to the name searched
-        title = page.get("title", "").lower()
-        if thumb and name.lower().split(" (")[0] in title:
-            return thumb
+    hits = []
+    for p in pages.values():
+        thumb = (p.get("thumbnail") or {}).get("source")
+        if thumb:
+            related, score = match(name, p.get("title", ""))
+            hits.append((not related, -score, p.get("index", 99), thumb))
+    hits.sort()
+    return [(not not_related, thumb) for not_related, _, _, thumb in hits]
+
+
+async def _search_thumb(name: str, etype: str, years: list[str]) -> str | None:
+    """The best search hit, only if its title is related to the name searched."""
+    for related, thumb in await _search_ranked(name, etype, years):
+        return thumb if related else None
     return None
 
 
@@ -342,25 +375,7 @@ async def _resolve(name: str, etype: str) -> dict:
 
 
 async def _search_thumbs(name: str, etype: str, years: list[str]) -> list[str]:
-    resp = await _get(
-        "https://en.wikipedia.org/w/api.php",
-        params={
-            "action": "query",
-            "generator": "search",
-            "gsrlimit": 6,
-            "format": "json",
-            "gsrsearch": f"{name} {years[0] if years else ''} {_HINT.get(etype, '')}".strip(),
-            "prop": "pageimages",
-            "piprop": "thumbnail",
-            "pilicense": "any",
-            "pithumbsize": 320,
-        },
-    )
-    if resp.status_code != 200:
-        return []
-    pages = (resp.json().get("query") or {}).get("pages") or {}
-    ranked = sorted(pages.values(), key=lambda p: p.get("index", 99))
-    return [t for p in ranked if (t := (p.get("thumbnail") or {}).get("source"))]
+    return [thumb for _, thumb in await _search_ranked(name, etype, years)]
 
 
 async def _candidates(name: str, etype: str) -> list[str]:
