@@ -1,6 +1,7 @@
 import { useRef, useCallback, useEffect, useState, useMemo } from "react";
 import ForceGraph2D from "react-force-graph-2d";
-import { Crosshair, Eraser, Eye, EyeOff, Focus, LayoutGrid, Link2, Locate, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
+import { ArrowLeftRight, Crosshair, Eraser, Eye, EyeOff, Focus, LayoutGrid, Link2, Locate, Lock, Network, Search, Trash2, Unlock, X } from "lucide-react";
+import { controlPoint, curvatures, dedupeLinks, isInvertible, orient } from "@/lib/relations";
 import type { GraphData, GraphNode } from "@/types";
 import { GAME_TYPES, IMAGE_TYPES, typeColor, typeLabel } from "@/lib/theme";
 import { onImagesChanged, peekImage, requestImage } from "@/lib/imageQueue";
@@ -147,6 +148,8 @@ export function KnowledgeGraph({
   const [frozen, setFrozen] = useState(false);
   const [find, setFind] = useState("");
   const [showDerived, setShowDerived] = useState(true);
+  // read every invertible relation the other way (developedBy <-> developerOf...)
+  const [invert, setInvert] = useState(false);
   // a second node clicked while another one is in focus: we show how the two are related
   const [secondary, setSecondary] = useState<string | null>(null);
   const [alertOff, setAlertOff] = useState(false);
@@ -205,19 +208,27 @@ export function KnowledgeGraph({
   }, []);
 
   // ── data filtered by the legend ──────────────────────────────────────────
+  // one arc per relation between two nodes: the inverse and the other direction are the same fact
   const filtered = useMemo<GraphData>(() => {
-    if (!hiddenTypes.size && showDerived) return data;
     const ids = new Set(data.nodes.filter((n) => !hiddenTypes.has(n.type)).map((n) => n.id));
+    const all = !hiddenTypes.size && showDerived;
     return {
-      nodes: data.nodes.filter((n) => ids.has(n.id)),
-      links: data.links.filter(
-        (l) =>
-          ids.has(endId(l.source)) &&
-          ids.has(endId(l.target)) &&
-          (showDerived || !isDerived(l.label)),
+      nodes: all ? data.nodes : data.nodes.filter((n) => ids.has(n.id)),
+      links: dedupeLinks(
+        all
+          ? data.links
+          : data.links.filter(
+              (l) =>
+                ids.has(endId(l.source)) &&
+                ids.has(endId(l.target)) &&
+                (showDerived || !isDerived(l.label)),
+            ),
       ),
     };
   }, [data, hiddenTypes, showDerived]);
+  // relations between the same two nodes are drawn as parallel curves, not one over the other
+  const curvature = useMemo(() => curvatures(filtered.links), [filtered.links]);
+  const anyInvertible = useMemo(() => filtered.links.some((l) => isInvertible(l.label)), [filtered.links]);
 
   useEffect(() => onImagesChanged(repaint), [repaint]);
   useEffect(() => setSecondary(null), [highlightNode]);
@@ -541,29 +552,34 @@ export function KnowledgeGraph({
       // relations derived by the reasoner (sharesDeveloperWith...) are many: dashed, labelled only for a pair
       const derived = isDerived(link.label);
       const hov = link === hoverLink;
+      // the verb is read from the selected node (or inverted): draw from the subject, label accordingly
+      const o = orient(link, highlightNode, invert);
+      const [from, to] = o.flip ? [b, a] : [a, b];
+      const cp = controlPoint(a, b, curvature.get(link) ?? 0);
       // derived links light up only for the selected node, not while merely hovering over one
       const shown = derived ? !!highlightNode && (a.id === highlightNode || b.id === highlightNode) : on;
       ctx.globalAlpha = pair || hov ? 1 : neighbours && !shown ? 0.06 : derived && !shown ? 0.5 : 1;
       ctx.beginPath();
       if (derived) ctx.setLineDash([4 / k, 3 / k]);
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
+      ctx.moveTo(from.x, from.y);
+      ctx.quadraticCurveTo(cp.x, cp.y, to.x, to.y);
       ctx.lineWidth = (pair || hov ? 2.2 : on ? 1.6 : 0.8) / Math.min(k, 2);
       ctx.strokeStyle = pair || on || hov ? BRICK : "rgba(236,232,221,0.22)";
       ctx.stroke();
       ctx.setLineDash([]);
       // arrowhead on the object: subject -> object (derived relations are symmetric: no arrow)
       if (!derived) {
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
+        // the arrow follows the end of the curve, not the straight line
+        const dx = to.x - cp.x;
+        const dy = to.y - cp.y;
         const len = Math.hypot(dx, dy);
-        const back = hitRadius(b.type) + 1;
+        const back = hitRadius(to.type) + 1;
         const sz = 6 / Math.min(Math.max(k, 0.35), 2.5);
         if (len > back + sz * 1.5) {
           const ux = dx / len;
           const uy = dy / len;
-          const tx = b.x - ux * back;
-          const ty = b.y - uy * back;
+          const tx = to.x - ux * back;
+          const ty = to.y - uy * back;
           ctx.beginPath();
           ctx.moveTo(tx, ty);
           ctx.lineTo(tx - ux * sz * 1.6 - uy * sz * 0.6, ty - uy * sz * 1.6 + ux * sz * 0.6);
@@ -578,10 +594,11 @@ export function KnowledgeGraph({
         // (the pair's labels are never skipped: they are moved down instead)
         const fs = 11 / k;
         ctx.font = `${fs}px "IBM Plex Mono", monospace`;
-        const w = ctx.measureText(link.label).width + 8 / k;
+        const w = ctx.measureText(o.label).width + 8 / k;
         const h = fs + 5 / k;
-        const mx = (a.x + b.x) / 2;
-        let my = (a.y + b.y) / 2;
+        // middle of the curve
+        const mx = 0.25 * from.x + 0.5 * cp.x + 0.25 * to.x;
+        let my = 0.25 * from.y + 0.5 * cp.y + 0.25 * to.y;
         const hit = (y: number) =>
           labelBoxes.current.some((o) => mx - w / 2 < o[2] && mx + w / 2 > o[0] && y - h / 2 < o[3] && y + h / 2 > o[1]);
         if (pair || hov) for (let i = 0; i < 6 && hit(my); i++) my += h;
@@ -592,12 +609,12 @@ export function KnowledgeGraph({
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillStyle = pair || hov ? INK : "#d9d4c6";
-          ctx.fillText(link.label, mx, my + 0.5 / k);
+          ctx.fillText(o.label, mx, my + 0.5 / k);
         }
       }
       ctx.globalAlpha = 1;
     },
-    [neighbours, focusId, secondary, highlightNode, hoverLink],
+    [neighbours, focusId, secondary, highlightNode, hoverLink, invert, curvature],
   );
 
   // ── interaction ──────────────────────────────────────────────────────────
@@ -877,9 +894,10 @@ export function KnowledgeGraph({
           if (highlightNode) {
             if (a.id !== highlightNode && b.id !== highlightNode) return;
           } else if (isDerived(link.label)) return;
+          const cp = controlPoint(a, b, curvature.get(link) ?? 0);
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
+          ctx.quadraticCurveTo(cp.x, cp.y, b.x, b.y);
           ctx.lineWidth = 10 / k; // generous hit area: the visible line is thin
           ctx.strokeStyle = color;
           ctx.stroke();
@@ -1024,9 +1042,9 @@ export function KnowledgeGraph({
           style={{ left: Math.max(8, linkInfo.x), top: Math.max(8, linkInfo.y) }}
         >
           {(() => {
-            const a = linkInfo.link.source;
-            const b = linkInfo.link.target;
-            const label = linkInfo.link.label as string;
+            const o = orient(linkInfo.link, highlightNode, invert);
+            const [a, b] = o.flip ? [linkInfo.link.target, linkInfo.link.source] : [linkInfo.link.source, linkInfo.link.target];
+            const label = o.label;
             const derived = isDerived(label);
             const info = linkInfo.info;
             return (
@@ -1272,6 +1290,16 @@ export function KnowledgeGraph({
         >
           <Link2 className="h-3.5 w-3.5" /> Derivate
         </button>
+        {anyInvertible && (
+          <button
+            onClick={() => setInvert((v) => !v)}
+            className={`btn !px-2.5 !py-1.5 ${invert ? "!border-brick" : ""}`}
+            title="Leggi le relazioni al contrario: ha sviluppato ⇄ sviluppato da, ha pubblicato ⇄ pubblicato da..."
+            aria-pressed={invert}
+          >
+            <ArrowLeftRight className="h-3.5 w-3.5" /> Inverti
+          </button>
+        )}
         <button
           onClick={() => fit(400)}
           className="btn !px-2 !py-1.5"
