@@ -34,7 +34,10 @@ Si esegue una sola volta, dalla root del repository:
 uv run python ontology/build_ontology.py                      # tutto: fetch → reasoning → validazione → .owl + .ttl
 uv run python ontology/build_ontology.py --years 2020-2026    # sottoinsieme di anni
 uv run python ontology/build_ontology.py --from-stage reason  # riusa il fetch già fatto
+uv run python ontology/build_ontology.py --force              # rigenera anche se il .owl esiste
 ```
+
+Senza `--force` lo script non fa nulla se `output/videogames_full.owl` esiste già. `./setup.ps1` (o `setup.bat`) esegue `uv sync`, `bun install` e questo script; `-Force` rigenera.
 
 Lo script mostra barre `tqdm` per ogni fase. Fasi:
 

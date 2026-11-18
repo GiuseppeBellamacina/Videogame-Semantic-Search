@@ -70,11 +70,13 @@ uv sync
 
 ### 3. Costruisci l'ontologia (una volta sola)
 
+`./setup.ps1` (o `setup.bat`) esegue i passi 2 e 3 più `bun install`; `-Force` rigenera l'ontologia.
+
 ```bash
 uv run python ontology/build_ontology.py
 ```
 
-Esegue in sequenza, con barre di avanzamento: fetch da Wikidata (checkpoint per mese in `ontology/.cache/`), assiomi V2, chiusura OWL-RL, materializzazione, regole CONSTRUCT, validazione e scrittura di `videogames_full.owl` e `videogames_full.ttl`. Il fetch richiede alcune ore. Opzioni utili: `--years 2020-2026` (sottoinsieme), `--from-stage reason` (riusa il fetch già fatto).
+Esegue in sequenza, con barre di avanzamento: fetch da Wikidata (checkpoint per mese in `ontology/.cache/`), assiomi V2, chiusura OWL-RL, materializzazione, regole CONSTRUCT, validazione e scrittura di `videogames_full.owl` e `videogames_full.ttl`. Se `ontology/output/videogames_full.owl` esiste già non fa nulla (`--force` per rigenerare). Il fetch richiede alcune ore. Opzioni utili: `--years 2020-2026` (sottoinsieme), `--from-stage reason` (riusa il fetch già fatto).
 
 > Wikidata può rispondere con HTTP 429 (rate limit): lo script attende il tempo indicato e riprova da solo.
 
