@@ -80,9 +80,12 @@ Dopo il fetch e gli assiomi V2 viene eseguito il reasoning (cfr.\ Sezione~\ref{s
 chiusura OWL 2 RL tramite \texttt{owlrl}, materializzazione mirata delle classi definite e
 regole SPARQL CONSTRUCT. Sulla build completa la chiusura \texttt{owlrl} richiede circa 45 minuti e aggiunge 5,18 milioni di triple
 al grafo di circa 946.000 (la successiva pulizia toglie i messaggi di errore di \texttt{owlrl}, 255.048 triple riflessive e 1,33 milioni di triple con nodi anonimi, sostituiti dallo schema originale); la materializzazione mirata aggiunge 178.581 triple e
-le regole CONSTRUCT 26.841 (tra cui \texttt{MultiConsoleGame} e \texttt{MultiPlatformGame}). Nelle relazioni \texttt{sharesDeveloperWith} e
-\texttt{sharesPublisherWith} i gruppi con pi\`u di 50 giochi (19 sviluppatori e 66 publisher) sono esclusi
-per limitare la crescita quadratica delle coppie. I conteggi finali sono in Tabella~\ref{tab:abox}
+le regole CONSTRUCT 26.841 (tra cui \texttt{MultiConsoleGame} e \texttt{MultiPlatformGame}). Il tetto di 50 giochi per gruppo (19 sviluppatori e 66 publisher lo superano) vale solo per il passo di
+materializzazione mirata, non per il risultato: le catene \texttt{sharesDeveloperWith} e
+\texttt{sharesPublisherWith} sono gi\`a derivate per ogni gruppo dalla chiusura \texttt{owlrl}, che le
+esegue prima (verificato su un developer sintetico con 60 giochi: tutte le 3.540 coppie). Il tetto
+resta quindi una protezione ridondante, e il grafo finale contiene anche le coppie dei gruppi pi\`u
+grandi, che sono quelle che pesano di pi\`u sulla dimensione (circa l'80\% delle triple finali \`e inferito). I conteggi finali sono in Tabella~\ref{tab:abox}
 e Tabella~\ref{tab:inferite}.
 
 \begin{table}[h]

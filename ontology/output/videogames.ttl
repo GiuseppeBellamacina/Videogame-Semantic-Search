@@ -2,6 +2,7 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix vg: <http://www.videogame-ontology.org/ontology#> .
 @prefix wd: <http://www.wikidata.org/entity/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -24,14 +25,14 @@
 vg:VideoGame a owl:Class ;
     rdfs:label "Video Game" ;
     rdfs:comment "A video game product" ;
-    owl:equivalentClass wd:Q7889 ;
     owl:hasKey ( vg:hasWikidataId ),
-        ( vg:hasSteamAppId ) .
+        ( vg:hasSteamAppId ) ;
+    skos:closeMatch wd:Q7889 .
 
 vg:Developer a owl:Class ;
     rdfs:label "Developer" ;
     rdfs:comment "A company or studio that develops video games" ;
-    owl:equivalentClass wd:Q210167 .
+    skos:closeMatch wd:Q210167 .
 
 vg:Publisher a owl:Class ;
     rdfs:label "Publisher" ;
@@ -40,7 +41,7 @@ vg:Publisher a owl:Class ;
 vg:Genre a owl:Class ;
     rdfs:label "Genre" ;
     rdfs:comment "A category or genre of video games" ;
-    owl:equivalentClass wd:Q65956376 .
+    skos:closeMatch wd:Q65956376 .
 
 vg:Platform a owl:Class ;
     rdfs:label "Platform" ;
@@ -61,7 +62,7 @@ vg:Award a owl:Class ;
 vg:GameEngine a owl:Class ;
     rdfs:label "Game Engine" ;
     rdfs:comment "A software framework used to develop video games" ;
-    owl:equivalentClass wd:Q193564 .
+    skos:closeMatch wd:Q193564 .
 
 vg:GameMode a owl:Class ;
     rdfs:label "Game Mode" ;
@@ -647,21 +648,21 @@ vg:gameName a owl:DatatypeProperty,
     rdfs:domain vg:VideoGame ;
     rdfs:range xsd:string ;
     rdfs:subPropertyOf vg:name ;
-    owl:equivalentProperty dcterms:title .
+    skos:closeMatch dcterms:title .
 
 vg:gameDescription a owl:DatatypeProperty ;
     rdfs:label "game description" ;
     rdfs:domain vg:VideoGame ;
     rdfs:range xsd:string ;
     rdfs:subPropertyOf vg:description ;
-    owl:equivalentProperty dcterms:description .
+    skos:closeMatch dcterms:description .
 
 vg:releaseDate a owl:DatatypeProperty,
         owl:FunctionalProperty ;
     rdfs:label "release date" ;
     rdfs:domain vg:VideoGame ;
     rdfs:range xsd:date ;
-    owl:equivalentProperty dcterms:issued .
+    skos:closeMatch dcterms:issued .
 
 vg:metacriticScore a owl:DatatypeProperty,
         owl:FunctionalProperty ;
@@ -1310,31 +1311,13 @@ vg:ExclusiveRelease a owl:Class ;
 
 <http://www.videogame-ontology.org/ontology/alignments> a owl:Ontology ;
     rdfs:label "Video Game Ontology: external alignments" ;
-    rdfs:comment "Alignment of classes and properties with Wikidata and Dublin Core." ;
+    rdfs:comment "Alignment of classes and properties with Wikidata and Dublin Core, as skos:closeMatch (not logical equivalence)." ;
     owl:imports <http://www.videogame-ontology.org/ontology/classes> .
 
 <http://www.videogame-ontology.org/ontology/dl-axioms> a owl:Ontology ;
     rdfs:label "Video Game Ontology: dl-only axioms" ;
     rdfs:comment "Functional data properties and keys: valid OWL 2 DL for a DL reasoner (HermiT, Pellet), removed before the owlrl closure." ;
     owl:imports <http://www.videogame-ontology.org/ontology/classes> .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:VideoGame vg:Developer vg:Publisher vg:Genre vg:Platform vg:Character vg:Franchise vg:Award vg:GameEngine vg:GameMode vg:Review vg:GameEvent ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:IndieGame vg:AAAGame ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:ReleasedGame vg:EarlyAccessGame vg:CancelledGame vg:DelistedGame ) .
-
-[] a owl:AllDisjointClasses ;
-    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:IndustryAward vg:EditorialAward vg:UserAward ) .
@@ -1346,11 +1329,29 @@ vg:ExclusiveRelease a owl:Class ;
     owl:members ( vg:ConsolePlatform vg:PCPlatform vg:MobilePlatform vg:BrowserPlatform vg:ArcadePlatform vg:RetroComputerPlatform vg:VRPlatform ) .
 
 [] a owl:AllDisjointClasses ;
+    owl:members ( vg:IndieGame vg:AAAGame ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:AnnouncementEvent vg:ReleaseEvent vg:UpdateEvent vg:DelistingEvent ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:PlayStationPlatform vg:XboxPlatform vg:NintendoPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:IOSPlatform vg:AndroidPlatform ) .
+
+[] a owl:AllDisjointClasses ;
     owl:members ( vg:ProprietaryEngine vg:OpenSourceEngine ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:ReleasedGame vg:EarlyAccessGame vg:CancelledGame vg:DelistedGame ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:SinglePlayerMode vg:MultiplayerMode vg:CoopMode vg:MMOMode ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:WindowsPlatform vg:MacOSPlatform vg:LinuxPlatform ) .
+    owl:members ( vg:VideoGame vg:Developer vg:Publisher vg:Genre vg:Platform vg:Character vg:Franchise vg:Award vg:GameEngine vg:GameMode vg:Review vg:GameEvent ) .
 

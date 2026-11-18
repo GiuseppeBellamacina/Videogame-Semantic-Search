@@ -1,4 +1,5 @@
 # Classify games available on at least two console platforms as MultiConsoleGame
+# Semantics: ?p1 != ?p2 compares IRIs, i.e. it assumes the Unique Name Assumption (two console IRIs = two consoles).
 PREFIX vg: <http://www.videogame-ontology.org/ontology#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

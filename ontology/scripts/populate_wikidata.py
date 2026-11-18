@@ -14,7 +14,7 @@ import unicodedata
 from collections import defaultdict
 from pathlib import Path
 
-from rdflib import RDF, RDFS, XSD, Graph, Literal, Namespace, URIRef
+from rdflib import OWL, RDF, RDFS, XSD, Graph, Literal, Namespace, URIRef
 from SPARQLWrapper import JSON, POST, SPARQLWrapper
 from tqdm import tqdm
 
@@ -420,8 +420,13 @@ def deduplicate_graph(g: Graph) -> int:
                 1 for _ in g.triples((None, None, uri))
             )
 
-        # Sort: most triples first → that is the canonical URI
-        uris_sorted = sorted(uris, key=triple_count, reverse=True)
+        # Canonical URI: one declared in the schema (a nominal such as pub/Nintendo, which the
+        # defined classes refer to) wins, otherwise the one with the most triples
+        uris_sorted = sorted(
+            uris,
+            key=lambda u: ((u, RDF.type, OWL.NamedIndividual) in g, triple_count(u)),
+            reverse=True,
+        )
         canonical = uris_sorted[0]
 
         for duplicate in uris_sorted[1:]:

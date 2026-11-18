@@ -231,4 +231,6 @@ dimensioni:
 \end{enumerate}
 
 Le regole pairwise (3--5) sono protette dal cap \texttt{-{}-max-group} (default 50)
-per evitare esplosioni combinatorie su franchise con migliaia di giochi.
+per evitare esplosioni combinatorie su franchise con migliaia di giochi. Il cap vale per il passo di
+materializzazione mirata: la chiusura \texttt{owlrl}, eseguita prima, deriva comunque le catene
+(\texttt{prp-spo2}) per tutti i gruppi, quindi il risultato finale non ne \`e limitato.

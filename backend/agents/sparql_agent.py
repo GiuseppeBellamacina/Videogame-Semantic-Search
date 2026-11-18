@@ -7,11 +7,13 @@ with automatic retry on errors.
 """
 
 import logging
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as QueryTimeout
 from dataclasses import dataclass, field
 
 from backend.agents.llm import LLM
 from backend.agents.prompts import SPARQL_GENERATOR_PROMPT
-from backend.config import MAX_SPARQL_RETRIES
+from backend.config import AGENT_MAX_ROWS, AGENT_QUERY_TIMEOUT, MAX_SPARQL_RETRIES
 from backend.services.ontology_service import OntologyService
 from backend.utils.result_formatter import format_results_summary
 from backend.utils.sparql_validator import clean_sparql_response, validate_sparql
@@ -155,14 +157,28 @@ class SPARQLAgent:
 
     def _execute_query(self, state: SPARQLAgentState) -> SPARQLAgentState:
         """Execute the SPARQL query on the local ontology."""
+        # shortcut: a timed-out query keeps running in its thread (pyoxigraph cannot cancel it);
+        # fine for one local user, a server would need a worker process to kill
+        pool = ThreadPoolExecutor(max_workers=1)
         try:
-            results = OntologyService.execute_sparql(state.sparql_query)
+            results = pool.submit(
+                OntologyService.execute_sparql, state.sparql_query, AGENT_MAX_ROWS
+            ).result(timeout=AGENT_QUERY_TIMEOUT)
             state.results = results
             state.result_summary = format_results_summary(results)
             state.error = ""
+        except QueryTimeout:
+            logger.error("Query execution timed out")
+            state.error = (
+                f"Execution error: the query takes more than {AGENT_QUERY_TIMEOUT} s, "
+                "add filters or a LIMIT"
+            )
+            state.results = []
         except Exception as e:
             logger.error(f"Query execution failed: {e}")
             state.error = f"Execution error: {str(e)}"
             state.results = []
+        finally:
+            pool.shutdown(wait=False)
 
         return state

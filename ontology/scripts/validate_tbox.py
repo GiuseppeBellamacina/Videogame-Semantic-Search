@@ -816,6 +816,117 @@ def check_datatype_restriction_syntax(g: Graph) -> list[Finding]:
 
 
 # ---------------------------------------------------------------------------
+# OWL 2 DL conformance (the parts that do not need a DL reasoner)
+# ---------------------------------------------------------------------------
+
+_XSD = "http://www.w3.org/2001/XMLSchema#"
+# OWL 2 datatype map (https://www.w3.org/TR/owl2-syntax/#Datatype_Maps); xsd:date is not in it
+OWL2_XSD_DATATYPES = {
+    _XSD + n
+    for n in (
+        "decimal integer nonNegativeInteger nonPositiveInteger positiveInteger "
+        "negativeInteger long int short byte unsignedLong unsignedInt unsignedShort "
+        "unsignedByte double float string normalizedString token language Name NCName "
+        "NMTOKEN boolean hexBinary base64Binary anyURI dateTime dateTimeStamp"
+    ).split()
+}
+
+
+def check_owl2_datatypes(g: Graph) -> list[Finding]:
+    """WARNING: a datatype used as a range or as owl:onDatatype that is not in the OWL 2
+    datatype map (e.g. xsd:date): a DL reasoner such as HermiT rejects it."""
+    used: dict[str, set[str]] = defaultdict(set)  # datatype -> who uses it
+    for prop in g.subjects(RDF.type, OWL.DatatypeProperty):
+        for dt in g.objects(prop, RDFS.range):
+            if isinstance(dt, URIRef):
+                used[str(dt)].add(_short(prop))
+    for bn, dt in g.subject_objects(OWL.onDatatype):
+        used[str(dt)].add("owl:onDatatype restriction")
+    return [
+        Finding(
+            severity="WARNING",
+            code="DATATYPE_OUTSIDE_OWL2_MAP",
+            message=f"{_short(URIRef(dt))} is not in the OWL 2 datatype map "
+            f"(used by {', '.join(sorted(who))})",
+            subjects=sorted(who),
+        )
+        for dt, who in sorted(used.items())
+        if dt.startswith(_XSD) and dt not in OWL2_XSD_DATATYPES
+    ]
+
+
+def _non_simple_properties(g: Graph) -> set[URIRef]:
+    """Transitive properties, heads of property chains, and everything that is a
+    super-property or an inverse of one of them (OWL 2 DL: not simple)."""
+    non_simple: set[URIRef] = {
+        p for p in g.subjects(RDF.type, OWL.TransitiveProperty) if isinstance(p, URIRef)
+    }
+    non_simple |= {p for p in g.subjects(OWL.propertyChainAxiom, None) if isinstance(p, URIRef)}
+    changed = True
+    while changed:
+        changed = False
+        for p in list(non_simple):
+            related = set(g.objects(p, RDFS.subPropertyOf)) | set(g.objects(p, OWL.inverseOf))
+            related |= set(g.subjects(OWL.inverseOf, p))
+            for q in related:
+                if isinstance(q, URIRef) and q not in non_simple:
+                    non_simple.add(q)
+                    changed = True
+    # rdfs:subPropertyOf points up, so following it from a non-simple property reaches its
+    # super-properties, which are non-simple too
+    return non_simple
+
+
+def check_global_restrictions(g: Graph) -> list[Finding]:
+    """ERROR: a non-simple property in an axiom that OWL 2 DL allows only on simple ones
+    (asymmetric, irreflexive, functional, inverse-functional, hasKey, cardinality)."""
+    non_simple = _non_simple_properties(g)
+    findings: list[Finding] = []
+    for p in sorted(non_simple, key=str):
+        for t in (OWL.AsymmetricProperty, OWL.IrreflexiveProperty, OWL.FunctionalProperty,
+                  OWL.InverseFunctionalProperty):
+            if (p, RDF.type, t) in g:
+                findings.append(
+                    Finding(
+                        severity="ERROR",
+                        code="NON_SIMPLE_PROPERTY_AXIOM",
+                        message=f"{_short(p)} is not simple but is declared {_short(t)}",
+                        subjects=[_short(p)],
+                    )
+                )
+    for r in g.subjects(RDF.type, OWL.Restriction):
+        prop = g.value(r, OWL.onProperty)
+        if prop in non_simple and any(
+            (r, c, None) in g
+            for c in (OWL.cardinality, OWL.minCardinality, OWL.maxCardinality,
+                      OWL.qualifiedCardinality, OWL.minQualifiedCardinality,
+                      OWL.maxQualifiedCardinality)
+        ):
+            findings.append(
+                Finding(
+                    severity="ERROR",
+                    code="NON_SIMPLE_PROPERTY_CARDINALITY",
+                    message=f"{_short(prop)} is not simple but has a cardinality restriction",
+                    subjects=[_short(prop)],
+                )
+            )
+    for cls, key_list in g.subject_objects(OWL.hasKey):
+        from rdflib.collection import Collection
+
+        for prop in Collection(g, key_list):
+            if prop in non_simple:
+                findings.append(
+                    Finding(
+                        severity="ERROR",
+                        code="NON_SIMPLE_PROPERTY_KEY",
+                        message=f"{_short(prop)} is not simple but is in the key of {_short(cls)}",
+                        subjects=[_short(prop), _short(cls)],
+                    )
+                )
+    return findings
+
+
+# ---------------------------------------------------------------------------
 # Orchestrator
 # ---------------------------------------------------------------------------
 
@@ -835,6 +946,8 @@ def validate(g: Graph) -> list[Finding]:
         ("Unused classes", check_unused_classes),
         ("Restriction completeness", check_restriction_completeness),
         ("Datatype restriction syntax", check_datatype_restriction_syntax),
+        ("OWL 2 datatype map", check_owl2_datatypes),
+        ("OWL 2 DL global restrictions", check_global_restrictions),
     ]
 
     for name, check_fn in checks:

@@ -38,7 +38,9 @@ Il sistema offre numerose direzioni di sviluppo futuro:
     automatica di inconsistenze tra le istanze;
   \item \textbf{Valutazione dell'agente NL $\rightarrow$ SPARQL} --- oggi non sono misurate
     accuratezza su un insieme di domande, latenza e casi di fallimento, e non esistono competency question
-    con risultati attesi (il test di istanze ha solo 3 giochi). Il retry su un risultato vuoto \`e
+    con risultati attesi sui dati (il test di istanze ha solo 3 giochi). Esiste un controllo senza LLM,
+    \texttt{backend/eval/run\_presets.py}, che esegue sullo store le 26 query predefinite e 10 competency
+    question (36 su 36 rispondono), ma non misura la qualit\`a delle query generate dall'agente. Il retry su un risultato vuoto \`e
     problematico: una risposta legittimamente vuota fa ritentare e pu\`o produrre una query allargata;
   \item \textbf{Validazione delle istanze con SHACL} --- definire SHACL shapes per
     validare la conformit\`a delle istanze (es. ogni VideoGame deve avere

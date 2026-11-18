@@ -1,4 +1,5 @@
 # Classify games with releaseDate >= 2020-01-01 as RecentGame
+# Semantics: fixed threshold (2020-01-01), so "recent" ages with time; games without releaseDate never match.
 PREFIX vg: <http://www.videogame-ontology.org/ontology#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

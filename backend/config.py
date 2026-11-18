@@ -26,6 +26,10 @@ ONTOLOGY_NS = "http://www.videogame-ontology.org/ontology#"
 
 # Agent settings
 MAX_SPARQL_RETRIES = 3
+# Limits on a query written by the LLM (the user editor has its own): the generated SPARQL
+# cannot write (the validator only accepts queries) but it can be huge or slow
+AGENT_MAX_ROWS = 1000
+AGENT_QUERY_TIMEOUT = 30  # seconds
 
 # Local SQLite cache (images + query results)
 CACHE_DB_PATH = Path(os.getenv("CACHE_DB_PATH", BASE_DIR / "backend" / "cache.db"))

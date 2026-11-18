@@ -99,9 +99,10 @@ I vincoli rispettati dallo schema sono:
     prevede l'inversa di una data property; l'identit\`a \`e espressa con \texttt{hasKey}.
 \end{enumerate}
 
-La verifica \`e stata eseguita con uno script basato su \texttt{rdflib}, che calcola
+La verifica \`e eseguita da \texttt{validate\_tbox.py} (basato su \texttt{rdflib}), che calcola
 l'insieme delle propriet\`a non semplici e ne controlla l'uso negli assiomi elencati:
-il risultato \`e di 0 violazioni.
+il risultato \`e di 0 violazioni. Lo stesso script controlla i datatype rispetto alla datatype map di
+OWL 2 e segnala un solo avviso, \texttt{xsd:date} (cfr.\ sotto) (i due controlli hanno un autotest in \texttt{ontology/scripts/test\_validate\_tbox.py}).
 
 \subsection{Limiti Noti}
 
