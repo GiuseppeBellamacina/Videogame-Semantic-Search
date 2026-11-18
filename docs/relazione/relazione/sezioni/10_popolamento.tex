@@ -122,13 +122,6 @@ Modalit\`a di gioco (individui) & 40 \\
 \end{tabular}
 \end{table}
 
-Le classi definite per negazione o per soglia vanno lette con la semantica di chiusura del secondo
-livello. \texttt{StandaloneGame} (106.926 giochi su 107.522) indica l'assenza di un predecessore noto e
-riflette la scarsit\`a di \texttt{sequelOf} nei dati (596 \texttt{SequelGame}). \texttt{HighlyRatedGame}
-(107 giochi) richiede un \texttt{metacriticScore} $\geq$ 85 e comprende solo i giochi con punteggio, non
-sempre presente in Wikidata; nella fusione dei titoli omonimi si conserva il punteggio pi\`u alto.
-\texttt{RecentGame} usa la soglia fissa 2020-01-01.
-
 \begin{table}[h]
 \centering
 \caption{Istanze delle classi definite dopo il reasoning}
@@ -166,6 +159,16 @@ AndroidGame & 3.941 & GOTYWinner & 16 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+I valori della Tabella~\ref{tab:inferite} vanno letti con la semantica di chiusura del secondo livello.
+\texttt{StandaloneGame} (106.926 giochi su 107.522) indica l'assenza di un predecessore \emph{noto}, non
+l'assenza di un predecessore: riflette la scarsit\`a di \texttt{sequelOf} nei dati (596 \texttt{SequelGame})
+e non l'assenza di sequel nel mondo reale. \texttt{HighlyRatedGame} (107 giochi) richiede un
+\texttt{metacriticScore} $\geq$ 85 e comprende solo i giochi con punteggio, non sempre presente in
+Wikidata; nella fusione dei titoli omonimi si conserva il punteggio pi\`u alto. \texttt{RecentGame} usa la
+soglia fissa 2020-01-01 e invecchia con il tempo. \texttt{MultiConsoleGame} e \texttt{MultiPlatformGame}
+contano IRI distinti (ipotesi di nomi unici, Sezione~\ref{sec:reasoning}).
+
 
 Sul file finale un controllo di coerenza non rileva violazioni delle disgiunzioni tra classi principali,
 \texttt{owl:sameAs} tra individui distinti, giochi privi di nome o con pi\`u nomi o date, n\'e termini usati

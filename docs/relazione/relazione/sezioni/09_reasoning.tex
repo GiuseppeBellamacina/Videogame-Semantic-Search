@@ -101,6 +101,19 @@ costrutti esulano dal profilo, mentre la quarta vi rientra ma non produce classi
     un valore in pi\`u produrrebbe un \texttt{owl:sameAs}, non un errore.
 \end{enumerate}
 
+\subsection{Ipotesi di Chiusura e di Nomi Unici nelle Regole CONSTRUCT}
+
+Le regole del secondo livello adottano due ipotesi che OWL non fa, e che vanno tenute presenti nel leggere
+i risultati:
+\begin{itemize}[nosep]
+  \item \textbf{Closed World Assumption} (R3): \texttt{StandaloneGame} significa \emph{nessun predecessore
+    noto}, non \emph{senza predecessore}; dipende dalla completezza di \texttt{sequelOf} nei dati;
+  \item \textbf{Unique Name Assumption} (R4b, R4c): le regole contano IRI distinti, quindi due piattaforme
+    con IRI diversi sono due piattaforme; OWL non lo garantisce senza \texttt{owl:differentFrom};
+  \item \textbf{Valori presenti} (R1, R2): le soglie sono valutate solo sui giochi che hanno un punteggio o
+    una data; l'assenza del valore non \`e un valore basso.
+\end{itemize}
+
 \subsection{Esempio di Inferenza a Due Livelli}
 
 L'insieme di istanze di test (Appendice~\ref{sec:app_abox}) permette di seguire il
