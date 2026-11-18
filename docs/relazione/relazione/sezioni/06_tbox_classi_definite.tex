@@ -181,8 +181,12 @@ non sono quindi classi definite in senso stretto. Questa scelta \`e deliberata:
     ma non tutti i giochi con $\leq$ 1 piattaforma sono necessariamente esclusive.
 \end{itemize}
 
-Queste classi forniscono vincoli di integrit\`a piuttosto che meccanismi di
-classificazione automatica.
+Queste classi non sono vincoli di integrit\`a e non classificano automaticamente.
+Sotto la \textit{Open World Assumption} una restrizione ${\le}1$ non rifiuta un'ontologia
+con due valori: un reasoner OWL 2 RL, con la regola \texttt{cls-maxc2}, concluderebbe
+invece che i due valori sono lo stesso individuo (\texttt{owl:sameAs}). Sono quindi
+condizioni necessarie, utili alla documentazione dello schema; un vincolo vero, che
+segnali l'errore, richiede SHACL (cfr.~Sezione~\ref{sec:conclusione}).
 
 \subsection{Costrutti OWL 2 Utilizzati}
 

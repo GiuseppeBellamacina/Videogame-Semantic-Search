@@ -34,6 +34,11 @@ nello stesso blocco.
 \end{tabular}
 \end{table}
 
+Il blocco 9 modella stati del ciclo di vita come classi statiche e disgiunte. \`E una semplificazione:
+un gioco delistato \`e stato rilasciato, e uno in accesso anticipato poi esce, quindi nel tempo gli stati
+non si escludono. Le quattro classi sono segnaposto che il popolamento non usa (gli stati temporali sono
+modellati da \texttt{GameEvent}) e l'ontologia pubblicata non le popola.
+
 \subsection{Importanza delle Disjointness}
 
 Le dichiarazioni di disjointness svolgono due ruoli fondamentali:

@@ -36,6 +36,11 @@ separazione schema/istanze:
     (giochi, developer, publisher, generi, piattaforme, \dots{}) per il periodo 2010--2026 e le triple
     materializzate dal reasoning. \`E l'unico file caricato dal backend.
 \end{itemize}
+La separazione ha un'eccezione voluta: gli otto publisher usati come nominali nelle classi
+\texttt{*PublishedGame} sono individui dichiarati nello schema (\texttt{schema/individuals.owl}), perch\'e un
+nominale richiede un individuo nominato. La deduplicazione tiene, per ogni nome, l'URI con pi\`u triple:
+non \`e garantito che coincida con quello dichiarato, per cui un publisher fuso con una variante del nome
+potrebbe lasciare il nominale dello schema scollegato dai suoi giochi.
 
 \subsection{Fonte Dati: Wikidata}
 

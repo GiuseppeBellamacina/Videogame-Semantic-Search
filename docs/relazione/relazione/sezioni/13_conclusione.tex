@@ -7,11 +7,13 @@ Il progetto \textbf{Videogame Semantic Search} ha prodotto un sistema completo
 di ricerca semantica che integra:
 
 \begin{itemize}[nosep]
-  \item \textbf{Un'ontologia OWL 2 DL} espressiva e ben strutturata, evoluta da 11 a
+  \item \textbf{Un'ontologia progettata verso OWL 2 DL}, espressiva e ben strutturata, evoluta da 11 a
     121 classi (69 primitive, 50 definite e 2 con vincolo di cardinalit\`a), con
     32 object property, 26 datatype property, 12 coppie inverse, 3 property chain,
     3 propriet\`a transitive, 12 blocchi di disjointness e allineamento esterno a
-    Wikidata e Dublin Core, nel rispetto dei vincoli globali di OWL 2 DL sulle propriet\`a;
+    Wikidata e Dublin Core. I vincoli globali di OWL 2 DL sulle propriet\`a sono verificati con uno script
+    del progetto; la conformit\`a non \`e stata controllata con un reasoner DL (HermiT, ROBOT), il file
+    prodotto \`e RL-safe e senza gli assiomi solo-DL, e \texttt{xsd:date} \`e fuori dalla datatype map di OWL 2;
   \item \textbf{Un sistema di reasoning a due livelli} (OWL 2 RL + 23 regole
     CONSTRUCT) funzionante end-to-end, con 0 falsi \texttt{owl:sameAs} dopo
     il fix del bug critico degli assiomi DL-only;
@@ -34,6 +36,10 @@ Il sistema offre numerose direzioni di sviluppo futuro:
     \texttt{hasKey}) senza bisogno delle regole CONSTRUCT compensative, previa
     migrazione delle date a \texttt{xsd:dateTime} (cfr.~Sezione~\ref{sec:profilo_dl}). Questo abiliterebbe anche la rilevazione
     automatica di inconsistenze tra le istanze;
+  \item \textbf{Valutazione dell'agente NL $\rightarrow$ SPARQL} --- oggi non sono misurate
+    accuratezza su un insieme di domande, latenza e casi di fallimento, e non esistono competency question
+    con risultati attesi (il test di istanze ha solo 3 giochi). Il retry su un risultato vuoto \`e
+    problematico: una risposta legittimamente vuota fa ritentare e pu\`o produrre una query allargata;
   \item \textbf{Validazione delle istanze con SHACL} --- definire SHACL shapes per
     validare la conformit\`a delle istanze (es. ogni VideoGame deve avere
     almeno un \texttt{gameName}, le date devono essere nel formato corretto);
@@ -41,7 +47,8 @@ Il sistema offre numerose direzioni di sviluppo futuro:
     autentiche SWRL rules, sfruttando un reasoner che le supporti nativamente;
   \item \textbf{Estensione della pipeline Wikidata} --- aggiungere query per
     recuperare \texttt{hasSteamAppId}, \texttt{budgetTier} e \texttt{playerCount},
-    attualmente non popolate dai dati Wikidata;
+    attualmente non popolate dai dati Wikidata (come le classi \texttt{Review} e \texttt{GameEvent}, modellate ma
+    senza istanze: il pattern n-ario non \`e quindi dimostrato sui dati);
   \item \textbf{Internazionalizzazione del frontend} --- supporto multilingua
     per l'interfaccia (oggi in italiano) ed estensione delle query in linguaggio
     naturale oltre italiano e inglese (francese, spagnolo, \dots{});

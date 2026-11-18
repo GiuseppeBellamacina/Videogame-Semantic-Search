@@ -58,7 +58,11 @@ I giochi fusi per titolo (un remake o un porting ha lo stesso titolo dell'origin
 pi\`u valori per le propriet\`a funzionali (311 date di uscita, 90 punteggi, 99 nomi): la pipeline
 tiene la data pi\`u antica, il punteggio pi\`u alto e un solo nome, e toglie i \texttt{sequelOf}
 che puntano al gioco stesso. Restano invece fusi i 921 titoli condivisi da pi\`u elementi di
-Wikidata, perch\'e gli URI dei giochi sono costruiti dal nome: \`e un limite noto.
+Wikidata, perch\'e gli URI dei giochi sono costruiti dal nome: \`e un limite noto. La regola
+\guillemotleft data pi\`u antica, punteggio pi\`u alto\guillemotright{} \`e inoltre una perdita di informazione, e il
+legame con Wikidata non \`e salvato: la pipeline non scrive \texttt{hasWikidataId}, per cui l'assioma
+\texttt{owl:hasKey} su di esso \`e vuoto sui dati. Costruire gli URI dal QID di Wikidata risolverebbe
+quasi tutto, ma richiede di rigenerare l'intero popolamento (Sezione~\ref{sec:conclusione}).
 
 \subsubsection{Aziende che sviluppano e pubblicano}
 
@@ -66,7 +70,9 @@ Un'azienda che \`e sia sviluppatore sia publisher (3.360 nomi, ad esempio FromSo
 individui, \texttt{dev/X} e \texttt{pub/X}. Non si possono dichiarare \texttt{owl:sameAs}: le classi
 \texttt{Developer} e \texttt{Publisher} sono disgiunte e il reasoner dichiarerebbe l'ontologia
 inconsistente. Il popolamento li collega con la propriet\`a simmetrica \texttt{sameCompanyAs}
-(6.720 triple); in 10.232 giochi lo stesso nome sviluppa e pubblica.
+(6.720 triple); in 10.232 giochi lo stesso nome sviluppa e pubblica. \`E un aggiramento: il modello pi\`u
+pulito \`e una classe \texttt{Company} con ruoli, e \texttt{Developer} e \texttt{Publisher} come classi definite da
+\texttt{developerOf} e \texttt{publisherOf}; non \`e stato adottato per non rifare il popolamento.
 
 \subsubsection{Reasoning}
 
@@ -98,6 +104,13 @@ Modalit\`a di gioco (individui) & 40 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Le cifre vanno lette con la semantica di chiusura del secondo livello. \texttt{StandaloneGame}
+(106.926 giochi su 107.522) significa \emph{nessun predecessore noto}: dipende dalla scarsit\`a
+di \texttt{sequelOf} nei dati (596 \texttt{SequelGame}), non da un fatto del mondo.
+\texttt{HighlyRatedGame} (107 giochi) richiede un \texttt{metacriticScore} $\geq$ 85 e vale solo
+per i giochi che hanno un punteggio, sparso in Wikidata, con il punteggio pi\`u alto tenuto nella
+fusione dei titoli omonimi. \texttt{RecentGame} usa una soglia fissa (2020-01-01) e invecchia.
 
 \begin{table}[h]
 \centering
