@@ -46,3 +46,6 @@ reference/
 ontology/.cache/
 backend/cache.db*
 backend/cache/
+
+# Protege
+Protege*/
