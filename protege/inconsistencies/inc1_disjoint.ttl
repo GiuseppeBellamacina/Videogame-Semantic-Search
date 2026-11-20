@@ -1,0 +1,10 @@
+# Test 1 (expected: INCONSISTENT). Disjointness: the platform families are disjoint,
+# so a device typed both console and PC contradicts the schema. A hybrid such as
+# the Steam Deck would need its own class, not two types.
+@prefix vg:   <http://www.videogame-ontology.org/ontology#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+<http://www.videogame-ontology.org/ontology/test-disjoint> a owl:Ontology ;
+    owl:imports <http://www.videogame-ontology.org/ontology/abox-demo> .
+<http://www.videogame-ontology.org/ontology#platform/Steam_Deck> a vg:ConsolePlatform , vg:PCPlatform ;
+    rdfs:label "Steam Deck (typed as console and as PC)" .

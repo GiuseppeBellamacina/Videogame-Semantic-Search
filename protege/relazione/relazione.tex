@@ -1,0 +1,289 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\emergencystretch=1.5em
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\setlist{itemsep=1pt,topsep=3pt}
+\graphicspath{{figure/}}
+\lstset{basicstyle=\ttfamily\footnotesize,backgroundcolor=\color{black!4},frame=single,
+  rulecolor=\color{black!25},breaklines=true,columns=fullflexible,keepspaces=true,
+  showstringspaces=false,aboveskip=4pt,belowskip=4pt}
+
+% Screenshot di Protégé: se il file manca, un riquadro segnaposto (la relazione compila comunque).
+\newcommand{\screenshot}[3][0.85\linewidth]{%
+  \begin{figure}[htbp]\centering
+  \IfFileExists{figure/#2.png}{\includegraphics[width=#1]{#2}}%
+    {\fbox{\parbox[c][3cm][c]{0.6\linewidth}{\centering\small Screenshot da inserire:\\\texttt{figure/\detokenize{#2}.png}}}}%
+  \caption{#3}\label{fig:#2}
+  \end{figure}}
+
+\newcommand{\cls}[1]{\textsf{#1}}
+\newcommand{\prop}[1]{\textit{#1}}
+\newcommand{\ind}[1]{\texttt{#1}}
+
+\title{\textbf{Un'ontologia OWL 2 dei videogiochi}\\[2pt]\large come è stata costruita, passo dopo passo, fino al ragionamento in Protégé}
+\author{Giuseppe Bellamacina}
+\date{Corso di Semantic Web --- \today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Questa relazione racconta la costruzione di un'ontologia OWL~2 dei videogiochi nell'ordine in cui è avvenuta. Si parte dalle domande a cui volevamo rispondere. Poi si dà un nome alle cose (le classi), le si collega (le proprietà) e si dà loro un significato preciso (le classi definite). Lo schema viene quindi generato da uno script e verificato con il reasoner HermiT in Protégé. Alla fine si mostra che cosa l'ontologia sa dedurre da sola: fatti che nei dati non ci sono, regole SWRL ed errori che il reasoner scopre.
+\end{abstract}
+
+% ---------------------------------------------------------------------------
+\section{Il punto di partenza: le domande}\label{sec:domande}
+
+Un'ontologia è una specifica esplicita e condivisa di una concettualizzazione~\cite{gruber}. Il nostro dominio sono i videogiochi. Un gioco è sviluppato da uno studio e pubblicato da un editore, esce su varie piattaforme, appartiene a generi e serie e vince premi. Fatti di questo tipo si trovano facilmente: Wikidata ne contiene moltissimi~\cite{wikidata}. Ma le conoscenze più interessanti non sono scritte da nessuna parte. Si possono solo \emph{dedurre}.
+
+Prima ancora di scrivere una classe abbiamo fissato le \emph{domande di competenza}, cioè le domande a cui l'ontologia deve saper rispondere. È stata la bussola di tutto il lavoro:
+\begin{itemize}
+  \item quali giochi sono \emph{first-party}, cioè pubblicati da chi costruisce console o da un'azienda del suo gruppo?
+  \item quali di questi sono usciti anche su una console rivale?
+  \item quali serie sono lunghe, cioè hanno almeno tre capitoli, e quali sono passate da uno studio a un altro?
+  \item quali seguiti sono stati anche acclamati dalla critica?
+  \item quali dati sono incoerenti?
+\end{itemize}
+
+Nessuna risposta è scritta nei dati. Per esempio, i dati dicono solo che \emph{Mass Effect} (2007) è pubblicato da Xbox Game Studios. Che sia un gioco Microsoft, e che sia poi uscito anche su una console Sony, lo deve capire il reasoner. Le sezioni che seguono raccontano come ci siamo arrivati, un passo alla volta.
+
+% ---------------------------------------------------------------------------
+\section{Primo passo: dare un nome alle cose}\label{sec:classi}
+
+Il primo passo è stato elencare i tipi di cose che compaiono nelle domande. Sono nove classi di primo livello: \cls{VideoGame}, \cls{Company}, \cls{Genre}, \cls{Platform}, \cls{GameMode}, \cls{Franchise}, \cls{Award}, \cls{GameEngine} e \cls{Character}. Le abbiamo dichiarate subito \emph{disgiunte a due a due} (\texttt{owl:AllDisjointClasses}). Così il reasoner può accorgersi di un errore, per esempio un individuo usato sia come gioco sia come piattaforma.
+
+Le domande parlano di ``console'', di ``PlayStation'', di ``giochi di ruolo''. Per questo alcune classi sono state divise in partizioni.
+\begin{itemize}
+  \item \textbf{Piattaforme.} Ci sono sette famiglie disgiunte: console, PC, mobile, browser, arcade, home computer retrò e realtà virtuale. Alcune hanno sottofamiglie, anch'esse disgiunte: PlayStation, Xbox e Nintendo per le console; Windows, macOS e Linux per i PC; iOS e Android per il mobile.
+  \item \textbf{Generi.} Sono tredici classi primitive. Un genere di Wikidata può appartenere a più di una: un \emph{action RPG} è sia \cls{ActionGenre} sia \cls{RPGGenre}.
+  \item \textbf{Modalità di gioco.} Sono tre e disgiunte: giocatore singolo, multigiocatore e cooperativa.
+\end{itemize}
+
+Sulle aziende la prima idea era sbagliata. Pensavamo a due classi distinte, sviluppatori ed editori. Ma FromSoftware sviluppa \emph{Dark Souls} e in Giappone lo pubblica anche: è \emph{una} azienda con due \emph{ruoli}. Per questo esiste una sola classe \cls{Company}, e i ruoli sono classi definite, non disgiunte:
+\[
+  \cls{Developer} \equiv \cls{Company} \sqcap \exists\,\prop{developerOf}.\cls{VideoGame}
+\]
+e analogamente \cls{Publisher}. L'appartenenza a questi ruoli non la scrive nessuno: la stabilisce il reasoner (figura~\ref{fig:gerarchia_inferita}).
+
+\screenshot[0.6\linewidth]{gerarchia_inferita}{La gerarchia inferita da HermiT in Protégé: le classi definite vengono collocate automaticamente sotto le classi che le contengono.}
+
+% ---------------------------------------------------------------------------
+\section{Secondo passo: collegare le cose}\label{sec:proprieta}
+
+\paragraph{Una direzione basta.} Ogni relazione tra un gioco e un'altra entità ha un'inversa: \prop{developedBy} e \prop{developerOf}, \prop{availableOn} e \prop{platformFor}, e così via. Nei dati scriviamo una sola direzione, l'altra la ricava il reasoner. Queste proprietà sono anche irriflessive e asimmetriche, perché un gioco non può essere la propria piattaforma.
+
+\paragraph{Il seguito diretto basta.} Wikidata, per ogni gioco, indica al più il capitolo precedente. Per questo \prop{sequelOf} è \emph{transitiva}: basta asserire ``\emph{GTA~V} segue \emph{GTA~IV}'' e il reasoner ricostruisce l'intera serie a ritroso.
+
+\paragraph{Dalle aziende ai gruppi.} Per la domanda sui giochi first-party servivano due fatti che all'inizio non avevamo: chi costruisce ciascuna console e a quale gruppo appartiene ciascuna azienda. Sono nate così:
+\begin{itemize}
+  \item \prop{manufacturedBy}, con l'inversa \prop{manufacturerOf} (Wikidata P176);
+  \item \prop{subsidiaryOf}, transitiva (Wikidata P749): Halo Studios fa parte di Xbox Game Studios, che fa parte di Microsoft.
+\end{itemize}
+
+\paragraph{Catene di proprietà.} Una \emph{property chain} dice che percorrere due archi di seguito equivale a percorrerne uno. Ne usiamo quattro (tabella~\ref{tab:proprieta}). La più utile è \prop{publishedByGroup}: ``pubblicato da un'azienda controllata da $X$'' vale come ``pubblicato dal gruppo $X$''.
+
+\begin{table}[htbp]\centering\small
+\begin{tabularx}{\linewidth}{@{}llYY@{}}
+\toprule
+Proprietà & Dominio $\to$ Range & Caratteristiche & Perché esiste \\
+\midrule
+\prop{sequelOf} & \cls{VideoGame} $\to$ \cls{VideoGame} & transitiva, inversa \prop{hasSequel} & la serie dal solo predecessore diretto \\
+\prop{subsidiaryOf} & \cls{Company} $\to$ \cls{Company} & transitiva & gruppi societari \\
+\prop{manufacturedBy} & \cls{Platform} $\to$ \cls{Company} & inversa \prop{manufacturerOf} & chi costruisce le console \\
+\prop{publishedByGroup} & \cls{VideoGame} $\to$ \cls{Company} & $\prop{publishedBy} \sqsubseteq$; catena $\prop{publishedBy} \circ \prop{subsidiaryOf}$ & editore o suo gruppo \\
+\prop{sharesDeveloperWith} & \cls{VideoGame} $\to$ \cls{VideoGame} & simmetrica, catena $\prop{developedBy} \circ \prop{developerOf}$ & giochi dello stesso studio \\
+\bottomrule
+\end{tabularx}
+\caption{Le object property con caratteristiche particolari (27 in tutto).}\label{tab:proprieta}
+\end{table}
+
+\paragraph{I valori.} Le 14 datatype property descrivono:
+\begin{itemize}
+  \item nomi (tutti sotto-proprietà di \prop{name});
+  \item data di uscita (\texttt{xsd:dateTime});
+  \item punteggio Metacritic (\texttt{xsd:integer});
+  \item paese d'origine;
+  \item identificativo Wikidata.
+\end{itemize}
+Undici sono \emph{funzionali}: un gioco ha una sola data di uscita e un solo punteggio. Serviva anche riconoscere due record dello stesso gioco. Una datatype property non può essere inverse-functional in OWL~2 DL, quindi abbiamo usato una chiave~\cite{owl2primer}: $\cls{VideoGame}$ \texttt{hasKey} $(\prop{hasWikidataId})$. La chiave vale solo per gli individui con un nome, e così il ragionamento resta decidibile.
+
+% ---------------------------------------------------------------------------
+\section{Terzo passo: dare un significato}\label{sec:definite}
+
+Finora avevamo nomi e collegamenti. Per rispondere alle domande servivano classi che il reasoner sapesse \emph{riconoscere da sé}. Una classe primitiva ha solo condizioni necessarie. Una classe \emph{definita} ($\equiv$) ha condizioni necessarie e sufficienti: chiunque le soddisfi vi viene classificato, senza che nessuno lo scriva. Delle 105 classi dell'ontologia, 58 sono definite. La tabella~\ref{tab:costrutti} mostra i costrutti, ognuno introdotto per una domanda precisa.
+
+\begin{table}[htbp]\centering\small
+\begin{tabularx}{\linewidth}{@{}lY@{}}
+\toprule
+Costrutto & Esempio \\
+\midrule
+restrizione esistenziale & $\cls{NintendoGame} \equiv \cls{VideoGame} \sqcap \exists\,\prop{availableOn}.\cls{NintendoPlatform}$ \\
+nominale (\texttt{hasValue}) & $\cls{NintendoPublishedGame} \equiv \cls{VideoGame} \sqcap \exists\,\prop{publishedBy}.\{\ind{Nintendo}\}$ \\
+restrizione su datatype & $\cls{HighlyRatedGame} \equiv \cls{VideoGame} \sqcap \exists\,\prop{metacriticScore}.\texttt{xsd:integer}[\geq 85]$ \\
+cardinalità qualificata & $\cls{MultiPlatformGame} \equiv \cls{VideoGame} \sqcap\, {\geq}3\,\prop{availableOn}.\cls{Platform}$ \\
+esistenziali annidati & $\cls{LateEntry} \equiv \cls{VideoGame} \sqcap \exists\,\prop{sequelOf}.(\exists\,\prop{sequelOf}.\cls{VideoGame})$ \\
+classi su classi definite & $\cls{AcclaimedSequel} \equiv \cls{SequelGame} \sqcap \cls{HighlyRatedGame}$ \\
+inversa + catena & $\cls{PlatformHolder} \equiv \cls{Company} \sqcap \exists\,\prop{manufacturerOf}.\cls{ConsolePlatform}$;\newline $\cls{FirstPartyGame} \equiv \cls{VideoGame} \sqcap \exists\,\prop{publishedByGroup}.\cls{PlatformHolder}$ \\
+dal gioco alla serie & $\cls{LongRunningFranchise} \equiv \cls{Franchise} \sqcap \exists\,\prop{includes}.\cls{LateEntry}$ \\
+\bottomrule
+\end{tabularx}
+\caption{I costrutti delle classi definite, con un esempio per ciascuno.}\label{tab:costrutti}
+\end{table}
+
+\paragraph{La lezione del mondo aperto.} Lungo la strada abbiamo dovuto togliere alcune classi. OWL ragiona in un \emph{mondo aperto}: ciò che non è scritto non è falso, è sconosciuto. Ne seguono tre conseguenze.
+\begin{enumerate}
+  \item ``Gioco che non è il seguito di nessuno'' ($\neg\exists\,\prop{sequelOf}$) non riceverebbe mai istanze, perché l'assenza di un predecessore nei dati non prova che non esista. La classe è stata eliminata.
+  \item ``Disponibile su al più una piattaforma'' non è un controllo sui dati. OWL non assume che nomi diversi indichino oggetti diversi (\emph{Unique Name Assumption}). Davanti a un gioco ``esclusivo'' su due piattaforme, il reasoner conclude che le due piattaforme sono lo stesso oggetto. Per questo i dati dichiarano piattaforme e aziende a due a due diverse (\texttt{owl:AllDifferent}): Nintendo Switch e Switch~2 restano due console distinte.
+  \item Per lo stesso motivo \cls{MultiPlatformGame} scatta solo quando le piattaforme sono note come distinte.
+\end{enumerate}
+
+% ---------------------------------------------------------------------------
+\section{Quarto passo: uno schema generato e verificato}\label{sec:verifica}
+
+\paragraph{Uno schema generato, non scritto.} A questo punto lo schema conteneva decine di classi quasi uguali. \cls{NintendoGame}, \cls{PlayStationGame} e \cls{XboxGame} differiscono solo per la piattaforma, e lo stesso vale per i tredici generi e gli otto editori. Scriverle a mano voleva dire ripetere lo stesso schema molte volte, con il rischio che una copia divergesse. Per questo lo schema è prodotto da uno script, \texttt{generate\_schema.py}, con rdflib come negli esempi del corso. Ogni famiglia di classi è un \emph{template} più una tabella con una riga per classe:
+
+\begin{lstlisting}[language=Python]
+GAME_ON_PLATFORM = [            # VideoGame and (availableOn some X)
+    ("PCGame", "PCPlatform", "PC Game"),
+    ("NintendoGame", "NintendoPlatform", "Nintendo Game"), ...]
+cls(game, label, comment, "VideoGame", and_("VideoGame", some("availableOn", plat)))
+\end{lstlisting}
+
+Allo stesso modo:
+\begin{itemize}
+  \item l'albero delle piattaforme genera classi, sottoclassi e disgiunzioni;
+  \item le liste di proprietà generano domini, range, inverse, caratteristiche, catene e chiavi;
+  \item la tabella delle regole genera il file SWRL.
+\end{itemize}
+Lo script scrive sempre lo stesso file nello stesso ordine. Funziona come una \emph{migration} di database: per cambiare lo schema si cambia una riga e si rigenera.
+
+\paragraph{Pulizia.} Generare lo schema ha permesso anche di confrontarlo con la prima versione, scritta a mano, e di togliere ciò che i dati non popolano mai:
+\begin{itemize}
+  \item tipi di gioco, di azienda e di premio senza istanze;
+  \item recensioni ed eventi;
+  \item proprietà senza valori;
+  \item le classi del mondo aperto viste sopra.
+\end{itemize}
+Le date sono passate da \texttt{xsd:date} a \texttt{xsd:dateTime}: \texttt{xsd:date} non appartiene alla \emph{datatype map} di OWL~2 e HermiT lo rifiuta. Il risultato:
+\begin{itemize}
+  \item 105 classi (47 primitive e 58 definite);
+  \item 27 object property e 14 datatype property;
+  \item 4 catene, 6 blocchi di disgiunzione, una chiave;
+  \item 6 regole SWRL.
+\end{itemize}
+
+\paragraph{I dati.} Le istanze sono un dataset dimostrativo curato a mano: 25 giochi di sette serie (GTA, Zelda, Dark Souls, The Witcher, Mass Effect, Portal, Halo), con sviluppatori, editori, generi, piattaforme, gruppi societari e costruttori delle console, tutti verificati su Wikidata. Per ogni gioco è asserito solo il seguito diretto. Una tripla è \emph{asserita} quando è scritta nei dati (``\emph{Mass Effect} è pubblicato da Xbox Game Studios''), \emph{dedotta} quando il reasoner la ricava dagli assiomi (``\emph{Mass Effect} è un gioco first-party''). Su 515 triple asserite, HermiT ne deduce 1\,133: 452 tipi e 681 relazioni.
+
+\paragraph{Verifica.} In Protégé~\cite{protege} si apre un solo file, \texttt{videogames.ttl}, che importa schema, dati e regole tramite il \texttt{catalog-v001.xml}. HermiT~\cite{hermit} li ragiona. L'ontologia risulta consistente e senza classi insoddisfacibili. Uno script ripete gli stessi controlli dalla riga di comando con HermiT e accerta 86 condizioni: consistenza, inferenze attese, conclusioni delle regole ed errori provocati.
+
+% ---------------------------------------------------------------------------
+\section{Quinto passo: che cosa sa dedurre l'ontologia}\label{sec:inferenze}
+
+Ora possiamo tornare alle domande della sezione~\ref{sec:domande}. Le deduzioni interessanti non sono le classificazioni ovvie come ``disponibile su una console Nintendo, quindi gioco Nintendo''. Sono quelle che combinano più assiomi e arrivano a un fatto che nei dati non c'è. La tabella~\ref{tab:inferenze} ne raccoglie le principali, tutte verificate.
+
+\begin{table}[htbp]\centering\small
+\begin{tabularx}{\linewidth}{@{}YYY@{}}
+\toprule
+Che cosa si deduce & Da quali fatti asseriti & Quali assiomi lavorano \\
+\midrule
+\emph{Mass Effect} e \emph{Halo~4} sono giochi \textbf{first-party} Microsoft & pubblicati da Xbox Game Studios; Xbox Game Studios è di Microsoft; la Xbox~360 è costruita da Microsoft & inversa $\to$ \cls{PlatformHolder}; catena $\prop{publishedBy}\circ\prop{subsidiaryOf}$; \cls{FirstPartyGame} \\
+Halo Studios (343 Industries) fa parte del gruppo Microsoft & Halo Studios $\to$ Xbox Game Studios $\to$ Microsoft & \prop{subsidiaryOf} transitiva \\
+GTA, Dark Souls, The Witcher e Mass Effect sono \textbf{serie lunghe}; Portal, Halo e (nella demo) Zelda no & solo il predecessore diretto di ogni gioco & transitività $\to$ \cls{LateEntry} $\to$ inversa \prop{includes} $\to$ \cls{LongRunningFranchise} \\
+Halo è una \textbf{serie passata di mano} & \emph{Halo~4} segue \emph{Halo: Reach}; Bungie e 343 Industries dichiarati diversi & regola SWRL, poi la classe OWL \cls{FranchiseWithStudioChange} sopra la sua conclusione \\
+\emph{GTA~IV}, \emph{Portal~2} e \emph{Mass Effect~2} sono \textbf{seguiti acclamati} & seguito + punteggio Metacritic & due classi definite intersecate \\
+\emph{Breath of the Wild} è multipiattaforma, \emph{Tears of the Kingdom} no & Wii~U, Switch, Switch~2, dichiarate diverse & cardinalità ${\geq}3$ + \texttt{AllDifferent} \\
+il primo \emph{GTA}, lasciato senza tipo, è un \cls{VideoGame} & le sue proprietà e il suo seguito & dominio e range \\
+\bottomrule
+\end{tabularx}
+\caption{Deduzioni non banali di HermiT sul dataset dimostrativo.}\label{tab:inferenze}
+\end{table}
+
+La prima riga è la più istruttiva, perché il reasoner fa tre passi:
+\begin{enumerate}
+  \item dal costruttore della Xbox~360 ricava che Microsoft è un \cls{PlatformHolder};
+  \item dalla catena ricava che \emph{Mass Effect} è ``pubblicato dal gruppo'' Microsoft;
+  \item dalla definizione di \cls{FirstPartyGame} conclude che è un gioco first-party.
+\end{enumerate}
+Protégé mostra le conclusioni in giallo sulla pagina dell'individuo (figura~\ref{fig:individuo_mass_effect}). Per ognuna offre la \emph{spiegazione}, cioè l'insieme minimo di assiomi da cui segue (figura~\ref{fig:spiegazione_firstparty}). La transitività, invece, ricostruisce le serie a partire dal solo predecessore diretto (figura~\ref{fig:ontograf_gta}).
+
+\screenshot[0.7\linewidth]{individuo_mass_effect}{\emph{Mass Effect} in Protégé: in giallo i tipi e le relazioni dedotte da HermiT, tra cui \cls{FirstPartyGame} e \cls{FirstPartyOnRivalConsole}.}
+\screenshot[0.7\linewidth]{spiegazione_firstparty}{La spiegazione di \emph{Mass Effect} \cls{FirstPartyGame}: catena di proprietà, inversa e due classi definite.}
+\screenshot[0.6\linewidth]{ontograf_gta}{La serie Grand Theft Auto in OntoGraf.}
+
+\subsection{Regole SWRL}
+
+Alcune domande richiedono di confrontare \emph{due} variabili, per esempio dire che due aziende sono diverse. Una classe OWL non lo esprime. Per queste servono regole SWRL~\cite{swrl} (tabella~\ref{tab:swrl}). Le regole sono decidibili solo nella forma \emph{DL-safe}~\cite{dlsafe}: le variabili si legano soltanto a individui con un nome. Tutte e sei sono DL-safe e HermiT le applica durante il ragionamento.
+
+Per la soglia di punteggio abbiamo seguito gli esempi del corso. Al posto di una funzione predefinita (\texttt{swrlb:greaterThan}), che HermiT non supporta, si usa un \emph{intervallo di dati}: $\texttt{xsd:integer}[>94](s)$.
+
+\begin{table}[htbp]\centering\small
+\begin{tabularx}{\linewidth}{@{}Y>{\raggedright\arraybackslash}p{4.2cm}@{}}
+\toprule
+Regola & Conclusioni \\
+\midrule
+$\prop{developedBy}(g,c) \wedge \prop{publishedBy}(g,c) \to \cls{SelfPublishedGame}(g)$ & \emph{Portal}, \emph{Dark Souls}, \emph{The Witcher~3} \\
+$\prop{sequelOf}(a,b) \wedge \prop{developedBy}(a,x) \wedge \prop{developedBy}(b,y) \wedge x \neq y \to \cls{SequelByDifferentStudio}(a)$ & \emph{Halo~4} \\
+$\prop{publishedBy}(g,x) \wedge \prop{subsidiaryOf}(x,h) \wedge \prop{manufacturerOf}(h,q) \wedge \cls{ConsolePlatform}(q) \wedge \prop{availableOn}(g,p) \wedge \cls{ConsolePlatform}(p) \wedge \prop{manufacturedBy}(p,m) \wedge h \neq m \to \cls{FirstPartyOnRivalConsole}(g)$ & \emph{Mass Effect} (Microsoft, uscito anche su PS3) \\
+$\prop{hasGameMode}(g,m) \wedge \cls{CoopMode}(m) \wedge \prop{availableOn}(g,p) \wedge \cls{ConsolePlatform}(p) \to \cls{CouchCoopCandidate}(g)$ & \emph{Portal~2}, \emph{Halo: Reach} \\
+$\prop{metacriticScore}(g,s) \wedge \texttt{xsd:integer}[>94](s) \to \cls{MustPlayGame}(g)$ & \emph{Ocarina of Time}, \emph{GTA~IV} \\
+\bottomrule
+\end{tabularx}
+\caption{Le regole SWRL e alcune conclusioni. La regola sul first-party ha una seconda versione per l'editore che costruisce lui stesso console.}\label{tab:swrl}
+\end{table}
+
+La regola sul first-party trova un fatto poco noto: \emph{Mass Effect}, pubblicato dal gruppo Microsoft, è uscito anche su una console Sony. La regola sul cambio di studio mostra invece che \emph{Halo~4} è stato sviluppato da 343~Industries dopo Bungie.
+
+Costruendo queste regole abbiamo incontrato un limite di HermiT: negli atomi delle regole vede solo le relazioni asserite, non quelle dedotte da una catena o dalla transitività. Per questo la regola usa \prop{publishedBy} e \prop{subsidiaryOf} asseriti, mentre la classe OWL \cls{FirstPartyGame} sfrutta la catena completa (figura~\ref{fig:swrl_rules}).
+
+\screenshot[0.7\linewidth]{swrl_rules}{Le regole nel tab SWRLTab di Protégé.}
+
+\subsection{Errori che il reasoner trova}\label{sec:inconsistenze}
+
+Un reasoner serve anche a trovare gli errori. Abbiamo provocato apposta quattro errori con piccole aggiunte ai dati: in ogni caso HermiT dichiara l'ontologia inconsistente e Protégé spiega perché (figura~\ref{fig:inconsistenza}).
+\begin{enumerate}
+  \item \textbf{Disgiunzione.} Una piattaforma è tipizzata sia console sia PC. Un ibrido come lo Steam Deck richiederebbe una classe propria.
+  \item \textbf{Proprietà funzionale.} \emph{Portal~2} ha due punteggi Metacritic diversi.
+  \item \textbf{Cardinalità.} \emph{Tears of the Kingdom} è dichiarato ``su al più una piattaforma'' (${\leq}1\,\prop{availableOn}$), ma esce su Switch e Switch~2, dichiarate diverse.
+  \item \textbf{Chiave.} Due giochi hanno lo stesso identificativo Wikidata ma sono dichiarati diversi.
+\end{enumerate}
+Il terzo caso ha un gemello istruttivo, che \emph{non} è un errore. \emph{Splatoon~2}, esclusiva Switch, è collegato sia alla Nintendo Switch sia a ``NX'', il nome in codice con cui la console era stata annunciata. Nessuno ha detto che NX sia un oggetto diverso. Il reasoner rispetta il vincolo ``al più una piattaforma'' concludendo che NX \emph{è} la Nintendo Switch: una deduzione corretta, che mostra in un colpo solo il mondo aperto e l'assenza di Unique Name Assumption.
+
+\screenshot[0.7\linewidth]{inconsistenza}{La spiegazione di un'inconsistenza in Protégé (test di cardinalità).}
+
+% ---------------------------------------------------------------------------
+\section{Limiti e sviluppi}
+
+\begin{itemize}
+  \item \textbf{Mondo aperto.} Negazioni e cardinalità massime non funzionano come controlli sui dati. Per vincoli del tipo ``un'esclusiva ha una sola piattaforma'' serve un linguaggio a mondo chiuso come SHACL, che affianca OWL senza sostituirlo.
+  \item \textbf{Tempo.} OWL non rappresenta il tempo. Bungie oggi fa parte di Sony, ma nel 2010, quando ha sviluppato \emph{Halo: Reach}, lavorava per Microsoft. Lo stesso vale per i nomi delle aziende e per le date di uscita nelle diverse regioni.
+  \item \textbf{Scala.} Il reasoner completo funziona bene su un dataset dimostrativo. Su centinaia di migliaia di giochi, collegati tra loro da piattaforme ed editori, calcolare il tipo di ogni individuo diventa troppo costoso. Servirebbero un profilo meno espressivo (OWL~2 RL o EL) o regole materializzate.
+  \item \textbf{Dati.} In Wikidata la relazione ``segue'' è scarsa e non sempre indica un vero seguito. Per questo le serie della demo sono curate e verificate fatto per fatto.
+\end{itemize}
+
+\begin{thebibliography}{9}\small
+\bibitem{gruber} T.~R. Gruber. A translation approach to portable ontology specifications. \emph{Knowledge Acquisition}, 5(2):199--220, 1993.
+\bibitem{owl2primer} P.~Hitzler, M.~Krötzsch, B.~Parsia, P.~F. Patel-Schneider, S.~Rudolph. \emph{OWL~2 Web Ontology Language Primer (Second Edition)}. W3C Recommendation, 2012.
+\bibitem{hermit} B.~Glimm, I.~Horrocks, B.~Motik, G.~Stoilos, Z.~Wang. HermiT: an OWL~2 reasoner. \emph{Journal of Automated Reasoning}, 53(3):245--269, 2014.
+\bibitem{swrl} I.~Horrocks, P.~F. Patel-Schneider, H.~Boley, S.~Tabet, B.~Grosof, M.~Dean. \emph{SWRL: A Semantic Web Rule Language Combining OWL and RuleML}. W3C Member Submission, 2004.
+\bibitem{dlsafe} B.~Motik, U.~Sattler, R.~Studer. Query answering for OWL-DL with rules. \emph{Journal of Web Semantics}, 3(1):41--60, 2005.
+\bibitem{protege} M.~A. Musen. The Protégé project: a look back and a look forward. \emph{AI Matters}, 1(4):4--12, 2015.
+\bibitem{wikidata} D.~Vrandečić, M.~Krötzsch. Wikidata: a free collaborative knowledgebase. \emph{Communications of the ACM}, 57(10):78--85, 2014.
+\end{thebibliography}
+
+\end{document}

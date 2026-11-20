@@ -47,5 +47,5 @@ ontology/.cache/
 backend/cache.db*
 backend/cache/
 
-# Protege
-Protege*/
+# Protege (the desktop app; protege/ with the ontology files is tracked)
+/Protege-*/

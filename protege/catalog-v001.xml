@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Protégé reads this file from the folder of the ontology it opens and resolves the owl:imports to the local files. -->
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri id="schema" name="http://www.videogame-ontology.org/ontology" uri="schema_generated.ttl"/>
+    <uri id="demo" name="http://www.videogame-ontology.org/ontology/abox-demo" uri="abox_demo.ttl"/>
+    <uri id="rules" name="http://www.videogame-ontology.org/ontology/swrl-rules" uri="swrl_rules.ttl"/>
+</catalog>

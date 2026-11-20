@@ -1,0 +1,19 @@
+# Test 3b (expected: CONSISTENT, with an inferred owl:sameAs). Splatoon 2 is a Nintendo Switch
+# exclusive (at most one platform). Here it is also linked to "NX", the codename under which the
+# Switch was announced, and nothing says NX is a different individual. OWL has no unique name
+# assumption, so "at most one platform" is satisfied by concluding NX = Nintendo Switch: a correct
+# conclusion. Compare with test 3, where the two consoles are declared different and the same
+# restriction becomes an error.
+@prefix vg:   <http://www.videogame-ontology.org/ontology#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+<http://www.videogame-ontology.org/ontology/test-sameas> a owl:Ontology ;
+    owl:imports <http://www.videogame-ontology.org/ontology/abox-demo> .
+<http://www.videogame-ontology.org/ontology#platform/Nintendo_NX> rdfs:label "NX (codename of the Nintendo Switch)" .
+vg:Splatoon_2 a vg:VideoGame , [ a owl:Restriction ;
+        owl:onProperty vg:availableOn ;
+        owl:maxCardinality "1"^^xsd:nonNegativeInteger ] ;
+    rdfs:label "Splatoon 2" ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> ,
+        <http://www.videogame-ontology.org/ontology#platform/Nintendo_NX> .
