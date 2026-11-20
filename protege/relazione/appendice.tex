@@ -27,11 +27,6 @@
 \texttt{GameOfTheYearAward} & \texttt{Award} & primitiva & Un premio Gioco dell'anno \\
 \texttt{Human} & \texttt{Character} & primitiva & Un personaggio umano \\
 \texttt{ArtificialIntelligence} & \texttt{Character} & primitiva & Un'intelligenza artificiale \\
-\texttt{DeceasedCharacter} & \texttt{Character} & primitiva & Un personaggio morto (dominio di killedBy) \\
-\texttt{Killer} & \texttt{Character} & primitiva & Un personaggio che ha tolto la vita a qualcuno (range di killedBy) \\
-\texttt{GameDirector} & \texttt{Person} & primitiva & Un regista di videogiochi (range di directedBy) \\
-\texttt{StudioHead} & \texttt{Person} & primitiva & Chi guida un'azienda (dominio di heads) \\
-\texttt{Remaster} & \texttt{VideoGame} & primitiva & La nuova edizione di un gioco (dominio di remasterOf) \\
 \texttt{FirstPartyOnRivalConsole} & \texttt{VideoGame} & regola SWRL & Un gioco first-party uscito su una console di un concorrente \\
 \texttt{SequelByDifferentStudio} & \texttt{VideoGame} & regola SWRL & Un seguito sviluppato da uno studio diverso \\
 \texttt{VeteransReturn} & \texttt{VideoGame} & regola SWRL & Un gioco fatto da uno studio fondato da chi aveva lavorato alla serie \\
@@ -41,6 +36,11 @@
 \texttt{ReturningDirectorSequel} & \texttt{VideoGame} & regola SWRL & Un seguito con lo stesso regista del predecessore \\
 \texttt{DefeatedVillain} & \texttt{Character} & regola SWRL & Un antagonista ucciso dal protagonista \\
 \texttt{MustPlayGame} & \texttt{VideoGame} & regola SWRL & Un gioco con almeno 95 su Metacritic \\
+\texttt{Remaster} & \texttt{VideoGame} & definita & La nuova edizione di un altro gioco \\
+\texttt{GameDirector} & \texttt{Person} & definita & Chi ha diretto almeno un gioco \\
+\texttt{StudioHead} & \texttt{Person} & definita & Chi guida un'azienda \\
+\texttt{DeceasedCharacter} & \texttt{Character} & definita & Un personaggio ucciso nella trama di un gioco \\
+\texttt{Killer} & \texttt{Character} & definita & Un personaggio che ha tolto la vita a qualcuno \\
 \texttt{Developer} & \texttt{Company} & definita & Un'azienda che ha sviluppato almeno un gioco \\
 \texttt{Publisher} & \texttt{Company} & definita & Un'azienda che ha pubblicato almeno un gioco \\
 \texttt{PlatformHolder} & \texttt{Company} & definita & Un'azienda che costruisce console \\
@@ -77,7 +77,7 @@
 \end{longtable}\endgroup
 
 \begingroup\footnotesize\begin{longtable}{lllp{6cm}}
-\caption{Le 42 object property}\\ \toprule
+\caption{Le 44 object property}\\ \toprule
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endfirsthead
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{developedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{developerOf} \\
@@ -87,15 +87,15 @@
 \texttt{hasGameMode} & \texttt{VideoGame} & \texttt{GameMode} &  \\
 \texttt{belongsTo} & \texttt{VideoGame} & \texttt{Franchise} & inversa \texttt{includes} \\
 \texttt{sequelOf} & \texttt{VideoGame} & \texttt{VideoGame} & inversa \texttt{hasSequel}, transitiva \\
-\texttt{remasterOf} & \texttt{Remaster} & \texttt{VideoGame} & inversa \texttt{hasRemaster} \\
+\texttt{remasterOf} & \texttt{VideoGame} & \texttt{VideoGame} & inversa \texttt{hasRemaster} \\
 \texttt{wonAward} & \texttt{VideoGame} & \texttt{Award} &  \\
 \texttt{madeWith} & \texttt{VideoGame} & \texttt{GameEngine} &  \\
 \texttt{engineDevelopedBy} & \texttt{GameEngine} & \texttt{Company} &  \\
 \texttt{manufacturedBy} & \texttt{Platform} & \texttt{Company} & inversa \texttt{manufacturerOf} \\
 \texttt{subsidiaryOf} & \texttt{Company} & \texttt{Company} & transitiva \\
 \texttt{publishedByGroup} & \texttt{VideoGame} & \texttt{Company} &  \\
-\texttt{directedBy} & \texttt{VideoGame} & \texttt{GameDirector} & inversa \texttt{directorOf} \\
-\texttt{heads} & \texttt{StudioHead} & \texttt{Company} &  \\
+\texttt{directedBy} & \texttt{VideoGame} & \texttt{Person} & inversa \texttt{directorOf} \\
+\texttt{heads} & \texttt{Person} & \texttt{Company} &  \\
 \texttt{foundedBy} & \texttt{Company} & \texttt{Person} &  \\
 \texttt{formerEmployeeOf} & \texttt{Person} & \texttt{Company} &  \\
 \texttt{basedOn} & \texttt{VideoGame} & \texttt{CreativeWork} &  \\
@@ -103,9 +103,9 @@
 \texttt{appearsIn} & \texttt{Character} & \texttt{VideoGame} & inversa \texttt{hasCharacter} \\
 \texttt{protagonistOf} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
 \texttt{antagonistOf} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
-\texttt{killedBy} & \texttt{DeceasedCharacter} & \texttt{Killer} & inversa \texttt{kills} \\
-\texttt{victim} & \texttt{Killing} & \texttt{DeceasedCharacter} &  \\
-\texttt{killer} & \texttt{Killing} & \texttt{Killer} &  \\
+\texttt{killedBy} & \texttt{Character} & \texttt{Character} & inversa \texttt{kills} \\
+\texttt{victim} & \texttt{Killing} & \texttt{Character} & inversa \texttt{victimIn} \\
+\texttt{killer} & \texttt{Killing} & \texttt{Character} & inversa \texttt{killerIn} \\
 \texttt{inGame} & \texttt{Killing} & \texttt{VideoGame} & inversa \texttt{hasKilling} \\
 \texttt{portrays} & \texttt{Character} & \texttt{Person} &  \\
 \texttt{mindCopiedFrom} & \texttt{ArtificialIntelligence} & \texttt{Human} &  \\
@@ -125,13 +125,18 @@
 
 \subsection*{Classi definite}
 \begingroup\small\begin{align*}
+\textsf{Remaster} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{remasterOf}.\textsf{VideoGame} \\
+\textsf{GameDirector} &\equiv \textsf{Person} \sqcap \exists\,\textit{directorOf}.\textsf{VideoGame} \\
+\textsf{StudioHead} &\equiv \textsf{Person} \sqcap \exists\,\textit{heads}.\textsf{Company} \\
+\textsf{DeceasedCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{victimIn}.\textsf{Killing} \\
+\textsf{Killer} &\equiv \textsf{Character} \sqcap \exists\,\textit{killerIn}.\textsf{Killing} \\
 \textsf{Developer} &\equiv \textsf{Company} \sqcap \exists\,\textit{developerOf}.\textsf{VideoGame} \\
 \textsf{Publisher} &\equiv \textsf{Company} \sqcap \exists\,\textit{publisherOf}.\textsf{VideoGame} \\
 \textsf{PlatformHolder} &\equiv \textsf{Company} \sqcap \exists\,\textit{manufacturerOf}.\textsf{ConsolePlatform} \\
 \textsf{FoundedByVeterans} &\equiv \textsf{Company} \sqcap \exists\,\textit{foundedBy}.\exists\,\textit{formerEmployeeOf}.\textsf{Developer} \\
 \textsf{FirstPartyGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{publishedByGroup}.\textsf{PlatformHolder} \\
 \textsf{SequelGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{sequelOf}.\textsf{VideoGame} \\
-\textsf{LateEntry} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{sequelOf}.\exists\,\textit{sequelOf}.\textsf{VideoGame} \\
+\textsf{LateEntry} &\equiv \textsf{SequelGame} \sqcap \exists\,\textit{sequelOf}.\exists\,\textit{sequelOf}.\textsf{VideoGame} \\
 \textsf{LongRunningOriginal} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasSequel}.\exists\,\textit{hasSequel}.\textsf{VideoGame} \\
 \textsf{ViolentStoryGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasKilling}.\textsf{Killing} \\
 \textsf{RealisticViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\geq 16] \\
@@ -144,7 +149,7 @@
 \textsf{StillPlayable} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{playableOn}.\textsf{CurrentGenerationConsole} \\
 \textsf{MultiPlatformGame} &\equiv \textsf{VideoGame} \sqcap {\geq}3\,\textit{availableOn}.\textsf{Platform} \\
 \textsf{Adaptation} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{basedOn}.\textsf{CreativeWork} \\
-\textsf{LiteraryAdaptation} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{basedOn}.\textsf{Novel} \\
+\textsf{LiteraryAdaptation} &\equiv \textsf{Adaptation} \sqcap \exists\,\textit{basedOn}.\textsf{Novel} \\
 \textsf{AuteurGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{directedBy}.\textsf{StudioHead} \\
 \textsf{LongRunningFranchise} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{includes}.\textsf{LateEntry} \\
 \textsf{AwardWinningFranchise} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{includes}.\textsf{GOTYWinner} \\
@@ -156,7 +161,7 @@
 \textsf{RecurringVillain} &\equiv \textsf{RecurringCharacter} \sqcap \textsf{Antagonist} \\
 \textsf{RogueAI} &\equiv \textsf{ArtificialIntelligence} \sqcap \textsf{Antagonist} \\
 \textsf{DigitalMind} &\equiv \textsf{ArtificialIntelligence} \sqcap \exists\,\textit{mindCopiedFrom}.\textsf{Human} \\
-\textsf{MultipleKiller} &\equiv \textsf{Character} \sqcap {\geq}2\,\textit{kills}.\textsf{Character} \\
+\textsf{MultipleKiller} &\equiv \textsf{Killer} \sqcap {\geq}2\,\textit{kills}.\textsf{Character} \\
 \textsf{HistoricalCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{portrays}.\textsf{Person} \\
 \end{align*}\endgroup
 \noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, Killing, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries, Comic, TabletopGame; Human, ArtificialIntelligence.

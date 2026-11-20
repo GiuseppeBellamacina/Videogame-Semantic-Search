@@ -41,11 +41,6 @@ PRIMITIVE = [
     ("GameOfTheYearAward", "Award", "Un premio Gioco dell'anno"),
     ("Human", "Character", "Un personaggio umano"),
     ("ArtificialIntelligence", "Character", "Un'intelligenza artificiale"),
-    ("DeceasedCharacter", "Character", "Un personaggio morto (dominio di killedBy)"),
-    ("Killer", "Character", "Un personaggio che ha tolto la vita a qualcuno (range di killedBy)"),
-    ("GameDirector", "Person", "Un regista di videogiochi (range di directedBy)"),
-    ("StudioHead", "Person", "Chi guida un'azienda (dominio di heads)"),
-    ("Remaster", "VideoGame", "La nuova edizione di un gioco (dominio di remasterOf)"),
 ]
 
 DISJOINT = [
@@ -81,13 +76,18 @@ def or_(*xs):
 
 
 DEFINED = [
+    ("Remaster", "VideoGame", "La nuova edizione di un altro gioco", and_("VideoGame", some("remasterOf", "VideoGame"))),
+    ("GameDirector", "Person", "Chi ha diretto almeno un gioco", and_("Person", some("directorOf", "VideoGame"))),
+    ("StudioHead", "Person", "Chi guida un'azienda", and_("Person", some("heads", "Company"))),
+    ("DeceasedCharacter", "Character", "Un personaggio ucciso nella trama di un gioco", and_("Character", some("victimIn", "Killing"))),
+    ("Killer", "Character", "Un personaggio che ha tolto la vita a qualcuno", and_("Character", some("killerIn", "Killing"))),
     ("Developer", "Company", "Un'azienda che ha sviluppato almeno un gioco", and_("Company", some("developerOf", "VideoGame"))),
     ("Publisher", "Company", "Un'azienda che ha pubblicato almeno un gioco", and_("Company", some("publisherOf", "VideoGame"))),
     ("PlatformHolder", "Company", "Un'azienda che costruisce console", and_("Company", some("manufacturerOf", "ConsolePlatform"))),
     ("FoundedByVeterans", "Company", "Un'azienda fondata da chi lavorava per uno sviluppatore", and_("Company", some("foundedBy", some("formerEmployeeOf", "Developer")))),
     ("FirstPartyGame", "VideoGame", "Un gioco pubblicato dal gruppo di un costruttore di console", and_("VideoGame", some("publishedByGroup", "PlatformHolder"))),
     ("SequelGame", "VideoGame", "Il seguito di un altro gioco", and_("VideoGame", some("sequelOf", "VideoGame"))),
-    ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", and_("VideoGame", some("sequelOf", some("sequelOf", "VideoGame")))),
+    ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", and_("SequelGame", some("sequelOf", some("sequelOf", "VideoGame")))),
     ("LongRunningOriginal", "VideoGame", "Il capostipite di una serie di almeno tre capitoli", and_("VideoGame", some("hasSequel", some("hasSequel", "VideoGame")))),
     ("ViolentStoryGame", "VideoGame", "Un gioco nella cui trama qualcuno viene ucciso", and_("VideoGame", some("hasKilling", "Killing"))),
     ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", and_("ViolentStoryGame", some("pegiRating", score(16)))),
@@ -100,7 +100,7 @@ DEFINED = [
     ("StillPlayable", "VideoGame", "Un gioco giocabile su una console attuale", and_("VideoGame", some("playableOn", "CurrentGenerationConsole"))),
     ("MultiPlatformGame", "VideoGame", "Un gioco uscito su almeno tre piattaforme", and_("VideoGame", at_least(3, "availableOn", "Platform"))),
     ("Adaptation", "VideoGame", "Un gioco tratto da un'opera di un altro medium", and_("VideoGame", some("basedOn", "CreativeWork"))),
-    ("LiteraryAdaptation", "Adaptation", "Un gioco tratto da un romanzo", and_("VideoGame", some("basedOn", "Novel"))),
+    ("LiteraryAdaptation", "Adaptation", "Un gioco tratto da un romanzo", and_("Adaptation", some("basedOn", "Novel"))),
     ("AuteurGame", "VideoGame", "Un gioco diretto da chi guida uno studio", and_("VideoGame", some("directedBy", "StudioHead"))),
     ("LongRunningFranchise", "Franchise", "Una serie con almeno tre capitoli", and_("Franchise", some("includes", "LateEntry"))),
     ("AwardWinningFranchise", "Franchise", "Una serie con un gioco dell'anno", and_("Franchise", some("includes", "GOTYWinner"))),
@@ -112,7 +112,7 @@ DEFINED = [
     ("RecurringVillain", "RecurringCharacter", "Un antagonista ricorrente", and_("RecurringCharacter", "Antagonist")),
     ("RogueAI", "ArtificialIntelligence", "Un'intelligenza artificiale antagonista", and_("ArtificialIntelligence", "Antagonist")),
     ("DigitalMind", "ArtificialIntelligence", "Un'intelligenza artificiale nata dalla mente di un umano", and_("ArtificialIntelligence", some("mindCopiedFrom", "Human"))),
-    ("MultipleKiller", "Killer", "Un personaggio che ha ucciso almeno due personaggi", and_("Character", at_least(2, "kills", "Character"))),
+    ("MultipleKiller", "Killer", "Un personaggio che ha ucciso almeno due personaggi", and_("Killer", at_least(2, "kills", "Character"))),
     ("HistoricalCharacter", "Character", "Un personaggio che interpreta una persona reale", and_("Character", some("portrays", "Person"))),
 ]
 
@@ -137,15 +137,15 @@ OBJECT_PROPS = [
     ("hasGameMode", "VideoGame", "GameMode", None, [], None),
     ("belongsTo", "VideoGame", "Franchise", "includes", [], None),
     ("sequelOf", "VideoGame", "VideoGame", "hasSequel", ["Transitive"], "Asserita solo verso il predecessore diretto"),
-    ("remasterOf", "Remaster", "VideoGame", "hasRemaster", [], None),
+    ("remasterOf", "VideoGame", "VideoGame", "hasRemaster", [], None),
     ("wonAward", "VideoGame", "Award", None, [], None),
     ("madeWith", "VideoGame", "GameEngine", None, [], None),
     ("engineDevelopedBy", "GameEngine", "Company", None, [], None),
     ("manufacturedBy", "Platform", "Company", "manufacturerOf", [], None),
     ("subsidiaryOf", "Company", "Company", None, ["Transitive"], None),
     ("publishedByGroup", "VideoGame", "Company", None, [], "Derivata dalle regole: l'editore e i gruppi che lo controllano"),
-    ("directedBy", "VideoGame", "GameDirector", "directorOf", [], None),
-    ("heads", "StudioHead", "Company", None, [], None),
+    ("directedBy", "VideoGame", "Person", "directorOf", [], None),
+    ("heads", "Person", "Company", None, [], None),
     ("foundedBy", "Company", "Person", None, [], None),
     ("formerEmployeeOf", "Person", "Company", None, [], None),
     ("basedOn", "VideoGame", "CreativeWork", None, [], None),
@@ -153,9 +153,9 @@ OBJECT_PROPS = [
     ("appearsIn", "Character", "VideoGame", "hasCharacter", [], None),
     ("protagonistOf", "Character", "VideoGame", None, [], None),
     ("antagonistOf", "Character", "VideoGame", None, [], None),
-    ("killedBy", "DeceasedCharacter", "Killer", "kills", [], "Dedotta dalla regola KillingEvent"),
-    ("victim", "Killing", "DeceasedCharacter", None, [], None),
-    ("killer", "Killing", "Killer", None, [], None),
+    ("killedBy", "Character", "Character", "kills", [], "Dedotta dalla regola KillingEvent"),
+    ("victim", "Killing", "Character", "victimIn", [], None),
+    ("killer", "Killing", "Character", "killerIn", [], None),
     ("inGame", "Killing", "VideoGame", "hasKilling", [], None),
     ("portrays", "Character", "Person", None, [], None),
     ("mindCopiedFrom", "ArtificialIntelligence", "Human", None, [], "L'IA è stata costruita a partire dalla mente di questo personaggio"),
@@ -254,10 +254,10 @@ def add_class(g, name, parent, comment, definition=None):
     g.add((VG[name], RDF.type, OWL.Class))
     g.add((VG[name], RDFS.label, Literal(name)))
     g.add((VG[name], RDFS.comment, Literal(comment)))
-    if parent:
-        g.add((VG[name], RDFS.subClassOf, VG[parent]))
-    if definition:
+    if definition:  # il padre di una classe definita è il primo termine della definizione
         g.add((VG[name], OWL.equivalentClass, node(g, definition)))
+    elif parent:
+        g.add((VG[name], RDFS.subClassOf, VG[parent]))
 
 
 def schema():
@@ -269,6 +269,7 @@ def schema():
     for name, parent, comment in PRIMITIVE + RULE_TARGETS:
         add_class(g, name, parent, comment)
     for row in DEFINED:
+        assert row[3][1] == row[1], f"{row[0]}: il padre deve essere il primo termine della definizione"
         add_class(g, *row)
     for i, block in enumerate(DISJOINT):
         b = BNode(f"disgiunte{i}")
