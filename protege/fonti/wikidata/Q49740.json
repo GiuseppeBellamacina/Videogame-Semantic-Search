@@ -1,0 +1,55 @@
+{
+ "data": [
+  "2011-11-18T00:00:00Z"
+ ],
+ "editore": [
+  "Xbox Game Studios"
+ ],
+ "motore": [
+  "Lightweight Java Game Library"
+ ],
+ "pegi": [
+  "PEGI 7"
+ ],
+ "piattaforme": [
+  "Android",
+  "Linux",
+  "Microsoft Windows",
+  "PlayStation 3",
+  "macOS",
+  "ARM architecture",
+  "Xbox 360",
+  "iOS",
+  "Wii U",
+  "ChromeOS",
+  "Kindle Fire HD",
+  "PlayStation Vita",
+  "Java virtual machine",
+  "Nintendo 3DS",
+  "Apple TV",
+  "Ouya",
+  "Windows Phone",
+  "PlayStation 4",
+  "Xbox One",
+  "Fire OS",
+  "New Nintendo 3DS",
+  "Nintendo Switch",
+  "tvOS",
+  "PlayStation 5",
+  "iPadOS",
+  "Xbox Series X and Series S",
+  "Nintendo Switch 2"
+ ],
+ "premi": [
+  "Independent Games Festival Award - Seumas McNally Grand Prize",
+  "Independent Games Festival Audience Award",
+  "Golden Joystick Awards − Still Playing Award - PC and Console"
+ ],
+ "serie": [
+  "Minecraft"
+ ],
+ "sviluppatore": [
+  "Microsoft",
+  "Mojang Studios"
+ ]
+}

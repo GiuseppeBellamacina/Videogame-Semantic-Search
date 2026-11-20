@@ -1,0 +1,51 @@
+{
+ "data": [
+  "1998-11-21T00:00:00Z",
+  "1998-11-23T00:00:00Z",
+  "1998-12-11T00:00:00Z",
+  "1998-12-18T00:00:00Z",
+  "2002-11-28T00:00:00Z",
+  "2003-02-18T00:00:00Z",
+  "2003-05-03T00:00:00Z",
+  "2003-11-01T00:00:00Z",
+  "2007-02-23T00:00:00Z",
+  "2007-02-26T00:00:00Z",
+  "2007-02-27T00:00:00Z"
+ ],
+ "editore": [
+  "Nintendo"
+ ],
+ "metacritic": [
+  "99/100"
+ ],
+ "pegi": [
+  "PEGI 12"
+ ],
+ "piattaforme": [
+  "Wii",
+  "Wii U",
+  "Nintendo GameCube",
+  "Nintendo 64",
+  "Nintendo 3DS",
+  "iQue Player",
+  "Virtual Console"
+ ],
+ "premi": [
+  "BAFTA Interactive Entertainment Awards",
+  "D.I.C.E. Award for Game of the Year",
+  "D.I.C.E. Award for Outstanding Technical Achievement",
+  "D.I.C.E. Award - Role-Playing Game of the Year",
+  "D.I.C.E. Award for Adventure Game of the Year (console)"
+ ],
+ "registi": [
+  "Shigeru Miyamoto",
+  "Eiji Aonuma"
+ ],
+ "serie": [
+  "The Legend of Zelda"
+ ],
+ "sviluppatore": [
+  "Nintendo",
+  "Nintendo Entertainment Analysis & Development"
+ ]
+}

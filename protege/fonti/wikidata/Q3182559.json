@@ -1,0 +1,57 @@
+{
+ "basato_su": [
+  "Cyberpunk 2020"
+ ],
+ "data": [
+  "2020-12-10T00:00:00Z",
+  "2022-02-15T00:00:00Z",
+  "2025-07-17T00:00:00Z"
+ ],
+ "editore": [
+  "CD Projekt RED",
+  "Bandai Namco Entertainment",
+  "Warner Bros. Games",
+  "Softclub",
+  "CD Projekt",
+  "Spike Chunsoft"
+ ],
+ "metacritic": [
+  "86/100",
+  "61/100",
+  "57/100"
+ ],
+ "motore": [
+  "REDengine"
+ ],
+ "pegi": [
+  "PEGI 18"
+ ],
+ "piattaforme": [
+  "Microsoft Windows",
+  "PlayStation 4",
+  "Xbox One",
+  "PlayStation 5",
+  "Xbox Series X and Series S",
+  "Nintendo Switch 2"
+ ],
+ "premi": [
+  "Golden Joystick Awards − Most Wanted Game",
+  "The Game Awards − Best Ongoing",
+  "Steam Award for Labor of Love",
+  "Japan Game Awards Future Category",
+  "Steam Award for Outstanding Story-Rich Game",
+  "British Academy Games Award for Evolving Game",
+  "Vidya Gaem Awards – Biggest Technical Blunder",
+  "Vidya Gaem Awards – Most Anticipated Game"
+ ],
+ "registi": [
+  "Adam Badowski",
+  "Mateusz Kanik"
+ ],
+ "serie": [
+  "Cyberpunk"
+ ],
+ "sviluppatore": [
+  "CD Projekt RED"
+ ]
+}

@@ -1,0 +1,33 @@
+{
+ "data": [
+  "2006-11-19T00:00:00Z",
+  "2006-12-02T00:00:00Z",
+  "2006-12-07T00:00:00Z",
+  "2006-12-08T00:00:00Z",
+  "2006-12-11T00:00:00Z",
+  "2006-12-15T00:00:00Z",
+  "2006-12-19T00:00:00Z",
+  "2017-12-05T00:00:00Z"
+ ],
+ "editore": [
+  "Nintendo"
+ ],
+ "pegi": [
+  "PEGI 12"
+ ],
+ "piattaforme": [
+  "Wii",
+  "Wii U",
+  "Nintendo GameCube",
+  "Nvidia Shield TV"
+ ],
+ "registi": [
+  "Eiji Aonuma"
+ ],
+ "serie": [
+  "The Legend of Zelda"
+ ],
+ "sviluppatore": [
+  "Nintendo Entertainment Analysis & Development"
+ ]
+}

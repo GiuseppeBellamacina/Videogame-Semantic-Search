@@ -1,0 +1,29 @@
+{
+ "data": [
+  "1986-02-21T00:00:00Z",
+  "1987-08-22T00:00:00Z",
+  "1987-11-15T00:00:00Z"
+ ],
+ "editore": [
+  "Nintendo"
+ ],
+ "pegi": [
+  "PEGI 3",
+  "PEGI 7"
+ ],
+ "piattaforme": [
+  "Famicom Disk System",
+  "Nintendo Entertainment System"
+ ],
+ "registi": [
+  "Shigeru Miyamoto",
+  "Takashi Tezuka"
+ ],
+ "serie": [
+  "The Legend of Zelda"
+ ],
+ "sviluppatore": [
+  "Nintendo",
+  "Nintendo Entertainment Analysis & Development"
+ ]
+}

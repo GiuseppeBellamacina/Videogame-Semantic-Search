@@ -1,0 +1,43 @@
+{
+ "basato_su": [
+  "Narbacular Drop"
+ ],
+ "data": [
+  "2007-10-10T00:00:00Z",
+  "2007-11-22T00:00:00Z",
+  "2007-11-23T00:00:00Z",
+  "2007-12-11T00:00:00Z",
+  "2010-05-12T00:00:00Z",
+  "2013-05-02T00:00:00Z"
+ ],
+ "editore": [
+  "Valve Corporation"
+ ],
+ "metacritic": [
+  "90/100"
+ ],
+ "motore": [
+  "Source"
+ ],
+ "pegi": [
+  "PEGI 12"
+ ],
+ "piattaforme": [
+  "Android",
+  "Linux",
+  "Microsoft Windows",
+  "PlayStation 3",
+  "macOS",
+  "Xbox 360"
+ ],
+ "premi": [
+  "Game Developers Choice Award - Game of the Year",
+  "Game Developers Choice Award - Best Design"
+ ],
+ "serie": [
+  "Portal"
+ ],
+ "sviluppatore": [
+  "Valve Corporation"
+ ]
+}

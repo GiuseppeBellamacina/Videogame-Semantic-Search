@@ -1,0 +1,44 @@
+{
+ "data": [
+  "2021-12-08T00:00:00Z"
+ ],
+ "editore": [
+  "Xbox Game Studios"
+ ],
+ "metacritic": [
+  "http://www.wikidata.org/.well-known/genid/e40d523b924688c0d806b34470223289",
+  "82/100"
+ ],
+ "motore": [
+  "Slipspace Engine"
+ ],
+ "pegi": [
+  "PEGI 16"
+ ],
+ "piattaforme": [
+  "Microsoft Windows",
+  "Xbox One",
+  "Xbox Series X and Series S"
+ ],
+ "premi": [
+  "The Game Awards − Player's Voice",
+  "Gamescom Award − Best Multiplayer Game",
+  "Gamescom Award − Best Microsoft Xbox Game",
+  "D.I.C.E. Award for Action Game of the Year",
+  "D.I.C.E. Award for Online Game of the Year"
+ ],
+ "registi": [
+  "Joseph Staten"
+ ],
+ "serie": [
+  "Halo"
+ ],
+ "sviluppatore": [
+  "Halo Studios",
+  "The Coalition",
+  "Certain Affinity",
+  "SkyBox Labs",
+  "Atomhawk Design Ltd.",
+  "Sperasoft"
+ ]
+}

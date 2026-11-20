@@ -1,0 +1,43 @@
+{
+ "data": [
+  "2002-10-29T00:00:00Z"
+ ],
+ "editore": [
+  "Rockstar Games"
+ ],
+ "metacritic": [
+  "95/100"
+ ],
+ "motore": [
+  "RenderWare"
+ ],
+ "pegi": [
+  "PEGI 18"
+ ],
+ "piattaforme": [
+  "Android",
+  "Microsoft Windows",
+  "PlayStation 2",
+  "PlayStation 3",
+  "macOS",
+  "iOS",
+  "Xbox",
+  "PlayStation 4",
+  "PlayStation 5"
+ ],
+ "premi": [
+  "British Academy Games Award for Game Design",
+  "D.I.C.E. Award for Adventure Game of the Year (console)",
+  "British Academy Games Award for Audio Achievement",
+  "British Academy Games Award for Action Game",
+  "British Academy Games Award for PC",
+  "British Academy Games Award for Racing",
+  "Sunday Times Reader Award for Games"
+ ],
+ "serie": [
+  "Grand Theft Auto"
+ ],
+ "sviluppatore": [
+  "Rockstar North"
+ ]
+}

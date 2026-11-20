@@ -1,0 +1,41 @@
+{
+ "data": [
+  "2023-10-05T00:00:00Z",
+  "2024-06-06T00:00:00Z"
+ ],
+ "editore": [
+  "Ubisoft"
+ ],
+ "motore": [
+  "Ubisoft Anvil"
+ ],
+ "pegi": [
+  "PEGI 18"
+ ],
+ "piattaforme": [
+  "Microsoft Windows",
+  "iOS",
+  "PlayStation 4",
+  "Xbox One",
+  "PlayStation 5",
+  "iPadOS",
+  "Xbox Series X and Series S"
+ ],
+ "premi": [
+  "Pégase Award for the audience reward"
+ ],
+ "serie": [
+  "Assassin's Creed"
+ ],
+ "sviluppatore": [
+  "Ubisoft Romania",
+  "Ubisoft Kyiv",
+  "Ubisoft Montreal",
+  "Ubisoft Montpellier",
+  "Ubisoft Sofia",
+  "Ubisoft Singapore",
+  "Ubisoft Bordeaux",
+  "Ubisoft Philippines",
+  "Ubisoft Odesa"
+ ]
+}

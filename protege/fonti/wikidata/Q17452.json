@@ -1,0 +1,52 @@
+{
+ "data": [
+  "2013-09-17T00:00:00Z",
+  "2013-10-10T00:00:00Z",
+  "2014-11-18T00:00:00Z",
+  "2015-04-15T00:00:00Z",
+  "2022-03-15T00:00:00Z"
+ ],
+ "editore": [
+  "Rockstar Games",
+  "Take-Two Interactive",
+  "Softclub"
+ ],
+ "motore": [
+  "Rockstar Advanced Game Engine"
+ ],
+ "pegi": [
+  "PEGI 18"
+ ],
+ "piattaforme": [
+  "Microsoft Windows",
+  "PlayStation 3",
+  "Xbox 360",
+  "PlayStation 4",
+  "Xbox One",
+  "PlayStation 5",
+  "Xbox Series X and Series S"
+ ],
+ "premi": [
+  "British Academy Games Award for Game Design",
+  "British Academy Games Award for Multiplayer",
+  "Golden Joystick Awards − Ultimate Game of the Year",
+  "British Academy Games Award for British Game",
+  "The Game Awards − Best Remaster",
+  "Golden Joystick Awards − PC Game of the Year",
+  "Steam Award for Labor of Love",
+  "Titanium Award for Game of the year",
+  "Steam Award for Whoooaaaaaaa, dude!",
+  "Steam Award for Game Within A Game Award"
+ ],
+ "serie": [
+  "Grand Theft Auto"
+ ],
+ "sviluppatore": [
+  "Rockstar North",
+  "Rockstar San Diego",
+  "Rockstar New England",
+  "Rockstar Leeds",
+  "Rockstar Toronto",
+  "Rockstar London"
+ ]
+}

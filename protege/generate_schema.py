@@ -5,18 +5,14 @@
 
 from pathlib import Path
 
-from rdflib import Graph
+from rdflib import OWL, RDF, RDFS, XSD, BNode, Graph, Literal, Namespace
+from rdflib.collection import Collection
 
 HERE = Path(__file__).resolve().parent
-VG = "http://www.videogame-ontology.org/ontology#"
-PREFIXES = f"""@prefix vg: <{VG}> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix swrl: <http://www.w3.org/2003/11/swrl#> .
-@prefix var: <http://www.videogame-ontology.org/ontology/regole#> .
-"""
+BASE = Namespace("http://www.videogame-ontology.org/")
+VG = Namespace("http://www.videogame-ontology.org/ontology#")
+SWRL = Namespace("http://www.w3.org/2003/11/swrl#")
+VAR = Namespace("http://www.videogame-ontology.org/ontology/regole#")
 
 TOP = [
     ("VideoGame", "Un videogioco"),
@@ -191,19 +187,41 @@ RULES = [
 ]
 
 
-def ttl(x):
+def term(x):
+    prefix, _, name = x.rpartition(":")
+    return {"xsd": XSD, "owl": OWL}[prefix][name] if prefix else VG[name]
+
+
+def rdf_list(g, items):
+    head = BNode()
+    Collection(g, head, items)
+    return head
+
+
+def node(g, x):
     if isinstance(x, str):
-        return x if ":" in x else f"vg:{x}"
+        return term(x)
     op, *a = x
-    if op == "and":
-        return f"[ a owl:Class ; owl:intersectionOf ( {' '.join(map(ttl, a))} ) ]"
-    if op == "or":
-        return f"[ a owl:Class ; owl:unionOf ( {' '.join(map(ttl, a))} ) ]"
-    if op == "some":
-        return f"[ a owl:Restriction ; owl:onProperty vg:{a[0]} ; owl:someValuesFrom {ttl(a[1])} ]"
-    if op == "min":
-        return f'[ a owl:Restriction ; owl:onProperty vg:{a[1]} ; owl:minQualifiedCardinality "{a[0]}"^^xsd:nonNegativeInteger ; owl:onClass {ttl(a[2])} ]'
-    return f"[ a rdfs:Datatype ; owl:onDatatype {a[0]} ; owl:withRestrictions ( [ {a[1]} {a[2]} ] ) ]"
+    b = BNode()
+    if op in ("and", "or"):
+        g.add((b, RDF.type, OWL.Class))
+        g.add((b, OWL.intersectionOf if op == "and" else OWL.unionOf, rdf_list(g, [node(g, y) for y in a])))
+    elif op == "some":
+        g.add((b, RDF.type, OWL.Restriction))
+        g.add((b, OWL.onProperty, VG[a[0]]))
+        g.add((b, OWL.someValuesFrom, node(g, a[1])))
+    elif op == "min":
+        g.add((b, RDF.type, OWL.Restriction))
+        g.add((b, OWL.onProperty, VG[a[1]]))
+        g.add((b, OWL.minQualifiedCardinality, Literal(a[0], datatype=XSD.nonNegativeInteger)))
+        g.add((b, OWL.onClass, node(g, a[2])))
+    else:
+        facet = BNode()
+        g.add((facet, term(a[1]), Literal(a[2])))
+        g.add((b, RDF.type, RDFS.Datatype))
+        g.add((b, OWL.onDatatype, term(a[0])))
+        g.add((b, OWL.withRestrictions, rdf_list(g, [facet])))
+    return b
 
 
 def dl(x):
@@ -221,50 +239,93 @@ def dl(x):
         return rf"{{\geq}}{a[0]}\,\textit{{{a[1]}}}.{dl(a[2])}"
 
 
-def statement(subject, *pairs):
-    body = " ;\n    ".join(f"{p} {o}" for p, o in pairs if o is not None)
-    return f"{subject} {body} .\n"
+def new_graph():
+    g = Graph()
+    for prefix, ns in [("vg", VG), ("owl", OWL), ("swrl", SWRL), ("var", VAR)]:
+        g.bind(prefix, ns)
+    return g
 
 
-def cls(name, parent, comment, definition=None):
-    return statement(f"vg:{name}", ("a", "owl:Class"), ("rdfs:label", f'"{name}"'), ("rdfs:comment", f'"{comment}"'),
-                     ("rdfs:subClassOf", parent and f"vg:{parent}"), ("owl:equivalentClass", definition and ttl(definition)))
+def add_class(g, name, parent, comment, definition=None):
+    g.add((VG[name], RDF.type, OWL.Class))
+    g.add((VG[name], RDFS.label, Literal(name)))
+    g.add((VG[name], RDFS.comment, Literal(comment)))
+    if parent:
+        g.add((VG[name], RDFS.subClassOf, VG[parent]))
+    if definition:
+        g.add((VG[name], OWL.equivalentClass, node(g, definition)))
 
 
 def schema():
-    out = [PREFIXES, statement("<http://www.videogame-ontology.org/ontology>", ("a", "owl:Ontology"), ("rdfs:label", '"Videogiochi: schema"'))]
-    out += [cls(name, None, comment) for name, comment in TOP]
-    out += [cls(name, parent, comment) for name, parent, comment in PRIMITIVE + [(n, p, c) for n, p, c in RULE_TARGETS]]
-    out += [cls(*row) for row in DEFINED]
-    out += [statement("[]", ("a", "owl:AllDisjointClasses"), ("owl:members", f"( {' '.join('vg:' + n for n in block)} )")) for block in DISJOINT]
+    g = new_graph()
+    g.add((BASE.ontology, RDF.type, OWL.Ontology))
+    g.add((BASE.ontology, RDFS.label, Literal("Videogiochi: schema")))
+    for name, comment in TOP:
+        add_class(g, name, None, comment)
+    for name, parent, comment in PRIMITIVE + RULE_TARGETS:
+        add_class(g, name, parent, comment)
+    for row in DEFINED:
+        add_class(g, *row)
+    for i, block in enumerate(DISJOINT):
+        b = BNode(f"disgiunte{i}")
+        g.add((b, RDF.type, OWL.AllDisjointClasses))
+        g.add((b, OWL.members, rdf_list(g, [VG[n] for n in block])))
     for name, dom, rng, inv, chars, comment in OBJECT_PROPS:
-        loose = ["owl:IrreflexiveProperty", "owl:AsymmetricProperty"] if inv and dom != rng else []
-        types = ", ".join(["owl:ObjectProperty", *loose, *(f"owl:{c}Property" for c in chars)])
-        out.append(statement(f"vg:{name}", ("a", types), ("rdfs:comment", comment and f'"{comment}"'), ("rdfs:domain", f"vg:{dom}"), ("rdfs:range", f"vg:{rng}")))
+        loose = [OWL.IrreflexiveProperty, OWL.AsymmetricProperty] if inv and dom != rng else []
+        for t in [OWL.ObjectProperty, *loose, *(OWL[f"{c}Property"] for c in chars)]:
+            g.add((VG[name], RDF.type, t))
+        g.add((VG[name], RDFS.domain, VG[dom]))
+        g.add((VG[name], RDFS.range, VG[rng]))
+        if comment:
+            g.add((VG[name], RDFS.comment, Literal(comment)))
         if inv:
-            out.append(statement(f"vg:{inv}", ("a", ", ".join(["owl:ObjectProperty", *loose])), ("owl:inverseOf", f"vg:{name}")))
-    out += [statement(f"vg:{sub}", ("rdfs:subPropertyOf", f"vg:{sup}")) for sub, sup in SUBPROPERTIES]
-    out += [statement(f"vg:{p}", ("owl:propertyChainAxiom", f"( {' '.join('vg:' + c for c in chain)} )")) for p, chain in CHAINS]
-    out += [statement(f"vg:{name}", ("a", "owl:DatatypeProperty, owl:FunctionalProperty" if functional else "owl:DatatypeProperty"),
-                      ("rdfs:domain", dom if ":" in dom else f"vg:{dom}"), ("rdfs:range", rng)) for name, dom, rng, functional in DATA_PROPS]
-    out += [statement(f"vg:{c}", ("owl:hasKey", f"( vg:{p} )")) for c, p in KEYS]
-    return "\n".join(out)
+            for t in [OWL.ObjectProperty, *loose]:
+                g.add((VG[inv], RDF.type, t))
+            g.add((VG[inv], OWL.inverseOf, VG[name]))
+    for sub, sup in SUBPROPERTIES:
+        g.add((VG[sub], RDFS.subPropertyOf, VG[sup]))
+    for p, chain in CHAINS:
+        g.add((VG[p], OWL.propertyChainAxiom, rdf_list(g, [VG[c] for c in chain])))
+    for name, dom, rng, functional in DATA_PROPS:
+        g.add((VG[name], RDF.type, OWL.DatatypeProperty))
+        if functional:
+            g.add((VG[name], RDF.type, OWL.FunctionalProperty))
+        g.add((VG[name], RDFS.domain, term(dom)))
+        g.add((VG[name], RDFS.range, term(rng)))
+    for c, p in KEYS:
+        g.add((VG[c], OWL.hasKey, rdf_list(g, [VG[p]])))
+    return g
 
 
-def atom(pred, *args):
-    v = [f"var:{a[1:]}" for a in args if isinstance(a, str) and a.startswith("?")]
+def atom(g, pred, *args):
+    v = [VAR[a[1:]] for a in args if isinstance(a, str) and a.startswith("?")]
+    b = BNode()
     if pred == "differentFrom":
-        return f"[ a swrl:DifferentIndividualsAtom ; swrl:argument1 {v[0]} ; swrl:argument2 {v[1]} ]"
-    if pred.startswith("xsd:"):
-        return f"[ a swrl:DataRangeAtom ; swrl:dataRange {ttl(('range', pred, args[0], args[1]))} ; swrl:argument1 {v[0]} ]"
-    if len(args) == 1:
-        return f"[ a swrl:ClassAtom ; swrl:classPredicate vg:{pred} ; swrl:argument1 {v[0]} ]"
-    kind = "DatavaluedPropertyAtom" if pred in {p[0] for p in DATA_PROPS} else "IndividualPropertyAtom"
-    return f"[ a swrl:{kind} ; swrl:propertyPredicate vg:{pred} ; swrl:argument1 {v[0]} ; swrl:argument2 {v[1]} ]"
+        g.add((b, RDF.type, SWRL.DifferentIndividualsAtom))
+    elif pred.startswith("xsd:"):
+        g.add((b, RDF.type, SWRL.DataRangeAtom))
+        g.add((b, SWRL.dataRange, node(g, ("range", pred, args[0], args[1]))))
+    elif len(args) == 1:
+        g.add((b, RDF.type, SWRL.ClassAtom))
+        g.add((b, SWRL.classPredicate, VG[pred]))
+    else:
+        kind = SWRL.DatavaluedPropertyAtom if pred in {p[0] for p in DATA_PROPS} else SWRL.IndividualPropertyAtom
+        g.add((b, RDF.type, kind))
+        g.add((b, SWRL.propertyPredicate, VG[pred]))
+    for i, x in enumerate(v, 1):
+        g.add((b, SWRL[f"argument{i}"], x))
+    return b
 
 
-def atom_list(atoms):
-    return "rdf:nil" if not atoms else f"[ a swrl:AtomList ; rdf:first {atoms[0]} ;\n      rdf:rest {atom_list(atoms[1:])} ]"
+def atom_list(g, atoms):
+    head = RDF.nil
+    for a in reversed(atoms):
+        cell = BNode()
+        g.add((cell, RDF.type, SWRL.AtomList))
+        g.add((cell, RDF.first, a))
+        g.add((cell, RDF.rest, head))
+        head = cell
+    return head
 
 
 def rule_text(atoms, sep=" ^ "):
@@ -272,13 +333,23 @@ def rule_text(atoms, sep=" ^ "):
 
 
 def rules():
-    names = sorted({a for _, body, head in RULES for at in body + head for a in at[1:] if isinstance(a, str) and a.startswith("?")})
-    out = [PREFIXES, statement("<http://www.videogame-ontology.org/ontology/regole>", ("a", "owl:Ontology"), ("rdfs:label", '"Videogiochi: regole SWRL"'),
-                               ("owl:imports", "<http://www.videogame-ontology.org/ontology>"))]
-    out += [statement(f"var:{n[1:]}", ("a", "swrl:Variable")) for n in names]
-    out += [statement(f"var:{name}", ("a", "swrl:Imp"), ("rdfs:label", f'"{name}"'), ("rdfs:comment", f'"{rule_text(body)} -> {rule_text(head)}"'),
-                      ("swrl:body", atom_list([atom(*a) for a in body])), ("swrl:head", atom_list([atom(*a) for a in head]))) for name, body, head in RULES]
-    return "\n".join(out)
+    g = new_graph()
+    onto = BASE["ontology/regole"]
+    g.add((onto, RDF.type, OWL.Ontology))
+    g.add((onto, RDFS.label, Literal("Videogiochi: regole SWRL")))
+    g.add((onto, OWL.imports, BASE.ontology))
+    for _, body, head in RULES:
+        for at in body + head:
+            for a in at[1:]:
+                if isinstance(a, str) and a.startswith("?"):
+                    g.add((VAR[a[1:]], RDF.type, SWRL.Variable))
+    for name, body, head in RULES:
+        g.add((VAR[name], RDF.type, SWRL.Imp))
+        g.add((VAR[name], RDFS.label, Literal(name)))
+        g.add((VAR[name], RDFS.comment, Literal(f"{rule_text(body)} -> {rule_text(head)}")))
+        g.add((VAR[name], SWRL.body, atom_list(g, [atom(g, *a) for a in body])))
+        g.add((VAR[name], SWRL.head, atom_list(g, [atom(g, *a) for a in head])))
+    return g
 
 
 def latex_table(caption, columns, header, rows):
@@ -314,19 +385,17 @@ def appendix():
     if data.exists():
         g = Graph()
         g.parse(data, format="turtle")
-        q = """SELECT ?label ?serie (YEAR(?d) AS ?anno) ?dev WHERE { ?g vg:belongsTo/rdfs:label ?serie ; rdfs:label ?label .
-               OPTIONAL { ?g vg:releaseDate ?d } OPTIONAL { ?g vg:developedBy/rdfs:label ?dev } }
+        q = """SELECT ?label (COALESCE(?s, "Giochi singoli") AS ?serie) (YEAR(?d) AS ?anno) ?dev WHERE { ?g vg:hasWikidataId ?id ; rdfs:label ?label .
+               OPTIONAL { ?g vg:belongsTo/rdfs:label ?s } OPTIONAL { ?g vg:releaseDate ?d } OPTIONAL { ?g vg:developedBy/rdfs:label ?dev } }
                ORDER BY ?serie ?d"""
-        rows = [[esc(x) if x is not None else "--" for x in row] for row in g.query(q, initNs={"vg": VG, "rdfs": "http://www.w3.org/2000/01/rdf-schema#"})]
+        rows = [[esc(x) if x is not None else "--" for x in row] for row in g.query(q, initNs={"vg": VG, "rdfs": RDFS})]
         out.append(latex_table(f"I {len(rows)} giochi del dataset", "p{6.5cm}p{3cm}lp{3.5cm}", r"\textbf{Gioco} & \textbf{Serie} & \textbf{Anno} & \textbf{Sviluppatore}", rows))
     return "\n".join(out)
 
 
 def main():
-    files = {"schema.ttl": schema(), "regole.ttl": rules()}
-    for name, text in files.items():
-        Graph().parse(data=text, format="turtle")
-        (HERE / name).write_text(text, encoding="utf-8")
+    for name, g in {"schema.ttl": schema(), "regole.ttl": rules()}.items():
+        g.serialize(destination=HERE / name, format="turtle")
     (HERE / "relazione" / "appendice.tex").write_text(appendix(), encoding="utf-8")
     print(f"classi {len(TOP) + len(PRIMITIVE) + len(RULE_TARGETS) + len(DEFINED)} (definite {len(DEFINED)}), "
           f"object property {len(OBJECT_PROPS) + sum(1 for p in OBJECT_PROPS if p[3])}, datatype property {len(DATA_PROPS)}, regole {len(RULES)}")

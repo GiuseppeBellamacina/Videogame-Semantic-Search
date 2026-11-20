@@ -1,0 +1,42 @@
+{
+ "data": [
+  "2012-10-30T00:00:00Z"
+ ],
+ "editore": [
+  "Ubisoft",
+  "Akella"
+ ],
+ "metacritic": [
+  "84/100",
+  "80/100",
+  "85/100"
+ ],
+ "motore": [
+  "Ubisoft Anvil",
+  "Havok"
+ ],
+ "pegi": [
+  "PEGI 18"
+ ],
+ "piattaforme": [
+  "Microsoft Windows",
+  "PlayStation 3",
+  "Xbox 360",
+  "Wii U",
+  "Java Platform, Micro Edition",
+  "PlayStation 4",
+  "Xbox One",
+  "Nintendo Switch"
+ ],
+ "serie": [
+  "Assassin's Creed"
+ ],
+ "sviluppatore": [
+  "Ubisoft Romania",
+  "Ubisoft Montreal",
+  "Ubisoft Barcelona",
+  "Ubisoft Annecy",
+  "Ubisoft Quebec",
+  "Ubisoft Singapore"
+ ]
+}

@@ -18,6 +18,9 @@ dependencies = [
     "tqdm>=4.66.0",
     "pyoxigraph>=0.5.8",
     "anthropic>=2.7.0",
+    "deepagents>=0.7.41",
+    "langchain-openai>=1.8.5",
+    "langchain-anthropic>=1.7.12",
 ]
 
 [project.optional-dependencies]

@@ -1,152 +1,50 @@
-@prefix vg: <http://www.videogame-ontology.org/ontology#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vg: <http://www.videogame-ontology.org/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix swrl: <http://www.w3.org/2003/11/swrl#> .
-@prefix var: <http://www.videogame-ontology.org/ontology/regole#> .
 
 <http://www.videogame-ontology.org/ontology> a owl:Ontology ;
     rdfs:label "Videogiochi: schema" .
 
-vg:VideoGame a owl:Class ;
-    rdfs:label "VideoGame" ;
-    rdfs:comment "Un videogioco" .
+vg:AcclaimedSequel a owl:Class ;
+    rdfs:label "AcclaimedSequel" ;
+    rdfs:comment "Un seguito acclamato" ;
+    rdfs:subClassOf vg:SequelGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:SequelGame vg:HighlyRatedGame ) ] .
 
-vg:Company a owl:Class ;
-    rdfs:label "Company" ;
-    rdfs:comment "Uno studio, un editore o un gruppo industriale" .
+vg:AuteurGame a owl:Class ;
+    rdfs:label "AuteurGame" ;
+    rdfs:comment "Un gioco diretto da chi guida uno studio" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:directedBy ;
+                        owl:someValuesFrom vg:StudioHead ] ) ] .
 
-vg:Person a owl:Class ;
-    rdfs:label "Person" ;
-    rdfs:comment "Una persona reale" .
+vg:AwardWinningFranchise a owl:Class ;
+    rdfs:label "AwardWinningFranchise" ;
+    rdfs:comment "Una serie con un gioco dell'anno" ;
+    rdfs:subClassOf vg:Franchise ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Franchise [ a owl:Restriction ;
+                        owl:onProperty vg:includes ;
+                        owl:someValuesFrom vg:GOTYWinner ] ) ] .
 
-vg:Character a owl:Class ;
-    rdfs:label "Character" ;
-    rdfs:comment "Un personaggio di finzione" .
-
-vg:Platform a owl:Class ;
-    rdfs:label "Platform" ;
-    rdfs:comment "Una piattaforma su cui si gioca" .
-
-vg:Franchise a owl:Class ;
-    rdfs:label "Franchise" ;
-    rdfs:comment "Una serie di giochi" .
-
-vg:GameEngine a owl:Class ;
-    rdfs:label "GameEngine" ;
-    rdfs:comment "Un motore di gioco" .
-
-vg:Award a owl:Class ;
-    rdfs:label "Award" ;
-    rdfs:comment "Un premio" .
-
-vg:Genre a owl:Class ;
-    rdfs:label "Genre" ;
-    rdfs:comment "Un genere" .
-
-vg:GameMode a owl:Class ;
-    rdfs:label "GameMode" ;
-    rdfs:comment "Una modalità di gioco" .
-
-vg:CreativeWork a owl:Class ;
-    rdfs:label "CreativeWork" ;
-    rdfs:comment "Un'opera di un altro medium (romanzo, film, serie TV)" .
-
-vg:ConsolePlatform a owl:Class ;
-    rdfs:label "ConsolePlatform" ;
-    rdfs:comment "Una console" ;
-    rdfs:subClassOf vg:Platform .
-
-vg:PCPlatform a owl:Class ;
-    rdfs:label "PCPlatform" ;
-    rdfs:comment "Un personal computer" ;
-    rdfs:subClassOf vg:Platform .
-
-vg:CurrentGenerationConsole a owl:Class ;
-    rdfs:label "CurrentGenerationConsole" ;
-    rdfs:comment "Una console dell'attuale generazione" ;
-    rdfs:subClassOf vg:ConsolePlatform .
-
-vg:Novel a owl:Class ;
-    rdfs:label "Novel" ;
-    rdfs:comment "Un romanzo" ;
-    rdfs:subClassOf vg:CreativeWork .
-
-vg:Film a owl:Class ;
-    rdfs:label "Film" ;
-    rdfs:comment "Un film" ;
-    rdfs:subClassOf vg:CreativeWork .
-
-vg:TVSeries a owl:Class ;
-    rdfs:label "TVSeries" ;
-    rdfs:comment "Una serie televisiva" ;
-    rdfs:subClassOf vg:CreativeWork .
-
-vg:Comic a owl:Class ;
-    rdfs:label "Comic" ;
-    rdfs:comment "Un fumetto" ;
-    rdfs:subClassOf vg:CreativeWork .
-
-vg:TabletopGame a owl:Class ;
-    rdfs:label "TabletopGame" ;
-    rdfs:comment "Un gioco da tavolo o di ruolo cartaceo" ;
-    rdfs:subClassOf vg:CreativeWork .
-
-vg:GameOfTheYearAward a owl:Class ;
-    rdfs:label "GameOfTheYearAward" ;
-    rdfs:comment "Un premio Gioco dell'anno" ;
-    rdfs:subClassOf vg:Award .
-
-vg:Human a owl:Class ;
-    rdfs:label "Human" ;
-    rdfs:comment "Un personaggio umano" ;
+vg:DefeatedVillain a owl:Class ;
+    rdfs:label "DefeatedVillain" ;
+    rdfs:comment "Un antagonista ucciso dal protagonista" ;
     rdfs:subClassOf vg:Character .
 
-vg:ArtificialIntelligence a owl:Class ;
-    rdfs:label "ArtificialIntelligence" ;
-    rdfs:comment "Un'intelligenza artificiale" ;
-    rdfs:subClassOf vg:Character .
-
-vg:DeceasedCharacter a owl:Class ;
-    rdfs:label "DeceasedCharacter" ;
-    rdfs:comment "Un personaggio morto (dominio di killedBy)" ;
-    rdfs:subClassOf vg:Character .
-
-vg:Killer a owl:Class ;
-    rdfs:label "Killer" ;
-    rdfs:comment "Un personaggio che ha tolto la vita a qualcuno (range di killedBy)" ;
-    rdfs:subClassOf vg:Character .
-
-vg:GameDirector a owl:Class ;
-    rdfs:label "GameDirector" ;
-    rdfs:comment "Un regista di videogiochi (range di directedBy)" ;
-    rdfs:subClassOf vg:Person .
-
-vg:StudioHead a owl:Class ;
-    rdfs:label "StudioHead" ;
-    rdfs:comment "Chi guida un'azienda (dominio di heads)" ;
-    rdfs:subClassOf vg:Person .
-
-vg:Remaster a owl:Class ;
-    rdfs:label "Remaster" ;
-    rdfs:comment "La nuova edizione di un gioco (dominio di remasterOf)" ;
-    rdfs:subClassOf vg:VideoGame .
-
-vg:FirstPartyOnRivalConsole a owl:Class ;
-    rdfs:label "FirstPartyOnRivalConsole" ;
-    rdfs:comment "Un gioco first-party uscito su una console di un concorrente" ;
-    rdfs:subClassOf vg:VideoGame .
-
-vg:SequelByDifferentStudio a owl:Class ;
-    rdfs:label "SequelByDifferentStudio" ;
-    rdfs:comment "Un seguito sviluppato da uno studio diverso" ;
-    rdfs:subClassOf vg:VideoGame .
-
-vg:VeteransReturn a owl:Class ;
-    rdfs:label "VeteransReturn" ;
-    rdfs:comment "Un gioco fatto da uno studio fondato da chi aveva lavorato alla serie" ;
-    rdfs:subClassOf vg:VideoGame .
+vg:DigitalMind a owl:Class ;
+    rdfs:label "DigitalMind" ;
+    rdfs:comment "Un'intelligenza artificiale nata dalla mente di un umano" ;
+    rdfs:subClassOf vg:ArtificialIntelligence ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:ArtificialIntelligence [ a owl:Restriction ;
+                        owl:onProperty vg:mindCopiedFrom ;
+                        owl:someValuesFrom vg:Human ] ) ] .
 
 vg:EngineChangeSequel a owl:Class ;
     rdfs:label "EngineChangeSequel" ;
@@ -158,223 +56,647 @@ vg:ExternalEngineGame a owl:Class ;
     rdfs:comment "Un gioco fatto con un motore sviluppato da un'altra azienda" ;
     rdfs:subClassOf vg:VideoGame .
 
+vg:FantasyViolenceGame a owl:Class ;
+    rdfs:label "FantasyViolenceGame" ;
+    rdfs:comment "Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici" ;
+    rdfs:subClassOf vg:ViolentStoryGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:ViolentStoryGame [ a owl:Restriction ;
+                        owl:onProperty vg:pegiRating ;
+                        owl:someValuesFrom [ a rdfs:Datatype ;
+                                owl:onDatatype xsd:integer ;
+                                owl:withRestrictions ( [ xsd:maxInclusive 12 ] ) ] ] ) ] .
+
+vg:FirstPartyGame a owl:Class ;
+    rdfs:label "FirstPartyGame" ;
+    rdfs:comment "Un gioco pubblicato dal gruppo di un costruttore di console" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:publishedByGroup ;
+                        owl:someValuesFrom vg:PlatformHolder ] ) ] .
+
+vg:FirstPartyOnRivalConsole a owl:Class ;
+    rdfs:label "FirstPartyOnRivalConsole" ;
+    rdfs:comment "Un gioco first-party uscito su una console di un concorrente" ;
+    rdfs:subClassOf vg:VideoGame .
+
+vg:FoundedByVeterans a owl:Class ;
+    rdfs:label "FoundedByVeterans" ;
+    rdfs:comment "Un'azienda fondata da chi lavorava per uno sviluppatore" ;
+    rdfs:subClassOf vg:Company ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Company [ a owl:Restriction ;
+                        owl:onProperty vg:foundedBy ;
+                        owl:someValuesFrom [ a owl:Restriction ;
+                                owl:onProperty vg:formerEmployeeOf ;
+                                owl:someValuesFrom vg:Developer ] ] ) ] .
+
+vg:FranchiseWithStudioChange a owl:Class ;
+    rdfs:label "FranchiseWithStudioChange" ;
+    rdfs:comment "Una serie passata a un altro studio" ;
+    rdfs:subClassOf vg:Franchise ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Franchise [ a owl:Restriction ;
+                        owl:onProperty vg:includes ;
+                        owl:someValuesFrom vg:SequelByDifferentStudio ] ) ] .
+
+vg:HistoricalCharacter a owl:Class ;
+    rdfs:label "HistoricalCharacter" ;
+    rdfs:comment "Un personaggio che interpreta una persona reale" ;
+    rdfs:subClassOf vg:Character ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Character [ a owl:Restriction ;
+                        owl:onProperty vg:portrays ;
+                        owl:someValuesFrom vg:Person ] ) ] .
+
 vg:InHouseEngineGame a owl:Class ;
     rdfs:label "InHouseEngineGame" ;
     rdfs:comment "Un gioco fatto con il motore dello stesso studio" ;
     rdfs:subClassOf vg:VideoGame .
 
-vg:ReturningDirectorSequel a owl:Class ;
-    rdfs:label "ReturningDirectorSequel" ;
-    rdfs:comment "Un seguito con lo stesso regista del predecessore" ;
-    rdfs:subClassOf vg:VideoGame .
+vg:LiteraryAdaptation a owl:Class ;
+    rdfs:label "LiteraryAdaptation" ;
+    rdfs:comment "Un gioco tratto da un romanzo" ;
+    rdfs:subClassOf vg:Adaptation ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:basedOn ;
+                        owl:someValuesFrom vg:Novel ] ) ] .
 
-vg:DefeatedVillain a owl:Class ;
-    rdfs:label "DefeatedVillain" ;
-    rdfs:comment "Un antagonista ucciso dal protagonista" ;
-    rdfs:subClassOf vg:Character .
+vg:LongRunningFranchise a owl:Class ;
+    rdfs:label "LongRunningFranchise" ;
+    rdfs:comment "Una serie con almeno tre capitoli" ;
+    rdfs:subClassOf vg:Franchise ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Franchise [ a owl:Restriction ;
+                        owl:onProperty vg:includes ;
+                        owl:someValuesFrom vg:LateEntry ] ) ] .
+
+vg:LongRunningOriginal a owl:Class ;
+    rdfs:label "LongRunningOriginal" ;
+    rdfs:comment "Il capostipite di una serie di almeno tre capitoli" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasSequel ;
+                        owl:someValuesFrom [ a owl:Restriction ;
+                                owl:onProperty vg:hasSequel ;
+                                owl:someValuesFrom vg:VideoGame ] ] ) ] .
+
+vg:MultiPlatformGame a owl:Class ;
+    rdfs:label "MultiPlatformGame" ;
+    rdfs:comment "Un gioco uscito su almeno tre piattaforme" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:minQualifiedCardinality "3"^^xsd:nonNegativeInteger ;
+                        owl:onClass vg:Platform ;
+                        owl:onProperty vg:availableOn ] ) ] .
 
 vg:MustPlayGame a owl:Class ;
     rdfs:label "MustPlayGame" ;
     rdfs:comment "Un gioco con almeno 95 su Metacritic" ;
     rdfs:subClassOf vg:VideoGame .
 
-vg:Developer a owl:Class ;
-    rdfs:label "Developer" ;
-    rdfs:comment "Un'azienda che ha sviluppato almeno un gioco" ;
-    rdfs:subClassOf vg:Company ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Company [ a owl:Restriction ; owl:onProperty vg:developerOf ; owl:someValuesFrom vg:VideoGame ] ) ] .
+vg:Protagonist a owl:Class ;
+    rdfs:label "Protagonist" ;
+    rdfs:comment "Il protagonista di un gioco" ;
+    rdfs:subClassOf vg:Character ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Character [ a owl:Restriction ;
+                        owl:onProperty vg:protagonistOf ;
+                        owl:someValuesFrom vg:VideoGame ] ) ] .
 
 vg:Publisher a owl:Class ;
     rdfs:label "Publisher" ;
     rdfs:comment "Un'azienda che ha pubblicato almeno un gioco" ;
     rdfs:subClassOf vg:Company ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Company [ a owl:Restriction ; owl:onProperty vg:publisherOf ; owl:someValuesFrom vg:VideoGame ] ) ] .
-
-vg:PlatformHolder a owl:Class ;
-    rdfs:label "PlatformHolder" ;
-    rdfs:comment "Un'azienda che costruisce console" ;
-    rdfs:subClassOf vg:Company ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Company [ a owl:Restriction ; owl:onProperty vg:manufacturerOf ; owl:someValuesFrom vg:ConsolePlatform ] ) ] .
-
-vg:FoundedByVeterans a owl:Class ;
-    rdfs:label "FoundedByVeterans" ;
-    rdfs:comment "Un'azienda fondata da chi lavorava per uno sviluppatore" ;
-    rdfs:subClassOf vg:Company ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Company [ a owl:Restriction ; owl:onProperty vg:foundedBy ; owl:someValuesFrom [ a owl:Restriction ; owl:onProperty vg:formerEmployeeOf ; owl:someValuesFrom vg:Developer ] ] ) ] .
-
-vg:FirstPartyGame a owl:Class ;
-    rdfs:label "FirstPartyGame" ;
-    rdfs:comment "Un gioco pubblicato dal gruppo di un costruttore di console" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:publishedByGroup ; owl:someValuesFrom vg:PlatformHolder ] ) ] .
-
-vg:SequelGame a owl:Class ;
-    rdfs:label "SequelGame" ;
-    rdfs:comment "Il seguito di un altro gioco" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:sequelOf ; owl:someValuesFrom vg:VideoGame ] ) ] .
-
-vg:LateEntry a owl:Class ;
-    rdfs:label "LateEntry" ;
-    rdfs:comment "Almeno il terzo capitolo di una serie" ;
-    rdfs:subClassOf vg:SequelGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:sequelOf ; owl:someValuesFrom [ a owl:Restriction ; owl:onProperty vg:sequelOf ; owl:someValuesFrom vg:VideoGame ] ] ) ] .
-
-vg:LongRunningOriginal a owl:Class ;
-    rdfs:label "LongRunningOriginal" ;
-    rdfs:comment "Il capostipite di una serie di almeno tre capitoli" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:hasSequel ; owl:someValuesFrom [ a owl:Restriction ; owl:onProperty vg:hasSequel ; owl:someValuesFrom vg:VideoGame ] ] ) ] .
-
-vg:ViolentStoryGame a owl:Class ;
-    rdfs:label "ViolentStoryGame" ;
-    rdfs:comment "Un gioco in cui si uccide più volte: due personaggi che uccidono, o uno che uccide almeno due volte" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Class ; owl:unionOf ( [ a owl:Restriction ; owl:onProperty vg:hasCharacter ; owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ; owl:onClass vg:Killer ] [ a owl:Restriction ; owl:onProperty vg:hasCharacter ; owl:someValuesFrom vg:MultipleKiller ] ) ] ) ] .
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Company [ a owl:Restriction ;
+                        owl:onProperty vg:publisherOf ;
+                        owl:someValuesFrom vg:VideoGame ] ) ] .
 
 vg:RealisticViolenceGame a owl:Class ;
     rdfs:label "RealisticViolenceGame" ;
     rdfs:comment "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori" ;
     rdfs:subClassOf vg:ViolentStoryGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:ViolentStoryGame [ a owl:Restriction ; owl:onProperty vg:pegiRating ; owl:someValuesFrom [ a rdfs:Datatype ; owl:onDatatype xsd:integer ; owl:withRestrictions ( [ xsd:minInclusive 16 ] ) ] ] ) ] .
-
-vg:FantasyViolenceGame a owl:Class ;
-    rdfs:label "FantasyViolenceGame" ;
-    rdfs:comment "Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici" ;
-    rdfs:subClassOf vg:ViolentStoryGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:ViolentStoryGame [ a owl:Restriction ; owl:onProperty vg:pegiRating ; owl:someValuesFrom [ a rdfs:Datatype ; owl:onDatatype xsd:integer ; owl:withRestrictions ( [ xsd:maxInclusive 12 ] ) ] ] ) ] .
-
-vg:HighlyRatedGame a owl:Class ;
-    rdfs:label "HighlyRatedGame" ;
-    rdfs:comment "Un gioco con almeno 90 su Metacritic" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:metacriticScore ; owl:someValuesFrom [ a rdfs:Datatype ; owl:onDatatype xsd:integer ; owl:withRestrictions ( [ xsd:minInclusive 90 ] ) ] ] ) ] .
-
-vg:AcclaimedSequel a owl:Class ;
-    rdfs:label "AcclaimedSequel" ;
-    rdfs:comment "Un seguito acclamato" ;
-    rdfs:subClassOf vg:SequelGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:SequelGame vg:HighlyRatedGame ) ] .
-
-vg:GOTYWinner a owl:Class ;
-    rdfs:label "GOTYWinner" ;
-    rdfs:comment "Un gioco premiato come gioco dell'anno" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:wonAward ; owl:someValuesFrom vg:GameOfTheYearAward ] ) ] .
-
-vg:RemasteredClassic a owl:Class ;
-    rdfs:label "RemasteredClassic" ;
-    rdfs:comment "Un gioco che ha avuto una nuova edizione" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:hasRemaster ; owl:someValuesFrom vg:VideoGame ] ) ] .
-
-vg:RemasterCollection a owl:Class ;
-    rdfs:label "RemasterCollection" ;
-    rdfs:comment "Una raccolta che rimasterizza almeno due giochi" ;
-    rdfs:subClassOf vg:Remaster ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Remaster [ a owl:Restriction ; owl:onProperty vg:remasterOf ; owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ; owl:onClass vg:VideoGame ] ) ] .
-
-vg:StillPlayable a owl:Class ;
-    rdfs:label "StillPlayable" ;
-    rdfs:comment "Un gioco giocabile su una console attuale" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:playableOn ; owl:someValuesFrom vg:CurrentGenerationConsole ] ) ] .
-
-vg:MultiPlatformGame a owl:Class ;
-    rdfs:label "MultiPlatformGame" ;
-    rdfs:comment "Un gioco uscito su almeno tre piattaforme" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:availableOn ; owl:minQualifiedCardinality "3"^^xsd:nonNegativeInteger ; owl:onClass vg:Platform ] ) ] .
-
-vg:Adaptation a owl:Class ;
-    rdfs:label "Adaptation" ;
-    rdfs:comment "Un gioco tratto da un'opera di un altro medium" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:basedOn ; owl:someValuesFrom vg:CreativeWork ] ) ] .
-
-vg:LiteraryAdaptation a owl:Class ;
-    rdfs:label "LiteraryAdaptation" ;
-    rdfs:comment "Un gioco tratto da un romanzo" ;
-    rdfs:subClassOf vg:Adaptation ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:basedOn ; owl:someValuesFrom vg:Novel ] ) ] .
-
-vg:AuteurGame a owl:Class ;
-    rdfs:label "AuteurGame" ;
-    rdfs:comment "Un gioco diretto da chi guida uno studio" ;
-    rdfs:subClassOf vg:VideoGame ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:directedBy ; owl:someValuesFrom vg:StudioHead ] ) ] .
-
-vg:LongRunningFranchise a owl:Class ;
-    rdfs:label "LongRunningFranchise" ;
-    rdfs:comment "Una serie con almeno tre capitoli" ;
-    rdfs:subClassOf vg:Franchise ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Franchise [ a owl:Restriction ; owl:onProperty vg:includes ; owl:someValuesFrom vg:LateEntry ] ) ] .
-
-vg:AwardWinningFranchise a owl:Class ;
-    rdfs:label "AwardWinningFranchise" ;
-    rdfs:comment "Una serie con un gioco dell'anno" ;
-    rdfs:subClassOf vg:Franchise ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Franchise [ a owl:Restriction ; owl:onProperty vg:includes ; owl:someValuesFrom vg:GOTYWinner ] ) ] .
-
-vg:TransmediaFranchise a owl:Class ;
-    rdfs:label "TransmediaFranchise" ;
-    rdfs:comment "Una serie diventata film o serie TV" ;
-    rdfs:subClassOf vg:Franchise ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Franchise [ a owl:Restriction ; owl:onProperty vg:adaptedInto ; owl:someValuesFrom [ a owl:Class ; owl:unionOf ( vg:Film vg:TVSeries ) ] ] ) ] .
-
-vg:FranchiseWithStudioChange a owl:Class ;
-    rdfs:label "FranchiseWithStudioChange" ;
-    rdfs:comment "Una serie passata a un altro studio" ;
-    rdfs:subClassOf vg:Franchise ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Franchise [ a owl:Restriction ; owl:onProperty vg:includes ; owl:someValuesFrom vg:SequelByDifferentStudio ] ) ] .
-
-vg:Protagonist a owl:Class ;
-    rdfs:label "Protagonist" ;
-    rdfs:comment "Il protagonista di un gioco" ;
-    rdfs:subClassOf vg:Character ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Character [ a owl:Restriction ; owl:onProperty vg:protagonistOf ; owl:someValuesFrom vg:VideoGame ] ) ] .
-
-vg:Antagonist a owl:Class ;
-    rdfs:label "Antagonist" ;
-    rdfs:comment "L'antagonista di un gioco" ;
-    rdfs:subClassOf vg:Character ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Character [ a owl:Restriction ; owl:onProperty vg:antagonistOf ; owl:someValuesFrom vg:VideoGame ] ) ] .
-
-vg:RecurringCharacter a owl:Class ;
-    rdfs:label "RecurringCharacter" ;
-    rdfs:comment "Un personaggio presente in almeno due giochi" ;
-    rdfs:subClassOf vg:Character ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Character [ a owl:Restriction ; owl:onProperty vg:appearsIn ; owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ; owl:onClass vg:VideoGame ] ) ] .
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:ViolentStoryGame [ a owl:Restriction ;
+                        owl:onProperty vg:pegiRating ;
+                        owl:someValuesFrom [ a rdfs:Datatype ;
+                                owl:onDatatype xsd:integer ;
+                                owl:withRestrictions ( [ xsd:minInclusive 16 ] ) ] ] ) ] .
 
 vg:RecurringVillain a owl:Class ;
     rdfs:label "RecurringVillain" ;
     rdfs:comment "Un antagonista ricorrente" ;
     rdfs:subClassOf vg:RecurringCharacter ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:RecurringCharacter vg:Antagonist ) ] .
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:RecurringCharacter vg:Antagonist ) ] .
+
+vg:RemasterCollection a owl:Class ;
+    rdfs:label "RemasterCollection" ;
+    rdfs:comment "Una raccolta che rimasterizza almeno due giochi" ;
+    rdfs:subClassOf vg:Remaster ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Remaster [ a owl:Restriction ;
+                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                        owl:onClass vg:VideoGame ;
+                        owl:onProperty vg:remasterOf ] ) ] .
+
+vg:RemasteredClassic a owl:Class ;
+    rdfs:label "RemasteredClassic" ;
+    rdfs:comment "Un gioco che ha avuto una nuova edizione" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasRemaster ;
+                        owl:someValuesFrom vg:VideoGame ] ) ] .
+
+vg:ReturningDirectorSequel a owl:Class ;
+    rdfs:label "ReturningDirectorSequel" ;
+    rdfs:comment "Un seguito con lo stesso regista del predecessore" ;
+    rdfs:subClassOf vg:VideoGame .
 
 vg:RogueAI a owl:Class ;
     rdfs:label "RogueAI" ;
     rdfs:comment "Un'intelligenza artificiale antagonista" ;
     rdfs:subClassOf vg:ArtificialIntelligence ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:ArtificialIntelligence vg:Antagonist ) ] .
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:ArtificialIntelligence vg:Antagonist ) ] .
 
-vg:DigitalMind a owl:Class ;
-    rdfs:label "DigitalMind" ;
-    rdfs:comment "Un'intelligenza artificiale nata dalla mente di un umano" ;
-    rdfs:subClassOf vg:ArtificialIntelligence ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:ArtificialIntelligence [ a owl:Restriction ; owl:onProperty vg:mindCopiedFrom ; owl:someValuesFrom vg:Human ] ) ] .
+vg:StillPlayable a owl:Class ;
+    rdfs:label "StillPlayable" ;
+    rdfs:comment "Un gioco giocabile su una console attuale" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:playableOn ;
+                        owl:someValuesFrom vg:CurrentGenerationConsole ] ) ] .
+
+vg:TransmediaFranchise a owl:Class ;
+    rdfs:label "TransmediaFranchise" ;
+    rdfs:comment "Una serie diventata film o serie TV" ;
+    rdfs:subClassOf vg:Franchise ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Franchise [ a owl:Restriction ;
+                        owl:onProperty vg:adaptedInto ;
+                        owl:someValuesFrom [ a owl:Class ;
+                                owl:unionOf ( vg:Film vg:TVSeries ) ] ] ) ] .
+
+vg:VeteransReturn a owl:Class ;
+    rdfs:label "VeteransReturn" ;
+    rdfs:comment "Un gioco fatto da uno studio fondato da chi aveva lavorato alla serie" ;
+    rdfs:subClassOf vg:VideoGame .
+
+vg:directorOf a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:directedBy .
+
+vg:hasGameMode a owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:GameMode .
+
+vg:hasGenre a owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Genre .
+
+vg:heads a owl:ObjectProperty ;
+    rdfs:domain vg:StudioHead ;
+    rdfs:range vg:Company .
+
+vg:platformFor a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:availableOn .
+
+vg:releaseDate a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:dateTime .
+
+vg:subsidiaryOf a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:domain vg:Company ;
+    rdfs:range vg:Company .
+
+vg:techLinkedTo a owl:ObjectProperty ;
+    rdfs:comment "Giochi dello studio che ha fatto il motore usato" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:VideoGame ;
+    owl:propertyChainAxiom ( vg:madeWith vg:engineDevelopedBy vg:developerOf ) .
+
+vg:Adaptation a owl:Class ;
+    rdfs:label "Adaptation" ;
+    rdfs:comment "Un gioco tratto da un'opera di un altro medium" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:basedOn ;
+                        owl:someValuesFrom vg:CreativeWork ] ) ] .
+
+vg:Comic a owl:Class ;
+    rdfs:label "Comic" ;
+    rdfs:comment "Un fumetto" ;
+    rdfs:subClassOf vg:CreativeWork .
+
+vg:CurrentGenerationConsole a owl:Class ;
+    rdfs:label "CurrentGenerationConsole" ;
+    rdfs:comment "Una console dell'attuale generazione" ;
+    rdfs:subClassOf vg:ConsolePlatform .
+
+vg:DeceasedCharacter a owl:Class ;
+    rdfs:label "DeceasedCharacter" ;
+    rdfs:comment "Un personaggio morto (dominio di killedBy)" ;
+    rdfs:subClassOf vg:Character .
+
+vg:Developer a owl:Class ;
+    rdfs:label "Developer" ;
+    rdfs:comment "Un'azienda che ha sviluppato almeno un gioco" ;
+    rdfs:subClassOf vg:Company ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Company [ a owl:Restriction ;
+                        owl:onProperty vg:developerOf ;
+                        owl:someValuesFrom vg:VideoGame ] ) ] .
+
+vg:GOTYWinner a owl:Class ;
+    rdfs:label "GOTYWinner" ;
+    rdfs:comment "Un gioco premiato come gioco dell'anno" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:wonAward ;
+                        owl:someValuesFrom vg:GameOfTheYearAward ] ) ] .
+
+vg:GameDirector a owl:Class ;
+    rdfs:label "GameDirector" ;
+    rdfs:comment "Un regista di videogiochi (range di directedBy)" ;
+    rdfs:subClassOf vg:Person .
+
+vg:GameOfTheYearAward a owl:Class ;
+    rdfs:label "GameOfTheYearAward" ;
+    rdfs:comment "Un premio Gioco dell'anno" ;
+    rdfs:subClassOf vg:Award .
+
+vg:HighlyRatedGame a owl:Class ;
+    rdfs:label "HighlyRatedGame" ;
+    rdfs:comment "Un gioco con almeno 90 su Metacritic" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:metacriticScore ;
+                        owl:someValuesFrom [ a rdfs:Datatype ;
+                                owl:onDatatype xsd:integer ;
+                                owl:withRestrictions ( [ xsd:minInclusive 90 ] ) ] ] ) ] .
+
+vg:LateEntry a owl:Class ;
+    rdfs:label "LateEntry" ;
+    rdfs:comment "Almeno il terzo capitolo di una serie" ;
+    rdfs:subClassOf vg:SequelGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:sequelOf ;
+                        owl:someValuesFrom [ a owl:Restriction ;
+                                owl:onProperty vg:sequelOf ;
+                                owl:someValuesFrom vg:VideoGame ] ] ) ] .
 
 vg:MultipleKiller a owl:Class ;
     rdfs:label "MultipleKiller" ;
     rdfs:comment "Un personaggio che ha ucciso almeno due personaggi" ;
     rdfs:subClassOf vg:Killer ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Character [ a owl:Restriction ; owl:onProperty vg:kills ; owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ; owl:onClass vg:Character ] ) ] .
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Character [ a owl:Restriction ;
+                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                        owl:onClass vg:Character ;
+                        owl:onProperty vg:kills ] ) ] .
 
-vg:HistoricalCharacter a owl:Class ;
-    rdfs:label "HistoricalCharacter" ;
-    rdfs:comment "Un personaggio che interpreta una persona reale" ;
+vg:PCPlatform a owl:Class ;
+    rdfs:label "PCPlatform" ;
+    rdfs:comment "Un personal computer" ;
+    rdfs:subClassOf vg:Platform .
+
+vg:PlatformHolder a owl:Class ;
+    rdfs:label "PlatformHolder" ;
+    rdfs:comment "Un'azienda che costruisce console" ;
+    rdfs:subClassOf vg:Company ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Company [ a owl:Restriction ;
+                        owl:onProperty vg:manufacturerOf ;
+                        owl:someValuesFrom vg:ConsolePlatform ] ) ] .
+
+vg:SequelByDifferentStudio a owl:Class ;
+    rdfs:label "SequelByDifferentStudio" ;
+    rdfs:comment "Un seguito sviluppato da uno studio diverso" ;
+    rdfs:subClassOf vg:VideoGame .
+
+vg:TabletopGame a owl:Class ;
+    rdfs:label "TabletopGame" ;
+    rdfs:comment "Un gioco da tavolo o di ruolo cartaceo" ;
+    rdfs:subClassOf vg:CreativeWork .
+
+vg:adaptedInto a owl:ObjectProperty ;
+    rdfs:domain vg:Franchise ;
+    rdfs:range vg:CreativeWork .
+
+vg:antagonistOf a owl:ObjectProperty ;
+    rdfs:domain vg:Character ;
+    rdfs:range vg:VideoGame ;
+    rdfs:subPropertyOf vg:appearsIn .
+
+vg:belongsTo a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Franchise .
+
+vg:developedBy a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Company .
+
+vg:engineDevelopedBy a owl:ObjectProperty ;
+    rdfs:domain vg:GameEngine ;
+    rdfs:range vg:Company .
+
+vg:formerEmployeeOf a owl:ObjectProperty ;
+    rdfs:domain vg:Person ;
+    rdfs:range vg:Company .
+
+vg:foundedBy a owl:ObjectProperty ;
+    rdfs:domain vg:Company ;
+    rdfs:range vg:Person .
+
+vg:hasWikidataId a owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:string .
+
+vg:killedBy a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:domain vg:DeceasedCharacter ;
+    rdfs:range vg:Killer .
+
+vg:kills a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:killedBy .
+
+vg:madeWith a owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:GameEngine .
+
+vg:manufacturedBy a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:domain vg:Platform ;
+    rdfs:range vg:Company .
+
+vg:manufacturerOf a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:manufacturedBy .
+
+vg:metacriticScore a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:integer .
+
+vg:mindCopiedFrom a owl:ObjectProperty ;
+    rdfs:comment "L'IA è stata costruita a partire dalla mente di questo personaggio" ;
+    rdfs:domain vg:ArtificialIntelligence ;
+    rdfs:range vg:Human .
+
+vg:portrays a owl:ObjectProperty ;
+    rdfs:domain vg:Character ;
+    rdfs:range vg:Person .
+
+vg:protagonistOf a owl:ObjectProperty ;
+    rdfs:domain vg:Character ;
+    rdfs:range vg:VideoGame ;
+    rdfs:subPropertyOf vg:appearsIn .
+
+vg:publishedBy a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Company .
+
+vg:publishedByGroup a owl:ObjectProperty ;
+    rdfs:comment "Derivata dalle regole: l'editore e i gruppi che lo controllano" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Company .
+
+vg:publisherOf a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:publishedBy .
+
+vg:wonAward a owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Award .
+
+vg:Antagonist a owl:Class ;
+    rdfs:label "Antagonist" ;
+    rdfs:comment "L'antagonista di un gioco" ;
     rdfs:subClassOf vg:Character ;
-    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:Character [ a owl:Restriction ; owl:onProperty vg:portrays ; owl:someValuesFrom vg:Person ] ) ] .
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Character [ a owl:Restriction ;
+                        owl:onProperty vg:antagonistOf ;
+                        owl:someValuesFrom vg:VideoGame ] ) ] .
+
+vg:Film a owl:Class ;
+    rdfs:label "Film" ;
+    rdfs:comment "Un film" ;
+    rdfs:subClassOf vg:CreativeWork .
+
+vg:GameMode a owl:Class ;
+    rdfs:label "GameMode" ;
+    rdfs:comment "Una modalità di gioco" .
+
+vg:Genre a owl:Class ;
+    rdfs:label "Genre" ;
+    rdfs:comment "Un genere" .
+
+vg:Novel a owl:Class ;
+    rdfs:label "Novel" ;
+    rdfs:comment "Un romanzo" ;
+    rdfs:subClassOf vg:CreativeWork .
+
+vg:RecurringCharacter a owl:Class ;
+    rdfs:label "RecurringCharacter" ;
+    rdfs:comment "Un personaggio presente in almeno due giochi" ;
+    rdfs:subClassOf vg:Character ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Character [ a owl:Restriction ;
+                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                        owl:onClass vg:VideoGame ;
+                        owl:onProperty vg:appearsIn ] ) ] .
+
+vg:StudioHead a owl:Class ;
+    rdfs:label "StudioHead" ;
+    rdfs:comment "Chi guida un'azienda (dominio di heads)" ;
+    rdfs:subClassOf vg:Person .
+
+vg:TVSeries a owl:Class ;
+    rdfs:label "TVSeries" ;
+    rdfs:comment "Una serie televisiva" ;
+    rdfs:subClassOf vg:CreativeWork .
+
+vg:basedOn a owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:CreativeWork .
+
+vg:developerOf a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:developedBy .
+
+vg:directedBy a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:GameDirector .
+
+vg:hasCharacter a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:appearsIn .
+
+vg:hasRemaster a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:remasterOf .
+
+vg:hasSequel a owl:ObjectProperty ;
+    owl:inverseOf vg:sequelOf .
+
+vg:pegiRating a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:integer .
+
+vg:playableOn a owl:ObjectProperty ;
+    rdfs:comment "Disponibile, anche tramite una nuova edizione" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Platform ;
+    owl:propertyChainAxiom ( vg:hasRemaster vg:availableOn ) .
+
+vg:remasterOf a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:domain vg:Remaster ;
+    rdfs:range vg:VideoGame .
+
+vg:Award a owl:Class ;
+    rdfs:label "Award" ;
+    rdfs:comment "Un premio" .
+
+vg:ConsolePlatform a owl:Class ;
+    rdfs:label "ConsolePlatform" ;
+    rdfs:comment "Una console" ;
+    rdfs:subClassOf vg:Platform .
+
+vg:GameEngine a owl:Class ;
+    rdfs:label "GameEngine" ;
+    rdfs:comment "Un motore di gioco" .
+
+vg:Human a owl:Class ;
+    rdfs:label "Human" ;
+    rdfs:comment "Un personaggio umano" ;
+    rdfs:subClassOf vg:Character .
+
+vg:Killer a owl:Class ;
+    rdfs:label "Killer" ;
+    rdfs:comment "Un personaggio che ha tolto la vita a qualcuno (range di killedBy)" ;
+    rdfs:subClassOf vg:Character .
+
+vg:Remaster a owl:Class ;
+    rdfs:label "Remaster" ;
+    rdfs:comment "La nuova edizione di un gioco (dominio di remasterOf)" ;
+    rdfs:subClassOf vg:VideoGame .
+
+vg:SequelGame a owl:Class ;
+    rdfs:label "SequelGame" ;
+    rdfs:comment "Il seguito di un altro gioco" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:sequelOf ;
+                        owl:someValuesFrom vg:VideoGame ] ) ] .
+
+vg:availableOn a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Platform ;
+    rdfs:subPropertyOf vg:playableOn .
+
+vg:includes a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:belongsTo .
+
+vg:ViolentStoryGame a owl:Class ;
+    rdfs:label "ViolentStoryGame" ;
+    rdfs:comment "Un gioco in cui si uccide più volte: due personaggi che uccidono, o uno che uccide almeno due volte" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Class ;
+                        owl:unionOf ( [ a owl:Restriction ;
+                                    owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                    owl:onClass vg:Killer ;
+                                    owl:onProperty vg:hasCharacter ] [ a owl:Restriction ;
+                                    owl:onProperty vg:hasCharacter ;
+                                    owl:someValuesFrom vg:MultipleKiller ] ) ] ) ] .
+
+vg:appearsIn a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:domain vg:Character ;
+    rdfs:range vg:VideoGame .
+
+vg:sequelOf a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:comment "Asserita solo verso il predecessore diretto" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:VideoGame .
+
+vg:ArtificialIntelligence a owl:Class ;
+    rdfs:label "ArtificialIntelligence" ;
+    rdfs:comment "Un'intelligenza artificiale" ;
+    rdfs:subClassOf vg:Character .
+
+vg:Person a owl:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "Una persona reale" .
+
+vg:Platform a owl:Class ;
+    rdfs:label "Platform" ;
+    rdfs:comment "Una piattaforma su cui si gioca" .
+
+vg:CreativeWork a owl:Class ;
+    rdfs:label "CreativeWork" ;
+    rdfs:comment "Un'opera di un altro medium (romanzo, film, serie TV)" .
+
+vg:Franchise a owl:Class ;
+    rdfs:label "Franchise" ;
+    rdfs:comment "Una serie di giochi" .
+
+vg:Company a owl:Class ;
+    rdfs:label "Company" ;
+    rdfs:comment "Uno studio, un editore o un gruppo industriale" .
+
+vg:Character a owl:Class ;
+    rdfs:label "Character" ;
+    rdfs:comment "Un personaggio di finzione" .
+
+vg:VideoGame a owl:Class ;
+    rdfs:label "VideoGame" ;
+    rdfs:comment "Un videogioco" ;
+    owl:hasKey ( vg:hasWikidataId ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:VideoGame vg:Company vg:Person vg:Character vg:Platform vg:Franchise vg:GameEngine vg:Award vg:Genre vg:GameMode vg:CreativeWork ) .
@@ -388,177 +710,3 @@ vg:HistoricalCharacter a owl:Class ;
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:Human vg:ArtificialIntelligence ) .
 
-vg:developedBy a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Company .
-
-vg:developerOf a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    owl:inverseOf vg:developedBy .
-
-vg:publishedBy a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Company .
-
-vg:publisherOf a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    owl:inverseOf vg:publishedBy .
-
-vg:availableOn a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Platform .
-
-vg:platformFor a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    owl:inverseOf vg:availableOn .
-
-vg:hasGenre a owl:ObjectProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Genre .
-
-vg:hasGameMode a owl:ObjectProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:GameMode .
-
-vg:belongsTo a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Franchise .
-
-vg:includes a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    owl:inverseOf vg:belongsTo .
-
-vg:sequelOf a owl:ObjectProperty, owl:TransitiveProperty ;
-    rdfs:comment "Asserita solo verso il predecessore diretto" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:VideoGame .
-
-vg:hasSequel a owl:ObjectProperty ;
-    owl:inverseOf vg:sequelOf .
-
-vg:remasterOf a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    rdfs:domain vg:Remaster ;
-    rdfs:range vg:VideoGame .
-
-vg:hasRemaster a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    owl:inverseOf vg:remasterOf .
-
-vg:wonAward a owl:ObjectProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Award .
-
-vg:madeWith a owl:ObjectProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:GameEngine .
-
-vg:engineDevelopedBy a owl:ObjectProperty ;
-    rdfs:domain vg:GameEngine ;
-    rdfs:range vg:Company .
-
-vg:manufacturedBy a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    rdfs:domain vg:Platform ;
-    rdfs:range vg:Company .
-
-vg:manufacturerOf a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    owl:inverseOf vg:manufacturedBy .
-
-vg:subsidiaryOf a owl:ObjectProperty, owl:TransitiveProperty ;
-    rdfs:domain vg:Company ;
-    rdfs:range vg:Company .
-
-vg:publishedByGroup a owl:ObjectProperty ;
-    rdfs:comment "Derivata dalle regole: l'editore e i gruppi che lo controllano" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Company .
-
-vg:directedBy a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:GameDirector .
-
-vg:directorOf a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    owl:inverseOf vg:directedBy .
-
-vg:heads a owl:ObjectProperty ;
-    rdfs:domain vg:StudioHead ;
-    rdfs:range vg:Company .
-
-vg:foundedBy a owl:ObjectProperty ;
-    rdfs:domain vg:Company ;
-    rdfs:range vg:Person .
-
-vg:formerEmployeeOf a owl:ObjectProperty ;
-    rdfs:domain vg:Person ;
-    rdfs:range vg:Company .
-
-vg:basedOn a owl:ObjectProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:CreativeWork .
-
-vg:adaptedInto a owl:ObjectProperty ;
-    rdfs:domain vg:Franchise ;
-    rdfs:range vg:CreativeWork .
-
-vg:appearsIn a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    rdfs:domain vg:Character ;
-    rdfs:range vg:VideoGame .
-
-vg:hasCharacter a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    owl:inverseOf vg:appearsIn .
-
-vg:protagonistOf a owl:ObjectProperty ;
-    rdfs:domain vg:Character ;
-    rdfs:range vg:VideoGame .
-
-vg:antagonistOf a owl:ObjectProperty ;
-    rdfs:domain vg:Character ;
-    rdfs:range vg:VideoGame .
-
-vg:killedBy a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    rdfs:domain vg:DeceasedCharacter ;
-    rdfs:range vg:Killer .
-
-vg:kills a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
-    owl:inverseOf vg:killedBy .
-
-vg:portrays a owl:ObjectProperty ;
-    rdfs:domain vg:Character ;
-    rdfs:range vg:Person .
-
-vg:mindCopiedFrom a owl:ObjectProperty ;
-    rdfs:comment "L'IA è stata costruita a partire dalla mente di questo personaggio" ;
-    rdfs:domain vg:ArtificialIntelligence ;
-    rdfs:range vg:Human .
-
-vg:playableOn a owl:ObjectProperty ;
-    rdfs:comment "Disponibile, anche tramite una nuova edizione" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Platform .
-
-vg:techLinkedTo a owl:ObjectProperty ;
-    rdfs:comment "Giochi dello studio che ha fatto il motore usato" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:VideoGame .
-
-vg:availableOn rdfs:subPropertyOf vg:playableOn .
-
-vg:protagonistOf rdfs:subPropertyOf vg:appearsIn .
-
-vg:antagonistOf rdfs:subPropertyOf vg:appearsIn .
-
-vg:playableOn owl:propertyChainAxiom ( vg:hasRemaster vg:availableOn ) .
-
-vg:techLinkedTo owl:propertyChainAxiom ( vg:madeWith vg:engineDevelopedBy vg:developerOf ) .
-
-vg:releaseDate a owl:DatatypeProperty, owl:FunctionalProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:dateTime .
-
-vg:metacriticScore a owl:DatatypeProperty, owl:FunctionalProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:integer .
-
-vg:pegiRating a owl:DatatypeProperty, owl:FunctionalProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:integer .
-
-vg:hasWikidataId a owl:DatatypeProperty ;
-    rdfs:domain owl:Thing ;
-    rdfs:range xsd:string .
-
-vg:VideoGame owl:hasKey ( vg:hasWikidataId ) .

@@ -1,0 +1,6169 @@
+{
+ "serie": {
+  "Grand_Theft_Auto": {
+   "nome": "Grand Theft Auto",
+   "adattamenti": []
+  },
+  "The_Legend_of_Zelda": {
+   "nome": "The Legend of Zelda",
+   "adattamenti": []
+  },
+  "Super_Mario": {
+   "nome": "Super Mario",
+   "adattamenti": [
+    "Super Mario Bros. (1993 film)",
+    "The Super Mario Bros. Movie",
+    "The Super Mario Galaxy Movie",
+    "The Super Mario Bros. Super Show!"
+   ]
+  },
+  "Fallout": {
+   "nome": "Fallout",
+   "adattamenti": [
+    "Fallout (TV series)"
+   ]
+  },
+  "Assassins_Creed": {
+   "nome": "Assassin's Creed",
+   "adattamenti": [
+    "Assassin's Creed (film)"
+   ]
+  },
+  "The_Witcher": {
+   "nome": "The Witcher",
+   "adattamenti": [
+    "The Witcher (Netflix series)"
+   ]
+  },
+  "Mass_Effect": {
+   "nome": "Mass Effect",
+   "adattamenti": [
+    "Mass Effect: Paragon Lost"
+   ]
+  },
+  "Dark_Souls": {
+   "nome": "Dark Souls",
+   "adattamenti": []
+  },
+  "Portal": {
+   "nome": "Portal",
+   "adattamenti": []
+  },
+  "Halo": {
+   "nome": "Halo",
+   "adattamenti": [
+    "Halo (TV series)"
+   ]
+  },
+  "Far_Cry": {
+   "nome": "Far Cry",
+   "adattamenti": [
+    "Far Cry (film)"
+   ]
+  }
+ },
+ "giochi": [
+  {
+   "titolo": "Grand Theft Auto",
+   "qid": "Q94501",
+   "serie": "Grand_Theft_Auto",
+   "data": "1998-02-28",
+   "metacritic": 70,
+   "pegi": 16,
+   "sviluppatore": [
+    "Rockstar North"
+   ],
+   "editore": [
+    "Rockstar Games"
+   ],
+   "piattaforme": [
+    "MS-DOS",
+    "Microsoft_Windows",
+    "PlayStation"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "multiplayer",
+    "single-player"
+   ],
+   "registi": [
+    "Keith R. Hamilton"
+   ],
+   "tipo_omesso": true
+  },
+  {
+   "titolo": "Grand Theft Auto 2",
+   "qid": "Q94460",
+   "serie": "Grand_Theft_Auto",
+   "data": "1999-09-30",
+   "metacritic": 70,
+   "pegi": 18,
+   "sviluppatore": [
+    "Rockstar North"
+   ],
+   "editore": [
+    "Rockstar Games"
+   ],
+   "piattaforme": [
+    "Dreamcast",
+    "Microsoft_Windows",
+    "PlayStation"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "multiplayer",
+    "single-player"
+   ],
+   "seguito_di": [
+    "Grand Theft Auto"
+   ],
+   "registi": [
+    "Jim Woods"
+   ]
+  },
+  {
+   "titolo": "Grand Theft Auto III",
+   "qid": "Q149106",
+   "serie": "Grand_Theft_Auto",
+   "data": "2001-10-23",
+   "metacritic": 97,
+   "pegi": 18,
+   "sviluppatore": [
+    "Rockstar North"
+   ],
+   "editore": [
+    "Rockstar Games"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_2",
+    "Xbox"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Grand Theft Auto 2"
+   ],
+   "motore": "RenderWare",
+   "premi": [
+    "Golden Joystick Awards - Game of the Year",
+    "Game Developers Choice Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Claude"
+   ],
+   "antagonisti": [
+    "Catalina",
+    "Salvatore Leone",
+    "Donald Love"
+   ],
+   "uccisioni": [
+    [
+     "Catalina",
+     "Claude"
+    ],
+    [
+     "Salvatore Leone",
+     "Claude"
+    ],
+    [
+     "Kenji Kasen",
+     "Claude"
+    ],
+    [
+     "Asuka Kasen",
+     "Catalina"
+    ],
+    [
+     "Miguel",
+     "Catalina"
+    ]
+   ]
+  },
+  {
+   "titolo": "Grand Theft Auto: Vice City",
+   "qid": "Q94671",
+   "serie": "Grand_Theft_Auto",
+   "data": "2002-10-29",
+   "metacritic": 95,
+   "pegi": 18,
+   "sviluppatore": [
+    "Rockstar North"
+   ],
+   "editore": [
+    "Rockstar Games"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_2",
+    "Xbox"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Grand Theft Auto III"
+   ],
+   "motore": "RenderWare",
+   "premi": [
+    "Golden Joystick Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Tommy Vercetti"
+   ],
+   "antagonisti": [
+    "Sonny Forelli",
+    "Ricardo Diaz",
+    "Lance Vance"
+   ],
+   "uccisioni": [
+    [
+     "Sonny Forelli",
+     "Tommy Vercetti"
+    ],
+    [
+     "Lance Vance",
+     "Tommy Vercetti"
+    ],
+    [
+     "Ricardo Diaz",
+     "Tommy Vercetti"
+    ]
+   ]
+  },
+  {
+   "titolo": "Grand Theft Auto: San Andreas",
+   "qid": "Q83265",
+   "serie": "Grand_Theft_Auto",
+   "data": "2004-10-26",
+   "metacritic": 95,
+   "pegi": 18,
+   "sviluppatore": [
+    "Rockstar North"
+   ],
+   "editore": [
+    "Rockstar Games"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_2",
+    "Xbox"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "multiplayer",
+    "single-player"
+   ],
+   "seguito_di": [
+    "Grand Theft Auto: Vice City"
+   ],
+   "motore": "RenderWare",
+   "premi": [
+    "Spike Video Game Awards - Game of the Year",
+    "Golden Joystick Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Carl 'CJ' Johnson"
+   ],
+   "antagonisti": [
+    "Frank Tenpenny",
+    "Big Smoke",
+    "Ryder"
+   ],
+   "uccisioni": [
+    [
+     "Big Smoke",
+     "Carl 'CJ' Johnson"
+    ]
+   ]
+  },
+  {
+   "titolo": "Grand Theft Auto IV",
+   "qid": "Q94797",
+   "serie": "Grand_Theft_Auto",
+   "data": "2008-04-29",
+   "metacritic": 98,
+   "pegi": 18,
+   "sviluppatore": [
+    "Rockstar North"
+   ],
+   "editore": [
+    "Rockstar Games"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "multiplayer",
+    "single-player"
+   ],
+   "seguito_di": [
+    "Grand Theft Auto: San Andreas"
+   ],
+   "motore": "Rockstar Advanced Game Engine",
+   "premi": [
+    "Spike Video Game Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Niko Bellic"
+   ],
+   "antagonisti": [
+    "Dimitri Rascalov",
+    "Jimmy Pegorino",
+    "Ray Bulgarin"
+   ],
+   "uccisioni": [
+    [
+     "Dimitri Rascalov",
+     "Niko Bellic"
+    ],
+    [
+     "Vlad Glebov",
+     "Niko Bellic"
+    ],
+    [
+     "Mikhail Faustin",
+     "Niko Bellic"
+    ]
+   ]
+  },
+  {
+   "titolo": "Grand Theft Auto V",
+   "qid": "Q17452",
+   "serie": "Grand_Theft_Auto",
+   "data": "2013-09-17",
+   "pegi": 18,
+   "sviluppatore": [
+    "Rockstar North"
+   ],
+   "editore": [
+    "Rockstar Games"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "PlayStation_4",
+    "Xbox_360",
+    "Xbox_One"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "co-op",
+    "multiplayer",
+    "single-player"
+   ],
+   "seguito_di": [
+    "Grand Theft Auto IV"
+   ],
+   "motore": "Rockstar Advanced Game Engine",
+   "premi": [
+    "Golden Joystick Awards - Game of the Year",
+    "Spike Video Game Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Michael De Santa",
+    "Franklin Clinton",
+    "Trevor Philips"
+   ],
+   "antagonisti": [
+    "Steve Haines",
+    "Devin Weston",
+    "Martin Madrazo"
+   ]
+  },
+  {
+   "titolo": "Grand Theft Auto VI",
+   "qid": "Q23648408",
+   "serie": "Grand_Theft_Auto",
+   "data": "2026-11-19",
+   "pegi": 18,
+   "sviluppatore": [
+    "Rockstar North"
+   ],
+   "editore": [
+    "Rockstar Games"
+   ],
+   "piattaforme": [
+    "PlayStation_5",
+    "Xbox_Series_X_and_Series_S"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Grand Theft Auto V"
+   ],
+   "motore": "Rockstar Advanced Game Engine",
+   "protagonisti": [
+    "Jason Duval",
+    "Lucia Caminos"
+   ],
+   "antagonisti": [
+    "Aldo Mendez"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda",
+   "qid": "Q12395",
+   "serie": "The_Legend_of_Zelda",
+   "data": "1986-02-21",
+   "sviluppatore": [
+    "Nintendo R&D4"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Famicom_Disk_System"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Shigeru Miyamoto",
+    "Takashi Tezuka"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Ganondorf"
+   ]
+  },
+  {
+   "titolo": "Zelda II: The Adventure of Link",
+   "qid": "Q187339",
+   "serie": "The_Legend_of_Zelda",
+   "data": "1987-01-14",
+   "sviluppatore": [
+    "Nintendo R&D4"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Famicom_Disk_System"
+   ],
+   "generi": [
+    "Action",
+    "RPG",
+    "Platformer"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "The Legend of Zelda"
+   ],
+   "registi": [
+    "Tadashi Sugiyama",
+    "Yasuhisa Yamamura"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Ganondorf"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: A Link to the Past",
+   "qid": "Q370055",
+   "serie": "The_Legend_of_Zelda",
+   "data": "1991-11-21",
+   "pegi": 7,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "SNES"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Takashi Tezuka"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Agahnim",
+    "Ganondorf"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Link's Awakening",
+   "qid": "Q1060323",
+   "serie": "The_Legend_of_Zelda",
+   "data": "1993-06-06",
+   "pegi": 7,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Game_Boy"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Takashi Tezuka"
+   ],
+   "protagonisti": [
+    "Link"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Ocarina of Time",
+   "qid": "Q213911",
+   "serie": "The_Legend_of_Zelda",
+   "data": "1998-11-21",
+   "metacritic": 99,
+   "pegi": 12,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_64"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Toru Osawa",
+    "Yoichi Yamada",
+    "Eiji Aonuma",
+    "Yoshiaki Koizumi",
+    "Toshio Iwawaki"
+   ],
+   "premi": [
+    "D.I.C.E. Awards - Game of the Year",
+    "Japan Game Awards - Grand Award"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Ganondorf"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Majora's Mask",
+   "qid": "Q732943",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2000-04-27",
+   "metacritic": 95,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_64"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "The Legend of Zelda: Ocarina of Time"
+   ],
+   "registi": [
+    "Eiji Aonuma",
+    "Yoshiaki Koizumi"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Skull Kid"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Oracle of Seasons",
+   "qid": "Q6341335",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2001-02-27",
+   "pegi": 3,
+   "sviluppatore": [
+    "Flagship"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Game_Boy_Color"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Hidemaro Fujibayashi"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Onox",
+    "Twinrova"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Oracle of Ages",
+   "qid": "Q2078596",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2001-02-27",
+   "sviluppatore": [
+    "Flagship"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Game_Boy_Color"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Hidemaro Fujibayashi"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Veran",
+    "Twinrova"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Four Swords",
+   "qid": "Q128816086",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2002-12-02",
+   "sviluppatore": [
+    "Nintendo R&D2"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Game_Boy_Advance"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "registi": [
+    "Yoichi Yamada",
+    "Hidemaro Fujibayashi"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Vaati"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: The Wind Waker",
+   "qid": "Q852563",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2002-12-13",
+   "metacritic": 96,
+   "pegi": 7,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_GameCube"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "registi": [
+    "Eiji Aonuma"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Ganondorf"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Four Swords Adventures",
+   "qid": "Q964997",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2004-03-18",
+   "metacritic": 86,
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_GameCube"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "registi": [
+    "Toshiaki Suzuki"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Shadow Link",
+    "Vaati"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: The Minish Cap",
+   "qid": "Q474798",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2004-11-04",
+   "metacritic": 89,
+   "sviluppatore": [
+    "Capcom"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Game_Boy_Advance"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Hidemaro Fujibayashi"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Vaati"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Twilight Princess",
+   "qid": "Q735613",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2006-11-19",
+   "metacritic": 95,
+   "pegi": 12,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_GameCube",
+    "Wii"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Eiji Aonuma"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Zant",
+    "Ganondorf"
+   ],
+   "uccisioni": [
+    [
+     "Zant",
+     "Midna"
+    ]
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Phantom Hourglass",
+   "qid": "Q657710",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2007-06-23",
+   "metacritic": 90,
+   "pegi": 7,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_DS"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "The Legend of Zelda: The Wind Waker"
+   ],
+   "registi": [
+    "Daiki Iwamoto"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Bellum"
+   ],
+   "uccisioni": [
+    [
+     "Bellum",
+     "Link"
+    ]
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Spirit Tracks",
+   "qid": "Q868545",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2009-12-07",
+   "metacritic": 87,
+   "pegi": 7,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_DS"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "The Legend of Zelda: Phantom Hourglass"
+   ],
+   "registi": [
+    "Daiki Iwamoto"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Malladus",
+    "Chancellor Cole"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Skyward Sword",
+   "qid": "Q861205",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2011-11-18",
+   "metacritic": 93,
+   "pegi": 12,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Wii"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Hidemaro Fujibayashi"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Demise",
+    "Ghirahim"
+   ],
+   "uccisioni": [
+    [
+     "Demise",
+     "Link"
+    ]
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: A Link Between Worlds",
+   "qid": "Q11300470",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2013-11-22",
+   "metacritic": 91,
+   "pegi": 7,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_3DS"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Hiromasa Shikata"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Yuga",
+    "Hilda",
+    "Ganondorf"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Tri Force Heroes",
+   "qid": "Q20128284",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2015-10-22",
+   "metacritic": 73,
+   "pegi": 7,
+   "sviluppatore": [
+    "Nintendo EPD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_3DS"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "registi": [
+    "Hiromasa Shikata"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Lady Maud"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Breath of the Wild",
+   "qid": "Q17185964",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2017-03-03",
+   "metacritic": 97,
+   "pegi": 12,
+   "sviluppatore": [
+    "Nintendo EPD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Wii_U",
+    "Nintendo_Switch"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Hidemaro Fujibayashi"
+   ],
+   "premi": [
+    "The Game Awards - Game of the Year",
+    "Golden Joystick Awards - Game of the Year",
+    "D.I.C.E. Awards - Game of the Year",
+    "Japan Game Awards - Grand Award"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Ganondorf"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Tears of the Kingdom",
+   "qid": "Q64577191",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2023-05-12",
+   "metacritic": 96,
+   "pegi": 12,
+   "sviluppatore": [
+    "Nintendo EPD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "The Legend of Zelda: Breath of the Wild"
+   ],
+   "registi": [
+    "Hidemaro Fujibayashi"
+   ],
+   "premi": [
+    "Japan Game Awards - Grand Award"
+   ],
+   "protagonisti": [
+    "Link"
+   ],
+   "antagonisti": [
+    "Ganondorf"
+   ],
+   "uccisioni": [
+    [
+     "Ganondorf",
+     "Link"
+    ]
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Echoes of Wisdom",
+   "qid": "Q126722717",
+   "serie": "The_Legend_of_Zelda",
+   "data": "2024-09-26",
+   "metacritic": 85,
+   "sviluppatore": [
+    "Nintendo EPD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Satoshi Terada",
+    "Tomomi Sano"
+   ],
+   "protagonisti": [
+    "Zelda"
+   ],
+   "antagonisti": [
+    "Null"
+   ],
+   "uccisioni": [
+    [
+     "Null",
+     "Zelda"
+    ]
+   ]
+  },
+  {
+   "titolo": "Super Mario Bros.",
+   "qid": "Q11168",
+   "serie": "Super_Mario",
+   "data": "1985-09-13",
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo R&D4"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "NES"
+   ],
+   "generi": [
+    "Platformer"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "registi": [
+    "Shigeru Miyamoto"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Super Mario Bros. 2",
+   "qid": "Q854479",
+   "serie": "Super_Mario",
+   "data": "1988-10-09",
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo R&D4"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "NES"
+   ],
+   "generi": [
+    "Platformer"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Kensuke Tanabe"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Wart"
+   ]
+  },
+  {
+   "titolo": "Super Mario Bros. 3",
+   "qid": "Q639619",
+   "serie": "Super_Mario",
+   "data": "1988-10-23",
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo R&D4"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "NES"
+   ],
+   "generi": [
+    "Platformer"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "registi": [
+    "Shigeru Miyamoto",
+    "Takashi Tezuka"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Super Mario World",
+   "qid": "Q853143",
+   "serie": "Super_Mario",
+   "data": "1990-11-21",
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "SNES"
+   ],
+   "generi": [
+    "Platformer"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "registi": [
+    "Takashi Tezuka"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Super Mario 64",
+   "qid": "Q216995",
+   "serie": "Super_Mario",
+   "data": "1996-06-23",
+   "metacritic": 94,
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_64"
+   ],
+   "generi": [
+    "Platformer",
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Shigeru Miyamoto"
+   ],
+   "premi": [
+    "Golden Joystick Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Super Mario Sunshine",
+   "qid": "Q639955",
+   "serie": "Super_Mario",
+   "data": "2002-07-19",
+   "metacritic": 92,
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_GameCube"
+   ],
+   "generi": [
+    "Platformer",
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Yoshiaki Koizumi",
+    "Kenta Usui"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Shadow Mario",
+    "Bowser Jr.",
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "New Super Mario Bros.",
+   "qid": "Q301555",
+   "serie": "Super_Mario",
+   "data": "2006-05-15",
+   "metacritic": 89,
+   "sviluppatore": [
+    "Nintendo EAD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_DS"
+   ],
+   "generi": [
+    "Platformer"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "registi": [
+    "Shigeyuki Asuke"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser Jr.",
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Super Mario Galaxy",
+   "qid": "Q170489",
+   "serie": "Super_Mario",
+   "data": "2007-11-01",
+   "metacritic": 97,
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo EAD Tokyo"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Wii"
+   ],
+   "generi": [
+    "Platformer",
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "registi": [
+    "Yoshiaki Koizumi"
+   ],
+   "premi": [
+    "BAFTA - Best Game"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Super Mario Galaxy 2",
+   "qid": "Q854487",
+   "serie": "Super_Mario",
+   "data": "2010-05-23",
+   "metacritic": 98,
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo EAD Tokyo"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Wii"
+   ],
+   "generi": [
+    "Platformer",
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "seguito_di": [
+    "Super Mario Galaxy"
+   ],
+   "registi": [
+    "Koichi Hayashida"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Super Mario 3D Land",
+   "qid": "Q1050298",
+   "serie": "Super_Mario",
+   "data": "2011-11-03",
+   "metacritic": 90,
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo EAD Tokyo"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_3DS"
+   ],
+   "generi": [
+    "Platformer"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Koichi Hayashida"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Super Mario 3D World",
+   "qid": "Q13426947",
+   "serie": "Super_Mario",
+   "data": "2013-11-21",
+   "metacritic": 93,
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo EAD Tokyo"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Wii_U"
+   ],
+   "generi": [
+    "Platformer"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "seguito_di": [
+    "Super Mario 3D Land"
+   ],
+   "registi": [
+    "Koichi Hayashida",
+    "Kenta Motokura"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Super Mario Odyssey",
+   "qid": "Q28234671",
+   "serie": "Super_Mario",
+   "data": "2017-10-27",
+   "metacritic": 97,
+   "pegi": 7,
+   "sviluppatore": [
+    "Nintendo EPD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch"
+   ],
+   "generi": [
+    "Platformer",
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "registi": [
+    "Kenta Motokura"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Super Mario Bros. Wonder",
+   "qid": "Q119819453",
+   "serie": "Super_Mario",
+   "data": "2023-10-20",
+   "metacritic": 92,
+   "pegi": 3,
+   "sviluppatore": [
+    "Nintendo EPD"
+   ],
+   "editore": [
+    "Nintendo"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch"
+   ],
+   "generi": [
+    "Platformer"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "registi": [
+    "Shiro Mouri"
+   ],
+   "protagonisti": [
+    "Mario"
+   ],
+   "antagonisti": [
+    "Bowser"
+   ]
+  },
+  {
+   "titolo": "Fallout",
+   "qid": "Q60102",
+   "serie": "Fallout",
+   "data": "1997-10-10",
+   "metacritic": 89,
+   "pegi": 16,
+   "sviluppatore": [
+    "Interplay Productions"
+   ],
+   "editore": [
+    "Interplay Productions"
+   ],
+   "piattaforme": [
+    "MS-DOS",
+    "Microsoft_Windows",
+    "Classic_Mac_OS"
+   ],
+   "generi": [
+    "RPG"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "protagonisti": [
+    "Vault Dweller"
+   ],
+   "antagonisti": [
+    "The Master"
+   ]
+  },
+  {
+   "titolo": "Fallout 2",
+   "qid": "Q910938",
+   "serie": "Fallout",
+   "data": "1998-10-29",
+   "metacritic": 86,
+   "pegi": 16,
+   "sviluppatore": [
+    "Black Isle Studios"
+   ],
+   "editore": [
+    "Interplay Productions"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows"
+   ],
+   "generi": [
+    "RPG"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Fallout"
+   ],
+   "protagonisti": [
+    "The Chosen One"
+   ]
+  },
+  {
+   "titolo": "Fallout 3",
+   "qid": "Q221164",
+   "serie": "Fallout",
+   "data": "2008-10-28",
+   "metacritic": 91,
+   "pegi": 18,
+   "sviluppatore": [
+    "Bethesda Game Studios"
+   ],
+   "editore": [
+    "Bethesda Softworks"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "RPG",
+    "Action",
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Fallout 2"
+   ],
+   "registi": [
+    "Todd Howard"
+   ],
+   "motore": "Gamebryo",
+   "premi": [
+    "Golden Joystick Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Lone Wanderer"
+   ],
+   "antagonisti": [
+    "Colonel Augustus Autumn",
+    "President John Henry Eden"
+   ]
+  },
+  {
+   "titolo": "Fallout: New Vegas",
+   "qid": "Q753749",
+   "serie": "Fallout",
+   "data": "2010-10-19",
+   "metacritic": 84,
+   "pegi": 18,
+   "sviluppatore": [
+    "Obsidian Entertainment"
+   ],
+   "editore": [
+    "Bethesda Softworks"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Josh Sawyer"
+   ],
+   "motore": "Gamebryo",
+   "protagonisti": [
+    "The Courier"
+   ],
+   "antagonisti": [
+    "Benny"
+   ]
+  },
+  {
+   "titolo": "Fallout 4",
+   "qid": "Q10493813",
+   "serie": "Fallout",
+   "data": "2015-11-10",
+   "metacritic": 84,
+   "pegi": 18,
+   "sviluppatore": [
+    "Bethesda Game Studios"
+   ],
+   "editore": [
+    "Bethesda Softworks"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_4",
+    "Xbox_One"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Fallout 3"
+   ],
+   "registi": [
+    "Todd Howard"
+   ],
+   "motore": "Creation Engine",
+   "premi": [
+    "D.I.C.E. Awards - Game of the Year",
+    "BAFTA - Best Game"
+   ],
+   "protagonisti": [
+    "Sole Survivor"
+   ],
+   "antagonisti": [
+    "Shaun",
+    "Conrad Kellogg"
+   ],
+   "uccisioni": [
+    [
+     "Sole Survivor's spouse",
+     "Conrad Kellogg"
+    ],
+    [
+     "Conrad Kellogg",
+     "Sole Survivor"
+    ]
+   ]
+  },
+  {
+   "titolo": "Fallout 76",
+   "qid": "Q54497595",
+   "serie": "Fallout",
+   "data": "2018-11-14",
+   "metacritic": 52,
+   "pegi": 18,
+   "sviluppatore": [
+    "Bethesda Game Studios"
+   ],
+   "editore": [
+    "Bethesda Softworks"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_4",
+    "Xbox_One"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "multiplayer",
+    "co-op"
+   ],
+   "registi": [
+    "Jeff Gardiner",
+    "Jonathan Rush"
+   ],
+   "motore": "Creation Engine",
+   "antagonisti": [
+    "Scorchbeast Queen"
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed",
+   "qid": "Q200864",
+   "serie": "Assassins_Creed",
+   "data": "2007-11-13",
+   "metacritic": 81,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Patrice Désilets"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Altaïr Ibn-La'Ahad",
+    "Desmond Miles"
+   ],
+   "antagonisti": [
+    "Al Mualim",
+    "Robert de Sablé",
+    "Warren Vidic"
+   ],
+   "uccisioni": [
+    [
+     "Al Mualim",
+     "Altaïr Ibn-La'Ahad"
+    ],
+    [
+     "Robert de Sablé",
+     "Altaïr Ibn-La'Ahad"
+    ],
+    [
+     "Tamir",
+     "Altaïr Ibn-La'Ahad"
+    ],
+    [
+     "Garnier de Nablus",
+     "Altaïr Ibn-La'Ahad"
+    ],
+    [
+     "Talal",
+     "Altaïr Ibn-La'Ahad"
+    ],
+    [
+     "Abu'l Nuquod",
+     "Altaïr Ibn-La'Ahad"
+    ],
+    [
+     "William V of Montferrat",
+     "Altaïr Ibn-La'Ahad"
+    ],
+    [
+     "Majd Addin",
+     "Altaïr Ibn-La'Ahad"
+    ],
+    [
+     "Master Sibrand",
+     "Altaïr Ibn-La'Ahad"
+    ],
+    [
+     "Jubair al Hakim",
+     "Altaïr Ibn-La'Ahad"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Richard I",
+     "Richard I of England"
+    ],
+    [
+     "Robert de Sablé",
+     "Robert de Sablé"
+    ],
+    [
+     "William V of Montferrat",
+     "William V, Marquess of Montferrat"
+    ],
+    [
+     "Garnier de Nablus",
+     "Garnier of Nablus"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed II",
+   "qid": "Q211735",
+   "serie": "Assassins_Creed",
+   "data": "2009-11-17",
+   "metacritic": 91,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Assassin's Creed"
+   ],
+   "registi": [
+    "Patrice Désilets"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Ezio Auditore da Firenze",
+    "Desmond Miles"
+   ],
+   "antagonisti": [
+    "Rodrigo Borgia",
+    "Uberto Alberti",
+    "Vieri de' Pazzi"
+   ],
+   "uccisioni": [
+    [
+     "Uberto Alberti",
+     "Ezio Auditore da Firenze"
+    ],
+    [
+     "Ludovico Orsi",
+     "Ezio Auditore da Firenze"
+    ],
+    [
+     "Checco Orsi",
+     "Ezio Auditore da Firenze"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Leonardo da Vinci",
+     "Leonardo da Vinci"
+    ],
+    [
+     "Lorenzo de' Medici",
+     "Lorenzo de' Medici"
+    ],
+    [
+     "Caterina Sforza",
+     "Caterina Sforza"
+    ],
+    [
+     "Rodrigo Borgia",
+     "Rodrigo Borgia"
+    ],
+    [
+     "Niccolò Machiavelli",
+     "Niccolò Machiavelli"
+    ],
+    [
+     "Girolamo Savonarola",
+     "Girolamo Savonarola"
+    ],
+    [
+     "Francesco de' Pazzi",
+     "Francesco de' Pazzi"
+    ],
+    [
+     "Jacopo de' Pazzi",
+     "Jacopo de' Pazzi"
+    ],
+    [
+     "Bartolomeo d'Alviano",
+     "Bartolomeo d'Alviano"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed: Brotherhood",
+   "qid": "Q677351",
+   "serie": "Assassins_Creed",
+   "data": "2010-11-16",
+   "metacritic": 90,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "Assassin's Creed II"
+   ],
+   "registi": [
+    "Patrick Plourde"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Ezio Auditore da Firenze",
+    "Desmond Miles"
+   ],
+   "antagonisti": [
+    "Cesare Borgia",
+    "Rodrigo Borgia"
+   ],
+   "uccisioni": [
+    [
+     "Cesare Borgia",
+     "Ezio Auditore da Firenze"
+    ],
+    [
+     "Rodrigo Borgia",
+     "Cesare Borgia"
+    ],
+    [
+     "Mario Auditore",
+     "Cesare Borgia"
+    ],
+    [
+     "Lucy Stillman",
+     "Desmond Miles"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Cesare Borgia",
+     "Cesare Borgia"
+    ],
+    [
+     "Rodrigo Borgia",
+     "Rodrigo Borgia"
+    ],
+    [
+     "Niccolò Machiavelli",
+     "Niccolò Machiavelli"
+    ],
+    [
+     "Caterina Sforza",
+     "Caterina Sforza"
+    ],
+    [
+     "Leonardo da Vinci",
+     "Leonardo da Vinci"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed: Revelations",
+   "qid": "Q739654",
+   "serie": "Assassins_Creed",
+   "data": "2011-11-15",
+   "metacritic": 80,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "Assassin's Creed: Brotherhood"
+   ],
+   "registi": [
+    "Alexandre Amancio"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Ezio Auditore da Firenze",
+    "Altaïr Ibn-La'Ahad",
+    "Desmond Miles"
+   ],
+   "antagonisti": [
+    "Ahmet",
+    "Manuel Palaiologos",
+    "Abbas Sofian"
+   ],
+   "uccisioni": [
+    [
+     "Manuel Palaiologos",
+     "Ezio Auditore da Firenze"
+    ],
+    [
+     "Ahmet",
+     "Selim I"
+    ],
+    [
+     "Yusuf Tazim",
+     "Ahmet"
+    ],
+    [
+     "Abbas Sofian",
+     "Altaïr Ibn-La'Ahad"
+    ],
+    [
+     "Malik Al-Sayf",
+     "Abbas Sofian"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Suleiman",
+     "Suleiman the Magnificent"
+    ],
+    [
+     "Selim I",
+     "Selim I"
+    ],
+    [
+     "Piri Reis",
+     "Piri Reis"
+    ],
+    [
+     "Manuel Palaiologos",
+     "Manuel Palaiologos"
+    ],
+    [
+     "Ahmet",
+     "Şehzade Ahmet"
+    ],
+    [
+     "Bayezid II",
+     "Bayezid II"
+    ],
+    [
+     "Niccolò and Maffeo Polo",
+     "Niccolò and Maffeo Polo"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed III",
+   "qid": "Q40166",
+   "serie": "Assassins_Creed",
+   "data": "2012-10-30",
+   "metacritic": 85,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "seguito_di": [
+    "Assassin's Creed: Revelations"
+   ],
+   "registi": [
+    "Alex Hutchinson"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Connor",
+    "Haytham Kenway",
+    "Desmond Miles"
+   ],
+   "antagonisti": [
+    "Charles Lee",
+    "Thomas Hickey"
+   ],
+   "uccisioni": [
+    [
+     "Haytham Kenway",
+     "Connor"
+    ],
+    [
+     "Charles Lee",
+     "Connor"
+    ],
+    [
+     "Kanen'tó:kon",
+     "Connor"
+    ],
+    [
+     "Daniel Cross",
+     "Desmond Miles"
+    ],
+    [
+     "Warren Vidic",
+     "Desmond Miles"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "George Washington",
+     "George Washington"
+    ],
+    [
+     "Samuel Adams",
+     "Samuel Adams"
+    ],
+    [
+     "Israel Putnam",
+     "Israel Putnam"
+    ],
+    [
+     "Thomas Jefferson",
+     "Thomas Jefferson"
+    ],
+    [
+     "Benjamin Franklin",
+     "Benjamin Franklin"
+    ],
+    [
+     "Edward Braddock",
+     "Edward Braddock"
+    ],
+    [
+     "Paul Revere",
+     "Paul Revere"
+    ],
+    [
+     "Marquis de Lafayette",
+     "Marquis de Lafayette"
+    ],
+    [
+     "William Johnson",
+     "William Johnson"
+    ],
+    [
+     "John Pitcairn",
+     "John Pitcairn"
+    ],
+    [
+     "Benjamin Church",
+     "Benjamin Church"
+    ],
+    [
+     "Charles Lee",
+     "Charles Lee"
+    ],
+    [
+     "Thomas Hickey",
+     "Thomas Hickey"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed IV: Black Flag",
+   "qid": "Q6052688",
+   "serie": "Assassins_Creed",
+   "data": "2013-10-29",
+   "metacritic": 88,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_3",
+    "Xbox_360",
+    "Wii_U"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "Assassin's Creed III"
+   ],
+   "registi": [
+    "Jean Guesdon",
+    "Ashraf Ismail",
+    "Damien Kieken"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Edward Kenway"
+   ],
+   "antagonisti": [
+    "Laureano Torres",
+    "Woodes Rogers",
+    "Bartholomew Roberts"
+   ],
+   "uccisioni": [
+    [
+     "Duncan Walpole",
+     "Edward Kenway"
+    ],
+    [
+     "Laureano Torres",
+     "Edward Kenway"
+    ],
+    [
+     "Bartholomew Roberts",
+     "Edward Kenway"
+    ],
+    [
+     "Woodes Rogers",
+     "Edward Kenway"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Blackbeard",
+     "Edward Thatch"
+    ],
+    [
+     "Benjamin Hornigold",
+     "Benjamin Hornigold"
+    ],
+    [
+     "Mary Read",
+     "Mary Read"
+    ],
+    [
+     "Anne Bonny",
+     "Anne Bonny"
+    ],
+    [
+     "Calico Jack Rackham",
+     "Calico Jack Rackham"
+    ],
+    [
+     "Charles Vane",
+     "Charles Vane"
+    ],
+    [
+     "Bartholomew Roberts",
+     "Bartholomew Roberts"
+    ],
+    [
+     "Woodes Rogers",
+     "Woodes Rogers"
+    ],
+    [
+     "Stede Bonnet",
+     "Stede Bonnet"
+    ],
+    [
+     "Laureano Torres",
+     "Laureano de Torres y Ayala"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed Rogue",
+   "qid": "Q17486360",
+   "serie": "Assassins_Creed",
+   "data": "2014-11-11",
+   "metacritic": 72,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Sofia"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Assassin's Creed IV: Black Flag"
+   ],
+   "registi": [
+    "Mikhail Lozanov",
+    "Spass Kroushkov",
+    "Martin Capel"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Shay Patrick Cormac"
+   ],
+   "antagonisti": [
+    "Achilles Davenport",
+    "Liam O'Brien",
+    "Hope Jensen"
+   ],
+   "uccisioni": [
+    [
+     "Liam O'Brien",
+     "Shay Patrick Cormac"
+    ],
+    [
+     "Hope Jensen",
+     "Shay Patrick Cormac"
+    ],
+    [
+     "Kesegowaase",
+     "Shay Patrick Cormac"
+    ],
+    [
+     "Adéwalé",
+     "Shay Patrick Cormac"
+    ],
+    [
+     "Louis-Joseph Gaultier de La Vérendrye",
+     "Shay Patrick Cormac"
+    ],
+    [
+     "Charles Dorian",
+     "Shay Patrick Cormac"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Benjamin Franklin",
+     "Benjamin Franklin"
+    ],
+    [
+     "George Monro",
+     "George Monro"
+    ],
+    [
+     "Louis-Joseph Gaultier de La Vérendrye",
+     "Louis-Joseph Gaultier de La Vérendrye"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed Unity",
+   "qid": "Q15983778",
+   "serie": "Assassins_Creed",
+   "data": "2014-11-11",
+   "metacritic": 72,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Microsoft_Windows",
+    "Xbox_One"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "seguito_di": [
+    "Assassin's Creed IV: Black Flag"
+   ],
+   "registi": [
+    "Alexandre Amancio",
+    "Marc Albinet"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Arno Dorian",
+    "Élise de la Serre"
+   ],
+   "antagonisti": [
+    "François-Thomas Germain",
+    "Pierre Bellec"
+   ],
+   "uccisioni": [
+    [
+     "Lafreniere",
+     "Arno Dorian"
+    ],
+    [
+     "François-Thomas Germain",
+     "Arno Dorian"
+    ],
+    [
+     "Mirabeau",
+     "Pierre Bellec"
+    ],
+    [
+     "Philippe Rose",
+     "Arno Dorian"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Napoleon Bonaparte",
+     "Napoleon Bonaparte"
+    ],
+    [
+     "Robespierre",
+     "Maximilien Robespierre"
+    ],
+    [
+     "Marquis de Sade",
+     "Marquis de Sade"
+    ],
+    [
+     "Mirabeau",
+     "Comte de Mirabeau"
+    ],
+    [
+     "Louis XVI",
+     "Louis XVI"
+    ],
+    [
+     "François-Thomas Germain",
+     "François-Thomas Germain"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed Syndicate",
+   "qid": "Q18602166",
+   "serie": "Assassins_Creed",
+   "data": "2015-10-23",
+   "metacritic": 78,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Quebec"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Xbox_One"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Assassin's Creed Unity"
+   ],
+   "registi": [
+    "Marc-Alexis Côté",
+    "Scott Phillips",
+    "Wesley Pincombe"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Jacob Frye",
+    "Evie Frye"
+   ],
+   "antagonisti": [
+    "Crawford Starrick",
+    "Lucy Thorne"
+   ],
+   "uccisioni": [
+    [
+     "David Brewster",
+     "Evie Frye"
+    ],
+    [
+     "Lucy Thorne",
+     "Evie Frye"
+    ],
+    [
+     "Dr. John Elliotson",
+     "Jacob Frye"
+    ],
+    [
+     "Malcolm Milner",
+     "Jacob Frye"
+    ],
+    [
+     "Pearl Attaway",
+     "Jacob Frye"
+    ],
+    [
+     "Philip Twopenny",
+     "Jacob Frye"
+    ],
+    [
+     "James Brudenell, 7th Earl of Cardigan",
+     "Jacob Frye"
+    ],
+    [
+     "Maxwell Roth",
+     "Jacob Frye"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Queen Victoria",
+     "Queen Victoria"
+    ],
+    [
+     "Benjamin Disraeli",
+     "Benjamin Disraeli"
+    ],
+    [
+     "Charles Dickens",
+     "Charles Dickens"
+    ],
+    [
+     "Charles Darwin",
+     "Charles Darwin"
+    ],
+    [
+     "Karl Marx",
+     "Karl Marx"
+    ],
+    [
+     "Florence Nightingale",
+     "Florence Nightingale"
+    ],
+    [
+     "Alexander Graham Bell",
+     "Alexander Graham Bell"
+    ],
+    [
+     "Frederick Abberline",
+     "Frederick Abberline"
+    ],
+    [
+     "Duleep Singh",
+     "Duleep Singh"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed Origins",
+   "qid": "Q30138024",
+   "serie": "Assassins_Creed",
+   "data": "2017-10-27",
+   "metacritic": 85,
+   "pegi": 12,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Microsoft_Windows",
+    "Xbox_One"
+   ],
+   "generi": [
+    "Action",
+    "RPG"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Assassin's Creed Syndicate"
+   ],
+   "registi": [
+    "Jean Guesdon",
+    "Ashraf Ismail"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Bayek of Siwa",
+    "Aya",
+    "Layla Hassan"
+   ],
+   "antagonisti": [
+    "Flavius Metellus",
+    "Lucius Septimius",
+    "Pothinus"
+   ],
+   "uccisioni": [
+    [
+     "Khemu",
+     "Bayek of Siwa"
+    ],
+    [
+     "Eudoros",
+     "Bayek of Siwa"
+    ],
+    [
+     "Pothinus",
+     "Bayek of Siwa"
+    ],
+    [
+     "Flavius Metellus",
+     "Bayek of Siwa"
+    ],
+    [
+     "Rufio",
+     "Bayek of Siwa"
+    ],
+    [
+     "Gamilat",
+     "Bayek of Siwa"
+    ],
+    [
+     "Pompey",
+     "Lucius Septimius"
+    ],
+    [
+     "Lucius Septimius",
+     "Aya"
+    ],
+    [
+     "Julius Caesar",
+     "Aya and the conspirators"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Cleopatra",
+     "Cleopatra VII"
+    ],
+    [
+     "Julius Caesar",
+     "Julius Caesar"
+    ],
+    [
+     "Pompey",
+     "Pompey the Great"
+    ],
+    [
+     "Ptolemy XIII",
+     "Ptolemy XIII"
+    ],
+    [
+     "Pothinus",
+     "Pothinus"
+    ],
+    [
+     "Brutus",
+     "Marcus Junius Brutus"
+    ],
+    [
+     "Cassius",
+     "Gaius Cassius Longinus"
+    ],
+    [
+     "Lucius Septimius",
+     "Lucius Septimius"
+    ],
+    [
+     "Apollodorus",
+     "Apollodorus of Sicily"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed Odyssey",
+   "qid": "Q54617566",
+   "serie": "Assassins_Creed",
+   "data": "2018-10-05",
+   "metacritic": 87,
+   "sviluppatore": [
+    "Ubisoft Quebec"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Microsoft_Windows",
+    "Xbox_One"
+   ],
+   "generi": [
+    "Action",
+    "RPG"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Assassin's Creed Origins"
+   ],
+   "registi": [
+    "Jonathan Dumont",
+    "Scott Phillips"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "The Eagle Bearer",
+    "Layla Hassan"
+   ],
+   "antagonisti": [
+    "Deimos",
+    "Elpenor"
+   ],
+   "uccisioni": [
+    [
+     "Elpenor",
+     "The Eagle Bearer"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Socrates",
+     "Socrates"
+    ],
+    [
+     "Hippocrates",
+     "Hippocrates"
+    ],
+    [
+     "Herodotus",
+     "Herodotus"
+    ],
+    [
+     "Alcibiades",
+     "Alcibiades"
+    ],
+    [
+     "Brasidas",
+     "Brasidas"
+    ],
+    [
+     "Pericles",
+     "Pericles"
+    ],
+    [
+     "Kleon",
+     "Cleon"
+    ],
+    [
+     "Aspasia",
+     "Aspasia"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed Valhalla",
+   "qid": "Q92464687",
+   "serie": "Assassins_Creed",
+   "data": "2020-11-10",
+   "metacritic": 82,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Microsoft_Windows",
+    "Xbox_One",
+    "Xbox_Series_X_and_Series_S",
+    "Google_Stadia"
+   ],
+   "generi": [
+    "Action",
+    "RPG"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Assassin's Creed Odyssey"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Eivor Varinsdottir",
+    "Layla Hassan"
+   ],
+   "antagonisti": [
+    "Kjotve the Cruel",
+    "Fulke"
+   ],
+   "uccisioni": [
+    [
+     "Ivar the Boneless",
+     "Eivor Varinsdottir"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Alfred the Great",
+     "Alfred the Great"
+    ],
+    [
+     "Ivar the Boneless",
+     "Ivar the Boneless"
+    ],
+    [
+     "Halfdan Ragnarsson",
+     "Halfdan Ragnarsson"
+    ],
+    [
+     "Ubba",
+     "Ubba"
+    ],
+    [
+     "Guthrum",
+     "Guthrum"
+    ],
+    [
+     "Harald Fairhair",
+     "Harald Fairhair"
+    ],
+    [
+     "Ceolwulf II",
+     "Ceolwulf II of Mercia"
+    ],
+    [
+     "Rhodri",
+     "Rhodri Mawr"
+    ],
+    [
+     "Flann Sinna",
+     "Flann Sinna"
+    ],
+    [
+     "Bárid mac Ímair",
+     "Bárid mac Ímair"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed Mirage",
+   "qid": "Q113675008",
+   "serie": "Assassins_Creed",
+   "data": "2023-10-05",
+   "metacritic": 76,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Bordeaux"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "PlayStation_5",
+    "Microsoft_Windows",
+    "Xbox_One",
+    "Xbox_Series_X_and_Series_S"
+   ],
+   "generi": [
+    "Action",
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Assassin's Creed Valhalla"
+   ],
+   "registi": [
+    "Stéphane Boudon"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Basim Ibn Ishaq"
+   ],
+   "antagonisti": [
+    "Qabiha"
+   ],
+   "uccisioni": [
+    [
+     "Qabiha",
+     "Roshan"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "al-Mutawakkil",
+     "Al-Mutawakkil"
+    ],
+    [
+     "Banū Mūsā brothers",
+     "Banu Musa"
+    ],
+    [
+     "Muhammad ibn Abdallah ibn Tahir",
+     "Muhammad ibn Abdallah ibn Tahir"
+    ],
+    [
+     "Leader of the Zanj Rebellion",
+     "Ali ibn Muhammad"
+    ]
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed Shadows",
+   "qid": "Q117716202",
+   "serie": "Assassins_Creed",
+   "data": "2025-03-20",
+   "metacritic": 79,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Quebec"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "macOS",
+    "PlayStation_5",
+    "Microsoft_Windows",
+    "Xbox_Series_X_and_Series_S"
+   ],
+   "generi": [
+    "Action",
+    "RPG"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Assassin's Creed Mirage"
+   ],
+   "registi": [
+    "Jonathan Dumont",
+    "Charles Benoit"
+   ],
+   "motore": "Anvil",
+   "protagonisti": [
+    "Fujibayashi Naoe",
+    "Yasuke"
+   ],
+   "antagonisti": [
+    "Nuno Caro",
+    "Duarte de Melo"
+   ],
+   "uccisioni": [
+    [
+     "Momochi Sandayu",
+     "Yasuke"
+    ],
+    [
+     "Nuno Caro",
+     "Yasuke"
+    ],
+    [
+     "Kimura Kei",
+     "Yasuke"
+    ],
+    [
+     "Duarte de Melo",
+     "Yasuke"
+    ]
+   ],
+   "personaggi_storici": [
+    [
+     "Oda Nobunaga",
+     "Oda Nobunaga"
+    ],
+    [
+     "Yasuke",
+     "Yasuke"
+    ],
+    [
+     "Akechi Mitsuhide",
+     "Akechi Mitsuhide"
+    ],
+    [
+     "Momochi Sandayu",
+     "Momochi Sandayu"
+    ]
+   ]
+  },
+  {
+   "titolo": "The Witcher",
+   "qid": "Q287637",
+   "serie": "The_Witcher",
+   "data": "2007-10-26",
+   "metacritic": 81,
+   "pegi": 18,
+   "sviluppatore": [
+    "CD Projekt Red"
+   ],
+   "editore": [
+    "Atari"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "macOS"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Jacek Brzezinski"
+   ],
+   "motore": "Aurora Engine",
+   "basato_su": "The Witcher saga (Andrzej Sapkowski)",
+   "protagonisti": [
+    "Geralt of Rivia"
+   ],
+   "antagonisti": [
+    "Azar Javed",
+    "The Professor"
+   ],
+   "uccisioni": [
+    [
+     "Jacques de Aldersberg",
+     "Geralt of Rivia"
+    ],
+    [
+     "Azar Javed",
+     "Geralt of Rivia"
+    ],
+    [
+     "The Professor",
+     "Geralt of Rivia"
+    ]
+   ]
+  },
+  {
+   "titolo": "The Witcher 2: Assassins of Kings",
+   "qid": "Q917272",
+   "serie": "The_Witcher",
+   "data": "2011-05-17",
+   "metacritic": 88,
+   "pegi": 18,
+   "sviluppatore": [
+    "CD Projekt Red"
+   ],
+   "editore": [
+    "cdp.pl"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "Xbox_360"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "The Witcher"
+   ],
+   "registi": [
+    "Adam Badowski"
+   ],
+   "motore": "REDengine",
+   "basato_su": "The Witcher saga (Andrzej Sapkowski)",
+   "protagonisti": [
+    "Geralt of Rivia"
+   ],
+   "antagonisti": [
+    "Letho",
+    "Philippa Eilhart",
+    "Sile de Tansarville"
+   ],
+   "uccisioni": [
+    [
+     "King Foltest",
+     "Letho"
+    ]
+   ]
+  },
+  {
+   "titolo": "The Witcher 3: Wild Hunt",
+   "qid": "Q4267401",
+   "serie": "The_Witcher",
+   "data": "2015-05-19",
+   "pegi": 18,
+   "sviluppatore": [
+    "CD Projekt Red"
+   ],
+   "editore": [
+    "CD Projekt Red"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "Nintendo_Switch",
+    "PlayStation_4",
+    "Xbox_One"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "The Witcher 2: Assassins of Kings"
+   ],
+   "registi": [
+    "Konrad Tomaszkiewicz"
+   ],
+   "motore": "REDengine",
+   "premi": [
+    "Golden Joystick Awards - Game of the Year",
+    "The Game Awards - Game of the Year",
+    "Game Developers Choice Awards - Game of the Year"
+   ],
+   "basato_su": "The Witcher saga (Andrzej Sapkowski)",
+   "protagonisti": [
+    "Geralt of Rivia"
+   ],
+   "antagonisti": [
+    "Eredin",
+    "Imlerith"
+   ],
+   "uccisioni": [
+    [
+     "Eredin",
+     "Geralt of Rivia"
+    ],
+    [
+     "Vesemir",
+     "Imlerith"
+    ]
+   ]
+  },
+  {
+   "titolo": "Mass Effect",
+   "qid": "Q275960",
+   "serie": "Mass_Effect",
+   "data": "2007-11-20",
+   "metacritic": 89,
+   "pegi": 18,
+   "sviluppatore": [
+    "BioWare"
+   ],
+   "editore": [
+    "Xbox Game Studios"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "RPG",
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Casey Hudson"
+   ],
+   "motore": "Unreal Engine",
+   "protagonisti": [
+    "Commander Shepard"
+   ],
+   "antagonisti": [
+    "Saren Arterius",
+    "Sovereign",
+    "Benezia"
+   ]
+  },
+  {
+   "titolo": "Mass Effect 2",
+   "qid": "Q725057",
+   "serie": "Mass_Effect",
+   "data": "2010-01-26",
+   "metacritic": 94,
+   "pegi": 18,
+   "sviluppatore": [
+    "BioWare"
+   ],
+   "editore": [
+    "Electronic Arts"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "RPG",
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Mass Effect"
+   ],
+   "registi": [
+    "Casey Hudson"
+   ],
+   "motore": "Unreal Engine",
+   "premi": [
+    "D.I.C.E. Awards - Game of the Year",
+    "BAFTA - Best Game",
+    "Golden Joystick Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Commander Shepard"
+   ],
+   "antagonisti": [
+    "Human-Reaper"
+   ],
+   "uccisioni": [
+    [
+     "Human-Reaper",
+     "Commander Shepard"
+    ]
+   ]
+  },
+  {
+   "titolo": "Mass Effect 3",
+   "qid": "Q753511",
+   "serie": "Mass_Effect",
+   "data": "2012-03-06",
+   "metacritic": 89,
+   "pegi": 18,
+   "sviluppatore": [
+    "BioWare"
+   ],
+   "editore": [
+    "Electronic Arts"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Wii_U",
+    "Xbox_360"
+   ],
+   "generi": [
+    "RPG",
+    "Shooter"
+   ],
+   "modalita": [
+    "co-op",
+    "multiplayer",
+    "single-player"
+   ],
+   "seguito_di": [
+    "Mass Effect 2"
+   ],
+   "registi": [
+    "Casey Hudson"
+   ],
+   "motore": "Unreal Engine",
+   "protagonisti": [
+    "Commander Shepard"
+   ],
+   "antagonisti": [
+    "Kai Leng",
+    "The Illusive Man"
+   ],
+   "uccisioni": [
+    [
+     "Kai Leng",
+     "Commander Shepard"
+    ]
+   ]
+  },
+  {
+   "titolo": "Dark Souls",
+   "qid": "Q1166232",
+   "serie": "Dark_Souls",
+   "data": "2011-09-22",
+   "metacritic": 89,
+   "pegi": 16,
+   "sviluppatore": [
+    "FromSoftware"
+   ],
+   "editore": [
+    "FromSoftware",
+    "Bandai Namco Entertainment"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "multiplayer",
+    "single-player"
+   ],
+   "registi": [
+    "Hidetaka Miyazaki"
+   ],
+   "protagonisti": [
+    "Chosen Undead"
+   ],
+   "antagonisti": [
+    "Gwyn, Lord of Sunlight"
+   ],
+   "uccisioni": [
+    [
+     "Gwyn, Lord of Sunlight",
+     "Chosen Undead"
+    ]
+   ]
+  },
+  {
+   "titolo": "Dark Souls II",
+   "qid": "Q3702740",
+   "serie": "Dark_Souls",
+   "data": "2014-03-11",
+   "metacritic": 91,
+   "sviluppatore": [
+    "FromSoftware"
+   ],
+   "editore": [
+    "Bandai Namco Entertainment"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "multiplayer",
+    "single-player"
+   ],
+   "seguito_di": [
+    "Dark Souls"
+   ],
+   "registi": [
+    "Tomohiro Shibuya",
+    "Yui Tanimura"
+   ],
+   "premi": [
+    "Golden Joystick Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Bearer of the Curse"
+   ],
+   "antagonisti": [
+    "Nashandra"
+   ],
+   "uccisioni": [
+    [
+     "Nashandra",
+     "Bearer of the Curse"
+    ]
+   ]
+  },
+  {
+   "titolo": "Dark Souls III",
+   "qid": "Q20112508",
+   "serie": "Dark_Souls",
+   "data": "2016-03-24",
+   "metacritic": 89,
+   "sviluppatore": [
+    "FromSoftware"
+   ],
+   "editore": [
+    "Bandai Namco Entertainment"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_4",
+    "Xbox_One"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "multiplayer",
+    "single-player"
+   ],
+   "seguito_di": [
+    "Dark Souls II"
+   ],
+   "registi": [
+    "Hidetaka Miyazaki",
+    "Isamu Okano",
+    "Yui Tanimura"
+   ],
+   "premi": [
+    "Golden Joystick Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Ashen One"
+   ],
+   "antagonisti": [
+    "Soul of Cinder"
+   ]
+  },
+  {
+   "titolo": "Portal",
+   "qid": "Q274897",
+   "serie": "Portal",
+   "data": "2007-10-10",
+   "metacritic": 90,
+   "pegi": 12,
+   "sviluppatore": [
+    "Valve"
+   ],
+   "editore": [
+    "Valve"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Xbox_360",
+    "macOS"
+   ],
+   "generi": [
+    "Puzzle",
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Kim Swift"
+   ],
+   "motore": "Source",
+   "premi": [
+    "Game Developers Choice Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Chell"
+   ],
+   "antagonisti": [
+    "GLaDOS"
+   ]
+  },
+  {
+   "titolo": "Portal 2",
+   "qid": "Q279446",
+   "serie": "Portal",
+   "data": "2011-04-18",
+   "metacritic": 95,
+   "pegi": 12,
+   "sviluppatore": [
+    "Valve"
+   ],
+   "editore": [
+    "Valve"
+   ],
+   "piattaforme": [
+    "Linux",
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Xbox_360",
+    "macOS"
+   ],
+   "generi": [
+    "Puzzle",
+    "Shooter"
+   ],
+   "modalita": [
+    "co-op",
+    "multiplayer",
+    "single-player"
+   ],
+   "seguito_di": [
+    "Portal"
+   ],
+   "motore": "Source",
+   "premi": [
+    "Golden Joystick Awards - Game of the Year",
+    "BAFTA - Best Game"
+   ],
+   "protagonisti": [
+    "Chell"
+   ],
+   "antagonisti": [
+    "GLaDOS",
+    "Wheatley"
+   ]
+  },
+  {
+   "titolo": "Halo: Combat Evolved",
+   "qid": "Q276217",
+   "serie": "Halo",
+   "data": "2001-11-15",
+   "metacritic": 97,
+   "pegi": 16,
+   "sviluppatore": [
+    "Bungie"
+   ],
+   "editore": [
+    "Xbox Game Studios"
+   ],
+   "piattaforme": [
+    "Xbox"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "registi": [
+    "Jason Jones"
+   ],
+   "premi": [
+    "D.I.C.E. Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "Master Chief",
+    "Cortana"
+   ],
+   "antagonisti": [
+    "343 Guilty Spark"
+   ]
+  },
+  {
+   "titolo": "Halo 2",
+   "qid": "Q252804",
+   "serie": "Halo",
+   "data": "2004-11-09",
+   "metacritic": 95,
+   "pegi": 16,
+   "sviluppatore": [
+    "Bungie"
+   ],
+   "editore": [
+    "Xbox Game Studios"
+   ],
+   "piattaforme": [
+    "Xbox"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "seguito_di": [
+    "Halo: Combat Evolved"
+   ],
+   "protagonisti": [
+    "Master Chief",
+    "Arbiter"
+   ],
+   "antagonisti": [
+    "Tartarus",
+    "Prophet of Truth",
+    "Prophet of Regret"
+   ],
+   "uccisioni": [
+    [
+     "Prophet of Regret",
+     "Master Chief"
+    ],
+    [
+     "Tartarus",
+     "Arbiter"
+    ]
+   ]
+  },
+  {
+   "titolo": "Halo 3",
+   "qid": "Q137802",
+   "serie": "Halo",
+   "data": "2007-09-25",
+   "metacritic": 94,
+   "pegi": 16,
+   "sviluppatore": [
+    "Bungie"
+   ],
+   "editore": [
+    "Xbox Game Studios"
+   ],
+   "piattaforme": [
+    "Xbox_360"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "seguito_di": [
+    "Halo 2"
+   ],
+   "protagonisti": [
+    "Master Chief",
+    "Arbiter"
+   ],
+   "antagonisti": [
+    "Prophet of Truth",
+    "343 Guilty Spark"
+   ],
+   "uccisioni": [
+    [
+     "Prophet of Truth",
+     "Arbiter"
+    ],
+    [
+     "Avery Johnson",
+     "343 Guilty Spark"
+    ],
+    [
+     "343 Guilty Spark",
+     "Master Chief"
+    ]
+   ]
+  },
+  {
+   "titolo": "Halo 3: ODST",
+   "qid": "Q1628364",
+   "serie": "Halo",
+   "data": "2009-09-22",
+   "metacritic": 83,
+   "pegi": 16,
+   "sviluppatore": [
+    "Bungie"
+   ],
+   "editore": [
+    "Xbox Game Studios"
+   ],
+   "piattaforme": [
+    "Xbox_360"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "Halo 3"
+   ],
+   "registi": [
+    "Joseph Staten"
+   ],
+   "protagonisti": [
+    "The Rookie"
+   ]
+  },
+  {
+   "titolo": "Halo: Reach",
+   "qid": "Q283878",
+   "serie": "Halo",
+   "data": "2010-09-14",
+   "metacritic": 91,
+   "pegi": 16,
+   "sviluppatore": [
+    "Bungie"
+   ],
+   "editore": [
+    "Xbox Game Studios"
+   ],
+   "piattaforme": [
+    "Xbox_360"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "seguito_di": [
+    "Halo 3: ODST"
+   ],
+   "registi": [
+    "Marcus Lehto"
+   ],
+   "protagonisti": [
+    "Noble Six"
+   ]
+  },
+  {
+   "titolo": "Halo 4",
+   "qid": "Q45028",
+   "serie": "Halo",
+   "data": "2012-11-06",
+   "pegi": 16,
+   "sviluppatore": [
+    "Halo Studios"
+   ],
+   "editore": [
+    "Xbox Game Studios"
+   ],
+   "piattaforme": [
+    "Xbox_360",
+    "Xbox_One"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "multiplayer",
+    "single-player"
+   ],
+   "seguito_di": [
+    "Halo: Reach"
+   ],
+   "registi": [
+    "Josh Holmes"
+   ],
+   "protagonisti": [
+    "Master Chief",
+    "Cortana"
+   ],
+   "antagonisti": [
+    "The Didact",
+    "Jul 'Mdama"
+   ]
+  },
+  {
+   "titolo": "Halo 5: Guardians",
+   "qid": "Q16888147",
+   "serie": "Halo",
+   "data": "2015-10-27",
+   "metacritic": 84,
+   "sviluppatore": [
+    "Halo Studios"
+   ],
+   "editore": [
+    "Xbox Game Studios"
+   ],
+   "piattaforme": [
+    "Xbox_One"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "Halo 4"
+   ],
+   "registi": [
+    "Tim Longo"
+   ],
+   "protagonisti": [
+    "Master Chief",
+    "Jameson Locke"
+   ],
+   "antagonisti": [
+    "Cortana",
+    "Warden Eternal"
+   ]
+  },
+  {
+   "titolo": "Halo Infinite",
+   "qid": "Q54913666",
+   "serie": "Halo",
+   "data": "2021-12-08",
+   "metacritic": 87,
+   "pegi": 16,
+   "sviluppatore": [
+    "Halo Studios"
+   ],
+   "editore": [
+    "Xbox Game Studios"
+   ],
+   "piattaforme": [
+    "Xbox_One",
+    "Xbox_Series_X_and_Series_S",
+    "Microsoft_Windows"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "Halo 5: Guardians"
+   ],
+   "registi": [
+    "Joseph Staten"
+   ],
+   "motore": "Slipspace Engine",
+   "protagonisti": [
+    "Master Chief",
+    "The Weapon"
+   ],
+   "antagonisti": [
+    "Atriox",
+    "The Harbinger"
+   ],
+   "uccisioni": [
+    [
+     "Despondent Pyre",
+     "The Harbinger"
+    ]
+   ]
+  },
+  {
+   "titolo": "Far Cry",
+   "qid": "Q337865",
+   "serie": "Far_Cry",
+   "data": "2004-03-23",
+   "metacritic": 89,
+   "pegi": 16,
+   "sviluppatore": [
+    "Crytek"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "registi": [
+    "Cevat Yerli"
+   ],
+   "motore": "CryEngine",
+   "protagonisti": [
+    "Jack Carver"
+   ],
+   "antagonisti": [
+    "Dr. Krieger",
+    "Crowe",
+    "Doyle"
+   ],
+   "uccisioni": [
+    [
+     "Doyle",
+     "Jack Carver"
+    ],
+    [
+     "Crowe",
+     "Jack Carver"
+    ],
+    [
+     "Dr. Krieger",
+     "Jack Carver"
+    ]
+   ]
+  },
+  {
+   "titolo": "Far Cry 2",
+   "qid": "Q176336",
+   "serie": "Far_Cry",
+   "data": "2008-10-21",
+   "metacritic": 85,
+   "pegi": 16,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "Far Cry"
+   ],
+   "registi": [
+    "Clint Hocking"
+   ],
+   "motore": "Dunia",
+   "antagonisti": [
+    "The Jackal"
+   ]
+  },
+  {
+   "titolo": "Far Cry 3",
+   "qid": "Q796529",
+   "serie": "Far_Cry",
+   "data": "2012-11-29",
+   "metacritic": 88,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_3",
+    "Microsoft_Windows",
+    "Xbox_360"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "seguito_di": [
+    "Far Cry 2"
+   ],
+   "registi": [
+    "Patrick Plourde",
+    "Patrik Methe"
+   ],
+   "motore": "Dunia 2",
+   "protagonisti": [
+    "Jason Brody"
+   ],
+   "antagonisti": [
+    "Vaas Montenegro",
+    "Hoyt Volker"
+   ],
+   "uccisioni": [
+    [
+     "Vaas Montenegro",
+     "Jason Brody"
+    ],
+    [
+     "Hoyt Volker",
+     "Jason Brody"
+    ],
+    [
+     "Grant Brody",
+     "Vaas Montenegro"
+    ],
+    [
+     "Sam Becker",
+     "Hoyt Volker"
+    ]
+   ]
+  },
+  {
+   "titolo": "Far Cry 4",
+   "qid": "Q15992359",
+   "serie": "Far_Cry",
+   "data": "2014-11-18",
+   "metacritic": 80,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_3",
+    "PlayStation_4",
+    "Microsoft_Windows",
+    "Xbox_360",
+    "Xbox_One"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "Far Cry 3"
+   ],
+   "registi": [
+    "Alex Hutchinson",
+    "Patrik Methe"
+   ],
+   "motore": "Dunia 2",
+   "protagonisti": [
+    "Ajay Ghale"
+   ],
+   "antagonisti": [
+    "Pagan Min"
+   ]
+  },
+  {
+   "titolo": "Far Cry Primal",
+   "qid": "Q21072291",
+   "serie": "Far_Cry",
+   "data": "2016-02-23",
+   "metacritic": 74,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Xbox_One",
+    "Microsoft_Windows"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "seguito_di": [
+    "Far Cry 4"
+   ],
+   "registi": [
+    "Jean-Christophe Guyot",
+    "Thomas Simon"
+   ],
+   "motore": "Dunia 2",
+   "protagonisti": [
+    "Takkar"
+   ],
+   "antagonisti": [
+    "Ull",
+    "Batari"
+   ],
+   "uccisioni": [
+    [
+     "Ull",
+     "Takkar"
+    ],
+    [
+     "Batari",
+     "Takkar"
+    ],
+    [
+     "Dah",
+     "Takkar"
+    ]
+   ]
+  },
+  {
+   "titolo": "Far Cry 5",
+   "qid": "Q30015130",
+   "serie": "Far_Cry",
+   "data": "2018-03-27",
+   "metacritic": 82,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Microsoft_Windows",
+    "Xbox_One"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "Far Cry Primal"
+   ],
+   "registi": [
+    "Dan Hay",
+    "Patrik Methe",
+    "Maxime Beland",
+    "Ben Bauer"
+   ],
+   "motore": "Dunia 2",
+   "protagonisti": [
+    "The Deputy"
+   ],
+   "antagonisti": [
+    "Joseph Seed",
+    "Jacob Seed",
+    "John Seed",
+    "Faith Seed"
+   ],
+   "uccisioni": [
+    [
+     "John Seed",
+     "The Deputy"
+    ],
+    [
+     "Jacob Seed",
+     "The Deputy"
+    ],
+    [
+     "Faith Seed",
+     "The Deputy"
+    ],
+    [
+     "Eli Palmer",
+     "The Deputy"
+    ],
+    [
+     "Virgil Minkler",
+     "Cameron Burke"
+    ]
+   ]
+  },
+  {
+   "titolo": "Far Cry New Dawn",
+   "qid": "Q59536524",
+   "serie": "Far_Cry",
+   "data": "2019-02-15",
+   "metacritic": 73,
+   "sviluppatore": [
+    "Ubisoft Montreal"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Microsoft_Windows",
+    "Xbox_One"
+   ],
+   "generi": [
+    "Shooter",
+    "Action"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer",
+    "co-op"
+   ],
+   "seguito_di": [
+    "Far Cry 5"
+   ],
+   "registi": [
+    "Jean-Sebastien Decant",
+    "Patrik Methe"
+   ],
+   "motore": "Dunia 2",
+   "protagonisti": [
+    "The Captain"
+   ],
+   "antagonisti": [
+    "Mickey",
+    "Lou",
+    "Ethan Seed"
+   ],
+   "uccisioni": [
+    [
+     "Ethan Seed",
+     "The Captain"
+    ],
+    [
+     "Lou",
+     "The Captain"
+    ]
+   ]
+  },
+  {
+   "titolo": "Far Cry 6",
+   "qid": "Q97120062",
+   "serie": "Far_Cry",
+   "data": "2021-10-07",
+   "metacritic": 74,
+   "pegi": 18,
+   "sviluppatore": [
+    "Ubisoft Toronto"
+   ],
+   "editore": [
+    "Ubisoft"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "PlayStation_5",
+    "Microsoft_Windows",
+    "Xbox_One",
+    "Xbox_Series_X_and_Series_S"
+   ],
+   "generi": [
+    "Shooter"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "seguito_di": [
+    "Far Cry New Dawn"
+   ],
+   "registi": [
+    "Omar Bouali",
+    "Alexandre Letendre"
+   ],
+   "motore": "Dunia 2",
+   "protagonisti": [
+    "Dani Rojas"
+   ],
+   "antagonisti": [
+    "Anton Castillo"
+   ],
+   "uccisioni": [
+    [
+     "Diego Castillo",
+     "Anton Castillo"
+    ],
+    [
+     "Clara Garcia",
+     "Anton Castillo"
+    ],
+    [
+     "Maria Marquessa",
+     "Dani Rojas"
+    ],
+    [
+     "Edgar Reyes",
+     "Dani Rojas"
+    ]
+   ]
+  },
+  {
+   "titolo": "Minecraft",
+   "qid": "Q49740",
+   "data": "2011-11-18",
+   "metacritic": 93,
+   "pegi": 7,
+   "sviluppatore": [
+    "Mojang Studios"
+   ],
+   "editore": [
+    "Mojang Studios"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "macOS",
+    "Linux",
+    "Xbox_360",
+    "PlayStation_3",
+    "PlayStation_4",
+    "Xbox_One",
+    "Wii_U",
+    "Nintendo_Switch",
+    "PlayStation_5",
+    "Nintendo_Switch_2"
+   ],
+   "generi": [
+    "Sandbox",
+    "Survival"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ]
+  },
+  {
+   "titolo": "The Walking Dead",
+   "qid": "Q939588",
+   "data": "2012-04-24",
+   "pegi": 18,
+   "sviluppatore": [
+    "Telltale Games"
+   ],
+   "editore": [
+    "Telltale Games"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "macOS",
+    "PlayStation_3",
+    "Xbox_360"
+   ],
+   "generi": [
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Sean Vanaman",
+    "Jake Rodkin"
+   ],
+   "motore": "Telltale Tool",
+   "premi": [
+    "Spike Video Game Awards - Game of the Year"
+   ],
+   "basato_su": "The Walking Dead (comic book series)",
+   "protagonisti": [
+    "Lee Everett",
+    "Clementine"
+   ],
+   "antagonisti": [
+    "The Stranger"
+   ],
+   "uccisioni": [
+    [
+     "The Stranger",
+     "Lee Everett"
+    ]
+   ]
+  },
+  {
+   "titolo": "Cyberpunk 2077",
+   "qid": "Q3182559",
+   "data": "2020-12-10",
+   "metacritic": 86,
+   "pegi": 18,
+   "sviluppatore": [
+    "CD Projekt Red"
+   ],
+   "editore": [
+    "CD Projekt"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Microsoft_Windows",
+    "Xbox_One",
+    "PlayStation_5",
+    "Xbox_Series_X_and_Series_S"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Adam Badowski",
+    "Konrad Tomaszkiewicz"
+   ],
+   "motore": "REDengine",
+   "basato_su": "Cyberpunk (tabletop role-playing game)",
+   "protagonisti": [
+    "V"
+   ],
+   "antagonisti": [
+    "Yorinobu Arasaka",
+    "Adam Smasher"
+   ],
+   "uccisioni": [
+    [
+     "Saburo Arasaka",
+     "Yorinobu Arasaka"
+    ]
+   ]
+  },
+  {
+   "titolo": "Elden Ring",
+   "qid": "Q64826862",
+   "data": "2022-02-25",
+   "metacritic": 96,
+   "pegi": 16,
+   "sviluppatore": [
+    "FromSoftware"
+   ],
+   "editore": [
+    "Bandai Namco Entertainment"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "PlayStation_5",
+    "Microsoft_Windows",
+    "Xbox_One",
+    "Xbox_Series_X_and_Series_S"
+   ],
+   "generi": [
+    "RPG",
+    "Action"
+   ],
+   "modalita": [
+    "single-player",
+    "multiplayer"
+   ],
+   "registi": [
+    "Hidetaka Miyazaki",
+    "Yui Tanimura"
+   ],
+   "premi": [
+    "The Game Awards - Game of the Year",
+    "D.I.C.E. Awards - Game of the Year",
+    "Game Developers Choice Awards - Game of the Year",
+    "Golden Joystick Awards - Game of the Year"
+   ],
+   "protagonisti": [
+    "The Tarnished"
+   ]
+  },
+  {
+   "titolo": "Clair Obscur: Expedition 33",
+   "qid": "Q126462072",
+   "data": "2025-04-24",
+   "metacritic": 92,
+   "pegi": 18,
+   "sviluppatore": [
+    "Sandfall Interactive"
+   ],
+   "editore": [
+    "Kepler Interactive"
+   ],
+   "piattaforme": [
+    "PlayStation_5",
+    "Microsoft_Windows",
+    "Xbox_Series_X_and_Series_S"
+   ],
+   "generi": [
+    "RPG"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Guillaume Broche"
+   ],
+   "motore": "Unreal Engine",
+   "premi": [
+    "The Game Awards - Game of the Year",
+    "Golden Joystick Awards - Game of the Year",
+    "D.I.C.E. Awards - Game of the Year",
+    "Game Developers Choice Awards - Game of the Year",
+    "BAFTA - Best Game"
+   ],
+   "protagonisti": [
+    "Gustave"
+   ],
+   "antagonisti": [
+    "Renoir"
+   ],
+   "uccisioni": [
+    [
+     "Gustave",
+     "Renoir"
+    ]
+   ]
+  },
+  {
+   "titolo": "Dispatch",
+   "qid": "Q131436199",
+   "data": "2025-10-22",
+   "metacritic": 87,
+   "sviluppatore": [
+    "AdHoc Studio"
+   ],
+   "editore": [
+    "AdHoc Studio"
+   ],
+   "piattaforme": [
+    "PlayStation_5",
+    "Microsoft_Windows"
+   ],
+   "generi": [
+    "Adventure"
+   ],
+   "modalita": [
+    "single-player"
+   ],
+   "registi": [
+    "Nick Herman",
+    "Dennis Lenart"
+   ],
+   "motore": "Unreal Engine",
+   "protagonisti": [
+    "Robert Robertson III"
+   ],
+   "antagonisti": [
+    "Shroud"
+   ]
+  }
+ ],
+ "edizioni": [
+  {
+   "titolo": "The Legend of Zelda: Ocarina of Time 3D",
+   "di": [
+    "The Legend of Zelda: Ocarina of Time"
+   ],
+   "piattaforme": [
+    "Nintendo_3DS"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Majora's Mask 3D",
+   "di": [
+    "The Legend of Zelda: Majora's Mask"
+   ],
+   "piattaforme": [
+    "Nintendo_3DS"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: The Wind Waker HD",
+   "di": [
+    "The Legend of Zelda: The Wind Waker"
+   ],
+   "piattaforme": [
+    "Wii_U"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Twilight Princess HD",
+   "di": [
+    "The Legend of Zelda: Twilight Princess"
+   ],
+   "piattaforme": [
+    "Wii_U"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Skyward Sword HD",
+   "di": [
+    "The Legend of Zelda: Skyward Sword"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Link's Awakening (2019)",
+   "di": [
+    "The Legend of Zelda: Link's Awakening"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Breath of the Wild - Nintendo Switch 2 Edition",
+   "di": [
+    "The Legend of Zelda: Breath of the Wild"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch_2"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Tears of the Kingdom - Nintendo Switch 2 Edition",
+   "di": [
+    "The Legend of Zelda: Tears of the Kingdom"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch_2"
+   ]
+  },
+  {
+   "titolo": "Super Mario All-Stars",
+   "di": [
+    "Super Mario Bros.",
+    "Super Mario Bros. 2",
+    "Super Mario Bros. 3"
+   ],
+   "piattaforme": [
+    "SNES"
+   ]
+  },
+  {
+   "titolo": "Super Mario 3D All-Stars",
+   "di": [
+    "Super Mario 64",
+    "Super Mario Sunshine",
+    "Super Mario Galaxy"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch"
+   ]
+  },
+  {
+   "titolo": "Super Mario Galaxy + Super Mario Galaxy 2",
+   "di": [
+    "Super Mario Galaxy",
+    "Super Mario Galaxy 2"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch"
+   ]
+  },
+  {
+   "titolo": "Super Mario 3D World + Bowser's Fury",
+   "di": [
+    "Super Mario 3D World"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch"
+   ]
+  },
+  {
+   "titolo": "Super Mario Bros. Wonder - Nintendo Switch 2 Edition",
+   "di": [
+    "Super Mario Bros. Wonder"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch_2"
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed: The Ezio Collection",
+   "di": [
+    "Assassin's Creed II",
+    "Assassin's Creed: Brotherhood",
+    "Assassin's Creed: Revelations"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Xbox_One",
+    "Nintendo_Switch"
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed III Remastered",
+   "di": [
+    "Assassin's Creed III"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_4",
+    "Xbox_One",
+    "Nintendo_Switch"
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed Rogue Remastered",
+   "di": [
+    "Assassin's Creed Rogue"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Xbox_One"
+   ]
+  },
+  {
+   "titolo": "Assassin's Creed Black Flag Resynced",
+   "di": [
+    "Assassin's Creed IV: Black Flag"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "PlayStation_5",
+    "Xbox_Series_X_and_Series_S"
+   ]
+  },
+  {
+   "titolo": "Fallout 4: Anniversary Edition",
+   "di": [
+    "Fallout 4"
+   ],
+   "piattaforme": [
+    "PlayStation_5",
+    "Xbox_Series_X_and_Series_S",
+    "Nintendo_Switch_2",
+    "Microsoft_Windows"
+   ]
+  },
+  {
+   "titolo": "Grand Theft Auto: The Trilogy - The Definitive Edition",
+   "di": [
+    "Grand Theft Auto III",
+    "Grand Theft Auto: Vice City",
+    "Grand Theft Auto: San Andreas"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch",
+    "PlayStation_4",
+    "PlayStation_5",
+    "Microsoft_Windows",
+    "Xbox_One",
+    "Xbox_Series_X_and_Series_S"
+   ]
+  },
+  {
+   "titolo": "Grand Theft Auto V (PlayStation 5 and Xbox Series X/S)",
+   "di": [
+    "Grand Theft Auto V"
+   ],
+   "piattaforme": [
+    "PlayStation_5",
+    "Xbox_Series_X_and_Series_S"
+   ]
+  },
+  {
+   "titolo": "Mass Effect Legendary Edition",
+   "di": [
+    "Mass Effect",
+    "Mass Effect 2",
+    "Mass Effect 3"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Microsoft_Windows",
+    "Xbox_One"
+   ]
+  },
+  {
+   "titolo": "The Witcher 3: Wild Hunt - Complete Edition (PlayStation 5 and Xbox Series X/S)",
+   "di": [
+    "The Witcher 3: Wild Hunt"
+   ],
+   "piattaforme": [
+    "PlayStation_5",
+    "Xbox_Series_X_and_Series_S"
+   ]
+  },
+  {
+   "titolo": "Dark Souls: Remastered",
+   "di": [
+    "Dark Souls"
+   ],
+   "piattaforme": [
+    "PlayStation_4",
+    "Microsoft_Windows",
+    "Xbox_One",
+    "Nintendo_Switch"
+   ]
+  },
+  {
+   "titolo": "Portal: Companion Collection",
+   "di": [
+    "Portal",
+    "Portal 2"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch"
+   ]
+  },
+  {
+   "titolo": "Halo: Combat Evolved Anniversary",
+   "di": [
+    "Halo: Combat Evolved"
+   ],
+   "piattaforme": [
+    "Xbox_360"
+   ]
+  },
+  {
+   "titolo": "Halo: The Master Chief Collection",
+   "di": [
+    "Halo: Combat Evolved",
+    "Halo 2",
+    "Halo 3",
+    "Halo 3: ODST",
+    "Halo: Reach",
+    "Halo 4"
+   ],
+   "piattaforme": [
+    "Xbox_One",
+    "Microsoft_Windows"
+   ]
+  },
+  {
+   "titolo": "Halo: Campaign Evolved",
+   "di": [
+    "Halo: Combat Evolved"
+   ],
+   "piattaforme": [
+    "Microsoft_Windows",
+    "Xbox_Series_X_and_Series_S",
+    "PlayStation_5"
+   ]
+  },
+  {
+   "titolo": "The Legend of Zelda: Ocarina of Time (2026)",
+   "di": [
+    "The Legend of Zelda: Ocarina of Time"
+   ],
+   "piattaforme": [
+    "Nintendo_Switch_2"
+   ]
+  }
+ ],
+ "personaggi": {
+  "343 Guilty Spark": {
+   "natura": "ArtificialIntelligence"
+  },
+  "Abbas Sofian": {},
+  "Abu'l Nuquod": {},
+  "Achilles Davenport": {},
+  "Adam Smasher": {},
+  "Adéwalé": {},
+  "Agahnim": {},
+  "Ahmet": {
+   "interpreta": "Şehzade Ahmet"
+  },
+  "Ajay Ghale": {
+   "natura": "Human"
+  },
+  "Akechi Mitsuhide": {
+   "interpreta": "Akechi Mitsuhide"
+  },
+  "Al Mualim": {
+   "natura": "Human"
+  },
+  "Alcibiades": {
+   "interpreta": "Alcibiades"
+  },
+  "Aldo Mendez": {},
+  "Alexander Graham Bell": {
+   "interpreta": "Alexander Graham Bell"
+  },
+  "Alfred the Great": {
+   "interpreta": "Alfred the Great"
+  },
+  "Altaïr Ibn-La'Ahad": {},
+  "Anne Bonny": {
+   "interpreta": "Anne Bonny"
+  },
+  "Anton Castillo": {},
+  "Apollodorus": {
+   "interpreta": "Apollodorus of Sicily"
+  },
+  "Arbiter": {},
+  "Arno Dorian": {
+   "natura": "Human"
+  },
+  "Ashen One": {},
+  "Aspasia": {
+   "interpreta": "Aspasia"
+  },
+  "Asuka Kasen": {
+   "natura": "Human"
+  },
+  "Atriox": {},
+  "Avery Johnson": {
+   "natura": "Human"
+  },
+  "Aya": {
+   "natura": "Human"
+  },
+  "Aya and the conspirators": {},
+  "Azar Javed": {},
+  "Banū Mūsā brothers": {
+   "interpreta": "Banu Musa"
+  },
+  "Bartholomew Roberts": {
+   "natura": "Human",
+   "interpreta": "Bartholomew Roberts"
+  },
+  "Bartolomeo d'Alviano": {
+   "interpreta": "Bartolomeo d'Alviano"
+  },
+  "Basim Ibn Ishaq": {},
+  "Batari": {},
+  "Bayek of Siwa": {},
+  "Bayezid II": {
+   "interpreta": "Bayezid II"
+  },
+  "Bearer of the Curse": {},
+  "Bellum": {},
+  "Benezia": {},
+  "Benjamin Church": {
+   "interpreta": "Benjamin Church"
+  },
+  "Benjamin Disraeli": {
+   "interpreta": "Benjamin Disraeli"
+  },
+  "Benjamin Franklin": {
+   "interpreta": "Benjamin Franklin"
+  },
+  "Benjamin Hornigold": {
+   "interpreta": "Benjamin Hornigold"
+  },
+  "Benny": {},
+  "Big Smoke": {
+   "natura": "Human"
+  },
+  "Blackbeard": {
+   "interpreta": "Edward Thatch"
+  },
+  "Bowser": {},
+  "Bowser Jr.": {},
+  "Brasidas": {
+   "interpreta": "Brasidas"
+  },
+  "Brutus": {
+   "interpreta": "Marcus Junius Brutus"
+  },
+  "Bárid mac Ímair": {
+   "interpreta": "Bárid mac Ímair"
+  },
+  "Calico Jack Rackham": {
+   "interpreta": "Calico Jack Rackham"
+  },
+  "Cameron Burke": {},
+  "Carl 'CJ' Johnson": {
+   "natura": "Human"
+  },
+  "Cassius": {
+   "interpreta": "Gaius Cassius Longinus"
+  },
+  "Catalina": {
+   "natura": "Human"
+  },
+  "Caterina Sforza": {
+   "interpreta": "Caterina Sforza"
+  },
+  "Catherine Halsey": {
+   "natura": "Human"
+  },
+  "Ceolwulf II": {
+   "interpreta": "Ceolwulf II of Mercia"
+  },
+  "Cesare Borgia": {
+   "natura": "Human",
+   "interpreta": "Cesare Borgia"
+  },
+  "Chancellor Cole": {},
+  "Charles Darwin": {
+   "interpreta": "Charles Darwin"
+  },
+  "Charles Dickens": {
+   "interpreta": "Charles Dickens"
+  },
+  "Charles Dorian": {},
+  "Charles Lee": {
+   "natura": "Human",
+   "interpreta": "Charles Lee"
+  },
+  "Charles Vane": {
+   "interpreta": "Charles Vane"
+  },
+  "Checco Orsi": {},
+  "Chell": {
+   "natura": "Human"
+  },
+  "Chosen Undead": {
+   "natura": "Human"
+  },
+  "Clara Garcia": {},
+  "Claude": {
+   "natura": "Human"
+  },
+  "Clementine": {},
+  "Cleopatra": {
+   "interpreta": "Cleopatra VII"
+  },
+  "Colonel Augustus Autumn": {},
+  "Commander Shepard": {
+   "natura": "Human"
+  },
+  "Connor": {
+   "natura": "Human"
+  },
+  "Conrad Kellogg": {},
+  "Cortana": {
+   "mente_copiata_da": "Catherine Halsey"
+  },
+  "Crawford Starrick": {},
+  "Crowe": {},
+  "Dah": {},
+  "Dani Rojas": {
+   "natura": "Human"
+  },
+  "Daniel Cross": {},
+  "David Brewster": {},
+  "Deimos": {
+   "natura": "Human"
+  },
+  "Demise": {},
+  "Desmond Miles": {
+   "natura": "Human"
+  },
+  "Despondent Pyre": {
+   "natura": "ArtificialIntelligence"
+  },
+  "Devin Weston": {},
+  "Diego Castillo": {},
+  "Dimitri Rascalov": {
+   "natura": "Human"
+  },
+  "Donald Love": {
+   "natura": "Human"
+  },
+  "Doyle": {},
+  "Dr. John Elliotson": {},
+  "Dr. Krieger": {},
+  "Duarte de Melo": {},
+  "Duleep Singh": {
+   "interpreta": "Duleep Singh"
+  },
+  "Duncan Walpole": {},
+  "Edgar Reyes": {},
+  "Edward Braddock": {
+   "interpreta": "Edward Braddock"
+  },
+  "Edward Kenway": {
+   "natura": "Human"
+  },
+  "Eivor Varinsdottir": {},
+  "Eli Palmer": {},
+  "Elpenor": {},
+  "Eredin": {},
+  "Ethan Seed": {},
+  "Eudoros": {},
+  "Evie Frye": {
+   "natura": "Human"
+  },
+  "Ezio Auditore da Firenze": {},
+  "Faith Seed": {},
+  "Flann Sinna": {
+   "interpreta": "Flann Sinna"
+  },
+  "Flavius Metellus": {},
+  "Florence Nightingale": {
+   "interpreta": "Florence Nightingale"
+  },
+  "Francesco de' Pazzi": {
+   "interpreta": "Francesco de' Pazzi"
+  },
+  "Frank Tenpenny": {
+   "natura": "Human"
+  },
+  "Franklin Clinton": {
+   "natura": "Human"
+  },
+  "François-Thomas Germain": {
+   "natura": "Human",
+   "interpreta": "François-Thomas Germain"
+  },
+  "Frederick Abberline": {
+   "interpreta": "Frederick Abberline"
+  },
+  "Fujibayashi Naoe": {},
+  "Fulke": {},
+  "GLaDOS": {
+   "natura": "ArtificialIntelligence"
+  },
+  "Gamilat": {},
+  "Ganondorf": {},
+  "Garnier de Nablus": {
+   "interpreta": "Garnier of Nablus"
+  },
+  "George Monro": {
+   "interpreta": "George Monro"
+  },
+  "George Washington": {
+   "interpreta": "George Washington"
+  },
+  "Geralt of Rivia": {
+   "natura": "Human"
+  },
+  "Ghirahim": {},
+  "Girolamo Savonarola": {
+   "interpreta": "Girolamo Savonarola"
+  },
+  "Grant Brody": {},
+  "Gustave": {},
+  "Guthrum": {
+   "interpreta": "Guthrum"
+  },
+  "Gwyn, Lord of Sunlight": {},
+  "Halfdan Ragnarsson": {
+   "interpreta": "Halfdan Ragnarsson"
+  },
+  "Harald Fairhair": {
+   "interpreta": "Harald Fairhair"
+  },
+  "Haytham Kenway": {
+   "natura": "Human"
+  },
+  "Herodotus": {
+   "interpreta": "Herodotus"
+  },
+  "Hilda": {},
+  "Hippocrates": {
+   "interpreta": "Hippocrates"
+  },
+  "Hope Jensen": {},
+  "Hoyt Volker": {},
+  "Human-Reaper": {},
+  "Imlerith": {},
+  "Israel Putnam": {
+   "interpreta": "Israel Putnam"
+  },
+  "Ivar the Boneless": {
+   "interpreta": "Ivar the Boneless"
+  },
+  "Jack Carver": {
+   "natura": "Human"
+  },
+  "Jacob Frye": {
+   "natura": "Human"
+  },
+  "Jacob Seed": {},
+  "Jacopo de' Pazzi": {
+   "interpreta": "Jacopo de' Pazzi"
+  },
+  "Jacques de Aldersberg": {
+   "natura": "Human"
+  },
+  "James Brudenell, 7th Earl of Cardigan": {},
+  "Jameson Locke": {
+   "natura": "Human"
+  },
+  "Jason Brody": {
+   "natura": "Human"
+  },
+  "Jason Duval": {
+   "natura": "Human"
+  },
+  "Jimmy Pegorino": {},
+  "John Pitcairn": {
+   "interpreta": "John Pitcairn"
+  },
+  "John Seed": {},
+  "Joseph Seed": {},
+  "Jubair al Hakim": {},
+  "Jul 'Mdama": {},
+  "Julius Caesar": {
+   "interpreta": "Julius Caesar"
+  },
+  "Kai Leng": {
+   "natura": "Human"
+  },
+  "Kanen'tó:kon": {},
+  "Karl Marx": {
+   "interpreta": "Karl Marx"
+  },
+  "Kenji Kasen": {},
+  "Kesegowaase": {},
+  "Khemu": {},
+  "Kimura Kei": {},
+  "King Foltest": {},
+  "Kjotve the Cruel": {},
+  "Kleon": {
+   "interpreta": "Cleon"
+  },
+  "Lady Maud": {},
+  "Lafreniere": {},
+  "Lance Vance": {
+   "natura": "Human"
+  },
+  "Laureano Torres": {
+   "interpreta": "Laureano de Torres y Ayala"
+  },
+  "Layla Hassan": {
+   "natura": "Human"
+  },
+  "Leader of the Zanj Rebellion": {
+   "interpreta": "Ali ibn Muhammad"
+  },
+  "Lee Everett": {},
+  "Leonardo da Vinci": {
+   "natura": "Human",
+   "interpreta": "Leonardo da Vinci"
+  },
+  "Letho": {
+   "natura": "Human"
+  },
+  "Liam O'Brien": {},
+  "Link": {
+   "natura": "Human"
+  },
+  "Lone Wanderer": {
+   "natura": "Human"
+  },
+  "Lorenzo de' Medici": {
+   "interpreta": "Lorenzo de' Medici"
+  },
+  "Lou": {},
+  "Louis XVI": {
+   "interpreta": "Louis XVI"
+  },
+  "Louis-Joseph Gaultier de La Vérendrye": {
+   "interpreta": "Louis-Joseph Gaultier de La Vérendrye"
+  },
+  "Lucia Caminos": {
+   "natura": "Human"
+  },
+  "Lucius Septimius": {
+   "interpreta": "Lucius Septimius"
+  },
+  "Lucy Stillman": {},
+  "Lucy Thorne": {},
+  "Ludovico Orsi": {},
+  "Majd Addin": {},
+  "Malcolm Milner": {},
+  "Malik Al-Sayf": {},
+  "Malladus": {},
+  "Manuel Palaiologos": {
+   "interpreta": "Manuel Palaiologos"
+  },
+  "Maria Marquessa": {},
+  "Mario": {
+   "natura": "Human"
+  },
+  "Mario Auditore": {},
+  "Marquis de Lafayette": {
+   "interpreta": "Marquis de Lafayette"
+  },
+  "Marquis de Sade": {
+   "interpreta": "Marquis de Sade"
+  },
+  "Martin Madrazo": {},
+  "Mary Read": {
+   "interpreta": "Mary Read"
+  },
+  "Master Chief": {
+   "natura": "Human"
+  },
+  "Master Sibrand": {},
+  "Maxwell Roth": {},
+  "Michael De Santa": {
+   "natura": "Human"
+  },
+  "Mickey": {},
+  "Midna": {},
+  "Miguel": {},
+  "Mikhail Faustin": {},
+  "Mirabeau": {
+   "interpreta": "Comte de Mirabeau"
+  },
+  "Momochi Sandayu": {
+   "interpreta": "Momochi Sandayu"
+  },
+  "Muhammad ibn Abdallah ibn Tahir": {
+   "interpreta": "Muhammad ibn Abdallah ibn Tahir"
+  },
+  "Napoleon Bonaparte": {
+   "interpreta": "Napoleon Bonaparte"
+  },
+  "Nashandra": {},
+  "Niccolò Machiavelli": {
+   "interpreta": "Niccolò Machiavelli"
+  },
+  "Niccolò and Maffeo Polo": {
+   "interpreta": "Niccolò and Maffeo Polo"
+  },
+  "Niko Bellic": {
+   "natura": "Human"
+  },
+  "Noble Six": {
+   "natura": "Human"
+  },
+  "Null": {},
+  "Nuno Caro": {},
+  "Oda Nobunaga": {
+   "interpreta": "Oda Nobunaga"
+  },
+  "Onox": {},
+  "Pagan Min": {},
+  "Paul Revere": {
+   "interpreta": "Paul Revere"
+  },
+  "Pearl Attaway": {},
+  "Pericles": {
+   "interpreta": "Pericles"
+  },
+  "Philip Twopenny": {},
+  "Philippa Eilhart": {},
+  "Philippe Rose": {},
+  "Pierre Bellec": {},
+  "Piri Reis": {
+   "interpreta": "Piri Reis"
+  },
+  "Pompey": {
+   "interpreta": "Pompey the Great"
+  },
+  "Pothinus": {
+   "interpreta": "Pothinus"
+  },
+  "President John Henry Eden": {},
+  "Prophet of Regret": {},
+  "Prophet of Truth": {},
+  "Ptolemy XIII": {
+   "interpreta": "Ptolemy XIII"
+  },
+  "Qabiha": {},
+  "Queen Victoria": {
+   "interpreta": "Queen Victoria"
+  },
+  "Ray Bulgarin": {},
+  "Renoir": {},
+  "Rhodri": {
+   "interpreta": "Rhodri Mawr"
+  },
+  "Ricardo Diaz": {
+   "natura": "Human"
+  },
+  "Richard I": {
+   "interpreta": "Richard I of England"
+  },
+  "Robert Robertson III": {},
+  "Robert de Sablé": {
+   "interpreta": "Robert de Sablé"
+  },
+  "Robespierre": {
+   "interpreta": "Maximilien Robespierre"
+  },
+  "Rodrigo Borgia": {
+   "natura": "Human",
+   "interpreta": "Rodrigo Borgia"
+  },
+  "Roshan": {
+   "natura": "Human"
+  },
+  "Rufio": {},
+  "Ryder": {},
+  "Saburo Arasaka": {},
+  "Salvatore Leone": {
+   "natura": "Human"
+  },
+  "Sam Becker": {},
+  "Samuel Adams": {
+   "interpreta": "Samuel Adams"
+  },
+  "Saren Arterius": {},
+  "Scorchbeast Queen": {},
+  "Selim I": {
+   "interpreta": "Selim I"
+  },
+  "Shadow Link": {},
+  "Shadow Mario": {},
+  "Shaun": {
+   "natura": "Human"
+  },
+  "Shay Patrick Cormac": {},
+  "Shroud": {},
+  "Sile de Tansarville": {},
+  "Skull Kid": {},
+  "Socrates": {
+   "interpreta": "Socrates"
+  },
+  "Sole Survivor": {
+   "natura": "Human"
+  },
+  "Sole Survivor's spouse": {},
+  "Sonny Forelli": {
+   "natura": "Human"
+  },
+  "Soul of Cinder": {},
+  "Sovereign": {},
+  "Stede Bonnet": {
+   "interpreta": "Stede Bonnet"
+  },
+  "Steve Haines": {},
+  "Suleiman": {
+   "interpreta": "Suleiman the Magnificent"
+  },
+  "Takkar": {
+   "natura": "Human"
+  },
+  "Talal": {},
+  "Tamir": {},
+  "Tartarus": {},
+  "The Captain": {
+   "natura": "Human"
+  },
+  "The Chosen One": {
+   "natura": "Human"
+  },
+  "The Courier": {
+   "natura": "Human"
+  },
+  "The Deputy": {
+   "natura": "Human"
+  },
+  "The Didact": {},
+  "The Eagle Bearer": {},
+  "The Harbinger": {},
+  "The Illusive Man": {
+   "natura": "Human"
+  },
+  "The Jackal": {
+   "natura": "Human"
+  },
+  "The Master": {},
+  "The Professor": {},
+  "The Rookie": {
+   "natura": "Human"
+  },
+  "The Stranger": {},
+  "The Tarnished": {},
+  "The Weapon": {
+   "natura": "ArtificialIntelligence"
+  },
+  "Thomas Hickey": {
+   "interpreta": "Thomas Hickey"
+  },
+  "Thomas Jefferson": {
+   "interpreta": "Thomas Jefferson"
+  },
+  "Tommy Vercetti": {
+   "natura": "Human"
+  },
+  "Trevor Philips": {
+   "natura": "Human"
+  },
+  "Twinrova": {},
+  "Ubba": {
+   "interpreta": "Ubba"
+  },
+  "Uberto Alberti": {},
+  "Ull": {},
+  "V": {},
+  "Vaas Montenegro": {},
+  "Vaati": {},
+  "Vault Dweller": {
+   "natura": "Human"
+  },
+  "Veran": {},
+  "Vesemir": {
+   "natura": "Human"
+  },
+  "Vieri de' Pazzi": {},
+  "Virgil Minkler": {},
+  "Vlad Glebov": {},
+  "Warden Eternal": {},
+  "Warren Vidic": {},
+  "Wart": {},
+  "Wheatley": {
+   "natura": "ArtificialIntelligence"
+  },
+  "William Johnson": {
+   "interpreta": "William Johnson"
+  },
+  "William V of Montferrat": {
+   "interpreta": "William V, Marquess of Montferrat"
+  },
+  "Woodes Rogers": {
+   "interpreta": "Woodes Rogers"
+  },
+  "Yasuke": {
+   "natura": "Human",
+   "interpreta": "Yasuke"
+  },
+  "Yorinobu Arasaka": {},
+  "Yuga": {},
+  "Yusuf Tazim": {},
+  "Zant": {},
+  "Zelda": {
+   "natura": "Human"
+  },
+  "al-Mutawakkil": {
+   "interpreta": "Al-Mutawakkil"
+  },
+  "Élise de la Serre": {}
+ },
+ "persone": {
+  "Adam Badowski": {},
+  "Akechi Mitsuhide": {},
+  "Al-Mutawakkil": {},
+  "Alcibiades": {},
+  "Alex Hutchinson": {},
+  "Alexander Graham Bell": {},
+  "Alexandre Amancio": {},
+  "Alexandre Letendre": {},
+  "Alfred the Great": {},
+  "Ali ibn Muhammad": {},
+  "Anne Bonny": {},
+  "Apollodorus of Sicily": {},
+  "Ashraf Ismail": {},
+  "Aspasia": {},
+  "Banu Musa": {},
+  "Bartholomew Roberts": {},
+  "Bartolomeo d'Alviano": {},
+  "Bayezid II": {},
+  "Ben Bauer": {},
+  "Benjamin Church": {},
+  "Benjamin Disraeli": {},
+  "Benjamin Franklin": {},
+  "Benjamin Hornigold": {},
+  "Brasidas": {},
+  "Bárid mac Ímair": {},
+  "Calico Jack Rackham": {},
+  "Casey Hudson": {},
+  "Caterina Sforza": {},
+  "Ceolwulf II of Mercia": {},
+  "Cesare Borgia": {},
+  "Cevat Yerli": {},
+  "Charles Benoit": {},
+  "Charles Darwin": {},
+  "Charles Dickens": {},
+  "Charles Lee": {},
+  "Charles Vane": {},
+  "Chris Avellone": {
+   "ex_dipendente_di": "Black Isle Studios"
+  },
+  "Chris Jones": {
+   "ex_dipendente_di": "Black Isle Studios"
+  },
+  "Chris Parker": {
+   "ex_dipendente_di": "Black Isle Studios"
+  },
+  "Cleon": {},
+  "Cleopatra VII": {},
+  "Clint Hocking": {},
+  "Comte de Mirabeau": {},
+  "Daiki Iwamoto": {},
+  "Damien Kieken": {},
+  "Dan Hay": {},
+  "Darren Monahan": {
+   "ex_dipendente_di": "Black Isle Studios"
+  },
+  "Dennis Lenart": {
+   "ex_dipendente_di": "Telltale Games"
+  },
+  "Duleep Singh": {},
+  "Edward Braddock": {},
+  "Edward Thatch": {},
+  "Eiji Aonuma": {},
+  "Feargus Urquhart": {
+   "ex_dipendente_di": "Black Isle Studios"
+  },
+  "Flann Sinna": {},
+  "Florence Nightingale": {},
+  "Francesco de' Pazzi": {},
+  "François-Thomas Germain": {},
+  "Frederick Abberline": {},
+  "Gabe Newell": {
+   "ex_dipendente_di": "Microsoft"
+  },
+  "Gaius Cassius Longinus": {},
+  "Garnier of Nablus": {},
+  "George Monro": {},
+  "George Washington": {},
+  "Girolamo Savonarola": {},
+  "Guillaume Broche": {},
+  "Guthrum": {},
+  "Halfdan Ragnarsson": {},
+  "Harald Fairhair": {},
+  "Herodotus": {},
+  "Hidemaro Fujibayashi": {},
+  "Hidetaka Miyazaki": {
+   "guida": "FromSoftware"
+  },
+  "Hippocrates": {},
+  "Hiromasa Shikata": {},
+  "Isamu Okano": {},
+  "Israel Putnam": {},
+  "Ivar the Boneless": {},
+  "Jacek Brzezinski": {},
+  "Jacopo de' Pazzi": {},
+  "Jake Rodkin": {},
+  "Jason Jones": {},
+  "Jean Guesdon": {},
+  "Jean-Christophe Guyot": {},
+  "Jean-Sebastien Decant": {},
+  "Jeff Gardiner": {},
+  "Jim Woods": {},
+  "John Pitcairn": {},
+  "Jonathan Dumont": {},
+  "Jonathan Rush": {},
+  "Joseph Staten": {},
+  "Josh Holmes": {},
+  "Josh Sawyer": {},
+  "Julius Caesar": {},
+  "Karl Marx": {},
+  "Keith R. Hamilton": {},
+  "Kensuke Tanabe": {},
+  "Kenta Motokura": {},
+  "Kenta Usui": {},
+  "Kim Swift": {},
+  "Koichi Hayashida": {},
+  "Konrad Tomaszkiewicz": {},
+  "Laureano de Torres y Ayala": {},
+  "Leonardo da Vinci": {},
+  "Lorenzo de' Medici": {},
+  "Louis XVI": {},
+  "Louis-Joseph Gaultier de La Vérendrye": {},
+  "Lucius Septimius": {},
+  "Manuel Palaiologos": {},
+  "Marc Albinet": {},
+  "Marc-Alexis Côté": {},
+  "Marcus Junius Brutus": {},
+  "Marcus Lehto": {},
+  "Marquis de Lafayette": {},
+  "Marquis de Sade": {},
+  "Martin Capel": {},
+  "Mary Read": {},
+  "Maxime Beland": {},
+  "Maximilien Robespierre": {},
+  "Michael Choung": {
+   "ex_dipendente_di": "Telltale Games"
+  },
+  "Mike Harrington": {
+   "ex_dipendente_di": "Microsoft"
+  },
+  "Mikhail Lozanov": {},
+  "Momochi Sandayu": {},
+  "Muhammad ibn Abdallah ibn Tahir": {},
+  "Napoleon Bonaparte": {},
+  "Niccolò Machiavelli": {},
+  "Niccolò and Maffeo Polo": {},
+  "Nick Herman": {
+   "ex_dipendente_di": "Telltale Games"
+  },
+  "Oda Nobunaga": {},
+  "Omar Bouali": {},
+  "Patrice Désilets": {},
+  "Patrick Plourde": {},
+  "Patrik Methe": {},
+  "Paul Revere": {},
+  "Pericles": {},
+  "Pierre Shorette": {
+   "ex_dipendente_di": "Telltale Games"
+  },
+  "Piri Reis": {},
+  "Pompey the Great": {},
+  "Pothinus": {},
+  "Ptolemy XIII": {},
+  "Queen Victoria": {},
+  "Rhodri Mawr": {},
+  "Richard I of England": {},
+  "Robert de Sablé": {},
+  "Rodrigo Borgia": {},
+  "Samuel Adams": {},
+  "Satoshi Terada": {},
+  "Scott Phillips": {},
+  "Sean Vanaman": {},
+  "Selim I": {},
+  "Shigeru Miyamoto": {},
+  "Shigeyuki Asuke": {},
+  "Shiro Mouri": {},
+  "Socrates": {},
+  "Spass Kroushkov": {},
+  "Stede Bonnet": {},
+  "Stéphane Boudon": {},
+  "Suleiman the Magnificent": {},
+  "Tadashi Sugiyama": {},
+  "Takashi Tezuka": {},
+  "Thomas Hickey": {},
+  "Thomas Jefferson": {},
+  "Thomas Simon": {},
+  "Tim Longo": {},
+  "Todd Howard": {},
+  "Tomohiro Shibuya": {},
+  "Tomomi Sano": {},
+  "Toru Osawa": {},
+  "Toshiaki Suzuki": {},
+  "Toshio Iwawaki": {},
+  "Ubba": {},
+  "Wesley Pincombe": {},
+  "William Johnson": {},
+  "William V, Marquess of Montferrat": {},
+  "Woodes Rogers": {},
+  "Yasuhisa Yamamura": {},
+  "Yasuke": {},
+  "Yoichi Yamada": {},
+  "Yoshiaki Koizumi": {},
+  "Yui Tanimura": {},
+  "Şehzade Ahmet": {}
+ },
+ "aziende": {
+  "AdHoc Studio": {
+   "fondatori": [
+    "Michael Choung",
+    "Nick Herman",
+    "Dennis Lenart",
+    "Pierre Shorette"
+   ]
+  },
+  "Atari": {},
+  "Bandai Namco Entertainment": {
+   "controllata_da": "Bandai Namco Holdings"
+  },
+  "Bandai Namco Holdings": {},
+  "Bethesda Game Studios": {
+   "controllata_da": "Bethesda Softworks"
+  },
+  "Bethesda Softworks": {
+   "controllata_da": "ZeniMax Media"
+  },
+  "BioWare": {
+   "controllata_da": "Electronic Arts"
+  },
+  "Black Isle Studios": {
+   "controllata_da": "Interplay Productions"
+  },
+  "Bungie": {
+   "controllata_da": "Sony Interactive Entertainment"
+  },
+  "CD Projekt": {},
+  "CD Projekt Red": {
+   "controllata_da": "CD Projekt"
+  },
+  "Capcom": {},
+  "Criterion Games": {
+   "controllata_da": "Electronic Arts"
+  },
+  "Crytek": {},
+  "Electronic Arts": {},
+  "Epic Games": {},
+  "Flagship": {
+   "controllata_da": "Capcom"
+  },
+  "FromSoftware": {
+   "controllata_da": "Kadokawa Corporation"
+  },
+  "Gamebase": {},
+  "Halo Studios": {
+   "controllata_da": "Xbox Game Studios"
+  },
+  "Interplay Productions": {},
+  "Kadokawa Corporation": {},
+  "Kepler Interactive": {},
+  "Microsoft": {},
+  "Mojang Studios": {
+   "controllata_da": "Xbox Game Studios"
+  },
+  "Nintendo": {},
+  "Nintendo EAD": {
+   "controllata_da": "Nintendo"
+  },
+  "Nintendo EAD Tokyo": {
+   "controllata_da": "Nintendo"
+  },
+  "Nintendo EPD": {
+   "controllata_da": "Nintendo"
+  },
+  "Nintendo R&D2": {
+   "controllata_da": "Nintendo"
+  },
+  "Nintendo R&D4": {
+   "controllata_da": "Nintendo"
+  },
+  "Obsidian Entertainment": {
+   "controllata_da": "Xbox Game Studios",
+   "fondatori": [
+    "Feargus Urquhart",
+    "Chris Avellone",
+    "Chris Parker",
+    "Darren Monahan",
+    "Chris Jones"
+   ]
+  },
+  "RAGE Technology Group": {
+   "controllata_da": "Rockstar Games"
+  },
+  "Rockstar Games": {
+   "controllata_da": "Take-Two Interactive"
+  },
+  "Rockstar North": {
+   "controllata_da": "Rockstar Games"
+  },
+  "Sandfall Interactive": {},
+  "Sega": {},
+  "Sony Group": {},
+  "Sony Interactive Entertainment": {
+   "controllata_da": "Sony Group"
+  },
+  "Take-Two Interactive": {},
+  "Telltale Games": {},
+  "Ubisoft": {},
+  "Ubisoft Bordeaux": {
+   "controllata_da": "Ubisoft"
+  },
+  "Ubisoft Montreal": {
+   "controllata_da": "Ubisoft"
+  },
+  "Ubisoft Quebec": {
+   "controllata_da": "Ubisoft"
+  },
+  "Ubisoft Sofia": {
+   "controllata_da": "Ubisoft"
+  },
+  "Ubisoft Toronto": {
+   "controllata_da": "Ubisoft"
+  },
+  "Valve": {
+   "fondatori": [
+    "Gabe Newell",
+    "Mike Harrington"
+   ]
+  },
+  "Xbox Game Studios": {
+   "controllata_da": "Microsoft"
+  },
+  "ZeniMax Media": {
+   "controllata_da": "Xbox Game Studios"
+  },
+  "cdp.pl": {}
+ },
+ "piattaforme": {
+  "Classic_Mac_OS": {
+   "nome": "Classic Mac OS",
+   "classe": "PCPlatform"
+  },
+  "Dreamcast": {
+   "nome": "Dreamcast",
+   "classe": "ConsolePlatform",
+   "costruttore": "Sega"
+  },
+  "Famicom_Disk_System": {
+   "nome": "Famicom Disk System",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Game_Boy": {
+   "nome": "Game Boy",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Game_Boy_Advance": {
+   "nome": "Game Boy Advance",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Game_Boy_Color": {
+   "nome": "Game Boy Color",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Google_Stadia": {
+   "nome": "Google Stadia",
+   "classe": "Platform"
+  },
+  "Linux": {
+   "nome": "Linux",
+   "classe": "PCPlatform"
+  },
+  "MS-DOS": {
+   "nome": "MS-DOS",
+   "classe": "PCPlatform"
+  },
+  "Microsoft_Windows": {
+   "nome": "Microsoft Windows",
+   "classe": "PCPlatform"
+  },
+  "NES": {
+   "nome": "Nintendo Entertainment System",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Nintendo_3DS": {
+   "nome": "Nintendo 3DS",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Nintendo_64": {
+   "nome": "Nintendo 64",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Nintendo_DS": {
+   "nome": "Nintendo DS",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Nintendo_GameCube": {
+   "nome": "GameCube",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Nintendo_Switch": {
+   "nome": "Nintendo Switch",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Nintendo_Switch_2": {
+   "nome": "Nintendo Switch 2",
+   "classe": "CurrentGenerationConsole",
+   "costruttore": "Nintendo"
+  },
+  "PlayStation": {
+   "nome": "PlayStation",
+   "classe": "ConsolePlatform",
+   "costruttore": "Sony Interactive Entertainment"
+  },
+  "PlayStation_2": {
+   "nome": "PlayStation 2",
+   "classe": "ConsolePlatform",
+   "costruttore": "Sony Interactive Entertainment"
+  },
+  "PlayStation_3": {
+   "nome": "PlayStation 3",
+   "classe": "ConsolePlatform",
+   "costruttore": "Sony Interactive Entertainment"
+  },
+  "PlayStation_4": {
+   "nome": "PlayStation 4",
+   "classe": "ConsolePlatform",
+   "costruttore": "Sony Interactive Entertainment"
+  },
+  "PlayStation_5": {
+   "nome": "PlayStation 5",
+   "classe": "CurrentGenerationConsole",
+   "costruttore": "Sony Interactive Entertainment"
+  },
+  "SNES": {
+   "nome": "Super Nintendo Entertainment System",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Wii": {
+   "nome": "Wii",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Wii_U": {
+   "nome": "Wii U",
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo"
+  },
+  "Xbox": {
+   "nome": "Xbox",
+   "classe": "ConsolePlatform",
+   "costruttore": "Microsoft"
+  },
+  "Xbox_360": {
+   "nome": "Xbox 360",
+   "classe": "ConsolePlatform",
+   "costruttore": "Microsoft"
+  },
+  "Xbox_One": {
+   "nome": "Xbox One",
+   "classe": "ConsolePlatform",
+   "costruttore": "Microsoft"
+  },
+  "Xbox_Series_X_and_Series_S": {
+   "nome": "Xbox Series X/S",
+   "classe": "CurrentGenerationConsole",
+   "costruttore": "Microsoft"
+  },
+  "macOS": {
+   "nome": "macOS",
+   "classe": "PCPlatform"
+  }
+ },
+ "motori": {
+  "Anvil": "Ubisoft Montreal",
+  "Aurora Engine": "BioWare",
+  "Creation Engine": "Bethesda Game Studios",
+  "CryEngine": "Crytek",
+  "Dunia": "Ubisoft Montreal",
+  "Dunia 2": "Ubisoft Montreal",
+  "Gamebryo": "Gamebase",
+  "REDengine": "CD Projekt Red",
+  "RenderWare": "Criterion Games",
+  "Rockstar Advanced Game Engine": "RAGE Technology Group",
+  "Slipspace Engine": "Halo Studios",
+  "Source": "Valve",
+  "Telltale Tool": "Telltale Games",
+  "Unreal Engine": "Epic Games"
+ },
+ "opere": {
+  "The Witcher (Netflix series)": "TVSeries",
+  "Halo (TV series)": "TVSeries",
+  "Fallout (TV series)": "TVSeries",
+  "Assassin's Creed (film)": "Film",
+  "Mass Effect: Paragon Lost": "Film",
+  "Super Mario Bros. (1993 film)": "Film",
+  "The Super Mario Bros. Movie": "Film",
+  "The Super Mario Galaxy Movie": "Film",
+  "The Super Mario Bros. Super Show!": "TVSeries",
+  "Far Cry (film)": "Film",
+  "The Witcher saga (Andrzej Sapkowski)": "Novel",
+  "Cyberpunk (tabletop role-playing game)": "TabletopGame",
+  "The Walking Dead (comic book series)": "Comic"
+ }
+}

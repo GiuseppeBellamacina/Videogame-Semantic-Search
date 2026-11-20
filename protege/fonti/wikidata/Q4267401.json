@@ -1,0 +1,55 @@
+{
+ "basato_su": [
+  "The Witcher"
+ ],
+ "data": [
+  "2015-05-19T00:00:00Z",
+  "2015-10-15T00:00:00Z",
+  "2021-01-01T00:00:00Z",
+  "2021-01-28T00:00:00Z"
+ ],
+ "editore": [
+  "Namco",
+  "cdp.pl",
+  "CD Projekt RED",
+  "Warner Bros. Games"
+ ],
+ "motore": [
+  "PhysX",
+  "SpeedTree",
+  "REDengine"
+ ],
+ "pegi": [
+  "PEGI 18"
+ ],
+ "piattaforme": [
+  "Microsoft Windows",
+  "PlayStation 4",
+  "Xbox One",
+  "Nintendo Switch",
+  "PlayStation 5",
+  "Xbox Series X and Series S"
+ ],
+ "premi": [
+  "Game Developers Choice Award - Game of the Year",
+  "The Game Awards − Most Anticipated Game",
+  "The Game Awards − Game of the Year",
+  "Golden Joystick Awards − Best Visual Design",
+  "The Game Awards − Best Role Playing",
+  "Steam Award for Best Environment",
+  "SXSW Gaming Award for Excellence in Narrative",
+  "Titanium Award for Game of the year",
+  "Big Apple Award for Best Game of the Year",
+  "Steam Award for Choices Matter",
+  "German Computer Game Award – Best International Game",
+  "German Computer Game Award – Best International Game World",
+  "German Computer Game Award – Audience Award",
+  "Vidya Gaem Awards – Least Worst Award"
+ ],
+ "serie": [
+  "The Witcher"
+ ],
+ "sviluppatore": [
+  "CD Projekt RED"
+ ]
+}

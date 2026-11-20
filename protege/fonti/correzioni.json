@@ -1,0 +1,107 @@
+[
+ {
+  "gioco": "Assassin's Creed Origins",
+  "campo": "pegi",
+  "valore": 18,
+  "fonte": "https://www.askaboutgames.com/parents-guide-assassins-creed-origins-pegi-18",
+  "nota": "Wikidata (P908) indica PEGI 12; la classificazione ufficiale è PEGI 18"
+ },
+ {
+  "gioco": "Assassin's Creed Odyssey",
+  "campo": "pegi",
+  "valore": 18,
+  "fonte": "https://pegi.info/search-pegi?q=Assassin%27s+Creed+Odyssey",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: PC/PS4/Xbox One, 05/10/2018"
+ },
+ {
+  "gioco": "Dark Souls II",
+  "campo": "pegi",
+  "valore": 16,
+  "fonte": "https://pegi.info/search-pegi?q=Dark+Souls+II",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: Xbox 360/PS3 14/03/2014, PC 25/04/2014"
+ },
+ {
+  "gioco": "Dark Souls III",
+  "campo": "pegi",
+  "valore": 16,
+  "fonte": "https://pegi.info/search-pegi?q=Dark+Souls",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: PC/PS4/Xbox One, 12/04/2016 (Dark Souls 3)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Echoes of Wisdom",
+  "campo": "pegi",
+  "valore": 7,
+  "fonte": "https://pegi.info/search-pegi?q=Echoes+of+Wisdom",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: Nintendo Switch, 26/09/2024"
+ },
+ {
+  "gioco": "The Legend of Zelda: Four Swords",
+  "campo": "pegi",
+  "valore": 7,
+  "fonte": "https://pegi.info/search-pegi?q=Legend+of+Zelda+Four+Swords",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: Four Swords Anniversary Edition, DSiWare, 28/09/2011"
+ },
+ {
+  "gioco": "The Legend of Zelda: Oracle of Ages",
+  "campo": "pegi",
+  "valore": 7,
+  "fonte": "https://pegi.info/search-pegi?q=Oracle+of+Ages",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: Nintendo 3DS Virtual Console, 30/05/2013"
+ },
+ {
+  "gioco": "Dispatch",
+  "campo": "pegi",
+  "valore": 18,
+  "fonte": "https://pegi.info/search-pegi?q=Dispatch",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: Dispatch Deluxe Edition (physical, U&I Entertainment), PS5/Switch 2, pre-release 25/10/2026"
+ },
+ {
+  "gioco": "Halo 5: Guardians",
+  "campo": "pegi",
+  "valore": 16,
+  "fonte": "https://pegi.info/search-pegi?q=Halo+5",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: Xbox One, 27/10/2015"
+ },
+ {
+  "gioco": "Far Cry New Dawn",
+  "campo": "pegi",
+  "valore": 18,
+  "fonte": "https://pegi.info/search-pegi?q=Far+Cry+New+Dawn",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: PC/PS4/Xbox One, 15/02/2019"
+ },
+ {
+  "gioco": "New Super Mario Bros.",
+  "campo": "pegi",
+  "valore": 3,
+  "fonte": "https://pegi.info/search-pegi?q=New+Super+Mario+Bros",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: Nintendo DS, 30/06/2006 (original)"
+ },
+ {
+  "gioco": "The Legend of Zelda",
+  "campo": "pegi",
+  "valore": 3,
+  "fonte": "https://pegi.info/search-pegi?q=The+Legend+of+Zelda+NES",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: The Legend of Zelda NES Classic, Game Boy Advance, 09/07/2004 (first PEGI-rated release found)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Majora's Mask",
+  "campo": "pegi",
+  "valore": 12,
+  "fonte": "https://pegi.info/search-pegi?q=Majora%27s+Mask",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: Wii Virtual Console, 03/04/2009 (first PEGI-rated release found)"
+ },
+ {
+  "gioco": "The Legend of Zelda: The Minish Cap",
+  "campo": "pegi",
+  "valore": 3,
+  "fonte": "https://pegi.info/search-pegi?q=Minish+Cap",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: Game Boy Advance, 12/11/2004 (original)"
+ },
+ {
+  "gioco": "Zelda II: The Adventure of Link",
+  "campo": "pegi",
+  "valore": 3,
+  "fonte": "https://pegi.info/search-pegi?q=Adventure+of+Link",
+  "nota": "assente o ambiguo su Wikidata; classificazione di: Game Boy Advance (NES Classic), 07/01/2005 (first PEGI-rated release found)"
+ }
+]

@@ -1,0 +1,46 @@
+{
+ "basato_su": [
+  "Portal",
+  "Tag: The Power of Paint"
+ ],
+ "data": [
+  "2011-04-18T00:00:00Z",
+  "2011-04-19T00:00:00Z",
+  "2014-02-26T00:00:00Z"
+ ],
+ "editore": [
+  "Valve Corporation"
+ ],
+ "metacritic": [
+  "95/100"
+ ],
+ "motore": [
+  "Source"
+ ],
+ "pegi": [
+  "PEGI 12"
+ ],
+ "piattaforme": [
+  "Linux",
+  "Microsoft Windows",
+  "PlayStation 3",
+  "macOS",
+  "Xbox 360"
+ ],
+ "premi": [
+  "British Academy Games Award for Best Game",
+  "British Academy Games Award for Game Design",
+  "Game Developers Choice Award - Best Design",
+  "Steam Award for Villain Most In Need Of A Hug",
+  "British Academy Games Award for Story"
+ ],
+ "seguito_di": [
+  "Portal"
+ ],
+ "serie": [
+  "Portal"
+ ],
+ "sviluppatore": [
+  "Valve Corporation"
+ ]
+}

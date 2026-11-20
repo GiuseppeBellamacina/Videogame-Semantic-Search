@@ -1,0 +1,30 @@
+{
+ "data": [
+  "1987-01-14T00:00:00Z",
+  "1988-09-26T00:00:00Z",
+  "1988-12-01T00:00:00Z"
+ ],
+ "editore": [
+  "Nintendo"
+ ],
+ "pegi": [
+  "PEGI 3",
+  "PEGI 7"
+ ],
+ "piattaforme": [
+  "Wii U",
+  "Famicom Disk System",
+  "Nintendo Entertainment System",
+  "Game Boy Advance"
+ ],
+ "registi": [
+  "Tadashi Sugiyama",
+  "Yasuhisa Yamamura"
+ ],
+ "serie": [
+  "The Legend of Zelda"
+ ],
+ "sviluppatore": [
+  "Nintendo Entertainment Analysis & Development"
+ ]
+}

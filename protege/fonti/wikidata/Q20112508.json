@@ -1,0 +1,43 @@
+{
+ "data": [
+  "2016-03-24T00:00:00Z",
+  "2016-04-12T00:00:00Z"
+ ],
+ "editore": [
+  "Bandai Namco Entertainment",
+  "FromSoftware",
+  "Noviy Disk"
+ ],
+ "metacritic": [
+  "89/100",
+  "87/100"
+ ],
+ "motore": [
+  "Havok"
+ ],
+ "piattaforme": [
+  "Microsoft Windows",
+  "PlayStation 4",
+  "Xbox One"
+ ],
+ "premi": [
+  "Golden Joystick Awards − Ultimate Game of the Year",
+  "Gamescom Award − Best RPG",
+  "D.I.C.E. Award - Role-Playing Game of the Year",
+  "Steam Award for Love/Hate Relationship",
+  "Vidya Gaem Awards – Most Anticipated Game"
+ ],
+ "registi": [
+  "Hidetaka Miyazaki",
+  "Isamu Okano"
+ ],
+ "seguito_di": [
+  "Dark Souls II"
+ ],
+ "serie": [
+  "Dark Souls"
+ ],
+ "sviluppatore": [
+  "FromSoftware"
+ ]
+}
