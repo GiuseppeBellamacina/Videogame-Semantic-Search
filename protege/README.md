@@ -5,12 +5,12 @@
 | File | Contenuto |
 |---|---|
 | `schema.ttl` | **Lo schema vuoto**: classi, proprietà e assiomi, nessun gioco. È generato da `generate_schema.py`. |
-| `dati.ttl` | **Solo le asserzioni**: 75 giochi di 10 serie, 25 nuove edizioni, personaggi, persone, aziende e piattaforme, verificati su Wikipedia e Wikidata. Non contiene nessuna conclusione. |
+| `dati.ttl` | **Solo le asserzioni**: 95 giochi (11 serie e 6 titoli singoli), 28 nuove edizioni, classificazioni PEGI, personaggi, persone, aziende e piattaforme, verificati su Wikipedia e Wikidata. Non contiene nessuna conclusione. |
 | `regole.ttl` | Le 11 regole SWRL, generate da `generate_schema.py`. |
 | `videogiochi.ttl` | **Il file da aprire in Protégé**: importa schema, dati e regole. |
 | `test/` | Quattro errori da far trovare a HermiT e un caso di `sameAs` corretto. |
 | `generate_schema.py` | Genera `schema.ttl`, `regole.ttl` e `relazione/appendice.tex` a partire dalle stesse tabelle. |
-| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 133 deduzioni attese. |
+| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 174 deduzioni attese. |
 | `relazione/` | La relazione LaTeX; le appendici sono generate. |
 
 ```bash
@@ -29,7 +29,10 @@ uv run --with owlready2==0.46 python protege/check_reasoning.py
 - **Mass Effect (3):** 1, 2, 3.
 - **Dark Souls (3):** I, II, III.
 - **Portal (2):** Portal, Portal 2.
-- **Halo (2):** Halo: Reach, Halo 4.
+- **Halo (8):** Combat Evolved, 2, 3, ODST, Reach, 4, 5: Guardians, Infinite.
+- **Far Cry (8):** Far Cry, 2, 3, 4, Primal, 5, New Dawn, 6.
+- **Giochi singoli (6):** Dispatch, Elden Ring, Cyberpunk 2077, Clair Obscur: Expedition 33, Minecraft, The Walking Dead.
+- **Nuove edizioni (28):** remaster, remake e raccolte, tra cui Halo: Campaign Evolved (2026) e il remake di Ocarina of Time per Switch 2 (5 novembre 2026).
 
 L'elenco completo, con anno e sviluppatore, è nell'appendice della relazione.
 
@@ -57,11 +60,18 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 
 | Individuo o classe | Cosa compare in giallo | Perché |
 |---|---|---|
-| `character/Gwyn_Lord_of_Sunlight` | `DeceasedCharacter`, `MortalCharacter`, `DefeatedVillain` | È stato ucciso dal Prescelto. Il dominio di `killedBy` lo fa morto, la sottoclasse lo fa mortale e la regola lo rende cattivo sconfitto dall'eroe. |
+| `character/Gwyn_Lord_of_Sunlight` | `DeceasedCharacter`, `DefeatedVillain` | È stato ucciso dal Prescelto: il dominio di `killedBy` lo fa morto, la regola lo rende cattivo sconfitto dall'eroe. |
+| `character/Chosen_Undead` | `Killer` | Lo stesso fatto, letto dall'altra parte: il range di `killedBy`. |
+| `The_Witcher_3_Wild_Hunt`, `The_Legend_of_Zelda_Twilight_Princess` | `MatureStoryGame` | Almeno due personaggi `Killer` (dedotti a loro volta). Confronta con `AdultRatedGame` (PEGI 18): The Witcher 3 c'è, Twilight Princess (PEGI 12) no. |
+| `character/Cortana` | `ArtificialIntelligence`, `DigitalMind`, `RogueAI` | Nei dati c'è solo `mindCopiedFrom` Catherine Halsey: il dominio la fa IA, e Halsey è umana. In Halo 5 è l'antagonista, quindi IA ribelle. |
+| `Halo_Combat_Evolved` | `StillPlayable`, `MustPlayGame`, `GOTYWinner` | Il remake Campaign Evolved è su PS5; Metacritic 97; D.I.C.E. 2002. |
+| `Far_Cry_2`, `Far_Cry_6` | `SequelByDifferentStudio`, `EngineChangeSequel` (FC2), `ExternalEngineGame` (FC6) | FC2 passa da Crytek/CryEngine a Ubisoft Montreal/Dunia; FC6 è di Ubisoft Toronto con il motore di Montreal. |
+| `Cyberpunk_2077`, `The_Walking_Dead` | `Adaptation` | Sono tratti da un gioco da tavolo e da un fumetto (`basedOn`). |
+| `Minecraft` | `FirstPartyOnRivalConsole` | Mojang → Xbox Game Studios → Microsoft, ed è uscito su PlayStation e Switch. |
 | `person/Hidetaka_Miyazaki` | `GameDirector`, `StudioHead` | Il range di `directedBy` e il dominio di `heads`. |
 | `Mass_Effect` | `FirstPartyGame`, `FirstPartyOnRivalConsole`, `RemasteredClassic` | Xbox Game Studios → Microsoft, costruttore della Xbox 360; il gioco è uscito anche su PS3; ha la Legendary Edition. |
 | `Fallout_New_Vegas` | `VeteransReturn`, `FirstPartyOnRivalConsole`, `ExternalEngineGame` | Obsidian, fondata da ex Black Isle (che aveva fatto Fallout 2); Bethesda Softworks → ZeniMax → Microsoft; motore Gamebryo. |
-| `company/Obsidian_Entertainment` | `FoundedByVeterans` | I fondatori lavoravano per uno sviluppatore. |
+| `company/Obsidian_Entertainment`, `company/AdHoc_Studio` | `FoundedByVeterans` | I fondatori lavoravano per uno sviluppatore (Black Isle, Telltale). |
 | `Grand_Theft_Auto_III` | `StillPlayable`, `LateEntry`, `ExternalEngineGame` | La Definitive Edition è uscita su PS5; è il terzo capitolo; usa RenderWare di Criterion. |
 | `The_Witcher` | `LiteraryAdaptation`, relazione `techLinkedTo Mass_Effect` | È tratto dalla saga di Sapkowski e usa il motore Aurora di BioWare. |
 | `character/Leonardo_da_Vinci` | `HistoricalCharacter` | Interpreta una persona reale. |
@@ -86,7 +96,7 @@ Apri un file di `test/` e avvia HermiT. Per i quattro errori Protégé segnala l
 
 Salvali in `relazione/figure/` con questi nomi:
 - `gerarchia_inferita.png`: la vista "Inferred" delle classi;
-- `spiegazione_gwyn.png`: la spiegazione di Gwyn come `MortalCharacter`;
+- `spiegazione_gwyn.png`: la spiegazione di Gwyn come `DeceasedCharacter`;
 - `individuo_fallout_new_vegas.png`: Fallout: New Vegas con i tipi dedotti in giallo;
 - `swrl_rules.png`: il tab SWRLTab;
 - `inconsistenza.png`: la spiegazione di `errore_cardinalita.ttl`.

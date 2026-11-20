@@ -83,6 +83,16 @@ vg:TVSeries a owl:Class ;
     rdfs:comment "Una serie televisiva" ;
     rdfs:subClassOf vg:CreativeWork .
 
+vg:Comic a owl:Class ;
+    rdfs:label "Comic" ;
+    rdfs:comment "Un fumetto" ;
+    rdfs:subClassOf vg:CreativeWork .
+
+vg:TabletopGame a owl:Class ;
+    rdfs:label "TabletopGame" ;
+    rdfs:comment "Un gioco da tavolo o di ruolo cartaceo" ;
+    rdfs:subClassOf vg:CreativeWork .
+
 vg:GameOfTheYearAward a owl:Class ;
     rdfs:label "GameOfTheYearAward" ;
     rdfs:comment "Un premio Gioco dell'anno" ;
@@ -98,15 +108,15 @@ vg:ArtificialIntelligence a owl:Class ;
     rdfs:comment "Un'intelligenza artificiale" ;
     rdfs:subClassOf vg:Character .
 
-vg:MortalCharacter a owl:Class ;
-    rdfs:label "MortalCharacter" ;
-    rdfs:comment "Un personaggio che può morire" ;
-    rdfs:subClassOf vg:Character .
-
 vg:DeceasedCharacter a owl:Class ;
     rdfs:label "DeceasedCharacter" ;
     rdfs:comment "Un personaggio morto (dominio di killedBy)" ;
-    rdfs:subClassOf vg:MortalCharacter .
+    rdfs:subClassOf vg:Character .
+
+vg:Killer a owl:Class ;
+    rdfs:label "Killer" ;
+    rdfs:comment "Un personaggio che ha tolto la vita a qualcuno (range di killedBy)" ;
+    rdfs:subClassOf vg:Character .
 
 vg:GameDirector a owl:Class ;
     rdfs:label "GameDirector" ;
@@ -216,6 +226,18 @@ vg:LongRunningOriginal a owl:Class ;
     rdfs:subClassOf vg:VideoGame ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:hasSequel ; owl:someValuesFrom [ a owl:Restriction ; owl:onProperty vg:hasSequel ; owl:someValuesFrom vg:VideoGame ] ] ) ] .
 
+vg:MatureStoryGame a owl:Class ;
+    rdfs:label "MatureStoryGame" ;
+    rdfs:comment "Un gioco con almeno due personaggi che uccidono: probabilmente non per minori" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:hasCharacter ; owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ; owl:onClass vg:Killer ] ) ] .
+
+vg:AdultRatedGame a owl:Class ;
+    rdfs:label "AdultRatedGame" ;
+    rdfs:comment "Un gioco classificato PEGI 18" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:pegiRating ; owl:someValuesFrom [ a rdfs:Datatype ; owl:onDatatype xsd:integer ; owl:withRestrictions ( [ xsd:minInclusive 18 ] ) ] ] ) ] .
+
 vg:HighlyRatedGame a owl:Class ;
     rdfs:label "HighlyRatedGame" ;
     rdfs:comment "Un gioco con almeno 90 su Metacritic" ;
@@ -258,10 +280,16 @@ vg:MultiPlatformGame a owl:Class ;
     rdfs:subClassOf vg:VideoGame ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:availableOn ; owl:minQualifiedCardinality "3"^^xsd:nonNegativeInteger ; owl:onClass vg:Platform ] ) ] .
 
+vg:Adaptation a owl:Class ;
+    rdfs:label "Adaptation" ;
+    rdfs:comment "Un gioco tratto da un'opera di un altro medium" ;
+    rdfs:subClassOf vg:VideoGame ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:basedOn ; owl:someValuesFrom vg:CreativeWork ] ) ] .
+
 vg:LiteraryAdaptation a owl:Class ;
     rdfs:label "LiteraryAdaptation" ;
     rdfs:comment "Un gioco tratto da un romanzo" ;
-    rdfs:subClassOf vg:VideoGame ;
+    rdfs:subClassOf vg:Adaptation ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ; owl:onProperty vg:basedOn ; owl:someValuesFrom vg:Novel ] ) ] .
 
 vg:AuteurGame a owl:Class ;
@@ -324,6 +352,12 @@ vg:RogueAI a owl:Class ;
     rdfs:subClassOf vg:ArtificialIntelligence ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:ArtificialIntelligence vg:Antagonist ) ] .
 
+vg:DigitalMind a owl:Class ;
+    rdfs:label "DigitalMind" ;
+    rdfs:comment "Un'intelligenza artificiale nata dalla mente di un umano" ;
+    rdfs:subClassOf vg:ArtificialIntelligence ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( vg:ArtificialIntelligence [ a owl:Restriction ; owl:onProperty vg:mindCopiedFrom ; owl:someValuesFrom vg:Human ] ) ] .
+
 vg:HistoricalCharacter a owl:Class ;
     rdfs:label "HistoricalCharacter" ;
     rdfs:comment "Un personaggio che interpreta una persona reale" ;
@@ -337,7 +371,7 @@ vg:HistoricalCharacter a owl:Class ;
     owl:members ( vg:ConsolePlatform vg:PCPlatform ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:Novel vg:Film vg:TVSeries ) .
+    owl:members ( vg:Novel vg:Film vg:TVSeries vg:Comic vg:TabletopGame ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:Human vg:ArtificialIntelligence ) .
@@ -465,11 +499,16 @@ vg:antagonistOf a owl:ObjectProperty ;
 
 vg:killedBy a owl:ObjectProperty ;
     rdfs:domain vg:DeceasedCharacter ;
-    rdfs:range vg:Character .
+    rdfs:range vg:Killer .
 
 vg:portrays a owl:ObjectProperty ;
     rdfs:domain vg:Character ;
     rdfs:range vg:Person .
+
+vg:mindCopiedFrom a owl:ObjectProperty ;
+    rdfs:comment "L'IA è stata costruita a partire dalla mente di questo personaggio" ;
+    rdfs:domain vg:ArtificialIntelligence ;
+    rdfs:range vg:Human .
 
 vg:playableOn a owl:ObjectProperty ;
     rdfs:comment "Disponibile, anche tramite una nuova edizione" ;
@@ -496,6 +535,10 @@ vg:releaseDate a owl:DatatypeProperty, owl:FunctionalProperty ;
     rdfs:range xsd:dateTime .
 
 vg:metacriticScore a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:integer .
+
+vg:pegiRating a owl:DatatypeProperty, owl:FunctionalProperty ;
     rdfs:domain vg:VideoGame ;
     rdfs:range xsd:integer .
 

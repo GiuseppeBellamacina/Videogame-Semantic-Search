@@ -1,7 +1,7 @@
 \section{Le componenti dell'ontologia}\label{app:componenti}
 
 \begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
-\caption{Le 61 classi}\\ \toprule
+\caption{Le 67 classi}\\ \toprule
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
@@ -21,11 +21,13 @@
 \texttt{Novel} & \texttt{CreativeWork} & primitiva & Un romanzo \\
 \texttt{Film} & \texttt{CreativeWork} & primitiva & Un film \\
 \texttt{TVSeries} & \texttt{CreativeWork} & primitiva & Una serie televisiva \\
+\texttt{Comic} & \texttt{CreativeWork} & primitiva & Un fumetto \\
+\texttt{TabletopGame} & \texttt{CreativeWork} & primitiva & Un gioco da tavolo o di ruolo cartaceo \\
 \texttt{GameOfTheYearAward} & \texttt{Award} & primitiva & Un premio Gioco dell'anno \\
 \texttt{Human} & \texttt{Character} & primitiva & Un personaggio umano \\
 \texttt{ArtificialIntelligence} & \texttt{Character} & primitiva & Un'intelligenza artificiale \\
-\texttt{MortalCharacter} & \texttt{Character} & primitiva & Un personaggio che può morire \\
-\texttt{DeceasedCharacter} & \texttt{MortalCharacter} & primitiva & Un personaggio morto (dominio di killedBy) \\
+\texttt{DeceasedCharacter} & \texttt{Character} & primitiva & Un personaggio morto (dominio di killedBy) \\
+\texttt{Killer} & \texttt{Character} & primitiva & Un personaggio che ha tolto la vita a qualcuno (range di killedBy) \\
 \texttt{GameDirector} & \texttt{Person} & primitiva & Un regista di videogiochi (range di directedBy) \\
 \texttt{StudioHead} & \texttt{Person} & primitiva & Chi guida un'azienda (dominio di heads) \\
 \texttt{Remaster} & \texttt{VideoGame} & primitiva & La nuova edizione di un gioco (dominio di remasterOf) \\
@@ -46,6 +48,8 @@
 \texttt{SequelGame} & \texttt{VideoGame} & definita & Il seguito di un altro gioco \\
 \texttt{LateEntry} & \texttt{SequelGame} & definita & Almeno il terzo capitolo di una serie \\
 \texttt{LongRunningOriginal} & \texttt{VideoGame} & definita & Il capostipite di una serie di almeno tre capitoli \\
+\texttt{MatureStoryGame} & \texttt{VideoGame} & definita & Un gioco con almeno due personaggi che uccidono: probabilmente non per minori \\
+\texttt{AdultRatedGame} & \texttt{VideoGame} & definita & Un gioco classificato PEGI 18 \\
 \texttt{HighlyRatedGame} & \texttt{VideoGame} & definita & Un gioco con almeno 90 su Metacritic \\
 \texttt{AcclaimedSequel} & \texttt{SequelGame} & definita & Un seguito acclamato \\
 \texttt{GOTYWinner} & \texttt{VideoGame} & definita & Un gioco premiato come gioco dell'anno \\
@@ -53,7 +57,8 @@
 \texttt{RemasterCollection} & \texttt{Remaster} & definita & Una raccolta che rimasterizza almeno due giochi \\
 \texttt{StillPlayable} & \texttt{VideoGame} & definita & Un gioco giocabile su una console attuale \\
 \texttt{MultiPlatformGame} & \texttt{VideoGame} & definita & Un gioco uscito su almeno tre piattaforme \\
-\texttt{LiteraryAdaptation} & \texttt{VideoGame} & definita & Un gioco tratto da un romanzo \\
+\texttt{Adaptation} & \texttt{VideoGame} & definita & Un gioco tratto da un'opera di un altro medium \\
+\texttt{LiteraryAdaptation} & \texttt{Adaptation} & definita & Un gioco tratto da un romanzo \\
 \texttt{AuteurGame} & \texttt{VideoGame} & definita & Un gioco diretto da chi guida uno studio \\
 \texttt{LongRunningFranchise} & \texttt{Franchise} & definita & Una serie con almeno tre capitoli \\
 \texttt{AwardWinningFranchise} & \texttt{Franchise} & definita & Una serie con un gioco dell'anno \\
@@ -64,11 +69,12 @@
 \texttt{RecurringCharacter} & \texttt{Character} & definita & Un personaggio presente in almeno due giochi \\
 \texttt{RecurringVillain} & \texttt{RecurringCharacter} & definita & Un antagonista ricorrente \\
 \texttt{RogueAI} & \texttt{ArtificialIntelligence} & definita & Un'intelligenza artificiale antagonista \\
+\texttt{DigitalMind} & \texttt{ArtificialIntelligence} & definita & Un'intelligenza artificiale nata dalla mente di un umano \\
 \texttt{HistoricalCharacter} & \texttt{Character} & definita & Un personaggio che interpreta una persona reale \\
 \end{longtable}\endgroup
 
 \begingroup\footnotesize\begin{longtable}{lllp{6cm}}
-\caption{Le 36 object property}\\ \toprule
+\caption{Le 37 object property}\\ \toprule
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endfirsthead
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{developedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{developerOf} \\
@@ -94,18 +100,20 @@
 \texttt{appearsIn} & \texttt{Character} & \texttt{VideoGame} & inversa \texttt{hasCharacter} \\
 \texttt{protagonistOf} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
 \texttt{antagonistOf} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
-\texttt{killedBy} & \texttt{DeceasedCharacter} & \texttt{Character} &  \\
+\texttt{killedBy} & \texttt{DeceasedCharacter} & \texttt{Killer} &  \\
 \texttt{portrays} & \texttt{Character} & \texttt{Person} &  \\
+\texttt{mindCopiedFrom} & \texttt{ArtificialIntelligence} & \texttt{Human} &  \\
 \texttt{playableOn} & \texttt{VideoGame} & \texttt{Platform} & catena hasRemaster $\circ$ availableOn \\
 \texttt{techLinkedTo} & \texttt{VideoGame} & \texttt{VideoGame} & catena madeWith $\circ$ engineDevelopedBy $\circ$ developerOf \\
 \end{longtable}\endgroup
 
 \begingroup\footnotesize\begin{longtable}{lllp{6cm}}
-\caption{Le 3 datatype property}\\ \toprule
+\caption{Le 4 datatype property}\\ \toprule
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endfirsthead
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{releaseDate} & \texttt{VideoGame} & \texttt{xsd:dateTime} & funzionale \\
 \texttt{metacriticScore} & \texttt{VideoGame} & \texttt{xsd:integer} & funzionale \\
+\texttt{pegiRating} & \texttt{VideoGame} & \texttt{xsd:integer} & funzionale \\
 \texttt{hasWikidataId} & \texttt{owl:Thing} & \texttt{xsd:string} & chiave di \texttt{VideoGame} \\
 \end{longtable}\endgroup
 
@@ -119,6 +127,8 @@
 \textsf{SequelGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{sequelOf}.\textsf{VideoGame} \\
 \textsf{LateEntry} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{sequelOf}.\exists\,\textit{sequelOf}.\textsf{VideoGame} \\
 \textsf{LongRunningOriginal} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasSequel}.\exists\,\textit{hasSequel}.\textsf{VideoGame} \\
+\textsf{MatureStoryGame} &\equiv \textsf{VideoGame} \sqcap {\geq}2\,\textit{hasCharacter}.\textsf{Killer} \\
+\textsf{AdultRatedGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\geq 18] \\
 \textsf{HighlyRatedGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{metacriticScore}.\texttt{integer}[\geq 90] \\
 \textsf{AcclaimedSequel} &\equiv \textsf{SequelGame} \sqcap \textsf{HighlyRatedGame} \\
 \textsf{GOTYWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{GameOfTheYearAward} \\
@@ -126,6 +136,7 @@
 \textsf{RemasterCollection} &\equiv \textsf{Remaster} \sqcap {\geq}2\,\textit{remasterOf}.\textsf{VideoGame} \\
 \textsf{StillPlayable} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{playableOn}.\textsf{CurrentGenerationConsole} \\
 \textsf{MultiPlatformGame} &\equiv \textsf{VideoGame} \sqcap {\geq}3\,\textit{availableOn}.\textsf{Platform} \\
+\textsf{Adaptation} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{basedOn}.\textsf{CreativeWork} \\
 \textsf{LiteraryAdaptation} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{basedOn}.\textsf{Novel} \\
 \textsf{AuteurGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{directedBy}.\textsf{StudioHead} \\
 \textsf{LongRunningFranchise} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{includes}.\textsf{LateEntry} \\
@@ -137,9 +148,10 @@
 \textsf{RecurringCharacter} &\equiv \textsf{Character} \sqcap {\geq}2\,\textit{appearsIn}.\textsf{VideoGame} \\
 \textsf{RecurringVillain} &\equiv \textsf{RecurringCharacter} \sqcap \textsf{Antagonist} \\
 \textsf{RogueAI} &\equiv \textsf{ArtificialIntelligence} \sqcap \textsf{Antagonist} \\
+\textsf{DigitalMind} &\equiv \textsf{ArtificialIntelligence} \sqcap \exists\,\textit{mindCopiedFrom}.\textsf{Human} \\
 \textsf{HistoricalCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{portrays}.\textsf{Person} \\
 \end{align*}\endgroup
-\noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries; Human, ArtificialIntelligence.
+\noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries, Comic, TabletopGame; Human, ArtificialIntelligence.
 
 \subsection*{Regole SWRL}
 \begin{itemize}\footnotesize
@@ -157,7 +169,7 @@
 \end{itemize}
 
 \begingroup\footnotesize\begin{longtable}{p{6.5cm}p{3cm}lp{3.5cm}}
-\caption{I 75 giochi del dataset}\\ \toprule
+\caption{I 89 giochi del dataset}\\ \toprule
 \textbf{Gioco} & \textbf{Serie} & \textbf{Anno} & \textbf{Sviluppatore} \\ \midrule \endfirsthead
 \textbf{Gioco} & \textbf{Serie} & \textbf{Anno} & \textbf{Sviluppatore} \\ \midrule \endhead \bottomrule \endfoot
 Assassin's Creed & Assassin's Creed & 2007 & Ubisoft Montreal \\
@@ -183,6 +195,14 @@ Fallout 3 & Fallout & 2008 & Bethesda Game Studios \\
 Fallout: New Vegas & Fallout & 2010 & Obsidian Entertainment \\
 Fallout 4 & Fallout & 2015 & Bethesda Game Studios \\
 Fallout 76 & Fallout & 2018 & Bethesda Game Studios \\
+Far Cry & Far Cry & 2004 & Crytek \\
+Far Cry 2 & Far Cry & 2008 & Ubisoft Montreal \\
+Far Cry 3 & Far Cry & 2012 & Ubisoft Montreal \\
+Far Cry 4 & Far Cry & 2014 & Ubisoft Montreal \\
+Far Cry Primal & Far Cry & 2016 & Ubisoft Montreal \\
+Far Cry 5 & Far Cry & 2018 & Ubisoft Montreal \\
+Far Cry New Dawn & Far Cry & 2019 & Ubisoft Montreal \\
+Far Cry 6 & Far Cry & 2021 & Ubisoft Toronto \\
 Grand Theft Auto & Grand Theft Auto & 1998 & Rockstar North \\
 Grand Theft Auto 2 & Grand Theft Auto & 1999 & Rockstar North \\
 Grand Theft Auto III & Grand Theft Auto & 2001 & Rockstar North \\
@@ -191,8 +211,14 @@ Grand Theft Auto: San Andreas & Grand Theft Auto & 2004 & Rockstar North \\
 Grand Theft Auto IV & Grand Theft Auto & 2008 & Rockstar North \\
 Grand Theft Auto V & Grand Theft Auto & 2013 & Rockstar North \\
 Grand Theft Auto VI & Grand Theft Auto & 2026 & Rockstar North \\
+Halo: Combat Evolved & Halo & 2001 & Bungie \\
+Halo 2 & Halo & 2004 & Bungie \\
+Halo 3 & Halo & 2007 & Bungie \\
+Halo 3: ODST & Halo & 2009 & Bungie \\
 Halo: Reach & Halo & 2010 & Bungie \\
 Halo 4 & Halo & 2012 & Halo Studios \\
+Halo 5: Guardians & Halo & 2015 & Halo Studios \\
+Halo Infinite & Halo & 2021 & Halo Studios \\
 Mass Effect & Mass Effect & 2007 & BioWare \\
 Mass Effect 2 & Mass Effect & 2010 & BioWare \\
 Mass Effect 3 & Mass Effect & 2012 & BioWare \\

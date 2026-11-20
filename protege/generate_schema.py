@@ -39,11 +39,13 @@ PRIMITIVE = [
     ("Novel", "CreativeWork", "Un romanzo"),
     ("Film", "CreativeWork", "Un film"),
     ("TVSeries", "CreativeWork", "Una serie televisiva"),
+    ("Comic", "CreativeWork", "Un fumetto"),
+    ("TabletopGame", "CreativeWork", "Un gioco da tavolo o di ruolo cartaceo"),
     ("GameOfTheYearAward", "Award", "Un premio Gioco dell'anno"),
     ("Human", "Character", "Un personaggio umano"),
     ("ArtificialIntelligence", "Character", "Un'intelligenza artificiale"),
-    ("MortalCharacter", "Character", "Un personaggio che può morire"),
-    ("DeceasedCharacter", "MortalCharacter", "Un personaggio morto (dominio di killedBy)"),
+    ("DeceasedCharacter", "Character", "Un personaggio morto (dominio di killedBy)"),
+    ("Killer", "Character", "Un personaggio che ha tolto la vita a qualcuno (range di killedBy)"),
     ("GameDirector", "Person", "Un regista di videogiochi (range di directedBy)"),
     ("StudioHead", "Person", "Chi guida un'azienda (dominio di heads)"),
     ("Remaster", "VideoGame", "La nuova edizione di un gioco (dominio di remasterOf)"),
@@ -52,7 +54,7 @@ PRIMITIVE = [
 DISJOINT = [
     [name for name, _ in TOP],
     ["ConsolePlatform", "PCPlatform"],
-    ["Novel", "Film", "TVSeries"],
+    ["Novel", "Film", "TVSeries", "Comic", "TabletopGame"],
     ["Human", "ArtificialIntelligence"],
 ]
 
@@ -86,6 +88,8 @@ DEFINED = [
     ("SequelGame", "VideoGame", "Il seguito di un altro gioco", and_("VideoGame", some("sequelOf", "VideoGame"))),
     ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", and_("VideoGame", some("sequelOf", some("sequelOf", "VideoGame")))),
     ("LongRunningOriginal", "VideoGame", "Il capostipite di una serie di almeno tre capitoli", and_("VideoGame", some("hasSequel", some("hasSequel", "VideoGame")))),
+    ("MatureStoryGame", "VideoGame", "Un gioco con almeno due personaggi che uccidono: probabilmente non per minori", and_("VideoGame", at_least(2, "hasCharacter", "Killer"))),
+    ("AdultRatedGame", "VideoGame", "Un gioco classificato PEGI 18", and_("VideoGame", some("pegiRating", score(18)))),
     ("HighlyRatedGame", "VideoGame", "Un gioco con almeno 90 su Metacritic", and_("VideoGame", some("metacriticScore", score(90)))),
     ("AcclaimedSequel", "SequelGame", "Un seguito acclamato", and_("SequelGame", "HighlyRatedGame")),
     ("GOTYWinner", "VideoGame", "Un gioco premiato come gioco dell'anno", and_("VideoGame", some("wonAward", "GameOfTheYearAward"))),
@@ -93,7 +97,8 @@ DEFINED = [
     ("RemasterCollection", "Remaster", "Una raccolta che rimasterizza almeno due giochi", and_("Remaster", at_least(2, "remasterOf", "VideoGame"))),
     ("StillPlayable", "VideoGame", "Un gioco giocabile su una console attuale", and_("VideoGame", some("playableOn", "CurrentGenerationConsole"))),
     ("MultiPlatformGame", "VideoGame", "Un gioco uscito su almeno tre piattaforme", and_("VideoGame", at_least(3, "availableOn", "Platform"))),
-    ("LiteraryAdaptation", "VideoGame", "Un gioco tratto da un romanzo", and_("VideoGame", some("basedOn", "Novel"))),
+    ("Adaptation", "VideoGame", "Un gioco tratto da un'opera di un altro medium", and_("VideoGame", some("basedOn", "CreativeWork"))),
+    ("LiteraryAdaptation", "Adaptation", "Un gioco tratto da un romanzo", and_("VideoGame", some("basedOn", "Novel"))),
     ("AuteurGame", "VideoGame", "Un gioco diretto da chi guida uno studio", and_("VideoGame", some("directedBy", "StudioHead"))),
     ("LongRunningFranchise", "Franchise", "Una serie con almeno tre capitoli", and_("Franchise", some("includes", "LateEntry"))),
     ("AwardWinningFranchise", "Franchise", "Una serie con un gioco dell'anno", and_("Franchise", some("includes", "GOTYWinner"))),
@@ -104,6 +109,7 @@ DEFINED = [
     ("RecurringCharacter", "Character", "Un personaggio presente in almeno due giochi", and_("Character", at_least(2, "appearsIn", "VideoGame"))),
     ("RecurringVillain", "RecurringCharacter", "Un antagonista ricorrente", and_("RecurringCharacter", "Antagonist")),
     ("RogueAI", "ArtificialIntelligence", "Un'intelligenza artificiale antagonista", and_("ArtificialIntelligence", "Antagonist")),
+    ("DigitalMind", "ArtificialIntelligence", "Un'intelligenza artificiale nata dalla mente di un umano", and_("ArtificialIntelligence", some("mindCopiedFrom", "Human"))),
     ("HistoricalCharacter", "Character", "Un personaggio che interpreta una persona reale", and_("Character", some("portrays", "Person"))),
 ]
 
@@ -144,8 +150,9 @@ OBJECT_PROPS = [
     ("appearsIn", "Character", "VideoGame", "hasCharacter", [], None),
     ("protagonistOf", "Character", "VideoGame", None, [], None),
     ("antagonistOf", "Character", "VideoGame", None, [], None),
-    ("killedBy", "DeceasedCharacter", "Character", None, [], None),
+    ("killedBy", "DeceasedCharacter", "Killer", None, [], None),
     ("portrays", "Character", "Person", None, [], None),
+    ("mindCopiedFrom", "ArtificialIntelligence", "Human", None, [], "L'IA è stata costruita a partire dalla mente di questo personaggio"),
     ("playableOn", "VideoGame", "Platform", None, [], "Disponibile, anche tramite una nuova edizione"),
     ("techLinkedTo", "VideoGame", "VideoGame", None, [], "Giochi dello studio che ha fatto il motore usato"),
 ]
@@ -156,6 +163,7 @@ CHAINS = [("playableOn", ["hasRemaster", "availableOn"]), ("techLinkedTo", ["mad
 DATA_PROPS = [
     ("releaseDate", "VideoGame", "xsd:dateTime", True),
     ("metacriticScore", "VideoGame", "xsd:integer", True),
+    ("pegiRating", "VideoGame", "xsd:integer", True),
     ("hasWikidataId", "owl:Thing", "xsd:string", False),
 ]
 KEYS = [("VideoGame", "hasWikidataId")]

@@ -41,7 +41,7 @@
 
 \begin{abstract}
 \noindent
-Questa relazione racconta la costruzione di un'ontologia OWL~2 dei videogiochi nell'ordine in cui è avvenuta: le domande da cui siamo partiti, i nomi delle cose (le classi), i loro collegamenti (le proprietà), il loro significato (le classi definite e le regole). Lo schema è generato da uno script; i dati, 75 giochi di dieci serie, sono raccolti e verificati uno per uno. Il cuore della relazione sono le deduzioni che il reasoner HermiT ottiene in Protégé: fatti mai scritti nei dati, come ``Gwyn è mortale perché è stato ucciso'' o ``Fallout: New Vegas è stato fatto da veterani della serie''.
+Questa relazione racconta la costruzione di un'ontologia OWL~2 dei videogiochi nell'ordine in cui è avvenuta: le domande da cui siamo partiti, i nomi delle cose (le classi), i loro collegamenti (le proprietà), il loro significato (le classi definite e le regole). Lo schema è generato da uno script; i dati, 95 giochi di undici serie più sei titoli singoli, sono raccolti e verificati uno per uno. Il cuore della relazione sono le deduzioni che il reasoner HermiT ottiene in Protégé: fatti mai scritti nei dati, come ``Gwyn è mortale perché è stato ucciso'' o ``Fallout: New Vegas è stato fatto da veterani della serie''.
 \end{abstract}
 
 % ---------------------------------------------------------------------------
@@ -125,9 +125,9 @@ su una catena & $\cls{StillPlayable} \equiv \cls{VideoGame} \sqcap \exists\,\pro
  and_("VideoGame", some("publishedByGroup", "PlatformHolder"))),
 \end{lstlisting}
 
-\paragraph{I dati.} Il dataset contiene 75 giochi di dieci serie (Zelda, Super Mario, Grand Theft Auto, Assassin's Creed, Fallout, The Witcher, Mass Effect, Dark Souls, Portal, Halo) e 25 nuove edizioni. Ogni fatto (sviluppatore, editore, piattaforme, registi, motori, premi, personaggi, uccisioni certe in ogni finale, gruppi societari, costruttori delle console) è stato verificato su Wikipedia e Wikidata, gioco per gioco; i fatti incerti sono stati esclusi. Il file dei dati contiene 2\,012 triple asserite; HermiT ne deduce altre 3\,423.
+\paragraph{I dati.} Il dataset contiene 95 giochi: undici serie (Zelda, Super Mario, Grand Theft Auto, Assassin's Creed, Fallout, Halo, Far Cry, The Witcher, Mass Effect, Dark Souls, Portal), sei titoli singoli (Dispatch, Elden Ring, Cyberpunk~2077, Clair Obscur, Minecraft, The Walking Dead) e 28 nuove edizioni, fino al remake di Ocarina of Time uscito nel novembre 2026. Per ogni gioco c'è anche la classificazione PEGI ufficiale, presa da Wikidata. Ogni fatto (sviluppatore, editore, piattaforme, registi, motori, premi, personaggi, uccisioni certe in ogni finale, gruppi societari, costruttori delle console) è stato verificato su Wikipedia e Wikidata, gioco per gioco; i fatti incerti sono stati esclusi. Il file dei dati contiene 4\,456 triple asserite; HermiT aggiunge 2\,439 fatti nuovi, tra tipi e relazioni.
 
-\paragraph{Verifica.} In Protégé~\cite{protege} si apre \texttt{videogiochi.ttl}, che importa schema, dati e regole tramite il \texttt{catalog-v001.xml}. HermiT~\cite{hermit} li ragiona in pochi secondi: l'ontologia è consistente e nessuna classe è insoddisfacibile. Uno script ripete il ragionamento dalla riga di comando e controlla 133 condizioni attese.
+\paragraph{Verifica.} In Protégé~\cite{protege} si apre \texttt{videogiochi.ttl}, che importa schema, dati e regole tramite il \texttt{catalog-v001.xml}. HermiT~\cite{hermit} li ragiona in pochi secondi: l'ontologia è consistente e nessuna classe è insoddisfacibile. Uno script ripete il ragionamento dalla riga di comando e controlla 174 condizioni attese.
 
 % ---------------------------------------------------------------------------
 \section{Quinto passo: che cosa sa dedurre l'ontologia}\label{sec:inferenze}
@@ -135,28 +135,30 @@ su una catena & $\cls{StillPlayable} \equiv \cls{VideoGame} \sqcap \exists\,\pro
 Ogni deduzione è presentata con i fatti asseriti, gli assiomi che lavorano e la conclusione, che nei dati non c'è.
 
 \subsection{Da un solo fatto}
-Il caso più semplice è quello del mito: chi è stato ucciso è morto, e chi muore è mortale.
+Il caso più semplice: un'uccisione dice qualcosa di tutti e due i personaggi coinvolti.
 \begin{itemize}
-  \item \textbf{Gwyn è mortale.} Nei dati: \emph{Gwyn, Lord of Sunlight è stato ucciso dal Prescelto} (\emph{Dark Souls}). Il dominio di \prop{killedBy} è \cls{DeceasedCharacter}, sottoclasse di \cls{MortalCharacter}: Gwyn, il signore che regna sul mondo di gioco, risulta mortale senza che lo si sia mai scritto (figura~\ref{fig:spiegazione_gwyn}).
+  \item \textbf{Gwyn è morto e il Prescelto è un assassino.} Nei dati: \emph{Gwyn, Lord of Sunlight è stato ucciso dal Prescelto} (\emph{Dark Souls}). Il dominio di \prop{killedBy} è \cls{DeceasedCharacter} e il range è \cls{Killer}: da un solo fatto il reasoner classifica entrambi, senza che lo si sia mai scritto (figura~\ref{fig:spiegazione_gwyn}).
   \item \textbf{Miyazaki è un regista.} Nei dati: \emph{Dark Souls è diretto da Hidetaka Miyazaki}. Il range di \prop{directedBy} lo classifica \cls{GameDirector}.
   \item \textbf{Ocarina of Time 3D è un remaster} perché è \prop{remasterOf} di un altro gioco; il primo \emph{Grand Theft Auto}, lasciato senza tipo, è un \cls{VideoGame} per dominio e range delle sue proprietà.
 \end{itemize}
 
-\screenshot[0.7\linewidth]{spiegazione_gwyn}{La spiegazione di Protégé per ``Gwyn è \cls{MortalCharacter}'': un fatto, un dominio, una sottoclasse.}
+\screenshot[0.7\linewidth]{spiegazione_gwyn}{La spiegazione di Protégé per ``Gwyn è \cls{DeceasedCharacter}'': un fatto e un dominio.}
 
 \subsection{Due o tre passi}
 Come per il semidio, che è un umano con un genitore divino, qui una classe nasce dal tipo di \emph{un altro} individuo.
 \begin{itemize}
   \item \textbf{Mass Effect e Fallout 4 sono giochi first-party Microsoft.} Nei dati: Mass Effect è pubblicato da Xbox Game Studios, che è controllata da Microsoft; la Xbox~360 è costruita da Microsoft. Il reasoner ricava che Microsoft è un \cls{PlatformHolder}, che il gioco è ``pubblicato dal gruppo'' Microsoft e quindi che è \cls{FirstPartyGame}. Per Fallout 4 la catena è più lunga: Bethesda Softworks $\to$ ZeniMax $\to$ Xbox Game Studios $\to$ Microsoft.
   \item \textbf{Obsidian è stata fondata da veterani.} I suoi fondatori lavoravano a Black Isle Studios, che il reasoner sa essere uno sviluppatore perché ha sviluppato Fallout~2: Obsidian è \cls{FoundedByVeterans}.
-  \item \textbf{Leonardo da Vinci e Cesare Borgia sono personaggi storici} (\cls{HistoricalCharacter}) perché interpretano persone reali; \textbf{GLaDOS e Wheatley sono IA ribelli} (\cls{RogueAI}), intelligenze artificiali che fanno da antagonisti; Cortana, IA alleata, no.
-  \item \textbf{The Witcher è un adattamento letterario} (tratto dalla saga di Sapkowski) e \textbf{Dark Souls è un gioco d'autore} (\cls{AuteurGame}), perché diretto da Miyazaki, che guida FromSoftware.
+  \item \textbf{Leonardo da Vinci e Cesare Borgia sono personaggi storici} (\cls{HistoricalCharacter}) perché interpretano persone reali; \textbf{GLaDOS e Wheatley sono IA ribelli} (\cls{RogueAI}), intelligenze artificiali che fanno da antagonisti.
+  \item \textbf{Cortana è un'intelligenza artificiale}, anche se nei dati non è scritto. Nei dati c'è solo che la sua mente è copiata da quella della dottoressa Halsey (\prop{mindCopiedFrom}), il cui dominio è \cls{ArtificialIntelligence}; poiché Halsey è umana, Cortana è anche una \cls{DigitalMind}. Alleata del Master Chief per quattro giochi, in \emph{Halo~5} diventa l'antagonista: da quel solo fatto il reasoner la classifica \cls{RogueAI}, come GLaDOS.
+  \item \textbf{Un gioco con più assassini ha una storia per adulti.} \cls{MatureStoryGame} è un gioco con almeno due personaggi \cls{Killer}, e \cls{Killer} è a sua volta dedotto dalle uccisioni: tre passi, dal fatto ``A ha ucciso B'' al gioco. Il risultato si confronta con un dato reale, la classificazione PEGI (\cls{AdultRatedGame}, PEGI~18): The Witcher~3 e Assassin's Creed~II sono in entrambe le classi; \emph{Twilight Princess} invece è dedotto ``maturo'' (Link uccide Ganondorf, Midna uccide Zant) ma è PEGI~12, e i primi tre Halo sono ``maturi'' ma PEGI~16. La deduzione è corretta rispetto agli assiomi; è la definizione a essere troppo grossolana, ed è il reasoner a mostrarlo.
+  \item \textbf{The Witcher è un adattamento letterario} (tratto dalla saga di Sapkowski), \textbf{Cyberpunk~2077 e The Walking Dead sono adattamenti} (di un gioco da tavolo e di un fumetto) e \textbf{Dark Souls è un gioco d'autore} (\cls{AuteurGame}), perché diretto da Miyazaki, che guida FromSoftware.
   \item \textbf{Bowser, Ganondorf e GLaDOS sono cattivi ricorrenti}: antagonisti presenti in almeno due giochi diversi.
 \end{itemize}
 
 \subsection{Catene, transitività e serie}
 \begin{itemize}
-  \item \textbf{GTA III si gioca ancora su PS5}, anche se è uscito nel 2001 su PS2: la sua Definitive Edition è uscita su PS5, e la catena $\prop{hasRemaster} \circ \prop{availableOn}$ lo rende \cls{StillPlayable}. Lo stesso vale per Breath of the Wild (Switch~2) e Fallout~4; non per Mass Effect, la cui raccolta è ferma a PS4.
+  \item \textbf{GTA III si gioca ancora su PS5}, anche se è uscito nel 2001 su PS2: la sua Definitive Edition è uscita su PS5, e la catena $\prop{hasRemaster} \circ \prop{availableOn}$ lo rende \cls{StillPlayable}. Lo stesso vale per Breath of the Wild (Switch~2), Fallout~4 e Halo: Combat Evolved, del 2001, che con il remake \emph{Campaign Evolved} arriva perfino su PS5; non per Mass Effect, la cui raccolta è ferma a PS4.
   \item \textbf{The Witcher è legato a Mass Effect}: è fatto con il motore Aurora di BioWare, che ha sviluppato Mass Effect (catena \prop{techLinkedTo}).
   \item \textbf{GTA, Assassin's Creed, Fallout e Zelda sono serie lunghe}; Super Mario, nella demo, no. \textbf{Halo e Fallout sono serie passate di mano}; \textbf{The Witcher, Fallout, Halo e Super Mario sono diventati film o serie TV}, GTA e Zelda no.
 \end{itemize}
@@ -168,7 +170,7 @@ Alcune conclusioni richiedono di confrontare due variabili (``lo stesso studio''
 \begin{itemize}
   \item \textbf{Veterani che tornano.} \emph{Fallout: New Vegas} è sviluppato da uno studio fondato da persone che lavoravano per lo sviluppatore di un altro gioco della stessa serie (Fallout~2): \cls{VeteransReturn}.
   \item \textbf{First-party su console rivale.} \emph{Mass Effect}, del gruppo Microsoft, è uscito su PS3; \emph{Fallout~4} su PS4. Due regole calcolano il gruppo dell'editore risalendo \prop{subsidiaryOf} un passo alla volta, perché HermiT, nelle regole, vede solo le relazioni asserite e non quelle ottenute per transitività.
-  \item \textbf{Seguiti di un altro studio} (Halo~4, Fallout~3), \textbf{seguiti che cambiano motore} (GTA~IV da RenderWare a RAGE, The Witcher~2, Fallout~4), \textbf{seguiti con lo stesso regista} (Mass Effect~2, Dark Souls~III), \textbf{motori interni o esterni} (The Witcher~3 contro Mass Effect, fatto con Unreal Engine di Epic).
+  \item \textbf{Seguiti di un altro studio} (Halo~4, Fallout~3, Far Cry~2 passato da Crytek a Ubisoft), \textbf{seguiti che cambiano motore} (GTA~IV da RenderWare a RAGE, Far Cry~2 da CryEngine a Dunia, Fallout~4), Far Cry~6 \textbf{fatto con un motore esterno} anche se di un'altra sede della stessa Ubisoft, \textbf{seguiti con lo stesso regista} (Mass Effect~2, Dark Souls~III), \textbf{motori interni o esterni} (The Witcher~3 contro Mass Effect, fatto con Unreal Engine di Epic).
   \item \textbf{Cattivi sconfitti dall'eroe.} Un antagonista ucciso dal protagonista dello stesso gioco è \cls{DefeatedVillain}: Cesare Borgia per mano di Ezio, Eredin per mano di Geralt, Gwyn per mano del Prescelto.
 \end{itemize}
 
