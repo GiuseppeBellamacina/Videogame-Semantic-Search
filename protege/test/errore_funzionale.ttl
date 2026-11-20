@@ -1,9 +1,12 @@
-# Atteso: inconsistente (metacriticScore è funzionale e Portal 2 ha già 95).
-@prefix vg: <http://www.videogame-ontology.org/ontology#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vg: <http://www.videogame-ontology.org/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-<http://www.videogame-ontology.org/ontology/test/funzionale> a owl:Ontology ;
-    owl:imports <http://www.videogame-ontology.org/ontology/dati> , <http://www.videogame-ontology.org/ontology/regole> .
 
 vg:Portal_2 vg:metacriticScore 90 .
+
+<http://www.videogame-ontology.org/ontology/test/funzionale> a owl:Ontology ;
+    rdfs:comment "Atteso: inconsistente (metacriticScore è funzionale e Portal 2 ha già 95)" ;
+    owl:imports <http://www.videogame-ontology.org/ontology/dati>,
+        <http://www.videogame-ontology.org/ontology/regole> .
+

@@ -2,21 +2,42 @@
 
 ## File
 
+Tutti i file `.ttl` sono generati da script Python con rdflib (`Graph.add`, `BNode`, `Collection`, `serialize`); nessuno è scritto a mano.
+
 | File | Contenuto |
 |---|---|
-| `schema.ttl` | **Lo schema vuoto**: classi, proprietà e assiomi, nessun gioco. È generato da `generate_schema.py`. |
-| `dati.ttl` | **Solo le asserzioni**: 95 giochi (11 serie e 6 titoli singoli), 28 nuove edizioni, classificazioni PEGI, personaggi, persone, aziende e piattaforme, verificati su Wikipedia e Wikidata. Non contiene nessuna conclusione. |
-| `regole.ttl` | Le 11 regole SWRL, generate da `generate_schema.py`. |
-| `videogiochi.ttl` | **Il file da aprire in Protégé**: importa schema, dati e regole. |
-| `test/` | Quattro errori da far trovare a HermiT e un caso di `sameAs` corretto. |
-| `generate_schema.py` | Genera `schema.ttl`, `regole.ttl` e `relazione/appendice.tex` a partire dalle stesse tabelle. |
+| `schema.ttl` | **Lo schema vuoto**: classi, proprietà e assiomi, nessun gioco. Generato da `generate_schema.py`. |
+| `regole.ttl` | Le 11 regole SWRL. Generate da `generate_schema.py`. |
+| `dati.ttl` | **Solo le asserzioni**: 95 giochi (11 serie e 6 titoli singoli), 28 nuove edizioni, PEGI, personaggi, persone, aziende e piattaforme. Nessuna conclusione. Generato da `build_data.py`. |
+| `videogiochi.ttl` | **Il file da aprire in Protégé**: importa schema, dati e regole. Generato da `generate_tests.py`. |
+| `test/` | Quattro errori da far trovare a HermiT e un caso di `sameAs` corretto. Generati da `generate_tests.py`. |
+| `fonti/dataset.json` | Il dataset revisionato da cui nasce `dati.ttl`. |
+| `fonti/correzioni.json` | Correzioni manuali, ognuna con l'URL della fonte (per esempio i PEGI presi da pegi.info). |
+| `fonti/wikidata/` | Le risposte di Wikidata salvate da `fetch_wikidata.py`. |
+| `fonti/agente/` | I fatti di trama estratti da `research_agent.py`, con URL e citazione per ciascuno. |
 | `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 182 deduzioni attese. |
 | `relazione/` | La relazione LaTeX; le appendici sono generate. |
 
 ```bash
-uv run python protege/generate_schema.py
+uv run python protege/generate_schema.py      # schema.ttl, regole.ttl, relazione/appendice.tex
+uv run python protege/build_data.py           # dati.ttl da fonti/dataset.json + fonti/correzioni.json
+uv run python protege/generate_tests.py       # videogiochi.ttl e test/
 uv run --with owlready2==0.46 python protege/check_reasoning.py
 ```
+
+### Da dove vengono i dati
+
+1. **Wikidata.** `uv run python protege/fetch_wikidata.py` scarica con una sola query SPARQL i dati strutturati di tutti i giochi (date, studi, piattaforme, registi, motori, PEGI, Metacritic, premi, seguiti), li salva in `fonti/wikidata/` ed elenca dove il dataset differisce da Wikidata.
+2. **Trama, con un agente.** Personaggi, uccisioni e natura dei personaggi non sono su Wikidata. `research_agent.py` usa un agente [deepagents](https://github.com/langchain-ai/deepagents) che può solo cercare e leggere Wikipedia e deve restituire, per ogni fatto, l'URL e una frase citata alla lettera. Lo script scarta i fatti la cui citazione non compare nella pagina, quelli che dipendono dal finale e i suicidi.
+   ```bash
+   # nel file .env alla radice: OPENAI_API_KEY=... (o ANTHROPIC_API_KEY=...)
+   # facoltativi: RESEARCH_MODEL=openai:gpt-4.1-mini, WIKI_CONTACT=<un contatto per Wikimedia>
+   uv run python protege/research_agent.py Q796529     # un gioco (Far Cry 3)
+   uv run python protege/research_agent.py             # tutti i giochi non ancora analizzati
+   uv run python protege/research_agent.py --applica   # copia i fatti verificati nel dataset
+   uv run python protege/build_data.py
+   ```
+3. **Correzioni.** Ciò che le fonti sbagliano o non hanno va in `fonti/correzioni.json`, sempre con l'URL della fonte.
 
 ## Giochi
 

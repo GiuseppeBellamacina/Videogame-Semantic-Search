@@ -88,7 +88,7 @@ Abbiamo resistito alla tentazione di creare una classe per ogni cosa. Le piattaf
 \]
 La prima dice che un gioco è giocabile anche dove è uscita una sua nuova edizione; la seconda collega un gioco ai giochi dello studio che ha fatto il suo motore.
 
-\paragraph{I valori.} Tre sole datatype property: data di uscita (\texttt{xsd:dateTime}), punteggio Metacritic (entrambe funzionali) e identificativo Wikidata, che è la \emph{chiave} di \cls{VideoGame} (\texttt{owl:hasKey}~\cite{owl2primer}): due record con lo stesso identificativo sono lo stesso gioco. In tutto ci sono 36 object property e 3 datatype property (appendice~\ref{app:componenti}).
+\paragraph{I valori.} Quattro datatype property: data di uscita (\texttt{xsd:dateTime}), punteggio Metacritic e classificazione PEGI (tutte funzionali) e identificativo Wikidata, che è la \emph{chiave} di \cls{VideoGame} (\texttt{owl:hasKey}~\cite{owl2primer}): due record con lo stesso identificativo sono lo stesso gioco. In tutto ci sono 38 object property e 4 datatype property (appendice~\ref{app:componenti}).
 
 % ---------------------------------------------------------------------------
 \section{Terzo passo: dare un significato}\label{sec:definite}
@@ -118,14 +118,22 @@ su una catena & $\cls{StillPlayable} \equiv \cls{VideoGame} \sqcap \exists\,\pro
 % ---------------------------------------------------------------------------
 \section{Quarto passo: uno schema generato e dati verificati}\label{sec:verifica}
 
-\paragraph{Uno schema generato, non scritto.} Lo schema è prodotto da uno script, \texttt{generate\_schema.py}, scritto con rdflib come negli esempi del corso. Classi, proprietà e regole stanno in tabelle, una riga per elemento; lo script scrive lo schema e le regole in Turtle e, dalle stesse tabelle, le appendici di questa relazione. Per cambiare l'ontologia si cambia una riga e si rigenera, come una \emph{migration} di database.
+\paragraph{Uno schema generato, non scritto.} Lo schema è prodotto da uno script, \texttt{generate\_schema.py}, scritto con rdflib come negli esempi del corso. Classi, proprietà e regole stanno in tabelle, una riga per elemento; lo script costruisce ogni assioma con \texttt{Graph.add}, nodi vuoti e \texttt{Collection} per le liste, e lo serializza in Turtle; dalle stesse tabelle scrive anche le appendici di questa relazione. Allo stesso modo \texttt{generate\_tests.py} genera il file da aprire in Protégé e i casi di test. Per cambiare l'ontologia si cambia una riga e si rigenera, come una \emph{migration} di database.
 
 \begin{lstlisting}[language=Python]
 ("FirstPartyGame", "VideoGame", "Un gioco pubblicato dal gruppo di un costruttore di console",
  and_("VideoGame", some("publishedByGroup", "PlatformHolder"))),
 \end{lstlisting}
 
-\paragraph{I dati.} Il dataset contiene 95 giochi: undici serie (Zelda, Super Mario, Grand Theft Auto, Assassin's Creed, Fallout, Halo, Far Cry, The Witcher, Mass Effect, Dark Souls, Portal), sei titoli singoli (Dispatch, Elden Ring, Cyberpunk~2077, Clair Obscur, Minecraft, The Walking Dead) e 28 nuove edizioni, fino al remake di Ocarina of Time uscito nel novembre 2026. Per ogni gioco c'è anche la classificazione PEGI ufficiale, presa da Wikidata. Ogni fatto (sviluppatore, editore, piattaforme, registi, motori, premi, personaggi, uccisioni certe in ogni finale, gruppi societari, costruttori delle console) è stato verificato su Wikipedia e Wikidata, gioco per gioco; i fatti incerti sono stati esclusi. Il file dei dati contiene 4\,456 triple asserite; HermiT aggiunge 2\,439 fatti nuovi, tra tipi e relazioni.
+\paragraph{I dati.} Il dataset contiene 95 giochi: undici serie (Zelda, Super Mario, Grand Theft Auto, Assassin's Creed, Fallout, Halo, Far Cry, The Witcher, Mass Effect, Dark Souls, Portal), sei titoli singoli (Dispatch, Elden Ring, Cyberpunk~2077, Clair Obscur, Minecraft, The Walking Dead) e 28 nuove edizioni, fino al remake di Ocarina of Time uscito nel novembre 2026. Per ogni gioco c'è anche la classificazione PEGI ufficiale.
+
+\paragraph{Da dove vengono i dati.} Anche i dati sono prodotti da script, in tre passi.
+\begin{enumerate}
+  \item \texttt{fetch\_wikidata.py} interroga Wikidata con una sola query SPARQL per tutti i giochi (date, sviluppatori, editori, piattaforme, registi, motori, PEGI, Metacritic, premi, seguiti) e salva le risposte, così la generazione non richiede la rete; lo stesso script elenca dove il dataset si discosta da Wikidata, per la revisione.
+  \item I fatti di trama (protagonisti, antagonisti, uccisioni certe in ogni finale, natura dei personaggi) su Wikidata quasi non esistono: sono stati estratti da Wikipedia con agenti LLM dotati di ricerca web. \texttt{research\_agent.py} rende ripetibile questa estrazione con un agente \emph{deepagents}~\cite{deepagents}: l'agente può solo cercare e leggere pagine di Wikipedia, deve restituire un JSON validato in cui ogni fatto ha l'URL e una frase citata alla lettera, e lo script scarta ogni fatto la cui citazione non compare nel testo scaricato.
+  \item Il dataset revisionato (\texttt{fonti/dataset.json}) e le correzioni manuali, ciascuna con la propria fonte (\texttt{fonti/correzioni.json}: per esempio i PEGI mancanti presi da pegi.info), sono convertiti in Turtle da \texttt{build\_data.py} con rdflib. Ogni gioco rimanda alla sua voce Wikidata con \texttt{rdfs:seeAlso}.
+\end{enumerate}
+Il file dei dati contiene circa 4\,500 triple asserite; HermiT aggiunge circa 2\,400 fatti nuovi, tra tipi e relazioni.
 
 \paragraph{Verifica.} In Protégé~\cite{protege} si apre \texttt{videogiochi.ttl}, che importa schema, dati e regole tramite il \texttt{catalog-v001.xml}. HermiT~\cite{hermit} li ragiona in pochi secondi: l'ontologia è consistente e nessuna classe è insoddisfacibile. Uno script ripete il ragionamento dalla riga di comando e controlla 182 condizioni attese.
 
@@ -196,6 +204,7 @@ Con quattro piccole aggiunte ai dati HermiT dichiara l'ontologia inconsistente e
 \bibitem{owl2primer} P.~Hitzler, M.~Krötzsch, B.~Parsia, P.~F. Patel-Schneider, S.~Rudolph. \emph{OWL~2 Web Ontology Language Primer (Second Edition)}. W3C Recommendation, 2012.
 \bibitem{hermit} B.~Glimm, I.~Horrocks, B.~Motik, G.~Stoilos, Z.~Wang. HermiT: an OWL~2 reasoner. \emph{Journal of Automated Reasoning}, 53(3):245--269, 2014.
 \bibitem{swrl} I.~Horrocks, P.~F. Patel-Schneider, H.~Boley, S.~Tabet, B.~Grosof, M.~Dean. \emph{SWRL: A Semantic Web Rule Language Combining OWL and RuleML}. W3C Member Submission, 2004.
+\bibitem{deepagents} LangChain. \emph{deepagents}: agenti LLM con pianificazione e strumenti. \texttt{github.com/langchain-ai/deepagents}, 2025.
 \bibitem{dlsafe} B.~Motik, U.~Sattler, R.~Studer. Query answering for OWL-DL with rules. \emph{Journal of Web Semantics}, 3(1):41--60, 2005.
 \bibitem{protege} M.~A. Musen. The Protégé project: a look back and a look forward. \emph{AI Matters}, 1(4):4--12, 2015.
 \bibitem{wikidata} D.~Vrandečić, M.~Krötzsch. Wikidata: a free collaborative knowledgebase. \emph{Communications of the ACM}, 57(10):78--85, 2014.

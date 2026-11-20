@@ -1,10 +1,13 @@
-# Atteso: inconsistente (console e PC sono classi disgiunte).
-@prefix vg: <http://www.videogame-ontology.org/ontology#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-<http://www.videogame-ontology.org/ontology/test/disgiunzione> a owl:Ontology ;
-    owl:imports <http://www.videogame-ontology.org/ontology/dati> , <http://www.videogame-ontology.org/ontology/regole> .
+@prefix vg: <http://www.videogame-ontology.org/ontology#> .
 
-<http://www.videogame-ontology.org/ontology#platform/Steam_Deck> a vg:ConsolePlatform , vg:PCPlatform ;
+<http://www.videogame-ontology.org/ontology#platform/Steam_Deck> a vg:ConsolePlatform,
+        vg:PCPlatform ;
     rdfs:label "Steam Deck" .
+
+<http://www.videogame-ontology.org/ontology/test/disgiunzione> a owl:Ontology ;
+    rdfs:comment "Atteso: inconsistente (console e PC sono classi disgiunte)" ;
+    owl:imports <http://www.videogame-ontology.org/ontology/dati>,
+        <http://www.videogame-ontology.org/ontology/regole> .
+
