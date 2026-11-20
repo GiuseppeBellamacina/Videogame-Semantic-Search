@@ -64,9 +64,9 @@ Nessuna risposta è scritta nei dati. Che \emph{Mass Effect} (2007) sia un gioco
 
 Abbiamo diviso l'ontologia in due parti, tenute in due file distinti: lo \emph{schema} (classi, proprietà, assiomi; nessun gioco) e i \emph{dati} (solo fatti asseriti, nessuna conclusione). Il reasoner unisce le due parti e ne ricava il resto.
 
-Lo schema parte da undici classi di primo livello, disgiunte a due a due: \cls{VideoGame}, \cls{Company}, \cls{Person}, \cls{Character}, \cls{Platform}, \cls{Franchise}, \cls{GameEngine}, \cls{Award}, \cls{Genre}, \cls{GameMode} e \cls{CreativeWork} (romanzi, film, serie TV). La disgiunzione non è una formalità: un individuo usato sia come gioco sia come opera letteraria rende l'ontologia inconsistente, e il reasoner lo segnala.
+Lo schema parte da dodici classi di primo livello, disgiunte a due a due: \cls{VideoGame}, \cls{Company}, \cls{Person}, \cls{Character}, \cls{Platform}, \cls{Franchise}, \cls{GameEngine}, \cls{Award}, \cls{Genre}, \cls{GameMode}, \cls{CreativeWork} (romanzi, film, serie TV) e \cls{Killing} (un'uccisione avvenuta in un gioco). La disgiunzione non è una formalità: un individuo usato sia come gioco sia come opera letteraria rende l'ontologia inconsistente, e il reasoner lo segnala.
 
-Abbiamo resistito alla tentazione di creare una classe per ogni cosa. Le piattaforme si dividono solo in console e PC (disgiunte), più le console dell'attuale generazione; le marche (PlayStation, Xbox, Nintendo) non sono classi, ma si ricavano da \emph{chi costruisce} la console. I personaggi possono essere umani o intelligenze artificiali. I ruoli, invece, non si asseriscono mai: sviluppatore, editore, regista, protagonista, antagonista sono classi che il reasoner riempie da solo, come si vedrà. Il risultato è un'ontologia piccola (61 classi) ma profonda: quasi metà delle classi è definita da assiomi e si popola per deduzione (figura~\ref{fig:gerarchia_inferita}).
+Abbiamo resistito alla tentazione di creare una classe per ogni cosa. Le piattaforme si dividono solo in console e PC (disgiunte), più le console dell'attuale generazione; le marche (PlayStation, Xbox, Nintendo) non sono classi, ma si ricavano da \emph{chi costruisce} la console. I personaggi possono essere umani o intelligenze artificiali. I ruoli, invece, non si asseriscono mai: sviluppatore, editore, regista, protagonista, antagonista sono classi che il reasoner riempie da solo, come si vedrà. Il risultato è un'ontologia piccola (70 classi) ma profonda: quasi metà delle classi è definita da assiomi e si popola per deduzione (figura~\ref{fig:gerarchia_inferita}).
 
 \screenshot[0.6\linewidth]{gerarchia_inferita}{La gerarchia inferita da HermiT in Protégé.}
 
@@ -93,7 +93,7 @@ La prima dice che un gioco è giocabile anche dove è uscita una sua nuova edizi
 % ---------------------------------------------------------------------------
 \section{Terzo passo: dare un significato}\label{sec:definite}
 
-Una classe primitiva ha solo condizioni necessarie; una classe \emph{definita} ($\equiv$) ha condizioni necessarie e sufficienti, e il reasoner vi classifica chiunque le soddisfi. Le 27 classi definite sono costruite le une sulle altre (tabella~\ref{tab:costrutti}); l'elenco completo è nell'appendice.
+Una classe primitiva ha solo condizioni necessarie; una classe \emph{definita} ($\equiv$) ha condizioni necessarie e sufficienti, e il reasoner vi classifica chiunque le soddisfi. Le 33 classi definite sono costruite le une sulle altre (tabella~\ref{tab:costrutti}); l'elenco completo è nell'appendice.
 
 \begin{table}[htbp]\centering\small
 \begin{tabularx}{\linewidth}{@{}lY@{}}
@@ -113,7 +113,7 @@ su una catena & $\cls{StillPlayable} \equiv \cls{VideoGame} \sqcap \exists\,\pro
 \caption{Costrutti delle classi definite.}\label{tab:costrutti}
 \end{table}
 
-\paragraph{La lezione del mondo aperto.} OWL ragiona in un \emph{mondo aperto}: ciò che non è scritto non è falso, è sconosciuto. Per questo non ci sono classi per negazione (``gioco senza seguiti'' non riceverebbe mai istanze) e le cardinalità massime non sono controlli sui dati. Inoltre OWL non assume che nomi diversi indichino oggetti diversi (\emph{Unique Name Assumption}): per contare ``almeno due giochi'' o confrontare due aziende, i dati dichiarano esplicitamente che giochi, aziende, piattaforme e motori sono a due a due diversi (\texttt{owl:AllDifferent}).
+\paragraph{La lezione del mondo aperto.} OWL ragiona in un \emph{mondo aperto}: ciò che non è scritto non è falso, è sconosciuto. Per questo non ci sono classi per negazione (``gioco senza seguiti'' non riceverebbe mai istanze) e le cardinalità massime non sono controlli sui dati. Inoltre OWL non assume che nomi diversi indichino oggetti diversi (\emph{Unique Name Assumption}): per contare ``almeno due giochi'' o confrontare due aziende, i dati dichiarano esplicitamente che giochi, aziende, personaggi, piattaforme, motori e uccisioni sono a due a due diversi (\texttt{owl:AllDifferent}).
 
 % ---------------------------------------------------------------------------
 \section{Quarto passo: uno schema generato e dati verificati}\label{sec:verifica}
