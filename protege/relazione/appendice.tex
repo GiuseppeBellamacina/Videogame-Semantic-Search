@@ -11,7 +11,7 @@
 \texttt{Platform} & \texttt{--} & primitiva & Una piattaforma su cui si gioca \\
 \texttt{Franchise} & \texttt{--} & primitiva & Una serie di giochi \\
 \texttt{GameEngine} & \texttt{--} & primitiva & Un motore di gioco \\
-\texttt{Award} & \texttt{--} & primitiva & Un premio \\
+\texttt{Award} & \texttt{--} & primitiva & Il premio Gioco dell'anno di una cerimonia (The Game Awards, BAFTA, D.I.C.E....) \\
 \texttt{Genre} & \texttt{--} & primitiva & Un genere \\
 \texttt{GameMode} & \texttt{--} & primitiva & Una modalità di gioco \\
 \texttt{Killing} & \texttt{--} & primitiva & Un'uccisione nella trama di un gioco: vittima, assassino e gioco (relazione n-aria) \\
@@ -24,7 +24,6 @@
 \texttt{TVSeries} & \texttt{CreativeWork} & primitiva & Una serie televisiva \\
 \texttt{Comic} & \texttt{CreativeWork} & primitiva & Un fumetto \\
 \texttt{TabletopGame} & \texttt{CreativeWork} & primitiva & Un gioco da tavolo o di ruolo cartaceo \\
-\texttt{GameOfTheYearAward} & \texttt{Award} & primitiva & Un premio Gioco dell'anno \\
 \texttt{Human} & \texttt{Character} & primitiva & Un personaggio umano \\
 \texttt{ArtificialIntelligence} & \texttt{Character} & primitiva & Un'intelligenza artificiale \\
 \texttt{FirstPartyOnRivalConsole} & \texttt{VideoGame} & regola SWRL & Un gioco first-party uscito su una console di un concorrente \\
@@ -55,6 +54,7 @@
 \texttt{HighlyRatedGame} & \texttt{VideoGame} & definita & Un gioco con almeno 90 su Metacritic \\
 \texttt{AcclaimedSequel} & \texttt{SequelGame} & definita & Un seguito acclamato \\
 \texttt{GOTYWinner} & \texttt{VideoGame} & definita & Un gioco premiato come gioco dell'anno \\
+\texttt{ConsensusGOTY} & \texttt{GOTYWinner} & definita & Un gioco dell'anno per almeno due cerimonie diverse \\
 \texttt{RemasteredClassic} & \texttt{VideoGame} & definita & Un gioco che ha avuto una nuova edizione \\
 \texttt{RemasterCollection} & \texttt{Remaster} & definita & Una raccolta che rimasterizza almeno due giochi \\
 \texttt{StillPlayable} & \texttt{VideoGame} & definita & Un gioco giocabile su una console attuale \\
@@ -143,7 +143,8 @@
 \textsf{FantasyViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\leq 12] \\
 \textsf{HighlyRatedGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{metacriticScore}.\texttt{integer}[\geq 90] \\
 \textsf{AcclaimedSequel} &\equiv \textsf{SequelGame} \sqcap \textsf{HighlyRatedGame} \\
-\textsf{GOTYWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{GameOfTheYearAward} \\
+\textsf{GOTYWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{Award} \\
+\textsf{ConsensusGOTY} &\equiv \textsf{GOTYWinner} \sqcap {\geq}2\,\textit{wonAward}.\textsf{Award} \\
 \textsf{RemasteredClassic} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasRemaster}.\textsf{VideoGame} \\
 \textsf{RemasterCollection} &\equiv \textsf{Remaster} \sqcap {\geq}2\,\textit{remasterOf}.\textsf{VideoGame} \\
 \textsf{StillPlayable} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{playableOn}.\textsf{CurrentGenerationConsole} \\

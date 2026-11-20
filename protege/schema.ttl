@@ -29,6 +29,15 @@ vg:AwardWinningFranchise a owl:Class ;
                         owl:onProperty vg:includes ;
                         owl:someValuesFrom vg:GOTYWinner ] ) ] .
 
+vg:ConsensusGOTY a owl:Class ;
+    rdfs:label "ConsensusGOTY" ;
+    rdfs:comment "Un gioco dell'anno per almeno due cerimonie diverse" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:GOTYWinner [ a owl:Restriction ;
+                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                        owl:onClass vg:Award ;
+                        owl:onProperty vg:wonAward ] ) ] .
+
 vg:DeceasedCharacter a owl:Class ;
     rdfs:label "DeceasedCharacter" ;
     rdfs:comment "Un personaggio ucciso nella trama di un gioco" ;
@@ -313,19 +322,6 @@ vg:Developer a owl:Class ;
                         owl:onProperty vg:developerOf ;
                         owl:someValuesFrom vg:VideoGame ] ) ] .
 
-vg:GOTYWinner a owl:Class ;
-    rdfs:label "GOTYWinner" ;
-    rdfs:comment "Un gioco premiato come gioco dell'anno" ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:wonAward ;
-                        owl:someValuesFrom vg:GameOfTheYearAward ] ) ] .
-
-vg:GameOfTheYearAward a owl:Class ;
-    rdfs:label "GameOfTheYearAward" ;
-    rdfs:comment "Un premio Gioco dell'anno" ;
-    rdfs:subClassOf vg:Award .
-
 vg:HighlyRatedGame a owl:Class ;
     rdfs:label "HighlyRatedGame" ;
     rdfs:comment "Un gioco con almeno 90 su Metacritic" ;
@@ -539,10 +535,6 @@ vg:victimIn a owl:AsymmetricProperty,
         owl:ObjectProperty ;
     owl:inverseOf vg:victim .
 
-vg:wonAward a owl:ObjectProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Award .
-
 vg:Antagonist a owl:Class ;
     rdfs:label "Antagonist" ;
     rdfs:comment "L'antagonista di un gioco" ;
@@ -555,6 +547,14 @@ vg:Film a owl:Class ;
     rdfs:label "Film" ;
     rdfs:comment "Un film" ;
     rdfs:subClassOf vg:CreativeWork .
+
+vg:GOTYWinner a owl:Class ;
+    rdfs:label "GOTYWinner" ;
+    rdfs:comment "Un gioco premiato come gioco dell'anno" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:wonAward ;
+                        owl:someValuesFrom vg:Award ] ) ] .
 
 vg:GameMode a owl:Class ;
     rdfs:label "GameMode" ;
@@ -622,9 +622,9 @@ vg:playableOn a owl:ObjectProperty ;
     rdfs:range vg:Platform ;
     owl:propertyChainAxiom ( vg:hasRemaster vg:availableOn ) .
 
-vg:Award a owl:Class ;
-    rdfs:label "Award" ;
-    rdfs:comment "Un premio" .
+vg:wonAward a owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Award .
 
 vg:ConsolePlatform a owl:Class ;
     rdfs:label "ConsolePlatform" ;
@@ -660,6 +660,10 @@ vg:ArtificialIntelligence a owl:Class ;
     rdfs:label "ArtificialIntelligence" ;
     rdfs:comment "Un'intelligenza artificiale" ;
     rdfs:subClassOf vg:Character .
+
+vg:Award a owl:Class ;
+    rdfs:label "Award" ;
+    rdfs:comment "Il premio Gioco dell'anno di una cerimonia (The Game Awards, BAFTA, D.I.C.E....)" .
 
 vg:appearsIn a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,

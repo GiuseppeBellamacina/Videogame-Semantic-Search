@@ -130,7 +130,7 @@ def build(ds):
         g.add((iri("engine", e), RDFS.label, Literal(e)))
         add(g, iri("engine", e), VG.engineDevelopedBy, dev and iri("company", dev))
     for a in sorted({a for x in ds["giochi"] for a in x.get("premi", [])}):
-        g.add((iri("award", a), RDF.type, VG.GameOfTheYearAward))
+        g.add((iri("award", a), RDF.type, VG.Award))
         g.add((iri("award", a), RDFS.label, Literal(a)))
     for f, d in ds["serie"].items():
         s = VG["franchise/" + f]
@@ -153,6 +153,7 @@ def build(ds):
     all_different(g, [iri("character", c) for c in ds["personaggi"]])
     all_different(g, [VG["platform/" + p] for p in ds["piattaforme"]])
     all_different(g, [iri("engine", e) for e in ds["motori"]])
+    all_different(g, [iri("award", a) for a in {a for x in ds["giochi"] for a in x.get("premi", [])}])
     all_different(g, [killing(x["titolo"], v, k) for x in ds["giochi"] for v, k in x.get("uccisioni", [])])
     return g
 
