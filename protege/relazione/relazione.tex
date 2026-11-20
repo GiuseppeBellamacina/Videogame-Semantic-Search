@@ -41,7 +41,7 @@
 
 \begin{abstract}
 \noindent
-Questa relazione racconta la costruzione di un'ontologia OWL~2 dei videogiochi nell'ordine in cui è avvenuta: le domande da cui siamo partiti, i nomi delle cose (le classi), i loro collegamenti (le proprietà), il loro significato (le classi definite e le regole). Lo schema è generato da uno script; i dati, 95 giochi di undici serie più sei titoli singoli, sono raccolti e verificati uno per uno. Il cuore della relazione sono le deduzioni che il reasoner HermiT ottiene in Protégé: fatti mai scritti nei dati, come ``Gwyn è mortale perché è stato ucciso'' o ``Fallout: New Vegas è stato fatto da veterani della serie''.
+Questa relazione racconta la costruzione di un'ontologia OWL~2 dei videogiochi nell'ordine in cui è avvenuta: le domande da cui siamo partiti, i nomi delle cose (le classi), i loro collegamenti (le proprietà), il loro significato (le classi definite e le regole). Schema, regole e dati sono generati da script Python con rdflib; i dati, 95 giochi di undici serie più sei titoli singoli, vengono da Wikidata e da Wikipedia, letta da un agente LLM che deve citare la fonte di ogni fatto. Il cuore della relazione sono le deduzioni che il reasoner HermiT ottiene in Protégé: fatti mai scritti nei dati, come ``chi è stato ucciso è morto e chi ha ucciso è un assassino'', ``Cortana è un'intelligenza artificiale'' o ``Fallout: New Vegas è stato fatto da veterani della serie''.
 \end{abstract}
 
 % ---------------------------------------------------------------------------
@@ -54,7 +54,8 @@ Prima di scrivere una sola classe abbiamo fissato le \emph{domande di competenza
   \item quali giochi sono \emph{first-party}, cioè pubblicati dal gruppo di chi costruisce console, e quali di questi sono usciti su una console rivale?
   \item quali giochi sono stati fatti da uno studio fondato da veterani della stessa serie?
   \item quali serie sono lunghe, quali sono passate di mano, quali sono diventate film o serie TV?
-  \item quali personaggi sono mortali, quali sono personaggi storici, quali cattivi ritornano?
+  \item quali personaggi muoiono e chi li uccide, quali sono intelligenze artificiali, quali sono personaggi storici, quali cattivi ritornano?
+  \item quali giochi raccontano una storia violenta, e quella violenza è realistica o di fantasia?
   \item quali vecchi giochi si possono ancora giocare su una console di oggi?
 \end{itemize}
 Nessuna risposta è scritta nei dati. Che \emph{Mass Effect} (2007) sia un gioco Microsoft uscito anche su una console Sony lo deve capire il reasoner, mettendo insieme fatti sparsi.
@@ -130,10 +131,19 @@ su una catena & $\cls{StillPlayable} \equiv \cls{VideoGame} \sqcap \exists\,\pro
 \paragraph{Da dove vengono i dati.} Anche i dati sono prodotti da script, in tre passi.
 \begin{enumerate}
   \item \texttt{fetch\_wikidata.py} interroga Wikidata con una sola query SPARQL per tutti i giochi (date, sviluppatori, editori, piattaforme, registi, motori, PEGI, Metacritic, premi, seguiti) e salva le risposte, così la generazione non richiede la rete; lo stesso script elenca dove il dataset si discosta da Wikidata, per la revisione.
-  \item I fatti di trama (protagonisti, antagonisti, uccisioni certe in ogni finale, natura dei personaggi) su Wikidata quasi non esistono: sono stati estratti da Wikipedia con agenti LLM dotati di ricerca web. \texttt{research\_agent.py} rende ripetibile questa estrazione con un agente \emph{deepagents}~\cite{deepagents}: l'agente può solo cercare e leggere pagine di Wikipedia, deve restituire un JSON validato in cui ogni fatto ha l'URL e una frase citata alla lettera, e lo script scarta ogni fatto la cui citazione non compare nel testo scaricato.
+  \item I fatti di trama (protagonisti, antagonisti, uccisioni certe in ogni finale, natura dei personaggi) su Wikidata quasi non esistono: sono stati estratti da Wikipedia con agenti LLM dotati di ricerca web. \texttt{research\_agent.py} rende ripetibile questa estrazione con un agente \emph{deepagents}~\cite{deepagents}. La lista dei giochi la ricava da sola con una query SPARQL sull'ontologia; per un gioco nuovo basta il titolo, perché l'agente trova da sé la voce Wikidata e la pagina Wikipedia, e i dati strutturati arrivano da Wikidata. L'agente può solo cercare e leggere Wikipedia e Wikidata, deve restituire un JSON validato in cui ogni fatto ha l'URL e una frase citata alla lettera, e lo script scarta ogni fatto la cui citazione non compare nel testo scaricato, oltre alle uccisioni che dipendono dal finale.
   \item Il dataset revisionato (\texttt{fonti/dataset.json}) e le correzioni manuali, ciascuna con la propria fonte (\texttt{fonti/correzioni.json}: per esempio i PEGI mancanti presi da pegi.info), sono convertiti in Turtle da \texttt{build\_data.py} con rdflib. Ogni gioco rimanda alla sua voce Wikidata con \texttt{rdfs:seeAlso}.
 \end{enumerate}
-Il file dei dati contiene circa 4\,500 triple asserite; HermiT aggiunge circa 2\,400 fatti nuovi, tra tipi e relazioni.
+Per esempio, così appaiono nei dati \emph{Dark Souls} e l'uccisione di Gwyn (i prefissi \texttt{company:}, \texttt{character:} e simili abbreviano gli IRI \texttt{vg:company/}\dots):
+\begin{lstlisting}
+vg:Dark_Souls a vg:VideoGame ; rdfs:label "Dark Souls" ; vg:hasWikidataId "Q1166232" ;
+    vg:developedBy company:FromSoftware ; vg:directedBy person:Hidetaka_Miyazaki ;
+    vg:pegiRating 16 ; vg:belongsTo franchise:Dark_Souls .
+killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
+    vg:victim character:Gwyn_Lord_of_Sunlight ; vg:killer character:Chosen_Undead ;
+    vg:inGame vg:Dark_Souls .
+\end{lstlisting}
+Nessuno di questi fatti dice che Gwyn è morto, che Miyazaki è un regista o che Dark Souls è un gioco violento: lo deduce il reasoner (sezione~\ref{sec:inferenze}). Il file dei dati contiene circa 5\,300 triple asserite; HermiT aggiunge circa 2\,400 fatti nuovi, tra tipi e relazioni.
 
 \paragraph{Verifica.} In Protégé~\cite{protege} si apre \texttt{videogiochi.ttl}, che importa schema, dati e regole tramite il \texttt{catalog-v001.xml}. HermiT~\cite{hermit} li ragiona in pochi secondi: l'ontologia è consistente e nessuna classe è insoddisfacibile. Uno script ripete il ragionamento dalla riga di comando e controlla 184 condizioni attese.
 
@@ -153,13 +163,13 @@ Il caso più semplice: un'uccisione dice qualcosa di tutti e due i personaggi co
 \screenshot[0.7\linewidth]{spiegazione_gwyn}{La spiegazione di Protégé per ``Gwyn è \cls{DeceasedCharacter}'': un'uccisione e il range di \prop{victim}.}
 
 \subsection{Due o tre passi}
-Come per il semidio, che è un umano con un genitore divino, qui una classe nasce dal tipo di \emph{un altro} individuo.
+Qui il tipo di un individuo nasce dal tipo di \emph{un altro} individuo, a sua volta dedotto.
 \begin{itemize}
   \item \textbf{Mass Effect e Fallout 4 sono giochi first-party Microsoft.} Nei dati: Mass Effect è pubblicato da Xbox Game Studios, che è controllata da Microsoft; la Xbox~360 è costruita da Microsoft. Il reasoner ricava che Microsoft è un \cls{PlatformHolder}, che il gioco è ``pubblicato dal gruppo'' Microsoft e quindi che è \cls{FirstPartyGame}. Per Fallout 4 la catena è più lunga: Bethesda Softworks $\to$ ZeniMax $\to$ Xbox Game Studios $\to$ Microsoft.
   \item \textbf{Obsidian è stata fondata da veterani.} I suoi fondatori lavoravano a Black Isle Studios, che il reasoner sa essere uno sviluppatore perché ha sviluppato Fallout~2: Obsidian è \cls{FoundedByVeterans}.
   \item \textbf{Leonardo da Vinci e Cesare Borgia sono personaggi storici} (\cls{HistoricalCharacter}) perché interpretano persone reali; \textbf{GLaDOS e Wheatley sono IA ribelli} (\cls{RogueAI}), intelligenze artificiali che fanno da antagonisti.
   \item \textbf{Cortana è un'intelligenza artificiale}, anche se nei dati non è scritto. Nei dati c'è solo che la sua mente è copiata da quella della dottoressa Halsey (\prop{mindCopiedFrom}), il cui dominio è \cls{ArtificialIntelligence}; poiché Halsey è umana, Cortana è anche una \cls{DigitalMind}. Alleata del Master Chief per quattro giochi, in \emph{Halo~5} diventa l'antagonista: da quel solo fatto il reasoner la classifica \cls{RogueAI}, come GLaDOS.
-  \item \textbf{Dalle uccisioni al tipo di violenza.} Chi ha ucciso almeno due personaggi è un \cls{MultipleKiller} (cardinalità qualificata sull'inversa \prop{kills}). Un'uccisione non è una semplice relazione tra due personaggi: avviene \emph{in un gioco}. Per questo è un individuo a sé, \cls{Killing}, con vittima, assassino e gioco (il pattern delle relazioni n-arie); la regola \textsf{KillingEvent} ne ricava \prop{killedBy}. Un gioco è un \cls{ViolentStoryGame} se nella sua trama qualcuno viene ucciso. Contare per gioco evita un errore che la versione precedente commetteva: Link è lo stesso personaggio in tutta la serie, e le sue uccisioni rendevano ``violenti'' anche i capitoli in cui non uccide nessuno. La storia da sola, però, non distingue GTA da Zelda: anche in Skyward Sword Link uccide Demise. La distinzione la dà il dato reale, la classificazione PEGI, letta con i criteri ufficiali (dal 16 la violenza è realistica, fino al 12 è rivolta a personaggi di fantasia): \cls{RealisticViolenceGame} (GTA, Assassin's Creed, Far Cry, Halo) e \cls{FantasyViolenceGame} (i cinque Zelda in cui c'è un'uccisione). Il ragionamento ha anche fatto emergere un errore nei dati: Assassin's Creed Origins risultava ``violenza di fantasia'' perché Wikidata gli attribuiva PEGI~12, mentre è PEGI~18; il dato è stato corretto.
+  \item \textbf{Dalle uccisioni al tipo di violenza.} Chi ha ucciso almeno due personaggi è un \cls{MultipleKiller} (cardinalità qualificata sull'inversa \prop{kills}). Un'uccisione non è una semplice relazione tra due personaggi: avviene \emph{in un gioco}. Per questo è un individuo a sé, \cls{Killing}, con vittima, assassino e gioco (il pattern delle relazioni n-arie); la regola \textsf{KillingEvent} ne ricava \prop{killedBy}. Un gioco è un \cls{ViolentStoryGame} se nella sua trama qualcuno viene ucciso. Legare l'uccisione al gioco è essenziale: Link è lo stesso personaggio in tutta la serie, e se l'uccisione fosse solo una relazione tra due personaggi renderebbe ``violenti'' anche i capitoli in cui non uccide nessuno. La storia da sola, però, non distingue GTA da Zelda: anche in Skyward Sword Link uccide Demise. La distinzione la dà il dato reale, la classificazione PEGI, letta con i criteri ufficiali (dal 16 la violenza è realistica, fino al 12 è rivolta a personaggi di fantasia): \cls{RealisticViolenceGame} (GTA, Assassin's Creed, Far Cry, Halo) e \cls{FantasyViolenceGame} (i cinque Zelda in cui c'è un'uccisione). Il ragionamento ha anche fatto emergere un errore nei dati: Assassin's Creed Origins risultava ``violenza di fantasia'' perché Wikidata gli attribuiva PEGI~12, mentre è PEGI~18; il dato è stato corretto.
   \item \textbf{The Witcher è un adattamento letterario} (tratto dalla saga di Sapkowski), \textbf{Cyberpunk~2077 e The Walking Dead sono adattamenti} (di un gioco da tavolo e di un fumetto) e \textbf{Dark Souls è un gioco d'autore} (\cls{AuteurGame}), perché diretto da Miyazaki, che guida FromSoftware.
   \item \textbf{Bowser, Ganondorf e GLaDOS sono cattivi ricorrenti}: antagonisti presenti in almeno due giochi diversi.
 \end{itemize}
@@ -168,7 +178,7 @@ Come per il semidio, che è un umano con un genitore divino, qui una classe nasc
 \begin{itemize}
   \item \textbf{GTA III si gioca ancora su PS5}, anche se è uscito nel 2001 su PS2: la sua Definitive Edition è uscita su PS5, e la catena $\prop{hasRemaster} \circ \prop{availableOn}$ lo rende \cls{StillPlayable}. Lo stesso vale per Breath of the Wild (Switch~2), Fallout~4 e Halo: Combat Evolved, del 2001, che con il remake \emph{Campaign Evolved} arriva perfino su PS5; non per Mass Effect, la cui raccolta è ferma a PS4.
   \item \textbf{The Witcher è legato a Mass Effect}: è fatto con il motore Aurora di BioWare, che ha sviluppato Mass Effect (catena \prop{techLinkedTo}).
-  \item \textbf{GTA, Assassin's Creed, Fallout e Zelda sono serie lunghe}; Super Mario, nella demo, no. \textbf{Halo e Fallout sono serie passate di mano}; \textbf{The Witcher, Fallout, Halo e Super Mario sono diventati film o serie TV}, GTA e Zelda no.
+  \item \textbf{GTA, Assassin's Creed, Fallout, Zelda, Super Mario e le altre serie con almeno tre capitoli sono serie lunghe}; Portal, con due, no. \textbf{Halo e Fallout sono serie passate di mano}; \textbf{The Witcher, Fallout, Halo e Super Mario sono diventati film o serie TV}, GTA e Zelda no.
 \end{itemize}
 
 \screenshot[0.7\linewidth]{individuo_fallout_new_vegas}{\emph{Fallout: New Vegas} in Protégé: in giallo i tipi dedotti, tra cui \cls{VeteransReturn} e \cls{FirstPartyOnRivalConsole}.}
@@ -196,7 +206,7 @@ Con quattro piccole aggiunte ai dati HermiT dichiara l'ontologia inconsistente e
   \item \textbf{Mondo aperto.} Negazioni e cardinalità massime non sono controlli: per vincoli a mondo chiuso serve un linguaggio come SHACL, accanto a OWL.
   \item \textbf{Regole.} HermiT non vede, dentro le regole, le relazioni dedotte da catene e transitività: certe regole vanno scritte in più versioni.
   \item \textbf{Personaggi senza contesto.} Le uccisioni sono legate al gioco, ma il resto no: un personaggio è lo stesso individuo in tutta la serie, quindi la sua natura o il suo ruolo valgono per tutti i giochi. Lo stesso pattern n-ario potrebbe servire anche per i ruoli (Cortana alleata o antagonista a seconda del gioco).
-  \item \textbf{Dati.} ``Seguito'' è inteso come capitolo precedente della serie principale; le uccisioni sono solo quelle certe in ogni finale.
+  \item \textbf{Dati.} ``Seguito'' è inteso come capitolo precedente della serie in ordine di uscita (dove Wikidata non lo indica, è aggiunto come correzione con fonte); le uccisioni sono solo quelle certe in ogni finale.
 \end{itemize}
 
 \begin{thebibliography}{9}\small

@@ -103,5 +103,248 @@
   "valore": 3,
   "fonte": "https://pegi.info/search-pegi?q=Adventure+of+Link",
   "nota": "assente o ambiguo su Wikidata; classificazione di: Game Boy Advance (NES Classic), 07/01/2005 (first PEGI-rated release found)"
+ },
+ {
+  "gioco": "The Legend of Zelda: A Link to the Past",
+  "campo": "seguito_di",
+  "valore": [
+   "Zelda II: The Adventure of Link"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Link's Awakening",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: A Link to the Past"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Ocarina of Time",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Link's Awakening"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Oracle of Seasons",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Majora's Mask"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Oracle of Ages",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Oracle of Seasons"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Four Swords",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Oracle of Ages"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: The Wind Waker",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Four Swords"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Four Swords Adventures",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: The Wind Waker"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: The Minish Cap",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Four Swords Adventures"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Twilight Princess",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: The Minish Cap"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Skyward Sword",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Spirit Tracks"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: A Link Between Worlds",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Skyward Sword"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Tri Force Heroes",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: A Link Between Worlds"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Breath of the Wild",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Tri Force Heroes"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Echoes of Wisdom",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Tears of the Kingdom"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Super Mario Bros. 2",
+  "campo": "seguito_di",
+  "valore": [
+   "Super Mario Bros."
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Super_Mario",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Super Mario Bros. 3",
+  "campo": "seguito_di",
+  "valore": [
+   "Super Mario Bros. 2"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Super_Mario",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Super Mario World",
+  "campo": "seguito_di",
+  "valore": [
+   "Super Mario Bros. 3"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Super_Mario",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Super Mario 64",
+  "campo": "seguito_di",
+  "valore": [
+   "Super Mario World"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Super_Mario",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Super Mario Sunshine",
+  "campo": "seguito_di",
+  "valore": [
+   "Super Mario 64"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Super_Mario",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "New Super Mario Bros.",
+  "campo": "seguito_di",
+  "valore": [
+   "Super Mario Sunshine"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Super_Mario",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Super Mario Galaxy",
+  "campo": "seguito_di",
+  "valore": [
+   "New Super Mario Bros."
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Super_Mario",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Super Mario 3D Land",
+  "campo": "seguito_di",
+  "valore": [
+   "Super Mario Galaxy 2"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Super_Mario",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Super Mario Odyssey",
+  "campo": "seguito_di",
+  "valore": [
+   "Super Mario 3D World"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Super_Mario",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Super Mario Bros. Wonder",
+  "campo": "seguito_di",
+  "valore": [
+   "Super Mario Odyssey"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Super_Mario",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Fallout: New Vegas",
+  "campo": "seguito_di",
+  "valore": [
+   "Fallout 3"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Fallout_(franchise)",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "Fallout 76",
+  "campo": "seguito_di",
+  "valore": [
+   "Fallout 4"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Fallout_(franchise)",
+  "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
  }
 ]

@@ -28,13 +28,17 @@ uv run --with owlready2==0.46 python protege/check_reasoning.py
 ### Da dove vengono i dati
 
 1. **Wikidata.** `uv run python protege/fetch_wikidata.py` scarica con una sola query SPARQL i dati strutturati di tutti i giochi (date, studi, piattaforme, registi, motori, PEGI, Metacritic, premi, seguiti), li salva in `fonti/wikidata/` ed elenca dove il dataset differisce da Wikidata.
-2. **Trama, con un agente.** Personaggi, uccisioni e natura dei personaggi non sono su Wikidata. `research_agent.py` usa un agente [deepagents](https://github.com/langchain-ai/deepagents) che può solo cercare e leggere Wikipedia e deve restituire, per ogni fatto, l'URL e una frase citata alla lettera. Lo script scarta i fatti la cui citazione non compare nella pagina, quelli che dipendono dal finale e i suicidi.
+2. **Trama, con un agente.** Personaggi, uccisioni e natura dei personaggi non sono su Wikidata. `research_agent.py` usa un agente [deepagents](https://github.com/langchain-ai/deepagents) con quattro strumenti: `wikidata_search`, `wikidata_facts`, `wikipedia_search` e `wikipedia_section`. Funziona così:
+   - **la lista dei giochi** la prende dall'ontologia, con una query SPARQL su `dati.ttl`; per giochi nuovi basta un file con un titolo per riga;
+   - **per ogni gioco** l'agente trova la voce Wikidata (se manca) e la pagina Wikipedia, legge la trama e restituisce un JSON validato (pydantic) in cui ogni fatto ha l'URL e una frase citata alla lettera;
+   - **lo script controlla** che ogni citazione compaia davvero nel testo scaricato e scarta i fatti non verificabili, le uccisioni che dipendono dal finale e i suicidi; il risultato va in `fonti/agente/<qid>.json`, con l'elenco dei fatti scartati;
+   - **`--applica`** porta i fatti nel dataset; per un gioco nuovo aggiunge anche i dati strutturati di Wikidata (date, studi, piattaforme, PEGI, Metacritic, registi, motore).
    ```bash
-   # nel file .env alla radice: OPENAI_API_KEY=... (o ANTHROPIC_API_KEY=...)
-   # facoltativi: RESEARCH_MODEL=openai:gpt-4.1-mini, WIKI_CONTACT=<un contatto per Wikimedia>
-   uv run python protege/research_agent.py Q796529     # un gioco (Far Cry 3)
-   uv run python protege/research_agent.py             # tutti i giochi non ancora analizzati
-   uv run python protege/research_agent.py --applica   # copia i fatti verificati nel dataset
+   # nel file .env alla radice: OPENAI_API_KEY=... (o ANTHROPIC_API_KEY=... con RESEARCH_MODEL=anthropic:<modello>)
+   uv run python protege/research_agent.py                    # tutti i giochi dell'ontologia non ancora analizzati
+   uv run python protege/research_agent.py Q796529            # un solo gioco (Far Cry 3)
+   uv run python protege/research_agent.py --nuovi lista.txt  # giochi nuovi, un titolo per riga
+   uv run python protege/research_agent.py --applica
    uv run python protege/build_data.py
    ```
 3. **Correzioni.** Ciò che le fonti sbagliano o non hanno va in `fonti/correzioni.json`, sempre con l'URL della fonte.
