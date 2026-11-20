@@ -25,6 +25,7 @@ TOP = [
     ("Award", "Un premio"),
     ("Genre", "Un genere"),
     ("GameMode", "Una modalità di gioco"),
+    ("Killing", "Un'uccisione nella trama di un gioco: vittima, assassino e gioco (relazione n-aria)"),
     ("CreativeWork", "Un'opera di un altro medium (romanzo, film, serie TV)"),
 ]
 
@@ -88,8 +89,7 @@ DEFINED = [
     ("SequelGame", "VideoGame", "Il seguito di un altro gioco", and_("VideoGame", some("sequelOf", "VideoGame"))),
     ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", and_("VideoGame", some("sequelOf", some("sequelOf", "VideoGame")))),
     ("LongRunningOriginal", "VideoGame", "Il capostipite di una serie di almeno tre capitoli", and_("VideoGame", some("hasSequel", some("hasSequel", "VideoGame")))),
-    ("ViolentStoryGame", "VideoGame", "Un gioco in cui si uccide più volte: due personaggi che uccidono, o uno che uccide almeno due volte",
-     and_("VideoGame", or_(at_least(2, "hasCharacter", "Killer"), some("hasCharacter", "MultipleKiller")))),
+    ("ViolentStoryGame", "VideoGame", "Un gioco nella cui trama qualcuno viene ucciso", and_("VideoGame", some("hasKilling", "Killing"))),
     ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", and_("ViolentStoryGame", some("pegiRating", score(16)))),
     ("FantasyViolenceGame", "ViolentStoryGame", "Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici", and_("ViolentStoryGame", some("pegiRating", score_max(12)))),
     ("HighlyRatedGame", "VideoGame", "Un gioco con almeno 90 su Metacritic", and_("VideoGame", some("metacriticScore", score(90)))),
@@ -153,7 +153,10 @@ OBJECT_PROPS = [
     ("appearsIn", "Character", "VideoGame", "hasCharacter", [], None),
     ("protagonistOf", "Character", "VideoGame", None, [], None),
     ("antagonistOf", "Character", "VideoGame", None, [], None),
-    ("killedBy", "DeceasedCharacter", "Killer", "kills", [], None),
+    ("killedBy", "DeceasedCharacter", "Killer", "kills", [], "Dedotta dalla regola KillingEvent"),
+    ("victim", "Killing", "DeceasedCharacter", None, [], None),
+    ("killer", "Killing", "Killer", None, [], None),
+    ("inGame", "Killing", "VideoGame", "hasKilling", [], None),
     ("portrays", "Character", "Person", None, [], None),
     ("mindCopiedFrom", "ArtificialIntelligence", "Human", None, [], "L'IA è stata costruita a partire dalla mente di questo personaggio"),
     ("playableOn", "VideoGame", "Platform", None, [], "Disponibile, anche tramite una nuova edizione"),
@@ -182,6 +185,7 @@ RULES = [
     ("ExternalEngine", [("madeWith", "?g", "?e"), ("engineDevelopedBy", "?e", "?m"), ("developedBy", "?g", "?d"), ("differentFrom", "?m", "?d")], [("ExternalEngineGame", "?g")]),
     ("InHouseEngine", [("madeWith", "?g", "?e"), ("engineDevelopedBy", "?e", "?d"), ("developedBy", "?g", "?d")], [("InHouseEngineGame", "?g")]),
     ("ReturningDirector", [("sequelOf", "?a", "?b"), ("directedBy", "?a", "?p"), ("directedBy", "?b", "?p")], [("ReturningDirectorSequel", "?a")]),
+    ("KillingEvent", [("victim", "?k", "?v"), ("killer", "?k", "?a")], [("killedBy", "?v", "?a")]),
     ("DefeatedVillain", [("antagonistOf", "?v", "?g"), ("protagonistOf", "?h", "?g"), ("killedBy", "?v", "?h")], [("DefeatedVillain", "?v")]),
     ("MustPlay", [("metacriticScore", "?g", "?s"), ("xsd:integer", "xsd:minInclusive", 95, "?s")], [("MustPlayGame", "?g")]),
 ]

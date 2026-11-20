@@ -79,9 +79,9 @@ EXPECTED = [
     ("DeceasedCharacter", ["character/Gwyn_Lord_of_Sunlight", "character/Cesare_Borgia"], ["character/Mario"]),
     ("Killer", ["character/Ezio_Auditore_da_Firenze", "character/Geralt_of_Rivia", "character/Chosen_Undead"], ["character/Mario"]),
     ("MultipleKiller", ["character/Jason_Brody", "character/Link", "character/Niko_Bellic"], ["character/Midna", "character/Mario"]),
-    ("ViolentStoryGame", ["Far_Cry_3", "Grand_Theft_Auto_IV", "The_Legend_of_Zelda_Twilight_Princess"], ["Super_Mario_Odyssey", "Portal_2"]),
-    ("RealisticViolenceGame", ["Far_Cry_3", "Grand_Theft_Auto_IV", "Halo_3", "Assassins_Creed_Origins"], ["The_Legend_of_Zelda_Twilight_Princess", "Cyberpunk_2077"]),
-    ("FantasyViolenceGame", ["The_Legend_of_Zelda_Twilight_Princess", "The_Legend_of_Zelda_Ocarina_of_Time"], ["Far_Cry_3", "Assassins_Creed_Origins"]),
+    ("ViolentStoryGame", ["Far_Cry_3", "Grand_Theft_Auto_IV", "The_Legend_of_Zelda_Twilight_Princess"], ["Super_Mario_Odyssey", "Portal_2", "The_Legend_of_Zelda_Four_Swords"]),
+    ("RealisticViolenceGame", ["Far_Cry_3", "Grand_Theft_Auto_IV", "Halo_3", "Assassins_Creed_Origins", "Cyberpunk_2077"], ["The_Legend_of_Zelda_Twilight_Princess"]),
+    ("FantasyViolenceGame", ["The_Legend_of_Zelda_Twilight_Princess", "The_Legend_of_Zelda_Skyward_Sword"], ["Far_Cry_3", "The_Legend_of_Zelda_Ocarina_of_Time"]),
     ("ArtificialIntelligence", ["character/Cortana", "character/GLaDOS"], ["character/Catherine_Halsey"]),
     ("DigitalMind", ["character/Cortana"], ["character/GLaDOS"]),
     ("Adaptation", ["Cyberpunk_2077", "The_Walking_Dead"], ["Elden_Ring"]),
@@ -121,6 +121,7 @@ RELATIONS = [
     ("The_Witcher", "techLinkedTo", "Mass_Effect"),
     ("Grand_Theft_Auto_III", "playableOn", "platform/PlayStation_5"),
     ("Fallout_4", "publishedByGroup", "company/Microsoft"),
+    ("character/Vaas_Montenegro", "killedBy", "character/Jason_Brody"),
 ]
 
 

@@ -160,6 +160,27 @@ var:InHouseEngine a swrl:Imp ;
                     swrl:classPredicate vg:InHouseEngineGame ] ;
             rdf:rest () ] .
 
+var:KillingEvent a swrl:Imp ;
+    rdfs:label "KillingEvent" ;
+    rdfs:comment "victim(?k, ?v) ^ killer(?k, ?a) -> killedBy(?v, ?a)" ;
+    swrl:body [ a swrl:AtomList ;
+            rdf:first [ a swrl:IndividualPropertyAtom ;
+                    swrl:argument1 var:k ;
+                    swrl:argument2 var:v ;
+                    swrl:propertyPredicate vg:victim ] ;
+            rdf:rest [ a swrl:AtomList ;
+                    rdf:first [ a swrl:IndividualPropertyAtom ;
+                            swrl:argument1 var:k ;
+                            swrl:argument2 var:a ;
+                            swrl:propertyPredicate vg:killer ] ;
+                    rdf:rest () ] ] ;
+    swrl:head [ a swrl:AtomList ;
+            rdf:first [ a swrl:IndividualPropertyAtom ;
+                    swrl:argument1 var:v ;
+                    swrl:argument2 var:a ;
+                    swrl:propertyPredicate vg:killedBy ] ;
+            rdf:rest () ] .
+
 var:MustPlay a swrl:Imp ;
     rdfs:label "MustPlay" ;
     rdfs:comment "metacriticScore(?g, ?s) ^ xsd:integer[>= 95](?s) -> MustPlayGame(?g)" ;
@@ -314,13 +335,13 @@ var:VeteransReturn a swrl:Imp ;
 
 var:f a swrl:Variable .
 
+var:k a swrl:Variable .
+
 var:o a swrl:Variable .
 
 var:q a swrl:Variable .
 
 var:s a swrl:Variable .
-
-var:v a swrl:Variable .
 
 var:d a swrl:Variable .
 
@@ -332,15 +353,17 @@ var:x a swrl:Variable .
 
 var:y a swrl:Variable .
 
+var:v a swrl:Variable .
+
 var:b a swrl:Variable .
 
 var:c a swrl:Variable .
 
 var:h a swrl:Variable .
 
-var:a a swrl:Variable .
-
 var:p a swrl:Variable .
+
+var:a a swrl:Variable .
 
 var:g a swrl:Variable .
 

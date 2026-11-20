@@ -154,6 +154,16 @@ vg:MultiPlatformGame a owl:Class ;
                         owl:onClass vg:Platform ;
                         owl:onProperty vg:availableOn ] ) ] .
 
+vg:MultipleKiller a owl:Class ;
+    rdfs:label "MultipleKiller" ;
+    rdfs:comment "Un personaggio che ha ucciso almeno due personaggi" ;
+    rdfs:subClassOf vg:Killer ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:Character [ a owl:Restriction ;
+                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                        owl:onClass vg:Character ;
+                        owl:onProperty vg:kills ] ) ] .
+
 vg:MustPlayGame a owl:Class ;
     rdfs:label "MustPlayGame" ;
     rdfs:comment "Un gioco con almeno 95 su Metacritic" ;
@@ -255,6 +265,11 @@ vg:directorOf a owl:AsymmetricProperty,
         owl:ObjectProperty ;
     owl:inverseOf vg:directedBy .
 
+vg:hasCharacter a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:appearsIn .
+
 vg:hasGameMode a owl:ObjectProperty ;
     rdfs:domain vg:VideoGame ;
     rdfs:range vg:GameMode .
@@ -266,6 +281,10 @@ vg:hasGenre a owl:ObjectProperty ;
 vg:heads a owl:ObjectProperty ;
     rdfs:domain vg:StudioHead ;
     rdfs:range vg:Company .
+
+vg:killer a owl:ObjectProperty ;
+    rdfs:domain vg:Killing ;
+    rdfs:range vg:Killer .
 
 vg:platformFor a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
@@ -288,6 +307,10 @@ vg:techLinkedTo a owl:ObjectProperty ;
     rdfs:range vg:VideoGame ;
     owl:propertyChainAxiom ( vg:madeWith vg:engineDevelopedBy vg:developerOf ) .
 
+vg:victim a owl:ObjectProperty ;
+    rdfs:domain vg:Killing ;
+    rdfs:range vg:DeceasedCharacter .
+
 vg:Adaptation a owl:Class ;
     rdfs:label "Adaptation" ;
     rdfs:comment "Un gioco tratto da un'opera di un altro medium" ;
@@ -306,11 +329,6 @@ vg:CurrentGenerationConsole a owl:Class ;
     rdfs:label "CurrentGenerationConsole" ;
     rdfs:comment "Una console dell'attuale generazione" ;
     rdfs:subClassOf vg:ConsolePlatform .
-
-vg:DeceasedCharacter a owl:Class ;
-    rdfs:label "DeceasedCharacter" ;
-    rdfs:comment "Un personaggio morto (dominio di killedBy)" ;
-    rdfs:subClassOf vg:Character .
 
 vg:Developer a owl:Class ;
     rdfs:label "Developer" ;
@@ -361,16 +379,6 @@ vg:LateEntry a owl:Class ;
                         owl:someValuesFrom [ a owl:Restriction ;
                                 owl:onProperty vg:sequelOf ;
                                 owl:someValuesFrom vg:VideoGame ] ] ) ] .
-
-vg:MultipleKiller a owl:Class ;
-    rdfs:label "MultipleKiller" ;
-    rdfs:comment "Un personaggio che ha ucciso almeno due personaggi" ;
-    rdfs:subClassOf vg:Killer ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:Character [ a owl:Restriction ;
-                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
-                        owl:onClass vg:Character ;
-                        owl:onProperty vg:kills ] ) ] .
 
 vg:PCPlatform a owl:Class ;
     rdfs:label "PCPlatform" ;
@@ -429,13 +437,25 @@ vg:foundedBy a owl:ObjectProperty ;
     rdfs:domain vg:Company ;
     rdfs:range vg:Person .
 
+vg:hasKilling a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    owl:inverseOf vg:inGame .
+
 vg:hasWikidataId a owl:DatatypeProperty ;
     rdfs:domain owl:Thing ;
     rdfs:range xsd:string .
 
+vg:inGame a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:ObjectProperty ;
+    rdfs:domain vg:Killing ;
+    rdfs:range vg:VideoGame .
+
 vg:killedBy a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
         owl:ObjectProperty ;
+    rdfs:comment "Dedotta dalla regola KillingEvent" ;
     rdfs:domain vg:DeceasedCharacter ;
     rdfs:range vg:Killer .
 
@@ -507,6 +527,11 @@ vg:Antagonist a owl:Class ;
                         owl:onProperty vg:antagonistOf ;
                         owl:someValuesFrom vg:VideoGame ] ) ] .
 
+vg:DeceasedCharacter a owl:Class ;
+    rdfs:label "DeceasedCharacter" ;
+    rdfs:comment "Un personaggio morto (dominio di killedBy)" ;
+    rdfs:subClassOf vg:Character .
+
 vg:Film a owl:Class ;
     rdfs:label "Film" ;
     rdfs:comment "Un film" ;
@@ -559,11 +584,6 @@ vg:directedBy a owl:AsymmetricProperty,
         owl:ObjectProperty ;
     rdfs:domain vg:VideoGame ;
     rdfs:range vg:GameDirector .
-
-vg:hasCharacter a owl:AsymmetricProperty,
-        owl:IrreflexiveProperty,
-        owl:ObjectProperty ;
-    owl:inverseOf vg:appearsIn .
 
 vg:hasRemaster a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
@@ -641,16 +661,12 @@ vg:includes a owl:AsymmetricProperty,
 
 vg:ViolentStoryGame a owl:Class ;
     rdfs:label "ViolentStoryGame" ;
-    rdfs:comment "Un gioco in cui si uccide più volte: due personaggi che uccidono, o uno che uccide almeno due volte" ;
+    rdfs:comment "Un gioco nella cui trama qualcuno viene ucciso" ;
     rdfs:subClassOf vg:VideoGame ;
     owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Class ;
-                        owl:unionOf ( [ a owl:Restriction ;
-                                    owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
-                                    owl:onClass vg:Killer ;
-                                    owl:onProperty vg:hasCharacter ] [ a owl:Restriction ;
-                                    owl:onProperty vg:hasCharacter ;
-                                    owl:someValuesFrom vg:MultipleKiller ] ) ] ) ] .
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasKilling ;
+                        owl:someValuesFrom vg:Killing ] ) ] .
 
 vg:appearsIn a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
@@ -663,6 +679,10 @@ vg:sequelOf a owl:ObjectProperty,
     rdfs:comment "Asserita solo verso il predecessore diretto" ;
     rdfs:domain vg:VideoGame ;
     rdfs:range vg:VideoGame .
+
+vg:Killing a owl:Class ;
+    rdfs:label "Killing" ;
+    rdfs:comment "Un'uccisione nella trama di un gioco: vittima, assassino e gioco (relazione n-aria)" .
 
 vg:ArtificialIntelligence a owl:Class ;
     rdfs:label "ArtificialIntelligence" ;
@@ -699,7 +719,7 @@ vg:VideoGame a owl:Class ;
     owl:hasKey ( vg:hasWikidataId ) .
 
 [] a owl:AllDisjointClasses ;
-    owl:members ( vg:VideoGame vg:Company vg:Person vg:Character vg:Platform vg:Franchise vg:GameEngine vg:Award vg:Genre vg:GameMode vg:CreativeWork ) .
+    owl:members ( vg:VideoGame vg:Company vg:Person vg:Character vg:Platform vg:Franchise vg:GameEngine vg:Award vg:Genre vg:GameMode vg:Killing vg:CreativeWork ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:ConsolePlatform vg:PCPlatform ) .

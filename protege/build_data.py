@@ -27,6 +27,10 @@ def iri(kind, name):
     return VG[f"{kind}/{slug(name)}"] if kind else VG[slug(name)]
 
 
+def killing(game, victim, killer):
+    return VG["killing/" + slug(f"{victim} by {killer} in {game}")]
+
+
 def add(g, s, p, objs):
     for o in objs if isinstance(objs, list) else [objs]:
         if o is not None:
@@ -79,7 +83,12 @@ def build(ds):
             g.add((iri("character", c), VG.antagonistOf, s))
             own.setdefault(c, set()).add(s)
         for victim, killer in x.get("uccisioni", []):
-            g.add((iri("character", victim), VG.killedBy, iri("character", killer)))
+            k = killing(x["titolo"], victim, killer)
+            g.add((k, RDF.type, VG.Killing))
+            g.add((k, RDFS.label, Literal(f"{killer} uccide {victim} ({x['titolo']})")))
+            g.add((k, VG.victim, iri("character", victim)))
+            g.add((k, VG.killer, iri("character", killer)))
+            g.add((k, VG.inGame, s))
             for c in (victim, killer):
                 appears.setdefault(c, set()).add(s)
         for c, real in x.get("personaggi_storici", []):
@@ -144,6 +153,7 @@ def build(ds):
     all_different(g, [iri("character", c) for c in ds["personaggi"]])
     all_different(g, [VG["platform/" + p] for p in ds["piattaforme"]])
     all_different(g, [iri("engine", e) for e in ds["motori"]])
+    all_different(g, [killing(x["titolo"], v, k) for x in ds["giochi"] for v, k in x.get("uccisioni", [])])
     return g
 
 
