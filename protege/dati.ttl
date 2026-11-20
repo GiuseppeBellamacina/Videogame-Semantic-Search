@@ -788,7 +788,7 @@ vg:Assassins_Creed_Origins a vg:VideoGame ;
     vg:hasWikidataId "Q30138024" ;
     vg:releaseDate "2017-10-27T00:00:00"^^xsd:dateTime ;
     vg:metacriticScore 85 ;
-    vg:pegiRating 12 ;
+    vg:pegiRating 18 ;
     vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> ;
     vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
     vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
@@ -2934,27 +2934,27 @@ vg:Coop a vg:GameMode ;
 
 # OWL non assume che nomi diversi indichino individui diversi: lo dichiariamo
 [] a owl:AllDifferent ;
-    owl:distinctMembers ( vg:Grand_Theft_Auto_V
-        vg:Grand_Theft_Auto_III
-        vg:Grand_Theft_Auto_Vice_City
-        vg:Dark_Souls_III
-        vg:The_Witcher_2_Assassins_of_Kings
-        vg:Dark_Souls
-        vg:Grand_Theft_Auto_IV
-        vg:Dark_Souls_II
-        vg:Mass_Effect_3
-        vg:Mass_Effect
-        vg:The_Witcher_3_Wild_Hunt
-        vg:The_Witcher
-        vg:Grand_Theft_Auto_2
-        vg:Grand_Theft_Auto_VI
-        vg:Grand_Theft_Auto_San_Andreas
-        vg:Grand_Theft_Auto
-        vg:Halo_Reach
-        vg:Portal
+    owl:distinctMembers ( vg:Dark_Souls_III
         vg:Portal_2
+        vg:Dark_Souls
+        vg:Mass_Effect_3
         vg:Halo_4
+        vg:Grand_Theft_Auto_V
+        vg:Grand_Theft_Auto_2
+        vg:Halo_Reach
+        vg:Grand_Theft_Auto
         vg:Mass_Effect_2
+        vg:Grand_Theft_Auto_III
+        vg:Grand_Theft_Auto_IV
+        vg:Grand_Theft_Auto_Vice_City
+        vg:The_Witcher_2_Assassins_of_Kings
+        vg:Portal
+        vg:The_Witcher_3_Wild_Hunt
+        vg:Grand_Theft_Auto_San_Andreas
+        vg:Mass_Effect
+        vg:Dark_Souls_II
+        vg:The_Witcher
+        vg:Grand_Theft_Auto_VI
         vg:The_Legend_of_Zelda
         vg:Zelda_II_The_Adventure_of_Link
         vg:The_Legend_of_Zelda_A_Link_to_the_Past

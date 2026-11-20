@@ -1,7 +1,7 @@
 \section{Le componenti dell'ontologia}\label{app:componenti}
 
 \begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
-\caption{Le 67 classi}\\ \toprule
+\caption{Le 69 classi}\\ \toprule
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
@@ -48,8 +48,9 @@
 \texttt{SequelGame} & \texttt{VideoGame} & definita & Il seguito di un altro gioco \\
 \texttt{LateEntry} & \texttt{SequelGame} & definita & Almeno il terzo capitolo di una serie \\
 \texttt{LongRunningOriginal} & \texttt{VideoGame} & definita & Il capostipite di una serie di almeno tre capitoli \\
-\texttt{MatureStoryGame} & \texttt{VideoGame} & definita & Un gioco con almeno due personaggi che uccidono: probabilmente non per minori \\
-\texttt{AdultRatedGame} & \texttt{VideoGame} & definita & Un gioco classificato PEGI 18 \\
+\texttt{ViolentStoryGame} & \texttt{VideoGame} & definita & Un gioco in cui si uccide più volte: due personaggi che uccidono, o uno che uccide almeno due volte \\
+\texttt{RealisticViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori \\
+\texttt{FantasyViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici \\
 \texttt{HighlyRatedGame} & \texttt{VideoGame} & definita & Un gioco con almeno 90 su Metacritic \\
 \texttt{AcclaimedSequel} & \texttt{SequelGame} & definita & Un seguito acclamato \\
 \texttt{GOTYWinner} & \texttt{VideoGame} & definita & Un gioco premiato come gioco dell'anno \\
@@ -70,11 +71,12 @@
 \texttt{RecurringVillain} & \texttt{RecurringCharacter} & definita & Un antagonista ricorrente \\
 \texttt{RogueAI} & \texttt{ArtificialIntelligence} & definita & Un'intelligenza artificiale antagonista \\
 \texttt{DigitalMind} & \texttt{ArtificialIntelligence} & definita & Un'intelligenza artificiale nata dalla mente di un umano \\
+\texttt{MultipleKiller} & \texttt{Killer} & definita & Un personaggio che ha ucciso almeno due personaggi \\
 \texttt{HistoricalCharacter} & \texttt{Character} & definita & Un personaggio che interpreta una persona reale \\
 \end{longtable}\endgroup
 
 \begingroup\footnotesize\begin{longtable}{lllp{6cm}}
-\caption{Le 37 object property}\\ \toprule
+\caption{Le 38 object property}\\ \toprule
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endfirsthead
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{developedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{developerOf} \\
@@ -100,7 +102,7 @@
 \texttt{appearsIn} & \texttt{Character} & \texttt{VideoGame} & inversa \texttt{hasCharacter} \\
 \texttt{protagonistOf} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
 \texttt{antagonistOf} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
-\texttt{killedBy} & \texttt{DeceasedCharacter} & \texttt{Killer} &  \\
+\texttt{killedBy} & \texttt{DeceasedCharacter} & \texttt{Killer} & inversa \texttt{kills} \\
 \texttt{portrays} & \texttt{Character} & \texttt{Person} &  \\
 \texttt{mindCopiedFrom} & \texttt{ArtificialIntelligence} & \texttt{Human} &  \\
 \texttt{playableOn} & \texttt{VideoGame} & \texttt{Platform} & catena hasRemaster $\circ$ availableOn \\
@@ -127,8 +129,9 @@
 \textsf{SequelGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{sequelOf}.\textsf{VideoGame} \\
 \textsf{LateEntry} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{sequelOf}.\exists\,\textit{sequelOf}.\textsf{VideoGame} \\
 \textsf{LongRunningOriginal} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasSequel}.\exists\,\textit{hasSequel}.\textsf{VideoGame} \\
-\textsf{MatureStoryGame} &\equiv \textsf{VideoGame} \sqcap {\geq}2\,\textit{hasCharacter}.\textsf{Killer} \\
-\textsf{AdultRatedGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\geq 18] \\
+\textsf{ViolentStoryGame} &\equiv \textsf{VideoGame} \sqcap ({\geq}2\,\textit{hasCharacter}.\textsf{Killer} \sqcup \exists\,\textit{hasCharacter}.\textsf{MultipleKiller}) \\
+\textsf{RealisticViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\geq 16] \\
+\textsf{FantasyViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\leq 12] \\
 \textsf{HighlyRatedGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{metacriticScore}.\texttt{integer}[\geq 90] \\
 \textsf{AcclaimedSequel} &\equiv \textsf{SequelGame} \sqcap \textsf{HighlyRatedGame} \\
 \textsf{GOTYWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{GameOfTheYearAward} \\
@@ -149,6 +152,7 @@
 \textsf{RecurringVillain} &\equiv \textsf{RecurringCharacter} \sqcap \textsf{Antagonist} \\
 \textsf{RogueAI} &\equiv \textsf{ArtificialIntelligence} \sqcap \textsf{Antagonist} \\
 \textsf{DigitalMind} &\equiv \textsf{ArtificialIntelligence} \sqcap \exists\,\textit{mindCopiedFrom}.\textsf{Human} \\
+\textsf{MultipleKiller} &\equiv \textsf{Character} \sqcap {\geq}2\,\textit{kills}.\textsf{Character} \\
 \textsf{HistoricalCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{portrays}.\textsf{Person} \\
 \end{align*}\endgroup
 \noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries, Comic, TabletopGame; Human, ArtificialIntelligence.

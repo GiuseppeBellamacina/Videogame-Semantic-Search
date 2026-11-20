@@ -71,6 +71,10 @@ def score(n):
     return ("range", "xsd:integer", "xsd:minInclusive", n)
 
 
+def score_max(n):
+    return ("range", "xsd:integer", "xsd:maxInclusive", n)
+
+
 def and_(*xs):
     return ("and", *xs)
 
@@ -88,8 +92,10 @@ DEFINED = [
     ("SequelGame", "VideoGame", "Il seguito di un altro gioco", and_("VideoGame", some("sequelOf", "VideoGame"))),
     ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", and_("VideoGame", some("sequelOf", some("sequelOf", "VideoGame")))),
     ("LongRunningOriginal", "VideoGame", "Il capostipite di una serie di almeno tre capitoli", and_("VideoGame", some("hasSequel", some("hasSequel", "VideoGame")))),
-    ("MatureStoryGame", "VideoGame", "Un gioco con almeno due personaggi che uccidono: probabilmente non per minori", and_("VideoGame", at_least(2, "hasCharacter", "Killer"))),
-    ("AdultRatedGame", "VideoGame", "Un gioco classificato PEGI 18", and_("VideoGame", some("pegiRating", score(18)))),
+    ("ViolentStoryGame", "VideoGame", "Un gioco in cui si uccide più volte: due personaggi che uccidono, o uno che uccide almeno due volte",
+     and_("VideoGame", or_(at_least(2, "hasCharacter", "Killer"), some("hasCharacter", "MultipleKiller")))),
+    ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", and_("ViolentStoryGame", some("pegiRating", score(16)))),
+    ("FantasyViolenceGame", "ViolentStoryGame", "Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici", and_("ViolentStoryGame", some("pegiRating", score_max(12)))),
     ("HighlyRatedGame", "VideoGame", "Un gioco con almeno 90 su Metacritic", and_("VideoGame", some("metacriticScore", score(90)))),
     ("AcclaimedSequel", "SequelGame", "Un seguito acclamato", and_("SequelGame", "HighlyRatedGame")),
     ("GOTYWinner", "VideoGame", "Un gioco premiato come gioco dell'anno", and_("VideoGame", some("wonAward", "GameOfTheYearAward"))),
@@ -110,6 +116,7 @@ DEFINED = [
     ("RecurringVillain", "RecurringCharacter", "Un antagonista ricorrente", and_("RecurringCharacter", "Antagonist")),
     ("RogueAI", "ArtificialIntelligence", "Un'intelligenza artificiale antagonista", and_("ArtificialIntelligence", "Antagonist")),
     ("DigitalMind", "ArtificialIntelligence", "Un'intelligenza artificiale nata dalla mente di un umano", and_("ArtificialIntelligence", some("mindCopiedFrom", "Human"))),
+    ("MultipleKiller", "Killer", "Un personaggio che ha ucciso almeno due personaggi", and_("Character", at_least(2, "kills", "Character"))),
     ("HistoricalCharacter", "Character", "Un personaggio che interpreta una persona reale", and_("Character", some("portrays", "Person"))),
 ]
 
@@ -150,7 +157,7 @@ OBJECT_PROPS = [
     ("appearsIn", "Character", "VideoGame", "hasCharacter", [], None),
     ("protagonistOf", "Character", "VideoGame", None, [], None),
     ("antagonistOf", "Character", "VideoGame", None, [], None),
-    ("killedBy", "DeceasedCharacter", "Killer", None, [], None),
+    ("killedBy", "DeceasedCharacter", "Killer", "kills", [], None),
     ("portrays", "Character", "Person", None, [], None),
     ("mindCopiedFrom", "ArtificialIntelligence", "Human", None, [], "L'IA è stata costruita a partire dalla mente di questo personaggio"),
     ("playableOn", "VideoGame", "Platform", None, [], "Disponibile, anche tramite una nuova edizione"),
@@ -207,7 +214,8 @@ def dl(x):
         return (r" \sqcap " if op == "and" else r" \sqcup ").join(f"({dl(y)})" if isinstance(y, tuple) and y[0] == "or" else dl(y) for y in a)
     if op == "some":
         if isinstance(a[1], tuple) and a[1][0] == "range":
-            return rf"\exists\,\textit{{{a[0]}}}.\texttt{{integer}}[\geq {a[1][3]}]"
+            cmp = r"\geq" if a[1][2] == "xsd:minInclusive" else r"\leq"
+            return rf"\exists\,\textit{{{a[0]}}}.\texttt{{integer}}[{cmp} {a[1][3]}]"
         return rf"\exists\,\textit{{{a[0]}}}." + (f"({dl(a[1])})" if isinstance(a[1], tuple) and a[1][0] == "or" else dl(a[1]))
     if op == "min":
         return rf"{{\geq}}{a[0]}\,\textit{{{a[1]}}}.{dl(a[2])}"

@@ -10,7 +10,7 @@
 | `videogiochi.ttl` | **Il file da aprire in Protégé**: importa schema, dati e regole. |
 | `test/` | Quattro errori da far trovare a HermiT e un caso di `sameAs` corretto. |
 | `generate_schema.py` | Genera `schema.ttl`, `regole.ttl` e `relazione/appendice.tex` a partire dalle stesse tabelle. |
-| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 174 deduzioni attese. |
+| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 182 deduzioni attese. |
 | `relazione/` | La relazione LaTeX; le appendici sono generate. |
 
 ```bash
@@ -62,7 +62,9 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 |---|---|---|
 | `character/Gwyn_Lord_of_Sunlight` | `DeceasedCharacter`, `DefeatedVillain` | È stato ucciso dal Prescelto: il dominio di `killedBy` lo fa morto, la regola lo rende cattivo sconfitto dall'eroe. |
 | `character/Chosen_Undead` | `Killer` | Lo stesso fatto, letto dall'altra parte: il range di `killedBy`. |
-| `The_Witcher_3_Wild_Hunt`, `The_Legend_of_Zelda_Twilight_Princess` | `MatureStoryGame` | Almeno due personaggi `Killer` (dedotti a loro volta). Confronta con `AdultRatedGame` (PEGI 18): The Witcher 3 c'è, Twilight Princess (PEGI 12) no. |
+| `character/Jason_Brody`, `character/Link` | `MultipleKiller` | Hanno ucciso almeno due personaggi (inversa `kills`, cardinalità ≥ 2). |
+| `Far_Cry_3`, `The_Legend_of_Zelda_Twilight_Princess` | `ViolentStoryGame` | Due assassini, oppure uno che uccide più volte. |
+| `Grand_Theft_Auto_IV` / `The_Legend_of_Zelda_Ocarina_of_Time` | `RealisticViolenceGame` / `FantasyViolenceGame` | Stessa violenza nella storia, la distingue il PEGI: ≥ 16 realistica, ≤ 12 di fantasia. |
 | `character/Cortana` | `ArtificialIntelligence`, `DigitalMind`, `RogueAI` | Nei dati c'è solo `mindCopiedFrom` Catherine Halsey: il dominio la fa IA, e Halsey è umana. In Halo 5 è l'antagonista, quindi IA ribelle. |
 | `Halo_Combat_Evolved` | `StillPlayable`, `MustPlayGame`, `GOTYWinner` | Il remake Campaign Evolved è su PS5; Metacritic 97; D.I.C.E. 2002. |
 | `Far_Cry_2`, `Far_Cry_6` | `SequelByDifferentStudio`, `EngineChangeSequel` (FC2), `ExternalEngineGame` (FC6) | FC2 passa da Crytek/CryEngine a Ubisoft Montreal/Dunia; FC6 è di Ubisoft Toronto con il motore di Montreal. |
