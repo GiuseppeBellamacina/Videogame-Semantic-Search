@@ -1,0 +1,159 @@
+@prefix vg: <http://www.videogame-ontology.org/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix swrl: <http://www.w3.org/2003/11/swrl#> .
+@prefix var: <http://www.videogame-ontology.org/ontology/regole#> .
+
+<http://www.videogame-ontology.org/ontology/regole> a owl:Ontology ;
+    rdfs:label "Videogiochi: regole SWRL" ;
+    owl:imports <http://www.videogame-ontology.org/ontology> .
+
+var:a a swrl:Variable .
+
+var:b a swrl:Variable .
+
+var:c a swrl:Variable .
+
+var:d a swrl:Variable .
+
+var:e a swrl:Variable .
+
+var:f a swrl:Variable .
+
+var:g a swrl:Variable .
+
+var:h a swrl:Variable .
+
+var:m a swrl:Variable .
+
+var:o a swrl:Variable .
+
+var:p a swrl:Variable .
+
+var:q a swrl:Variable .
+
+var:s a swrl:Variable .
+
+var:v a swrl:Variable .
+
+var:x a swrl:Variable .
+
+var:y a swrl:Variable .
+
+var:PublisherGroup a swrl:Imp ;
+    rdfs:label "PublisherGroup" ;
+    rdfs:comment "publishedBy(?g, ?c) -> publishedByGroup(?g, ?c)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:publishedBy ; swrl:argument1 var:g ; swrl:argument2 var:c ] ;
+      rdf:rest rdf:nil ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:publishedByGroup ; swrl:argument1 var:g ; swrl:argument2 var:c ] ;
+      rdf:rest rdf:nil ] .
+
+var:ParentGroup a swrl:Imp ;
+    rdfs:label "ParentGroup" ;
+    rdfs:comment "publishedByGroup(?g, ?c) ^ subsidiaryOf(?c, ?p) -> publishedByGroup(?g, ?p)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:publishedByGroup ; swrl:argument1 var:g ; swrl:argument2 var:c ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:subsidiaryOf ; swrl:argument1 var:c ; swrl:argument2 var:p ] ;
+      rdf:rest rdf:nil ] ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:publishedByGroup ; swrl:argument1 var:g ; swrl:argument2 var:p ] ;
+      rdf:rest rdf:nil ] .
+
+var:FirstPartyOnRivalConsole a swrl:Imp ;
+    rdfs:label "FirstPartyOnRivalConsole" ;
+    rdfs:comment "publishedByGroup(?g, ?h) ^ availableOn(?g, ?p) ^ ConsolePlatform(?p) ^ manufacturedBy(?p, ?m) ^ manufacturerOf(?h, ?q) ^ ConsolePlatform(?q) ^ differentFrom(?h, ?m) -> FirstPartyOnRivalConsole(?g)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:publishedByGroup ; swrl:argument1 var:g ; swrl:argument2 var:h ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:availableOn ; swrl:argument1 var:g ; swrl:argument2 var:p ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:ConsolePlatform ; swrl:argument1 var:p ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:manufacturedBy ; swrl:argument1 var:p ; swrl:argument2 var:m ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:manufacturerOf ; swrl:argument1 var:h ; swrl:argument2 var:q ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:ConsolePlatform ; swrl:argument1 var:q ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:DifferentIndividualsAtom ; swrl:argument1 var:h ; swrl:argument2 var:m ] ;
+      rdf:rest rdf:nil ] ] ] ] ] ] ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:FirstPartyOnRivalConsole ; swrl:argument1 var:g ] ;
+      rdf:rest rdf:nil ] .
+
+var:SequelByDifferentStudio a swrl:Imp ;
+    rdfs:label "SequelByDifferentStudio" ;
+    rdfs:comment "sequelOf(?a, ?b) ^ developedBy(?a, ?x) ^ developedBy(?b, ?y) ^ differentFrom(?x, ?y) -> SequelByDifferentStudio(?a)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:sequelOf ; swrl:argument1 var:a ; swrl:argument2 var:b ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:developedBy ; swrl:argument1 var:a ; swrl:argument2 var:x ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:developedBy ; swrl:argument1 var:b ; swrl:argument2 var:y ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:DifferentIndividualsAtom ; swrl:argument1 var:x ; swrl:argument2 var:y ] ;
+      rdf:rest rdf:nil ] ] ] ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:SequelByDifferentStudio ; swrl:argument1 var:a ] ;
+      rdf:rest rdf:nil ] .
+
+var:VeteransReturn a swrl:Imp ;
+    rdfs:label "VeteransReturn" ;
+    rdfs:comment "developedBy(?g, ?c) ^ foundedBy(?c, ?p) ^ formerEmployeeOf(?p, ?o) ^ developerOf(?o, ?h) ^ belongsTo(?g, ?f) ^ belongsTo(?h, ?f) -> VeteransReturn(?g)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:developedBy ; swrl:argument1 var:g ; swrl:argument2 var:c ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:foundedBy ; swrl:argument1 var:c ; swrl:argument2 var:p ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:formerEmployeeOf ; swrl:argument1 var:p ; swrl:argument2 var:o ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:developerOf ; swrl:argument1 var:o ; swrl:argument2 var:h ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:belongsTo ; swrl:argument1 var:g ; swrl:argument2 var:f ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:belongsTo ; swrl:argument1 var:h ; swrl:argument2 var:f ] ;
+      rdf:rest rdf:nil ] ] ] ] ] ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:VeteransReturn ; swrl:argument1 var:g ] ;
+      rdf:rest rdf:nil ] .
+
+var:EngineChangeSequel a swrl:Imp ;
+    rdfs:label "EngineChangeSequel" ;
+    rdfs:comment "sequelOf(?a, ?b) ^ madeWith(?a, ?x) ^ madeWith(?b, ?y) ^ differentFrom(?x, ?y) -> EngineChangeSequel(?a)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:sequelOf ; swrl:argument1 var:a ; swrl:argument2 var:b ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:madeWith ; swrl:argument1 var:a ; swrl:argument2 var:x ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:madeWith ; swrl:argument1 var:b ; swrl:argument2 var:y ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:DifferentIndividualsAtom ; swrl:argument1 var:x ; swrl:argument2 var:y ] ;
+      rdf:rest rdf:nil ] ] ] ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:EngineChangeSequel ; swrl:argument1 var:a ] ;
+      rdf:rest rdf:nil ] .
+
+var:ExternalEngine a swrl:Imp ;
+    rdfs:label "ExternalEngine" ;
+    rdfs:comment "madeWith(?g, ?e) ^ engineDevelopedBy(?e, ?m) ^ developedBy(?g, ?d) ^ differentFrom(?m, ?d) -> ExternalEngineGame(?g)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:madeWith ; swrl:argument1 var:g ; swrl:argument2 var:e ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:engineDevelopedBy ; swrl:argument1 var:e ; swrl:argument2 var:m ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:developedBy ; swrl:argument1 var:g ; swrl:argument2 var:d ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:DifferentIndividualsAtom ; swrl:argument1 var:m ; swrl:argument2 var:d ] ;
+      rdf:rest rdf:nil ] ] ] ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:ExternalEngineGame ; swrl:argument1 var:g ] ;
+      rdf:rest rdf:nil ] .
+
+var:InHouseEngine a swrl:Imp ;
+    rdfs:label "InHouseEngine" ;
+    rdfs:comment "madeWith(?g, ?e) ^ engineDevelopedBy(?e, ?d) ^ developedBy(?g, ?d) -> InHouseEngineGame(?g)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:madeWith ; swrl:argument1 var:g ; swrl:argument2 var:e ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:engineDevelopedBy ; swrl:argument1 var:e ; swrl:argument2 var:d ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:developedBy ; swrl:argument1 var:g ; swrl:argument2 var:d ] ;
+      rdf:rest rdf:nil ] ] ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:InHouseEngineGame ; swrl:argument1 var:g ] ;
+      rdf:rest rdf:nil ] .
+
+var:ReturningDirector a swrl:Imp ;
+    rdfs:label "ReturningDirector" ;
+    rdfs:comment "sequelOf(?a, ?b) ^ directedBy(?a, ?p) ^ directedBy(?b, ?p) -> ReturningDirectorSequel(?a)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:sequelOf ; swrl:argument1 var:a ; swrl:argument2 var:b ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:directedBy ; swrl:argument1 var:a ; swrl:argument2 var:p ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:directedBy ; swrl:argument1 var:b ; swrl:argument2 var:p ] ;
+      rdf:rest rdf:nil ] ] ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:ReturningDirectorSequel ; swrl:argument1 var:a ] ;
+      rdf:rest rdf:nil ] .
+
+var:DefeatedVillain a swrl:Imp ;
+    rdfs:label "DefeatedVillain" ;
+    rdfs:comment "antagonistOf(?v, ?g) ^ protagonistOf(?h, ?g) ^ killedBy(?v, ?h) -> DefeatedVillain(?v)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:antagonistOf ; swrl:argument1 var:v ; swrl:argument2 var:g ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:protagonistOf ; swrl:argument1 var:h ; swrl:argument2 var:g ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:IndividualPropertyAtom ; swrl:propertyPredicate vg:killedBy ; swrl:argument1 var:v ; swrl:argument2 var:h ] ;
+      rdf:rest rdf:nil ] ] ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:DefeatedVillain ; swrl:argument1 var:v ] ;
+      rdf:rest rdf:nil ] .
+
+var:MustPlay a swrl:Imp ;
+    rdfs:label "MustPlay" ;
+    rdfs:comment "metacriticScore(?g, ?s) ^ xsd:integer[>= 95](?s) -> MustPlayGame(?g)" ;
+    swrl:body [ a swrl:AtomList ; rdf:first [ a swrl:DatavaluedPropertyAtom ; swrl:propertyPredicate vg:metacriticScore ; swrl:argument1 var:g ; swrl:argument2 var:s ] ;
+      rdf:rest [ a swrl:AtomList ; rdf:first [ a swrl:DataRangeAtom ; swrl:dataRange [ a rdfs:Datatype ; owl:onDatatype xsd:integer ; owl:withRestrictions ( [ xsd:minInclusive 95 ] ) ] ; swrl:argument1 var:s ] ;
+      rdf:rest rdf:nil ] ] ;
+    swrl:head [ a swrl:AtomList ; rdf:first [ a swrl:ClassAtom ; swrl:classPredicate vg:MustPlayGame ; swrl:argument1 var:g ] ;
+      rdf:rest rdf:nil ] .

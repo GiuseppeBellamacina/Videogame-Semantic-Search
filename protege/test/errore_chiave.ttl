@@ -1,0 +1,12 @@
+# Atteso: inconsistente (stesso hasWikidataId, chiave di VideoGame, ma dichiarati diversi).
+@prefix vg: <http://www.videogame-ontology.org/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+<http://www.videogame-ontology.org/ontology/test/chiave> a owl:Ontology ;
+    owl:imports <http://www.videogame-ontology.org/ontology/dati> , <http://www.videogame-ontology.org/ontology/regole> .
+
+vg:GTA_V_copia a vg:VideoGame ;
+    rdfs:label "GTA V (record duplicato)" ;
+    vg:hasWikidataId "Q17452" ;
+    owl:differentFrom vg:Grand_Theft_Auto_V .

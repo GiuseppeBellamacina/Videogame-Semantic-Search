@@ -1,67 +1,94 @@
-# L'ontologia in Protégé
-
-Questa cartella contiene l'ontologia dei videogiochi così come si apre in Protégé: lo schema generato da uno script, un dataset dimostrativo curato a mano, le regole SWRL e i test di inconsistenza. Il sito web e la pipeline in `ontology/` qui non servono.
+# Ontologia dei videogiochi per Protégé
 
 ## File
 
 | File | Contenuto |
 |---|---|
-| `videogames.ttl` | **Il file da aprire in Protégé.** Importa schema, dati demo e regole. |
-| `generate_schema.py` | Genera lo schema e le regole SWRL a partire da tabelle dichiarative, usando solo rdflib come negli esempi del corso. **Non modificare a mano i `.ttl` generati.** |
-| `schema_generated.ttl` | Lo schema (TBox): 105 classi (47 primitive, 58 definite), 27 object property, 14 datatype property, 4 catene, 6 blocchi di disgiunzione e una `hasKey`. Contiene solo elementi che hanno istanze. |
-| `swrl_rules.ttl` | Le 6 regole SWRL, tutte DL-safe ed eseguite da HermiT. La soglia di punteggio è un intervallo di dati (`xsd:integer[> 94]`), come negli esempi del corso, non una built-in `swrlb:`. |
-| `abox_demo.ttl` | I dati (ABox), curati a mano e verificati su Wikidata. Contengono 25 giochi di 7 serie (GTA, Zelda, Dark Souls, The Witcher, Mass Effect, Portal, Halo), le aziende con i loro gruppi (`subsidiaryOf`) e i costruttori delle console (`manufacturedBy`). |
-| `inconsistencies/` | Un file per ogni test (vedi più sotto). |
-| `catalog-v001.xml` | Indica a Protégé dove trovare i file locali corrispondenti agli `owl:imports`. |
-| `check_reasoning.py` | Strumento extra, l'unico fuori dallo stile del corso. Lancia HermiT da Python con owlready2 e verifica 86 condizioni: consistenza, inferenze, regole e test. |
-| `SCHEMA_DIFF.md`, `ANALISI.md` | Confronto con il vecchio schema scritto a mano e analisi dell'ontologia. |
-
-## Comandi (dalla radice del repository)
+| `schema.ttl` | **Lo schema vuoto**: classi, proprietà e assiomi, nessun gioco. È generato da `generate_schema.py`. |
+| `dati.ttl` | **Solo le asserzioni**: 75 giochi di 10 serie, 25 nuove edizioni, personaggi, persone, aziende e piattaforme, verificati su Wikipedia e Wikidata. Non contiene nessuna conclusione. |
+| `regole.ttl` | Le 11 regole SWRL, generate da `generate_schema.py`. |
+| `videogiochi.ttl` | **Il file da aprire in Protégé**: importa schema, dati e regole. |
+| `test/` | Quattro errori da far trovare a HermiT e un caso di `sameAs` corretto. |
+| `generate_schema.py` | Genera `schema.ttl`, `regole.ttl` e `relazione/appendice.tex` a partire dalle stesse tabelle. |
+| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 133 deduzioni attese. |
+| `relazione/` | La relazione LaTeX; le appendici sono generate. |
 
 ```bash
-uv run python protege/generate_schema.py           # rigenera schema e regole (--diff: confronto con il vecchio schema)
-uv run --with owlready2==0.46 python protege/check_reasoning.py   # verifica tutto con HermiT
+uv run python protege/generate_schema.py
+uv run --with owlready2==0.46 python protege/check_reasoning.py
 ```
 
-## Uso in Protégé
+## Giochi
 
-Protégé 5.6.9 si trova in `Protege-5.6.9-win/` (avvialo con `Protege.exe`). Contiene già Java e i plugin che servono: HermiT, SWRLTab, OntoGraf ed Explanation Workbench. Pellet non è necessario.
+- **The Legend of Zelda (21):** dal primo (1986) a Echoes of Wisdom (2024).
+- **Super Mario (13):** da Super Mario Bros. (1985) a Wonder (2023).
+- **Assassin's Creed (14):** dal primo (2007) a Shadows (2025).
+- **Fallout (6):** 1, 2, 3, New Vegas, 4, 76.
+- **Grand Theft Auto (8):** dal primo (1997) a GTA VI (2026).
+- **The Witcher (3):** 1, 2, 3.
+- **Mass Effect (3):** 1, 2, 3.
+- **Dark Souls (3):** I, II, III.
+- **Portal (2):** Portal, Portal 2.
+- **Halo (2):** Halo: Reach, Halo 4.
 
-1. **Apri l'ontologia.** File > Open > `protege/videogames.ttl`. Nel tab *Active ontology*, alla voce *Imported ontologies*, compaiono schema, demo e regole. Se vuoi vedere solo lo schema, apri `schema_generated.ttl`.
-2. **Avvia il reasoner.** Reasoner > HermiT, poi Reasoner > Start reasoner. Dopo ogni modifica usa Reasoner > Synchronize reasoner. L'ontologia è consistente e nessuna classe deve risultare insoddisfacibile (in rosso).
-3. **Cosa guardare.**
-   - *Entities > Classes*, vista "Inferred": `LateEntry` e `AcclaimedSequel` compaiono sotto `SequelGame`.
-   - *Individuals*, `Mass_Effect`: in giallo i tipi dedotti `FirstPartyGame` e `FirstPartyOnRivalConsole`. Il "?" accanto a `FirstPartyGame` mostra la spiegazione, che passa per la catena `publishedBy ∘ subsidiaryOf`, l'inversa `manufacturerOf` e due classi definite.
-   - `franchise/Halo` risulta `FranchiseWithStudioChange`; `franchise/Grand_Theft_Auto` risulta `LongRunningFranchise`.
-   - `dev/Halo_Studios` è `subsidiaryOf` Microsoft per transitività.
-   - `Grand_Theft_Auto` non ha tipo asserito, ma risulta `VideoGame` grazie a dominio e range.
-   - Tab *DL Query*, per esempio `FirstPartyGame`, `SequelGame and HighlyRatedGame` o `sequelOf value Grand_Theft_Auto` (spunta "Instances").
-4. **OntoGraf** (Window > Tabs > OntoGraf): seleziona `Grand_Theft_Auto_VI` ed espandi la serie.
-5. **SWRL.** Le regole si vedono in Window > Tabs > SWRLTab. Le applica HermiT allo Start reasoner, senza bisogno di Drools. Nota: negli atomi delle regole HermiT vede solo relazioni asserite, non quelle dedotte da catene o transitività. Per questo la regola first-party ha due versioni (editore diretto ed editore controllato).
-6. **Inconsistenze.** Apri un file di `inconsistencies/` e avvia HermiT. Protégé segnala l'ontologia inconsistente e propone **Explain inconsistent ontology**.
-   - `inc1_disjoint.ttl`: una piattaforma è sia console sia PC (classi disgiunte).
-   - `inc2_functional.ttl`: Portal 2 ha due `metacriticScore` (proprietà funzionale).
-   - `inc3_cardinality.ttl`: Tears of the Kingdom è "su al più una piattaforma", ma è su Switch e Switch 2, dichiarate diverse.
-   - `inc4_key.ttl`: due giochi hanno lo stesso `hasWikidataId` (`hasKey`) ma sono dichiarati diversi.
-   - `inc3b_sameas.ttl` **non** è inconsistente. Splatoon 2 è collegato a "Nintendo Switch" e a "NX", il nome in codice della Switch, non dichiarati diversi. Il reasoner deduce NX `sameAs` Nintendo Switch, che è corretto. Il confronto con `inc3` mostra mondo aperto e assenza di Unique Name Assumption.
+L'elenco completo, con anno e sviluppatore, è nell'appendice della relazione.
 
-## Caricare, creare ed esportare in Protégé
+## Usare HermiT in Protégé
 
-- **Aprire:** File > Open. Per aggiungere un'altra ontologia: *Active ontology > Imported ontologies* > "+".
-- **Salvare:** File > Save as… permette di scegliere il formato (Turtle, RDF/XML, OWL/XML…).
-- **Solo lo schema:** Refactor > Copy/move/delete axioms… e scegli gli assiomi di classi e proprietà.
-- **Le deduzioni:** File > Export inferred axioms as ontology…
-- **Tutto in un file:** Refactor > Merge ontologies.
+1. **Aprire l'ontologia.** Avvia `Protege-5.6.9-win/Protege-5.6.9/Protege.exe`, poi File > Open > `protege/videogiochi.ttl`. Il tab *Active ontology* mostra le tre ontologie importate. Con *File > Open* di `schema.ttl` si vede lo schema da solo.
+2. **Avviare il ragionamento.**
+   - Nel menu Reasoner seleziona HermiT, poi scegli Start reasoner (richiede pochi secondi).
+   - Dopo ogni modifica scegli Reasoner > Synchronize reasoner.
+   - Per vedere anche le relazioni dedotte, controlla che in Reasoner > Configure… > *Displayed inferences* siano spuntate "Class assertions" e "Object property assertions".
+3. **Distinguere asserito e dedotto.**
+   - **Individui** (tab *Entities > Individuals*): le righe con lo sfondo giallo sono dedotte da HermiT, le altre sono scritte in `dati.ttl`. Il "?" accanto a una riga gialla apre la *spiegazione*, cioè gli assiomi da cui segue.
+   - **Classi** (tab *Entities > Classes*): il menu sopra l'albero passa da "Asserted" a "Inferred". Nella vista inferita le classi definite compaiono al loro posto, e il tab *Instances* di una classe elenca anche gli individui dedotti.
+   - **DL Query** (Window > Tabs > DL Query): scrivi il nome di una classe o un'espressione, per esempio `FirstPartyGame and SequelGame`, e spunta "Instances". Il risultato include ciò che il reasoner ha dedotto.
+   - **Tutto ciò che è stato dedotto, in un file:** File > Export inferred axioms as ontology…, scegliendo i tipi di assiomi. Il file salvato contiene solo le conclusioni e si può confrontare con `dati.ttl`.
+4. **Che cosa HermiT non deduce, e perché:**
+   - le negazioni: con il mondo aperto, "non scritto" non significa "falso";
+   - l'uguaglianza tra individui dichiarati diversi;
+   - le relazioni nel tempo: OWL non sa che Bethesda è di Microsoft solo dal 2021;
+   - dentro le regole SWRL, i valori ottenuti da catene o transitività. Per questo il gruppo di un editore è calcolato da due regole, un passo alla volta.
+
+## Deduzioni da mostrare (dove cliccare)
+
+Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel tab *Individuals*.
+
+| Individuo o classe | Cosa compare in giallo | Perché |
+|---|---|---|
+| `character/Gwyn_Lord_of_Sunlight` | `DeceasedCharacter`, `MortalCharacter`, `DefeatedVillain` | È stato ucciso dal Prescelto. Il dominio di `killedBy` lo fa morto, la sottoclasse lo fa mortale e la regola lo rende cattivo sconfitto dall'eroe. |
+| `person/Hidetaka_Miyazaki` | `GameDirector`, `StudioHead` | Il range di `directedBy` e il dominio di `heads`. |
+| `Mass_Effect` | `FirstPartyGame`, `FirstPartyOnRivalConsole`, `RemasteredClassic` | Xbox Game Studios → Microsoft, costruttore della Xbox 360; il gioco è uscito anche su PS3; ha la Legendary Edition. |
+| `Fallout_New_Vegas` | `VeteransReturn`, `FirstPartyOnRivalConsole`, `ExternalEngineGame` | Obsidian, fondata da ex Black Isle (che aveva fatto Fallout 2); Bethesda Softworks → ZeniMax → Microsoft; motore Gamebryo. |
+| `company/Obsidian_Entertainment` | `FoundedByVeterans` | I fondatori lavoravano per uno sviluppatore. |
+| `Grand_Theft_Auto_III` | `StillPlayable`, `LateEntry`, `ExternalEngineGame` | La Definitive Edition è uscita su PS5; è il terzo capitolo; usa RenderWare di Criterion. |
+| `The_Witcher` | `LiteraryAdaptation`, relazione `techLinkedTo Mass_Effect` | È tratto dalla saga di Sapkowski e usa il motore Aurora di BioWare. |
+| `character/Leonardo_da_Vinci` | `HistoricalCharacter` | Interpreta una persona reale. |
+| `character/GLaDOS` | `RogueAI`, `RecurringVillain` | È un'IA antagonista, presente in Portal e Portal 2. |
+| `franchise/Halo`, `franchise/Fallout` | `FranchiseWithStudioChange`, `TransmediaFranchise` | Halo 4 è di 343 Industries dopo Bungie, Fallout 3 di Bethesda dopo Black Isle; da entrambe è nata una serie TV. |
+| `Grand_Theft_Auto` | `VideoGame` | Il tipo non è asserito; deriva da dominio e range delle sue proprietà. |
+| `Grand_Theft_Auto_IV`, `Fallout_4` | `EngineChangeSequel` | GTA IV passa da RenderWare a RAGE; Fallout 4 da Gamebryo a Creation Engine. |
+
+## Test
+
+Apri un file di `test/` e avvia HermiT. Per i quattro errori Protégé segnala l'ontologia inconsistente e offre **Explain inconsistent ontology**.
+
+| File | Atteso |
+|---|---|
+| `errore_disgiunzione.ttl` | inconsistente: una piattaforma è sia console sia PC |
+| `errore_funzionale.ttl` | inconsistente: Portal 2 ha due punteggi Metacritic |
+| `errore_cardinalita.ttl` | inconsistente: Breath of the Wild è "su al più una piattaforma", ma è uscito su Wii U e Switch |
+| `errore_chiave.ttl` | inconsistente: due giochi hanno lo stesso identificativo Wikidata ma sono dichiarati diversi |
+| `deduzione_sameas.ttl` | consistente: HermiT deduce che "NX" è la Nintendo Switch |
 
 ## Screenshot per la relazione
 
-Salvali in `protege/relazione/figure/` con questi nomi. Finché mancano, la relazione mostra un riquadro segnaposto.
+Salvali in `relazione/figure/` con questi nomi:
+- `gerarchia_inferita.png`: la vista "Inferred" delle classi;
+- `spiegazione_gwyn.png`: la spiegazione di Gwyn come `MortalCharacter`;
+- `individuo_fallout_new_vegas.png`: Fallout: New Vegas con i tipi dedotti in giallo;
+- `swrl_rules.png`: il tab SWRLTab;
+- `inconsistenza.png`: la spiegazione di `errore_cardinalita.ttl`.
 
-| File | Cosa |
-|---|---|
-| `gerarchia_inferita.png` | La gerarchia "Inferred" con `VideoGame` espansa (`SequelGame` > `LateEntry`, `AcclaimedSequel`). |
-| `individuo_mass_effect.png` | `Mass_Effect` nel tab Individuals, con i tipi dedotti in giallo. |
-| `spiegazione_firstparty.png` | La spiegazione ("?") di `Mass_Effect` come `FirstPartyGame`. |
-| `ontograf_gta.png` | OntoGraf della serie GTA. |
-| `swrl_rules.png` | Il tab SWRLTab con le regole. |
-| `inconsistenza.png` | La finestra "Explain inconsistent ontology" di `inc3_cardinality.ttl`. |
+Nessun plugin aggiuntivo è necessario.

@@ -1,10 +1,6 @@
-"""Self-check without the Protégé GUI: HermiT on the same files Protégé opens, plus the
-expected inferences, SWRL conclusions and inconsistencies.
+"""Verifica con HermiT le deduzioni attese (strumento extra, usa owlready2).
 
     uv run --with owlready2==0.46 python protege/check_reasoning.py
-
-Extra tool, the only file outside the style of the course examples: it uses owlready2 to
-call HermiT from Python. Java comes from the Protégé install (its JRE) or from JAVA_EXE.
 """
 
 import os
@@ -19,13 +15,12 @@ from rdflib.namespace import OWL
 
 HERE = Path(__file__).resolve().parent
 VG = "http://www.videogame-ontology.org/ontology#"
-JAVA = [p / "Protege-5.6.9-win" / "Protege-5.6.9" / "jre" / "bin" / "java.exe" for p in (HERE.parent, HERE.parent.parent / "Videogame-Semantic-Search")]
-o.JAVA_EXE = os.environ.get("JAVA_EXE") or str(next((j for j in JAVA if j.exists()), "java"))
+JAVA = HERE.parent / "Protege-5.6.9-win" / "Protege-5.6.9" / "jre" / "bin" / "java.exe"
+o.JAVA_EXE = os.environ.get("JAVA_EXE") or (str(JAVA) if JAVA.exists() else "java")
 failures = []
 
 
 def merged(file, extra=()):
-    """The file plus everything it imports, resolved through the catalog of its folder."""
     g, todo, seen = Graph(), [Path(file)], set()
     while todo:
         f = todo.pop()
@@ -42,7 +37,6 @@ def merged(file, extra=()):
 
 
 def reason(name, file, extra=()):
-    """HermiT on the file (and its imports): the world, or None if the ontology is inconsistent."""
     nt = Path(tempfile.gettempdir()) / f"vg_check_{name}.nt"
     merged(file, extra).serialize(nt, format="nt", encoding="utf-8")
     w = o.World()
@@ -50,9 +44,9 @@ def reason(name, file, extra=()):
         with w.get_ontology("file://" + nt.as_posix()).load():
             o.sync_reasoner_hermit(w, infer_property_values=True, debug=0)
     except o.OwlReadyInconsistentOntologyError:
-        print(f"[{name}] INCONSISTENT")
+        print(f"[{name}] inconsistente")
         return None
-    print(f"[{name}] consistent")
+    print(f"[{name}] consistente")
     return w
 
 
@@ -72,56 +66,74 @@ def related(w, s, p, obj):
 
 def types(w, cls, yes, no=()):
     for i in yes:
-        check(is_a(w, i, cls), f"{i} is {cls}")
+        check(is_a(w, i, cls), f"{i} è {cls}")
     for i in no:
-        check(not is_a(w, i, cls), f"{i} is NOT {cls}")
+        check(not is_a(w, i, cls), f"{i} non è {cls}")
+
+
+EXPECTED = [
+    ("VideoGame", ["Grand_Theft_Auto"], []),
+    ("GameDirector", ["person/Hidetaka_Miyazaki", "person/Casey_Hudson"], []),
+    ("StudioHead", ["person/Hidetaka_Miyazaki"], ["person/Casey_Hudson"]),
+    ("Remaster", ["The_Legend_of_Zelda_Ocarina_of_Time_3D"], []),
+    ("MortalCharacter", ["character/Gwyn_Lord_of_Sunlight", "character/Cesare_Borgia"], ["character/Mario"]),
+    ("Developer", ["company/Black_Isle_Studios"], ["company/Microsoft"]),
+    ("PlatformHolder", ["company/Nintendo", "company/Microsoft", "company/Sony_Interactive_Entertainment"], ["company/Xbox_Game_Studios"]),
+    ("FirstPartyGame", ["Mass_Effect", "Fallout_4", "The_Legend_of_Zelda_Breath_of_the_Wild"], ["Mass_Effect_2", "Assassins_Creed_II"]),
+    ("FoundedByVeterans", ["company/Obsidian_Entertainment"], ["company/Valve"]),
+    ("LateEntry", ["Assassins_Creed_Revelations", "The_Legend_of_Zelda_Spirit_Tracks", "Grand_Theft_Auto_III"], ["Super_Mario_Galaxy_2"]),
+    ("AcclaimedSequel", ["Grand_Theft_Auto_IV", "Portal_2"], []),
+    ("GOTYWinner", ["The_Witcher_3_Wild_Hunt", "Fallout_4"], ["The_Witcher"]),
+    ("RemasteredClassic", ["The_Legend_of_Zelda_Ocarina_of_Time", "Mass_Effect"], ["Fallout_3"]),
+    ("RemasterCollection", ["Super_Mario_3D_All_Stars", "Mass_Effect_Legendary_Edition"], ["The_Legend_of_Zelda_Ocarina_of_Time_3D"]),
+    ("StillPlayable", ["Grand_Theft_Auto_III", "The_Legend_of_Zelda_Breath_of_the_Wild", "Fallout_4", "Assassins_Creed_IV_Black_Flag"], ["Mass_Effect", "Halo_Reach"]),
+    ("LiteraryAdaptation", ["The_Witcher_3_Wild_Hunt"], ["Mass_Effect"]),
+    ("AuteurGame", ["Dark_Souls", "Dark_Souls_III"], ["Dark_Souls_II"]),
+    ("LongRunningFranchise", ["franchise/Grand_Theft_Auto", "franchise/Assassins_Creed", "franchise/Fallout", "franchise/The_Legend_of_Zelda"], ["franchise/Super_Mario", "franchise/Portal"]),
+    ("TransmediaFranchise", ["franchise/The_Witcher", "franchise/Fallout", "franchise/Super_Mario", "franchise/Halo"], ["franchise/Grand_Theft_Auto", "franchise/The_Legend_of_Zelda"]),
+    ("FranchiseWithStudioChange", ["franchise/Halo", "franchise/Fallout"], ["franchise/Super_Mario"]),
+    ("RecurringCharacter", ["character/Link", "character/Geralt_of_Rivia", "character/Ezio_Auditore_da_Firenze", "character/Chell"], ["character/Niko_Bellic"]),
+    ("RecurringVillain", ["character/Bowser", "character/Ganondorf", "character/GLaDOS"], ["character/Mario"]),
+    ("RogueAI", ["character/GLaDOS", "character/Wheatley"], ["character/Cortana"]),
+    ("HistoricalCharacter", ["character/Leonardo_da_Vinci", "character/Cesare_Borgia"], ["character/Ezio_Auditore_da_Firenze"]),
+    ("FirstPartyOnRivalConsole", ["Mass_Effect", "Fallout_4", "Fallout_New_Vegas"], ["Halo_4", "The_Legend_of_Zelda_Breath_of_the_Wild", "Mass_Effect_2"]),
+    ("SequelByDifferentStudio", ["Halo_4", "Fallout_3"], ["Grand_Theft_Auto_VI", "Dark_Souls_III"]),
+    ("VeteransReturn", ["Fallout_New_Vegas"], ["Fallout_3"]),
+    ("EngineChangeSequel", ["Grand_Theft_Auto_IV", "The_Witcher_2_Assassins_of_Kings", "Fallout_4"], ["Grand_Theft_Auto_V", "Mass_Effect_2"]),
+    ("ExternalEngineGame", ["Mass_Effect", "The_Witcher", "Grand_Theft_Auto_III", "Fallout_3", "Fallout_New_Vegas"], ["The_Witcher_3_Wild_Hunt", "Portal_2"]),
+    ("InHouseEngineGame", ["The_Witcher_3_Wild_Hunt", "Fallout_4", "Portal_2"], ["Mass_Effect"]),
+    ("ReturningDirectorSequel", ["Mass_Effect_2", "Fallout_4", "Dark_Souls_III", "The_Legend_of_Zelda_Tears_of_the_Kingdom"], ["Halo_4"]),
+    ("DefeatedVillain", ["character/Cesare_Borgia", "character/Eredin", "character/Gwyn_Lord_of_Sunlight", "character/Demise"], ["character/Bowser"]),
+    ("MustPlayGame", ["The_Legend_of_Zelda_Ocarina_of_Time", "Grand_Theft_Auto_IV"], ["Fallout_4"]),
+]
+RELATIONS = [
+    ("Grand_Theft_Auto_V", "sequelOf", "Grand_Theft_Auto"),
+    ("company/Halo_Studios", "subsidiaryOf", "company/Microsoft"),
+    ("The_Witcher", "techLinkedTo", "Mass_Effect"),
+    ("Grand_Theft_Auto_III", "playableOn", "platform/PlayStation_5"),
+    ("Fallout_4", "publishedByGroup", "company/Microsoft"),
+]
 
 
 def main():
-    w = reason("schema", HERE / "schema_generated.ttl")
-    check(w is not None and not list(w.inconsistent_classes()), "schema: consistent, no unsatisfiable classes")
-
-    w = reason("videogames", HERE / "videogames.ttl")  # schema + demo + SWRL rules
-    check(w is not None, "videogames.ttl (schema + demo + rules) is consistent")
+    w = reason("schema", HERE / "schema.ttl")
+    check(w is not None and not list(w.inconsistent_classes()), "schema consistente, nessuna classe insoddisfacibile")
+    w = reason("videogiochi", HERE / "videogiochi.ttl")
+    check(w is not None, "videogiochi.ttl consistente")
     if w is None:
         sys.exit(1)
-    check(not list(w.inconsistent_classes()), "no unsatisfiable classes")
-    print(" sequel chains, domain/range")
-    check(related(w, "Grand_Theft_Auto_V", "sequelOf", "Grand_Theft_Auto"), "GTA V sequelOf GTA, never asserted (transitivity)")
-    check(related(w, "Grand_Theft_Auto", "hasSequel", "Grand_Theft_Auto_VI"), "GTA hasSequel GTA VI (inverse + transitivity)")
-    check(is_a(w, "Grand_Theft_Auto", "VideoGame"), "untyped GTA is a VideoGame (domain/range)")
-    print(" defined classes")
-    types(w, "LateEntry", ["Grand_Theft_Auto_III", "Dark_Souls_III", "The_Witcher_3_Wild_Hunt", "Mass_Effect_3"], ["Grand_Theft_Auto_2", "Dark_Souls_II", "Portal_2"])
-    types(w, "LongRunningOriginal", ["Grand_Theft_Auto", "Dark_Souls", "The_Witcher", "Mass_Effect"], ["Portal", "Grand_Theft_Auto_VI"])
-    types(w, "AcclaimedSequel", ["Grand_Theft_Auto_IV", "Portal_2", "Mass_Effect_2"], ["Grand_Theft_Auto_V", "The_Legend_of_Zelda_Ocarina_of_Time"])
-    types(w, "RecentGame", ["The_Legend_of_Zelda_Tears_of_the_Kingdom", "Grand_Theft_Auto_VI"], ["The_Legend_of_Zelda_Breath_of_the_Wild"])
-    types(w, "MultiPlatformGame", ["Grand_Theft_Auto_V", "The_Legend_of_Zelda_Breath_of_the_Wild"], ["The_Legend_of_Zelda_Tears_of_the_Kingdom"])
-    types(w, "BandaiNamcoPublishedGame", ["Dark_Souls", "Dark_Souls_II"], ["The_Witcher"])
-    types(w, "Developer", ["dev/Bungie"], ["pub/Atari"])
-    types(w, "Publisher", ["pub/Atari", "dev/FromSoftware"], ["dev/Bungie"])
-    check(related(w, "Mass_Effect", "sharesDeveloperWith", "Mass_Effect_3"), "Mass Effect sharesDeveloperWith Mass Effect 3 (chain)")
-    print(" groups and series")
-    check(related(w, "dev/Halo_Studios", "subsidiaryOf", "pub/Microsoft"), "Halo Studios subsidiaryOf Microsoft (transitivity)")
-    types(w, "PlatformHolder", ["pub/Nintendo", "pub/Microsoft", "pub/Sony_Interactive_Entertainment"], ["pub/Xbox_Game_Studios", "pub/Electronic_Arts"])
-    types(w, "FirstPartyGame", ["The_Legend_of_Zelda_Breath_of_the_Wild", "Halo_4", "Mass_Effect"], ["Mass_Effect_2", "Grand_Theft_Auto_V"])
-    types(w, "LongRunningFranchise", ["franchise/Grand_Theft_Auto", "franchise/Dark_Souls", "franchise/Mass_Effect"], ["franchise/Portal", "franchise/Halo", "franchise/The_Legend_of_Zelda"])
-    types(w, "FranchiseWithStudioChange", ["franchise/Halo"], ["franchise/Grand_Theft_Auto", "franchise/Dark_Souls"])
-    print(" SWRL rules")
-    types(w, "SelfPublishedGame", ["Portal", "Dark_Souls", "The_Witcher_3_Wild_Hunt"], ["The_Legend_of_Zelda_Ocarina_of_Time", "Grand_Theft_Auto_VI"])
-    types(w, "SequelByDifferentStudio", ["Halo_4"], ["Grand_Theft_Auto_VI", "Dark_Souls_III"])
-    types(w, "FirstPartyOnRivalConsole", ["Mass_Effect"], ["Halo_4", "Mass_Effect_2", "The_Legend_of_Zelda_Ocarina_of_Time"])
-    types(w, "CouchCoopCandidate", ["Portal_2", "Halo_Reach"], ["Halo_4", "The_Witcher"])
-    types(w, "MustPlayGame", ["The_Legend_of_Zelda_Ocarina_of_Time", "Grand_Theft_Auto_IV", "Portal_2"], ["Mass_Effect_2", "Dark_Souls"])
-
-    inc = HERE / "inconsistencies"
-    for f in ["inc1_disjoint", "inc2_functional", "inc3_cardinality", "inc4_key"]:
-        check(reason(f, inc / f"{f}.ttl") is None, f"{f} is inconsistent")
-    check(reason("inc3b_sameas", inc / "inc3b_sameas.ttl") is not None, "inc3b_sameas is consistent")
-    # KB |= NX = Switch exactly when KB + {NX != Switch} is inconsistent
+    check(not list(w.inconsistent_classes()), "nessuna classe insoddisfacibile")
+    for cls, yes, no in EXPECTED:
+        types(w, cls, yes, no)
+    for s, p, x in RELATIONS:
+        check(related(w, s, p, x), f"{s} {p} {x}")
+    test = HERE / "test"
+    for f in ["errore_disgiunzione", "errore_funzionale", "errore_cardinalita", "errore_chiave"]:
+        check(reason(f, test / f"{f}.ttl") is None, f"{f} inconsistente")
+    check(reason("deduzione_sameas", test / "deduzione_sameas.ttl") is not None, "deduzione_sameas consistente")
     nx, switch = URIRef(VG + "platform/Nintendo_NX"), URIRef(VG + "platform/Nintendo_Switch")
-    check(reason("inc3b_different", inc / "inc3b_sameas.ttl", [(nx, OWL.differentFrom, switch)]) is None, "inc3b entails NX sameAs Nintendo Switch")
-
-    print("\nALL CHECKS PASSED" if not failures else f"\n{len(failures)} FAILED: " + "; ".join(failures))
+    check(reason("sameas_negato", test / "deduzione_sameas.ttl", [(nx, OWL.differentFrom, switch)]) is None, "deduzione_sameas implica NX = Nintendo Switch")
+    print("\nTUTTI I CONTROLLI SUPERATI" if not failures else f"\n{len(failures)} FALLITI: " + "; ".join(failures))
     sys.exit(1 if failures else 0)
 
 

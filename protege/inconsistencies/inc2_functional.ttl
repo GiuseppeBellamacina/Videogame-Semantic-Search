@@ -1,8 +1,0 @@
-# Test 2 (expected: INCONSISTENT). metacriticScore is functional and the demo gives
-# Portal 2 the score 95: a second, different score cannot hold at the same time.
-@prefix vg:   <http://www.videogame-ontology.org/ontology#> .
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-<http://www.videogame-ontology.org/ontology/test-functional> a owl:Ontology ;
-    owl:imports <http://www.videogame-ontology.org/ontology/abox-demo> .
-vg:Portal_2 vg:metacriticScore 90 .

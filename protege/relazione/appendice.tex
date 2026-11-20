@@ -1,0 +1,238 @@
+\section{Le componenti dell'ontologia}\label{app:componenti}
+
+\begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
+\caption{Le 61 classi}\\ \toprule
+\textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
+\textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
+\texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
+\texttt{Company} & \texttt{--} & primitiva & Uno studio, un editore o un gruppo industriale \\
+\texttt{Person} & \texttt{--} & primitiva & Una persona reale \\
+\texttt{Character} & \texttt{--} & primitiva & Un personaggio di finzione \\
+\texttt{Platform} & \texttt{--} & primitiva & Una piattaforma su cui si gioca \\
+\texttt{Franchise} & \texttt{--} & primitiva & Una serie di giochi \\
+\texttt{GameEngine} & \texttt{--} & primitiva & Un motore di gioco \\
+\texttt{Award} & \texttt{--} & primitiva & Un premio \\
+\texttt{Genre} & \texttt{--} & primitiva & Un genere \\
+\texttt{GameMode} & \texttt{--} & primitiva & Una modalità di gioco \\
+\texttt{CreativeWork} & \texttt{--} & primitiva & Un'opera di un altro medium (romanzo, film, serie TV) \\
+\texttt{ConsolePlatform} & \texttt{Platform} & primitiva & Una console \\
+\texttt{PCPlatform} & \texttt{Platform} & primitiva & Un personal computer \\
+\texttt{CurrentGenerationConsole} & \texttt{ConsolePlatform} & primitiva & Una console dell'attuale generazione \\
+\texttt{Novel} & \texttt{CreativeWork} & primitiva & Un romanzo \\
+\texttt{Film} & \texttt{CreativeWork} & primitiva & Un film \\
+\texttt{TVSeries} & \texttt{CreativeWork} & primitiva & Una serie televisiva \\
+\texttt{GameOfTheYearAward} & \texttt{Award} & primitiva & Un premio Gioco dell'anno \\
+\texttt{Human} & \texttt{Character} & primitiva & Un personaggio umano \\
+\texttt{ArtificialIntelligence} & \texttt{Character} & primitiva & Un'intelligenza artificiale \\
+\texttt{MortalCharacter} & \texttt{Character} & primitiva & Un personaggio che può morire \\
+\texttt{DeceasedCharacter} & \texttt{MortalCharacter} & primitiva & Un personaggio morto (dominio di killedBy) \\
+\texttt{GameDirector} & \texttt{Person} & primitiva & Un regista di videogiochi (range di directedBy) \\
+\texttt{StudioHead} & \texttt{Person} & primitiva & Chi guida un'azienda (dominio di heads) \\
+\texttt{Remaster} & \texttt{VideoGame} & primitiva & La nuova edizione di un gioco (dominio di remasterOf) \\
+\texttt{FirstPartyOnRivalConsole} & \texttt{VideoGame} & regola SWRL & Un gioco first-party uscito su una console di un concorrente \\
+\texttt{SequelByDifferentStudio} & \texttt{VideoGame} & regola SWRL & Un seguito sviluppato da uno studio diverso \\
+\texttt{VeteransReturn} & \texttt{VideoGame} & regola SWRL & Un gioco fatto da uno studio fondato da chi aveva lavorato alla serie \\
+\texttt{EngineChangeSequel} & \texttt{VideoGame} & regola SWRL & Un seguito che cambia motore \\
+\texttt{ExternalEngineGame} & \texttt{VideoGame} & regola SWRL & Un gioco fatto con un motore sviluppato da un'altra azienda \\
+\texttt{InHouseEngineGame} & \texttt{VideoGame} & regola SWRL & Un gioco fatto con il motore dello stesso studio \\
+\texttt{ReturningDirectorSequel} & \texttt{VideoGame} & regola SWRL & Un seguito con lo stesso regista del predecessore \\
+\texttt{DefeatedVillain} & \texttt{Character} & regola SWRL & Un antagonista ucciso dal protagonista \\
+\texttt{MustPlayGame} & \texttt{VideoGame} & regola SWRL & Un gioco con almeno 95 su Metacritic \\
+\texttt{Developer} & \texttt{Company} & definita & Un'azienda che ha sviluppato almeno un gioco \\
+\texttt{Publisher} & \texttt{Company} & definita & Un'azienda che ha pubblicato almeno un gioco \\
+\texttt{PlatformHolder} & \texttt{Company} & definita & Un'azienda che costruisce console \\
+\texttt{FoundedByVeterans} & \texttt{Company} & definita & Un'azienda fondata da chi lavorava per uno sviluppatore \\
+\texttt{FirstPartyGame} & \texttt{VideoGame} & definita & Un gioco pubblicato dal gruppo di un costruttore di console \\
+\texttt{SequelGame} & \texttt{VideoGame} & definita & Il seguito di un altro gioco \\
+\texttt{LateEntry} & \texttt{SequelGame} & definita & Almeno il terzo capitolo di una serie \\
+\texttt{LongRunningOriginal} & \texttt{VideoGame} & definita & Il capostipite di una serie di almeno tre capitoli \\
+\texttt{HighlyRatedGame} & \texttt{VideoGame} & definita & Un gioco con almeno 90 su Metacritic \\
+\texttt{AcclaimedSequel} & \texttt{SequelGame} & definita & Un seguito acclamato \\
+\texttt{GOTYWinner} & \texttt{VideoGame} & definita & Un gioco premiato come gioco dell'anno \\
+\texttt{RemasteredClassic} & \texttt{VideoGame} & definita & Un gioco che ha avuto una nuova edizione \\
+\texttt{RemasterCollection} & \texttt{Remaster} & definita & Una raccolta che rimasterizza almeno due giochi \\
+\texttt{StillPlayable} & \texttt{VideoGame} & definita & Un gioco giocabile su una console attuale \\
+\texttt{MultiPlatformGame} & \texttt{VideoGame} & definita & Un gioco uscito su almeno tre piattaforme \\
+\texttt{LiteraryAdaptation} & \texttt{VideoGame} & definita & Un gioco tratto da un romanzo \\
+\texttt{AuteurGame} & \texttt{VideoGame} & definita & Un gioco diretto da chi guida uno studio \\
+\texttt{LongRunningFranchise} & \texttt{Franchise} & definita & Una serie con almeno tre capitoli \\
+\texttt{AwardWinningFranchise} & \texttt{Franchise} & definita & Una serie con un gioco dell'anno \\
+\texttt{TransmediaFranchise} & \texttt{Franchise} & definita & Una serie diventata film o serie TV \\
+\texttt{FranchiseWithStudioChange} & \texttt{Franchise} & definita & Una serie passata a un altro studio \\
+\texttt{Protagonist} & \texttt{Character} & definita & Il protagonista di un gioco \\
+\texttt{Antagonist} & \texttt{Character} & definita & L'antagonista di un gioco \\
+\texttt{RecurringCharacter} & \texttt{Character} & definita & Un personaggio presente in almeno due giochi \\
+\texttt{RecurringVillain} & \texttt{RecurringCharacter} & definita & Un antagonista ricorrente \\
+\texttt{RogueAI} & \texttt{ArtificialIntelligence} & definita & Un'intelligenza artificiale antagonista \\
+\texttt{HistoricalCharacter} & \texttt{Character} & definita & Un personaggio che interpreta una persona reale \\
+\end{longtable}\endgroup
+
+\begingroup\footnotesize\begin{longtable}{lllp{6cm}}
+\caption{Le 36 object property}\\ \toprule
+\textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endfirsthead
+\textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endhead \bottomrule \endfoot
+\texttt{developedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{developerOf} \\
+\texttt{publishedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{publisherOf} \\
+\texttt{availableOn} & \texttt{VideoGame} & \texttt{Platform} & inversa \texttt{platformFor}, sotto-proprietà di \texttt{playableOn} \\
+\texttt{hasGenre} & \texttt{VideoGame} & \texttt{Genre} &  \\
+\texttt{hasGameMode} & \texttt{VideoGame} & \texttt{GameMode} &  \\
+\texttt{belongsTo} & \texttt{VideoGame} & \texttt{Franchise} & inversa \texttt{includes} \\
+\texttt{sequelOf} & \texttt{VideoGame} & \texttt{VideoGame} & inversa \texttt{hasSequel}, transitiva \\
+\texttt{remasterOf} & \texttt{Remaster} & \texttt{VideoGame} & inversa \texttt{hasRemaster} \\
+\texttt{wonAward} & \texttt{VideoGame} & \texttt{Award} &  \\
+\texttt{madeWith} & \texttt{VideoGame} & \texttt{GameEngine} &  \\
+\texttt{engineDevelopedBy} & \texttt{GameEngine} & \texttt{Company} &  \\
+\texttt{manufacturedBy} & \texttt{Platform} & \texttt{Company} & inversa \texttt{manufacturerOf} \\
+\texttt{subsidiaryOf} & \texttt{Company} & \texttt{Company} & transitiva \\
+\texttt{publishedByGroup} & \texttt{VideoGame} & \texttt{Company} &  \\
+\texttt{directedBy} & \texttt{VideoGame} & \texttt{GameDirector} & inversa \texttt{directorOf} \\
+\texttt{heads} & \texttt{StudioHead} & \texttt{Company} &  \\
+\texttt{foundedBy} & \texttt{Company} & \texttt{Person} &  \\
+\texttt{formerEmployeeOf} & \texttt{Person} & \texttt{Company} &  \\
+\texttt{basedOn} & \texttt{VideoGame} & \texttt{CreativeWork} &  \\
+\texttt{adaptedInto} & \texttt{Franchise} & \texttt{CreativeWork} &  \\
+\texttt{appearsIn} & \texttt{Character} & \texttt{VideoGame} & inversa \texttt{hasCharacter} \\
+\texttt{protagonistOf} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
+\texttt{antagonistOf} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
+\texttt{killedBy} & \texttt{DeceasedCharacter} & \texttt{Character} &  \\
+\texttt{portrays} & \texttt{Character} & \texttt{Person} &  \\
+\texttt{playableOn} & \texttt{VideoGame} & \texttt{Platform} & catena hasRemaster $\circ$ availableOn \\
+\texttt{techLinkedTo} & \texttt{VideoGame} & \texttt{VideoGame} & catena madeWith $\circ$ engineDevelopedBy $\circ$ developerOf \\
+\end{longtable}\endgroup
+
+\begingroup\footnotesize\begin{longtable}{lllp{6cm}}
+\caption{Le 3 datatype property}\\ \toprule
+\textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endfirsthead
+\textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endhead \bottomrule \endfoot
+\texttt{releaseDate} & \texttt{VideoGame} & \texttt{xsd:dateTime} & funzionale \\
+\texttt{metacriticScore} & \texttt{VideoGame} & \texttt{xsd:integer} & funzionale \\
+\texttt{hasWikidataId} & \texttt{owl:Thing} & \texttt{xsd:string} & chiave di \texttt{VideoGame} \\
+\end{longtable}\endgroup
+
+\subsection*{Classi definite}
+\begingroup\small\begin{align*}
+\textsf{Developer} &\equiv \textsf{Company} \sqcap \exists\,\textit{developerOf}.\textsf{VideoGame} \\
+\textsf{Publisher} &\equiv \textsf{Company} \sqcap \exists\,\textit{publisherOf}.\textsf{VideoGame} \\
+\textsf{PlatformHolder} &\equiv \textsf{Company} \sqcap \exists\,\textit{manufacturerOf}.\textsf{ConsolePlatform} \\
+\textsf{FoundedByVeterans} &\equiv \textsf{Company} \sqcap \exists\,\textit{foundedBy}.\exists\,\textit{formerEmployeeOf}.\textsf{Developer} \\
+\textsf{FirstPartyGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{publishedByGroup}.\textsf{PlatformHolder} \\
+\textsf{SequelGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{sequelOf}.\textsf{VideoGame} \\
+\textsf{LateEntry} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{sequelOf}.\exists\,\textit{sequelOf}.\textsf{VideoGame} \\
+\textsf{LongRunningOriginal} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasSequel}.\exists\,\textit{hasSequel}.\textsf{VideoGame} \\
+\textsf{HighlyRatedGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{metacriticScore}.\texttt{integer}[\geq 90] \\
+\textsf{AcclaimedSequel} &\equiv \textsf{SequelGame} \sqcap \textsf{HighlyRatedGame} \\
+\textsf{GOTYWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{GameOfTheYearAward} \\
+\textsf{RemasteredClassic} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasRemaster}.\textsf{VideoGame} \\
+\textsf{RemasterCollection} &\equiv \textsf{Remaster} \sqcap {\geq}2\,\textit{remasterOf}.\textsf{VideoGame} \\
+\textsf{StillPlayable} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{playableOn}.\textsf{CurrentGenerationConsole} \\
+\textsf{MultiPlatformGame} &\equiv \textsf{VideoGame} \sqcap {\geq}3\,\textit{availableOn}.\textsf{Platform} \\
+\textsf{LiteraryAdaptation} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{basedOn}.\textsf{Novel} \\
+\textsf{AuteurGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{directedBy}.\textsf{StudioHead} \\
+\textsf{LongRunningFranchise} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{includes}.\textsf{LateEntry} \\
+\textsf{AwardWinningFranchise} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{includes}.\textsf{GOTYWinner} \\
+\textsf{TransmediaFranchise} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{adaptedInto}.(\textsf{Film} \sqcup \textsf{TVSeries}) \\
+\textsf{FranchiseWithStudioChange} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{includes}.\textsf{SequelByDifferentStudio} \\
+\textsf{Protagonist} &\equiv \textsf{Character} \sqcap \exists\,\textit{protagonistOf}.\textsf{VideoGame} \\
+\textsf{Antagonist} &\equiv \textsf{Character} \sqcap \exists\,\textit{antagonistOf}.\textsf{VideoGame} \\
+\textsf{RecurringCharacter} &\equiv \textsf{Character} \sqcap {\geq}2\,\textit{appearsIn}.\textsf{VideoGame} \\
+\textsf{RecurringVillain} &\equiv \textsf{RecurringCharacter} \sqcap \textsf{Antagonist} \\
+\textsf{RogueAI} &\equiv \textsf{ArtificialIntelligence} \sqcap \textsf{Antagonist} \\
+\textsf{HistoricalCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{portrays}.\textsf{Person} \\
+\end{align*}\endgroup
+\noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries; Human, ArtificialIntelligence.
+
+\subsection*{Regole SWRL}
+\begin{itemize}\footnotesize
+\item \textbf{PublisherGroup}: \texttt{publishedBy(?g, ?c) $\rightarrow$ publishedByGroup(?g, ?c)}
+\item \textbf{ParentGroup}: \texttt{publishedByGroup(?g, ?c) $\wedge$ subsidiaryOf(?c, ?p) $\rightarrow$ publishedByGroup(?g, ?p)}
+\item \textbf{FirstPartyOnRivalConsole}: \texttt{publishedByGroup(?g, ?h) $\wedge$ availableOn(?g, ?p) $\wedge$ ConsolePlatform(?p) $\wedge$ manufacturedBy(?p, ?m) $\wedge$ manufacturerOf(?h, ?q) $\wedge$ ConsolePlatform(?q) $\wedge$ differentFrom(?h, ?m) $\rightarrow$ FirstPartyOnRivalConsole(?g)}
+\item \textbf{SequelByDifferentStudio}: \texttt{sequelOf(?a, ?b) $\wedge$ developedBy(?a, ?x) $\wedge$ developedBy(?b, ?y) $\wedge$ differentFrom(?x, ?y) $\rightarrow$ SequelByDifferentStudio(?a)}
+\item \textbf{VeteransReturn}: \texttt{developedBy(?g, ?c) $\wedge$ foundedBy(?c, ?p) $\wedge$ formerEmployeeOf(?p, ?o) $\wedge$ developerOf(?o, ?h) $\wedge$ belongsTo(?g, ?f) $\wedge$ belongsTo(?h, ?f) $\rightarrow$ VeteransReturn(?g)}
+\item \textbf{EngineChangeSequel}: \texttt{sequelOf(?a, ?b) $\wedge$ madeWith(?a, ?x) $\wedge$ madeWith(?b, ?y) $\wedge$ differentFrom(?x, ?y) $\rightarrow$ EngineChangeSequel(?a)}
+\item \textbf{ExternalEngine}: \texttt{madeWith(?g, ?e) $\wedge$ engineDevelopedBy(?e, ?m) $\wedge$ developedBy(?g, ?d) $\wedge$ differentFrom(?m, ?d) $\rightarrow$ ExternalEngineGame(?g)}
+\item \textbf{InHouseEngine}: \texttt{madeWith(?g, ?e) $\wedge$ engineDevelopedBy(?e, ?d) $\wedge$ developedBy(?g, ?d) $\rightarrow$ InHouseEngineGame(?g)}
+\item \textbf{ReturningDirector}: \texttt{sequelOf(?a, ?b) $\wedge$ directedBy(?a, ?p) $\wedge$ directedBy(?b, ?p) $\rightarrow$ ReturningDirectorSequel(?a)}
+\item \textbf{DefeatedVillain}: \texttt{antagonistOf(?v, ?g) $\wedge$ protagonistOf(?h, ?g) $\wedge$ killedBy(?v, ?h) $\rightarrow$ DefeatedVillain(?v)}
+\item \textbf{MustPlay}: \texttt{metacriticScore(?g, ?s) $\wedge$ xsd:integer[>= 95](?s) $\rightarrow$ MustPlayGame(?g)}
+\end{itemize}
+
+\begingroup\footnotesize\begin{longtable}{p{6.5cm}p{3cm}lp{3.5cm}}
+\caption{I 75 giochi del dataset}\\ \toprule
+\textbf{Gioco} & \textbf{Serie} & \textbf{Anno} & \textbf{Sviluppatore} \\ \midrule \endfirsthead
+\textbf{Gioco} & \textbf{Serie} & \textbf{Anno} & \textbf{Sviluppatore} \\ \midrule \endhead \bottomrule \endfoot
+Assassin's Creed & Assassin's Creed & 2007 & Ubisoft Montreal \\
+Assassin's Creed II & Assassin's Creed & 2009 & Ubisoft Montreal \\
+Assassin's Creed: Brotherhood & Assassin's Creed & 2010 & Ubisoft Montreal \\
+Assassin's Creed: Revelations & Assassin's Creed & 2011 & Ubisoft Montreal \\
+Assassin's Creed III & Assassin's Creed & 2012 & Ubisoft Montreal \\
+Assassin's Creed IV: Black Flag & Assassin's Creed & 2013 & Ubisoft Montreal \\
+Assassin's Creed Rogue & Assassin's Creed & 2014 & Ubisoft Sofia \\
+Assassin's Creed Unity & Assassin's Creed & 2014 & Ubisoft Montreal \\
+Assassin's Creed Syndicate & Assassin's Creed & 2015 & Ubisoft Quebec \\
+Assassin's Creed Origins & Assassin's Creed & 2017 & Ubisoft Montreal \\
+Assassin's Creed Odyssey & Assassin's Creed & 2018 & Ubisoft Quebec \\
+Assassin's Creed Valhalla & Assassin's Creed & 2020 & Ubisoft Montreal \\
+Assassin's Creed Mirage & Assassin's Creed & 2023 & Ubisoft Bordeaux \\
+Assassin's Creed Shadows & Assassin's Creed & 2025 & Ubisoft Quebec \\
+Dark Souls & Dark Souls & 2011 & FromSoftware \\
+Dark Souls II & Dark Souls & 2014 & FromSoftware \\
+Dark Souls III & Dark Souls & 2016 & FromSoftware \\
+Fallout & Fallout & 1997 & Interplay Productions \\
+Fallout 2 & Fallout & 1998 & Black Isle Studios \\
+Fallout 3 & Fallout & 2008 & Bethesda Game Studios \\
+Fallout: New Vegas & Fallout & 2010 & Obsidian Entertainment \\
+Fallout 4 & Fallout & 2015 & Bethesda Game Studios \\
+Fallout 76 & Fallout & 2018 & Bethesda Game Studios \\
+Grand Theft Auto & Grand Theft Auto & 1998 & Rockstar North \\
+Grand Theft Auto 2 & Grand Theft Auto & 1999 & Rockstar North \\
+Grand Theft Auto III & Grand Theft Auto & 2001 & Rockstar North \\
+Grand Theft Auto: Vice City & Grand Theft Auto & 2002 & Rockstar North \\
+Grand Theft Auto: San Andreas & Grand Theft Auto & 2004 & Rockstar North \\
+Grand Theft Auto IV & Grand Theft Auto & 2008 & Rockstar North \\
+Grand Theft Auto V & Grand Theft Auto & 2013 & Rockstar North \\
+Grand Theft Auto VI & Grand Theft Auto & 2026 & Rockstar North \\
+Halo: Reach & Halo & 2010 & Bungie \\
+Halo 4 & Halo & 2012 & Halo Studios \\
+Mass Effect & Mass Effect & 2007 & BioWare \\
+Mass Effect 2 & Mass Effect & 2010 & BioWare \\
+Mass Effect 3 & Mass Effect & 2012 & BioWare \\
+Portal & Portal & 2007 & Valve \\
+Portal 2 & Portal & 2011 & Valve \\
+Super Mario Bros. & Super Mario & 1985 & Nintendo R\&D4 \\
+Super Mario Bros. 2 & Super Mario & 1988 & Nintendo R\&D4 \\
+Super Mario Bros. 3 & Super Mario & 1988 & Nintendo R\&D4 \\
+Super Mario World & Super Mario & 1990 & Nintendo EAD \\
+Super Mario 64 & Super Mario & 1996 & Nintendo EAD \\
+Super Mario Sunshine & Super Mario & 2002 & Nintendo EAD \\
+New Super Mario Bros. & Super Mario & 2006 & Nintendo EAD \\
+Super Mario Galaxy & Super Mario & 2007 & Nintendo EAD Tokyo \\
+Super Mario Galaxy 2 & Super Mario & 2010 & Nintendo EAD Tokyo \\
+Super Mario 3D Land & Super Mario & 2011 & Nintendo EAD Tokyo \\
+Super Mario 3D World & Super Mario & 2013 & Nintendo EAD Tokyo \\
+Super Mario Odyssey & Super Mario & 2017 & Nintendo EPD \\
+Super Mario Bros. Wonder & Super Mario & 2023 & Nintendo EPD \\
+The Legend of Zelda & The Legend of Zelda & 1986 & Nintendo R\&D4 \\
+Zelda II: The Adventure of Link & The Legend of Zelda & 1987 & Nintendo R\&D4 \\
+The Legend of Zelda: A Link to the Past & The Legend of Zelda & 1991 & Nintendo EAD \\
+The Legend of Zelda: Link's Awakening & The Legend of Zelda & 1993 & Nintendo EAD \\
+The Legend of Zelda: Ocarina of Time & The Legend of Zelda & 1998 & Nintendo EAD \\
+The Legend of Zelda: Majora's Mask & The Legend of Zelda & 2000 & Nintendo EAD \\
+The Legend of Zelda: Oracle of Seasons & The Legend of Zelda & 2001 & Flagship \\
+The Legend of Zelda: Oracle of Ages & The Legend of Zelda & 2001 & Flagship \\
+The Legend of Zelda: Four Swords & The Legend of Zelda & 2002 & Nintendo R\&D2 \\
+The Legend of Zelda: The Wind Waker & The Legend of Zelda & 2002 & Nintendo EAD \\
+The Legend of Zelda: Four Swords Adventures & The Legend of Zelda & 2004 & Nintendo EAD \\
+The Legend of Zelda: The Minish Cap & The Legend of Zelda & 2004 & Capcom \\
+The Legend of Zelda: Twilight Princess & The Legend of Zelda & 2006 & Nintendo EAD \\
+The Legend of Zelda: Phantom Hourglass & The Legend of Zelda & 2007 & Nintendo EAD \\
+The Legend of Zelda: Spirit Tracks & The Legend of Zelda & 2009 & Nintendo EAD \\
+The Legend of Zelda: Skyward Sword & The Legend of Zelda & 2011 & Nintendo EAD \\
+The Legend of Zelda: A Link Between Worlds & The Legend of Zelda & 2013 & Nintendo EAD \\
+The Legend of Zelda: Tri Force Heroes & The Legend of Zelda & 2015 & Nintendo EPD \\
+The Legend of Zelda: Breath of the Wild & The Legend of Zelda & 2017 & Nintendo EPD \\
+The Legend of Zelda: Tears of the Kingdom & The Legend of Zelda & 2023 & Nintendo EPD \\
+The Legend of Zelda: Echoes of Wisdom & The Legend of Zelda & 2024 & Nintendo EPD \\
+The Witcher & The Witcher & 2007 & CD Projekt Red \\
+The Witcher 2: Assassins of Kings & The Witcher & 2011 & CD Projekt Red \\
+The Witcher 3: Wild Hunt & The Witcher & 2015 & CD Projekt Red \\
+\end{longtable}\endgroup

@@ -1,0 +1,2528 @@
+@prefix vg: <http://www.videogame-ontology.org/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.videogame-ontology.org/ontology/dati> a owl:Ontology ;
+    rdfs:label "Videogiochi: dati (solo asserzioni)" ;
+    owl:imports <http://www.videogame-ontology.org/ontology> .
+
+# Grand Theft Auto
+vg:Grand_Theft_Auto rdfs:label "Grand Theft Auto" ;
+    vg:hasWikidataId "Q94501" ;
+    vg:releaseDate "1998-02-28T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 70 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_North> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_Games> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/MS-DOS> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Grand_Theft_Auto> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Keith_R_Hamilton> .
+vg:Grand_Theft_Auto_2 a vg:VideoGame ;
+    rdfs:label "Grand Theft Auto 2" ;
+    vg:hasWikidataId "Q94460" ;
+    vg:releaseDate "1999-09-30T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 70 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_North> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_Games> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Dreamcast> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Grand_Theft_Auto> ;
+    vg:sequelOf vg:Grand_Theft_Auto ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Jim_Woods> .
+vg:Grand_Theft_Auto_III a vg:VideoGame ;
+    rdfs:label "Grand Theft Auto III" ;
+    vg:hasWikidataId "Q149106" ;
+    vg:releaseDate "2001-10-23T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 97 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_North> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_Games> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_2> , <http://www.videogame-ontology.org/ontology#platform/Xbox> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Grand_Theft_Auto> ;
+    vg:sequelOf vg:Grand_Theft_Auto_2 ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/RenderWare> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/Game_Developers_Choice_Awards_Game_of_the_Year> .
+vg:Grand_Theft_Auto_Vice_City a vg:VideoGame ;
+    rdfs:label "Grand Theft Auto: Vice City" ;
+    vg:hasWikidataId "Q94671" ;
+    vg:releaseDate "2002-10-29T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 95 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_North> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_Games> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_2> , <http://www.videogame-ontology.org/ontology#platform/Xbox> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Grand_Theft_Auto> ;
+    vg:sequelOf vg:Grand_Theft_Auto_III ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/RenderWare> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> .
+vg:Grand_Theft_Auto_San_Andreas a vg:VideoGame ;
+    rdfs:label "Grand Theft Auto: San Andreas" ;
+    vg:hasWikidataId "Q83265" ;
+    vg:releaseDate "2004-10-26T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 95 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_North> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_Games> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_2> , <http://www.videogame-ontology.org/ontology#platform/Xbox> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Grand_Theft_Auto> ;
+    vg:sequelOf vg:Grand_Theft_Auto_Vice_City ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/RenderWare> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Spike_Video_Game_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> .
+vg:Grand_Theft_Auto_IV a vg:VideoGame ;
+    rdfs:label "Grand Theft Auto IV" ;
+    vg:hasWikidataId "Q94797" ;
+    vg:releaseDate "2008-04-29T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 98 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_North> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_Games> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Grand_Theft_Auto> ;
+    vg:sequelOf vg:Grand_Theft_Auto_San_Andreas ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Rockstar_Advanced_Game_Engine> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Spike_Video_Game_Awards_Game_of_the_Year> .
+vg:Grand_Theft_Auto_V a vg:VideoGame ;
+    rdfs:label "Grand Theft Auto V" ;
+    vg:hasWikidataId "Q17452" ;
+    vg:releaseDate "2013-09-17T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_North> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_Games> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:Coop , vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Grand_Theft_Auto> ;
+    vg:sequelOf vg:Grand_Theft_Auto_IV ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Rockstar_Advanced_Game_Engine> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/Spike_Video_Game_Awards_Game_of_the_Year> .
+vg:Grand_Theft_Auto_VI a vg:VideoGame ;
+    rdfs:label "Grand Theft Auto VI" ;
+    vg:hasWikidataId "Q23648408" ;
+    vg:releaseDate "2026-11-19T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_North> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Rockstar_Games> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_5> , <http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Grand_Theft_Auto> ;
+    vg:sequelOf vg:Grand_Theft_Auto_V ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Rockstar_Advanced_Game_Engine> .
+
+# The Legend of Zelda
+vg:The_Legend_of_Zelda a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda" ;
+    vg:hasWikidataId "Q12395" ;
+    vg:releaseDate "1986-02-21T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_RD4> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Famicom_Disk_System> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Shigeru_Miyamoto> , <http://www.videogame-ontology.org/ontology#person/Takashi_Tezuka> .
+vg:Zelda_II_The_Adventure_of_Link a vg:VideoGame ;
+    rdfs:label "Zelda II: The Adventure of Link" ;
+    vg:hasWikidataId "Q187339" ;
+    vg:releaseDate "1987-01-14T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_RD4> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Famicom_Disk_System> ;
+    vg:hasGenre vg:Action , vg:RPG , vg:Platformer ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:sequelOf vg:The_Legend_of_Zelda ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Tadashi_Sugiyama> , <http://www.videogame-ontology.org/ontology#person/Yasuhisa_Yamamura> .
+vg:The_Legend_of_Zelda_A_Link_to_the_Past a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: A Link to the Past" ;
+    vg:hasWikidataId "Q370055" ;
+    vg:releaseDate "1991-11-21T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/SNES> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Takashi_Tezuka> .
+vg:The_Legend_of_Zelda_Links_Awakening a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Link's Awakening" ;
+    vg:hasWikidataId "Q1060323" ;
+    vg:releaseDate "1993-06-06T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Game_Boy> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Takashi_Tezuka> .
+vg:The_Legend_of_Zelda_Ocarina_of_Time a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Ocarina of Time" ;
+    vg:hasWikidataId "Q213911" ;
+    vg:releaseDate "1998-11-21T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 99 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_64> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Toru_Osawa> , <http://www.videogame-ontology.org/ontology#person/Yoichi_Yamada> , <http://www.videogame-ontology.org/ontology#person/Eiji_Aonuma> , <http://www.videogame-ontology.org/ontology#person/Yoshiaki_Koizumi> , <http://www.videogame-ontology.org/ontology#person/Toshio_Iwawaki> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/D_I_C_E_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/Japan_Game_Awards_Grand_Award> .
+vg:The_Legend_of_Zelda_Majoras_Mask a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Majora's Mask" ;
+    vg:hasWikidataId "Q732943" ;
+    vg:releaseDate "2000-04-27T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 95 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_64> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:sequelOf vg:The_Legend_of_Zelda_Ocarina_of_Time ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Eiji_Aonuma> , <http://www.videogame-ontology.org/ontology#person/Yoshiaki_Koizumi> .
+vg:The_Legend_of_Zelda_Oracle_of_Seasons a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Oracle of Seasons" ;
+    vg:hasWikidataId "Q6341335" ;
+    vg:releaseDate "2001-02-27T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Flagship> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Game_Boy_Color> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Hidemaro_Fujibayashi> .
+vg:The_Legend_of_Zelda_Oracle_of_Ages a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Oracle of Ages" ;
+    vg:hasWikidataId "Q2078596" ;
+    vg:releaseDate "2001-02-27T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Flagship> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Game_Boy_Color> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Hidemaro_Fujibayashi> .
+vg:The_Legend_of_Zelda_Four_Swords a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Four Swords" ;
+    vg:hasWikidataId "Q128816086" ;
+    vg:releaseDate "2002-12-02T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_RD2> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Game_Boy_Advance> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Yoichi_Yamada> , <http://www.videogame-ontology.org/ontology#person/Hidemaro_Fujibayashi> .
+vg:The_Legend_of_Zelda_The_Wind_Waker a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: The Wind Waker" ;
+    vg:hasWikidataId "Q852563" ;
+    vg:releaseDate "2002-12-13T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 96 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_GameCube> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Eiji_Aonuma> .
+vg:The_Legend_of_Zelda_Four_Swords_Adventures a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Four Swords Adventures" ;
+    vg:hasWikidataId "Q964997" ;
+    vg:releaseDate "2004-03-18T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 86 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_GameCube> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Toshiaki_Suzuki> .
+vg:The_Legend_of_Zelda_The_Minish_Cap a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: The Minish Cap" ;
+    vg:hasWikidataId "Q474798" ;
+    vg:releaseDate "2004-11-04T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 89 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Capcom> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Game_Boy_Advance> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Hidemaro_Fujibayashi> .
+vg:The_Legend_of_Zelda_Twilight_Princess a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Twilight Princess" ;
+    vg:hasWikidataId "Q735613" ;
+    vg:releaseDate "2006-11-19T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 95 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_GameCube> , <http://www.videogame-ontology.org/ontology#platform/Wii> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Eiji_Aonuma> .
+vg:The_Legend_of_Zelda_Phantom_Hourglass a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Phantom Hourglass" ;
+    vg:hasWikidataId "Q657710" ;
+    vg:releaseDate "2007-06-23T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 90 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_DS> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:sequelOf vg:The_Legend_of_Zelda_The_Wind_Waker ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Daiki_Iwamoto> .
+vg:The_Legend_of_Zelda_Spirit_Tracks a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Spirit Tracks" ;
+    vg:hasWikidataId "Q868545" ;
+    vg:releaseDate "2009-12-07T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 87 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_DS> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:sequelOf vg:The_Legend_of_Zelda_Phantom_Hourglass ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Daiki_Iwamoto> .
+vg:The_Legend_of_Zelda_Skyward_Sword a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Skyward Sword" ;
+    vg:hasWikidataId "Q861205" ;
+    vg:releaseDate "2011-11-18T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 93 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Wii> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Hidemaro_Fujibayashi> .
+vg:The_Legend_of_Zelda_A_Link_Between_Worlds a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: A Link Between Worlds" ;
+    vg:hasWikidataId "Q11300470" ;
+    vg:releaseDate "2013-11-22T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 91 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_3DS> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Hiromasa_Shikata> .
+vg:The_Legend_of_Zelda_Tri_Force_Heroes a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Tri Force Heroes" ;
+    vg:hasWikidataId "Q20128284" ;
+    vg:releaseDate "2015-10-22T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 73 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EPD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_3DS> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Hiromasa_Shikata> .
+vg:The_Legend_of_Zelda_Breath_of_the_Wild a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Breath of the Wild" ;
+    vg:hasWikidataId "Q17185964" ;
+    vg:releaseDate "2017-03-03T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 97 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EPD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Wii_U> , <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Hidemaro_Fujibayashi> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/The_Game_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/D_I_C_E_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/Japan_Game_Awards_Grand_Award> .
+vg:The_Legend_of_Zelda_Tears_of_the_Kingdom a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Tears of the Kingdom" ;
+    vg:hasWikidataId "Q64577191" ;
+    vg:releaseDate "2023-05-12T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 96 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EPD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:sequelOf vg:The_Legend_of_Zelda_Breath_of_the_Wild ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Hidemaro_Fujibayashi> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Japan_Game_Awards_Grand_Award> .
+vg:The_Legend_of_Zelda_Echoes_of_Wisdom a vg:VideoGame ;
+    rdfs:label "The Legend of Zelda: Echoes of Wisdom" ;
+    vg:hasWikidataId "Q126722717" ;
+    vg:releaseDate "2024-09-26T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 85 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EPD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Satoshi_Terada> , <http://www.videogame-ontology.org/ontology#person/Tomomi_Sano> .
+
+# Super Mario
+vg:Super_Mario_Bros a vg:VideoGame ;
+    rdfs:label "Super Mario Bros." ;
+    vg:hasWikidataId "Q11168" ;
+    vg:releaseDate "1985-09-13T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_RD4> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/NES> ;
+    vg:hasGenre vg:Platformer ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Shigeru_Miyamoto> .
+vg:Super_Mario_Bros_2 a vg:VideoGame ;
+    rdfs:label "Super Mario Bros. 2" ;
+    vg:hasWikidataId "Q854479" ;
+    vg:releaseDate "1988-10-09T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_RD4> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/NES> ;
+    vg:hasGenre vg:Platformer ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Kensuke_Tanabe> .
+vg:Super_Mario_Bros_3 a vg:VideoGame ;
+    rdfs:label "Super Mario Bros. 3" ;
+    vg:hasWikidataId "Q639619" ;
+    vg:releaseDate "1988-10-23T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_RD4> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/NES> ;
+    vg:hasGenre vg:Platformer ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Shigeru_Miyamoto> , <http://www.videogame-ontology.org/ontology#person/Takashi_Tezuka> .
+vg:Super_Mario_World a vg:VideoGame ;
+    rdfs:label "Super Mario World" ;
+    vg:hasWikidataId "Q853143" ;
+    vg:releaseDate "1990-11-21T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/SNES> ;
+    vg:hasGenre vg:Platformer ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Takashi_Tezuka> .
+vg:Super_Mario_64 a vg:VideoGame ;
+    rdfs:label "Super Mario 64" ;
+    vg:hasWikidataId "Q216995" ;
+    vg:releaseDate "1996-06-23T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 94 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_64> ;
+    vg:hasGenre vg:Platformer , vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Shigeru_Miyamoto> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> .
+vg:Super_Mario_Sunshine a vg:VideoGame ;
+    rdfs:label "Super Mario Sunshine" ;
+    vg:hasWikidataId "Q639955" ;
+    vg:releaseDate "2002-07-19T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 92 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_GameCube> ;
+    vg:hasGenre vg:Platformer , vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Yoshiaki_Koizumi> , <http://www.videogame-ontology.org/ontology#person/Kenta_Usui> .
+vg:New_Super_Mario_Bros a vg:VideoGame ;
+    rdfs:label "New Super Mario Bros." ;
+    vg:hasWikidataId "Q301555" ;
+    vg:releaseDate "2006-05-15T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 89 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_DS> ;
+    vg:hasGenre vg:Platformer ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Shigeyuki_Asuke> .
+vg:Super_Mario_Galaxy a vg:VideoGame ;
+    rdfs:label "Super Mario Galaxy" ;
+    vg:hasWikidataId "Q170489" ;
+    vg:releaseDate "2007-11-01T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 97 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD_Tokyo> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Wii> ;
+    vg:hasGenre vg:Platformer , vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Yoshiaki_Koizumi> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/BAFTA_Best_Game> .
+vg:Super_Mario_Galaxy_2 a vg:VideoGame ;
+    rdfs:label "Super Mario Galaxy 2" ;
+    vg:hasWikidataId "Q854487" ;
+    vg:releaseDate "2010-05-23T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 98 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD_Tokyo> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Wii> ;
+    vg:hasGenre vg:Platformer , vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:sequelOf vg:Super_Mario_Galaxy ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Koichi_Hayashida> .
+vg:Super_Mario_3D_Land a vg:VideoGame ;
+    rdfs:label "Super Mario 3D Land" ;
+    vg:hasWikidataId "Q1050298" ;
+    vg:releaseDate "2011-11-03T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 90 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD_Tokyo> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_3DS> ;
+    vg:hasGenre vg:Platformer ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Koichi_Hayashida> .
+vg:Super_Mario_3D_World a vg:VideoGame ;
+    rdfs:label "Super Mario 3D World" ;
+    vg:hasWikidataId "Q13426947" ;
+    vg:releaseDate "2013-11-21T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 93 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD_Tokyo> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Wii_U> ;
+    vg:hasGenre vg:Platformer ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:sequelOf vg:Super_Mario_3D_Land ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Koichi_Hayashida> , <http://www.videogame-ontology.org/ontology#person/Kenta_Motokura> .
+vg:Super_Mario_Odyssey a vg:VideoGame ;
+    rdfs:label "Super Mario Odyssey" ;
+    vg:hasWikidataId "Q28234671" ;
+    vg:releaseDate "2017-10-27T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 97 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EPD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> ;
+    vg:hasGenre vg:Platformer , vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Kenta_Motokura> .
+vg:Super_Mario_Bros_Wonder a vg:VideoGame ;
+    rdfs:label "Super Mario Bros. Wonder" ;
+    vg:hasWikidataId "Q119819453" ;
+    vg:releaseDate "2023-10-20T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 92 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Nintendo_EPD> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> ;
+    vg:hasGenre vg:Platformer ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Super_Mario> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Shiro_Mouri> .
+
+# Fallout
+vg:Fallout a vg:VideoGame ;
+    rdfs:label "Fallout" ;
+    vg:hasWikidataId "Q60102" ;
+    vg:releaseDate "1997-10-10T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 89 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Interplay_Productions> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Interplay_Productions> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/MS-DOS> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Classic_Mac_OS> ;
+    vg:hasGenre vg:RPG ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Fallout> .
+vg:Fallout_2 a vg:VideoGame ;
+    rdfs:label "Fallout 2" ;
+    vg:hasWikidataId "Q910938" ;
+    vg:releaseDate "1998-10-29T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 86 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Black_Isle_Studios> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Interplay_Productions> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> ;
+    vg:hasGenre vg:RPG ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Fallout> ;
+    vg:sequelOf vg:Fallout .
+vg:Fallout_3 a vg:VideoGame ;
+    rdfs:label "Fallout 3" ;
+    vg:hasWikidataId "Q221164" ;
+    vg:releaseDate "2008-10-28T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 91 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Bethesda_Game_Studios> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Bethesda_Softworks> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:RPG , vg:Action , vg:Shooter ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Fallout> ;
+    vg:sequelOf vg:Fallout_2 ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Todd_Howard> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Gamebryo> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> .
+vg:Fallout_New_Vegas a vg:VideoGame ;
+    rdfs:label "Fallout: New Vegas" ;
+    vg:hasWikidataId "Q753749" ;
+    vg:releaseDate "2010-10-19T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 84 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Obsidian_Entertainment> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Bethesda_Softworks> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:RPG , vg:Action ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Fallout> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Josh_Sawyer> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Gamebryo> .
+vg:Fallout_4 a vg:VideoGame ;
+    rdfs:label "Fallout 4" ;
+    vg:hasWikidataId "Q10493813" ;
+    vg:releaseDate "2015-11-10T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 84 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Bethesda_Game_Studios> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Bethesda_Softworks> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
+    vg:hasGenre vg:RPG , vg:Action ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Fallout> ;
+    vg:sequelOf vg:Fallout_3 ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Todd_Howard> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Creation_Engine> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/D_I_C_E_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/BAFTA_Best_Game> .
+vg:Fallout_76 a vg:VideoGame ;
+    rdfs:label "Fallout 76" ;
+    vg:hasWikidataId "Q54497595" ;
+    vg:releaseDate "2018-11-14T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 52 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Bethesda_Game_Studios> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Bethesda_Softworks> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
+    vg:hasGenre vg:RPG , vg:Action ;
+    vg:hasGameMode vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Fallout> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Jeff_Gardiner> , <http://www.videogame-ontology.org/ontology#person/Jonathan_Rush> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Creation_Engine> .
+
+# Assassin's Creed
+vg:Assassins_Creed a vg:VideoGame ;
+    rdfs:label "Assassin's Creed" ;
+    vg:hasWikidataId "Q200864" ;
+    vg:releaseDate "2007-11-13T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 81 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Patrice_Desilets> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_II a vg:VideoGame ;
+    rdfs:label "Assassin's Creed II" ;
+    vg:hasWikidataId "Q211735" ;
+    vg:releaseDate "2009-11-17T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 91 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Patrice_Desilets> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_Brotherhood a vg:VideoGame ;
+    rdfs:label "Assassin's Creed: Brotherhood" ;
+    vg:hasWikidataId "Q677351" ;
+    vg:releaseDate "2010-11-16T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 90 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_II ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Patrick_Plourde> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_Revelations a vg:VideoGame ;
+    rdfs:label "Assassin's Creed: Revelations" ;
+    vg:hasWikidataId "Q739654" ;
+    vg:releaseDate "2011-11-15T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 80 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_Brotherhood ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Alexandre_Amancio> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_III a vg:VideoGame ;
+    rdfs:label "Assassin's Creed III" ;
+    vg:hasWikidataId "Q40166" ;
+    vg:releaseDate "2012-10-30T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 85 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_Revelations ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Alex_Hutchinson> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_IV_Black_Flag a vg:VideoGame ;
+    rdfs:label "Assassin's Creed IV: Black Flag" ;
+    vg:hasWikidataId "Q6052688" ;
+    vg:releaseDate "2013-10-29T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 88 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> , <http://www.videogame-ontology.org/ontology#platform/Wii_U> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_III ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Jean_Guesdon> , <http://www.videogame-ontology.org/ontology#person/Ashraf_Ismail> , <http://www.videogame-ontology.org/ontology#person/Damien_Kieken> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_Rogue a vg:VideoGame ;
+    rdfs:label "Assassin's Creed Rogue" ;
+    vg:hasWikidataId "Q17486360" ;
+    vg:releaseDate "2014-11-11T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 72 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Sofia> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_IV_Black_Flag ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Mikhail_Lozanov> , <http://www.videogame-ontology.org/ontology#person/Spass_Kroushkov> , <http://www.videogame-ontology.org/ontology#person/Martin_Capel> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_Unity a vg:VideoGame ;
+    rdfs:label "Assassin's Creed Unity" ;
+    vg:hasWikidataId "Q15983778" ;
+    vg:releaseDate "2014-11-11T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 72 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer , vg:Multiplayer , vg:Coop ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_IV_Black_Flag ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Alexandre_Amancio> , <http://www.videogame-ontology.org/ontology#person/Marc_Albinet> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_Syndicate a vg:VideoGame ;
+    rdfs:label "Assassin's Creed Syndicate" ;
+    vg:hasWikidataId "Q18602166" ;
+    vg:releaseDate "2015-10-23T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 78 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Quebec> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_Unity ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Marc_Alexis_Cote> , <http://www.videogame-ontology.org/ontology#person/Scott_Phillips> , <http://www.videogame-ontology.org/ontology#person/Wesley_Pincombe> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_Origins a vg:VideoGame ;
+    rdfs:label "Assassin's Creed Origins" ;
+    vg:hasWikidataId "Q30138024" ;
+    vg:releaseDate "2017-10-27T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 85 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
+    vg:hasGenre vg:Action , vg:RPG ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_Syndicate ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Jean_Guesdon> , <http://www.videogame-ontology.org/ontology#person/Ashraf_Ismail> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_Odyssey a vg:VideoGame ;
+    rdfs:label "Assassin's Creed Odyssey" ;
+    vg:hasWikidataId "Q54617566" ;
+    vg:releaseDate "2018-10-05T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 87 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Quebec> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
+    vg:hasGenre vg:Action , vg:RPG ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_Origins ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Jonathan_Dumont> , <http://www.videogame-ontology.org/ontology#person/Scott_Phillips> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_Valhalla a vg:VideoGame ;
+    rdfs:label "Assassin's Creed Valhalla" ;
+    vg:hasWikidataId "Q92464687" ;
+    vg:releaseDate "2020-11-10T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 82 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> , <http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S> , <http://www.videogame-ontology.org/ontology#platform/Google_Stadia> ;
+    vg:hasGenre vg:Action , vg:RPG ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_Odyssey ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_Mirage a vg:VideoGame ;
+    rdfs:label "Assassin's Creed Mirage" ;
+    vg:hasWikidataId "Q113675008" ;
+    vg:releaseDate "2023-10-05T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 76 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Bordeaux> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_5> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> , <http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S> ;
+    vg:hasGenre vg:Action , vg:Adventure ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_Valhalla ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Stephane_Boudon> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+vg:Assassins_Creed_Shadows a vg:VideoGame ;
+    rdfs:label "Assassin's Creed Shadows" ;
+    vg:hasWikidataId "Q117716202" ;
+    vg:releaseDate "2025-03-20T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 79 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Quebec> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/macOS> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_5> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S> ;
+    vg:hasGenre vg:Action , vg:RPG ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> ;
+    vg:sequelOf vg:Assassins_Creed_Mirage ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Jonathan_Dumont> , <http://www.videogame-ontology.org/ontology#person/Charles_Benoit> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Anvil> .
+
+# The Witcher
+vg:The_Witcher a vg:VideoGame ;
+    rdfs:label "The Witcher" ;
+    vg:hasWikidataId "Q287637" ;
+    vg:releaseDate "2007-10-26T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 81 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/CD_Projekt_Red> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Atari> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/macOS> ;
+    vg:hasGenre vg:RPG , vg:Action ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Witcher> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Jacek_Brzezinski> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Aurora_Engine> ;
+    vg:basedOn <http://www.videogame-ontology.org/ontology#work/The_Witcher_saga_Andrzej_Sapkowski> .
+vg:The_Witcher_2_Assassins_of_Kings a vg:VideoGame ;
+    rdfs:label "The Witcher 2: Assassins of Kings" ;
+    vg:hasWikidataId "Q917272" ;
+    vg:releaseDate "2011-05-17T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 88 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/CD_Projekt_Red> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/cdp_pl> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:RPG , vg:Action ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Witcher> ;
+    vg:sequelOf vg:The_Witcher ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Adam_Badowski> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/REDengine> ;
+    vg:basedOn <http://www.videogame-ontology.org/ontology#work/The_Witcher_saga_Andrzej_Sapkowski> .
+vg:The_Witcher_3_Wild_Hunt a vg:VideoGame ;
+    rdfs:label "The Witcher 3: Wild Hunt" ;
+    vg:hasWikidataId "Q4267401" ;
+    vg:releaseDate "2015-05-19T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/CD_Projekt_Red> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/CD_Projekt_Red> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
+    vg:hasGenre vg:RPG , vg:Action ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/The_Witcher> ;
+    vg:sequelOf vg:The_Witcher_2_Assassins_of_Kings ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Konrad_Tomaszkiewicz> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/REDengine> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/The_Game_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/Game_Developers_Choice_Awards_Game_of_the_Year> ;
+    vg:basedOn <http://www.videogame-ontology.org/ontology#work/The_Witcher_saga_Andrzej_Sapkowski> .
+
+# Mass Effect
+vg:Mass_Effect a vg:VideoGame ;
+    rdfs:label "Mass Effect" ;
+    vg:hasWikidataId "Q275960" ;
+    vg:releaseDate "2007-11-20T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 89 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/BioWare> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Xbox_Game_Studios> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:RPG , vg:Shooter ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Mass_Effect> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Casey_Hudson> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Unreal_Engine_3> .
+vg:Mass_Effect_2 a vg:VideoGame ;
+    rdfs:label "Mass Effect 2" ;
+    vg:hasWikidataId "Q725057" ;
+    vg:releaseDate "2010-01-26T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 94 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/BioWare> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Electronic_Arts> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:RPG , vg:Shooter ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Mass_Effect> ;
+    vg:sequelOf vg:Mass_Effect ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Casey_Hudson> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Unreal_Engine_3> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/D_I_C_E_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/BAFTA_Best_Game> , <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> .
+vg:Mass_Effect_3 a vg:VideoGame ;
+    rdfs:label "Mass Effect 3" ;
+    vg:hasWikidataId "Q753511" ;
+    vg:releaseDate "2012-03-06T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 89 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/BioWare> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Electronic_Arts> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Wii_U> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:RPG , vg:Shooter ;
+    vg:hasGameMode vg:Coop , vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Mass_Effect> ;
+    vg:sequelOf vg:Mass_Effect_2 ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Casey_Hudson> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Unreal_Engine_3> .
+
+# Dark Souls
+vg:Dark_Souls a vg:VideoGame ;
+    rdfs:label "Dark Souls" ;
+    vg:hasWikidataId "Q1166232" ;
+    vg:releaseDate "2011-09-22T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 89 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/FromSoftware> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/FromSoftware> , <http://www.videogame-ontology.org/ontology#company/Bandai_Namco_Entertainment> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:RPG , vg:Action ;
+    vg:hasGameMode vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Dark_Souls> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Hidetaka_Miyazaki> .
+vg:Dark_Souls_II a vg:VideoGame ;
+    rdfs:label "Dark Souls II" ;
+    vg:hasWikidataId "Q3702740" ;
+    vg:releaseDate "2014-03-11T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 91 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/FromSoftware> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Bandai_Namco_Entertainment> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:RPG , vg:Action ;
+    vg:hasGameMode vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Dark_Souls> ;
+    vg:sequelOf vg:Dark_Souls ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Tomohiro_Shibuya> , <http://www.videogame-ontology.org/ontology#person/Yui_Tanimura> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> .
+vg:Dark_Souls_III a vg:VideoGame ;
+    rdfs:label "Dark Souls III" ;
+    vg:hasWikidataId "Q20112508" ;
+    vg:releaseDate "2016-03-24T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 89 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/FromSoftware> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Bandai_Namco_Entertainment> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
+    vg:hasGenre vg:RPG , vg:Action ;
+    vg:hasGameMode vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Dark_Souls> ;
+    vg:sequelOf vg:Dark_Souls_II ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Hidetaka_Miyazaki> , <http://www.videogame-ontology.org/ontology#person/Isamu_Okano> , <http://www.videogame-ontology.org/ontology#person/Yui_Tanimura> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> .
+
+# Portal
+vg:Portal a vg:VideoGame ;
+    rdfs:label "Portal" ;
+    vg:hasWikidataId "Q274897" ;
+    vg:releaseDate "2007-10-10T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 90 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Valve> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Valve> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> , <http://www.videogame-ontology.org/ontology#platform/macOS> ;
+    vg:hasGenre vg:Puzzle , vg:Shooter ;
+    vg:hasGameMode vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Portal> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Kim_Swift> ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Source> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Game_Developers_Choice_Awards_Game_of_the_Year> .
+vg:Portal_2 a vg:VideoGame ;
+    rdfs:label "Portal 2" ;
+    vg:hasWikidataId "Q279446" ;
+    vg:releaseDate "2011-04-18T00:00:00"^^xsd:dateTime ;
+    vg:metacriticScore 95 ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Valve> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Valve> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Linux> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_3> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> , <http://www.videogame-ontology.org/ontology#platform/macOS> ;
+    vg:hasGenre vg:Puzzle , vg:Shooter ;
+    vg:hasGameMode vg:Coop , vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Portal> ;
+    vg:sequelOf vg:Portal ;
+    vg:madeWith <http://www.videogame-ontology.org/ontology#engine/Source> ;
+    vg:wonAward <http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> , <http://www.videogame-ontology.org/ontology#award/BAFTA_Best_Game> .
+
+# Halo
+vg:Halo_Reach a vg:VideoGame ;
+    rdfs:label "Halo: Reach" ;
+    vg:hasWikidataId "Q283878" ;
+    vg:releaseDate "2010-09-14T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Bungie> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Xbox_Game_Studios> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_360> ;
+    vg:hasGenre vg:Shooter ;
+    vg:hasGameMode vg:Coop , vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Halo> ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Marcus_Lehto> .
+vg:Halo_4 a vg:VideoGame ;
+    rdfs:label "Halo 4" ;
+    vg:hasWikidataId "Q45028" ;
+    vg:releaseDate "2012-11-06T00:00:00"^^xsd:dateTime ;
+    vg:developedBy <http://www.videogame-ontology.org/ontology#company/Halo_Studios> ;
+    vg:publishedBy <http://www.videogame-ontology.org/ontology#company/Xbox_Game_Studios> ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Xbox_360> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> ;
+    vg:hasGenre vg:Shooter ;
+    vg:hasGameMode vg:Multiplayer , vg:SinglePlayer ;
+    vg:belongsTo <http://www.videogame-ontology.org/ontology#franchise/Halo> ;
+    vg:sequelOf vg:Halo_Reach ;
+    vg:directedBy <http://www.videogame-ontology.org/ontology#person/Josh_Holmes> .
+
+# Nuove edizioni e raccolte
+vg:The_Legend_of_Zelda_Ocarina_of_Time_3D rdfs:label "The Legend of Zelda: Ocarina of Time 3D" ;
+    vg:remasterOf vg:The_Legend_of_Zelda_Ocarina_of_Time ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_3DS> .
+vg:The_Legend_of_Zelda_Majoras_Mask_3D rdfs:label "The Legend of Zelda: Majora's Mask 3D" ;
+    vg:remasterOf vg:The_Legend_of_Zelda_Majoras_Mask ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_3DS> .
+vg:The_Legend_of_Zelda_The_Wind_Waker_HD rdfs:label "The Legend of Zelda: The Wind Waker HD" ;
+    vg:remasterOf vg:The_Legend_of_Zelda_The_Wind_Waker ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Wii_U> .
+vg:The_Legend_of_Zelda_Twilight_Princess_HD rdfs:label "The Legend of Zelda: Twilight Princess HD" ;
+    vg:remasterOf vg:The_Legend_of_Zelda_Twilight_Princess ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Wii_U> .
+vg:The_Legend_of_Zelda_Skyward_Sword_HD rdfs:label "The Legend of Zelda: Skyward Sword HD" ;
+    vg:remasterOf vg:The_Legend_of_Zelda_Skyward_Sword ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> .
+vg:The_Legend_of_Zelda_Links_Awakening_2019 rdfs:label "The Legend of Zelda: Link's Awakening (2019)" ;
+    vg:remasterOf vg:The_Legend_of_Zelda_Links_Awakening ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> .
+vg:The_Legend_of_Zelda_Breath_of_the_Wild_Nintendo_Switch_2_Edition rdfs:label "The Legend of Zelda: Breath of the Wild - Nintendo Switch 2 Edition" ;
+    vg:remasterOf vg:The_Legend_of_Zelda_Breath_of_the_Wild ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch_2> .
+vg:The_Legend_of_Zelda_Tears_of_the_Kingdom_Nintendo_Switch_2_Edition rdfs:label "The Legend of Zelda: Tears of the Kingdom - Nintendo Switch 2 Edition" ;
+    vg:remasterOf vg:The_Legend_of_Zelda_Tears_of_the_Kingdom ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch_2> .
+vg:Super_Mario_All_Stars rdfs:label "Super Mario All-Stars" ;
+    vg:remasterOf vg:Super_Mario_Bros , vg:Super_Mario_Bros_2 , vg:Super_Mario_Bros_3 ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/SNES> .
+vg:Super_Mario_3D_All_Stars rdfs:label "Super Mario 3D All-Stars" ;
+    vg:remasterOf vg:Super_Mario_64 , vg:Super_Mario_Sunshine , vg:Super_Mario_Galaxy ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> .
+vg:Super_Mario_Galaxy_Super_Mario_Galaxy_2 rdfs:label "Super Mario Galaxy + Super Mario Galaxy 2" ;
+    vg:remasterOf vg:Super_Mario_Galaxy , vg:Super_Mario_Galaxy_2 ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> .
+vg:Super_Mario_3D_World_Bowsers_Fury rdfs:label "Super Mario 3D World + Bowser's Fury" ;
+    vg:remasterOf vg:Super_Mario_3D_World ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> .
+vg:Super_Mario_Bros_Wonder_Nintendo_Switch_2_Edition rdfs:label "Super Mario Bros. Wonder - Nintendo Switch 2 Edition" ;
+    vg:remasterOf vg:Super_Mario_Bros_Wonder ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch_2> .
+vg:Assassins_Creed_The_Ezio_Collection rdfs:label "Assassin's Creed: The Ezio Collection" ;
+    vg:remasterOf vg:Assassins_Creed_II , vg:Assassins_Creed_Brotherhood , vg:Assassins_Creed_Revelations ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> , <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> .
+vg:Assassins_Creed_III_Remastered rdfs:label "Assassin's Creed III Remastered" ;
+    vg:remasterOf vg:Assassins_Creed_III ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> , <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> .
+vg:Assassins_Creed_Rogue_Remastered rdfs:label "Assassin's Creed Rogue Remastered" ;
+    vg:remasterOf vg:Assassins_Creed_Rogue ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> .
+vg:Assassins_Creed_Black_Flag_Resynced rdfs:label "Assassin's Creed Black Flag Resynced" ;
+    vg:remasterOf vg:Assassins_Creed_IV_Black_Flag ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_5> , <http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S> .
+vg:Fallout_4_Anniversary_Edition rdfs:label "Fallout 4: Anniversary Edition" ;
+    vg:remasterOf vg:Fallout_4 ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_5> , <http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S> , <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch_2> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> .
+vg:Grand_Theft_Auto_The_Trilogy_The_Definitive_Edition rdfs:label "Grand Theft Auto: The Trilogy - The Definitive Edition" ;
+    vg:remasterOf vg:Grand_Theft_Auto_III , vg:Grand_Theft_Auto_Vice_City , vg:Grand_Theft_Auto_San_Andreas ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/PlayStation_5> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> , <http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S> .
+vg:Grand_Theft_Auto_V_PlayStation_5_and_Xbox_Series_X_S rdfs:label "Grand Theft Auto V (PlayStation 5 and Xbox Series X/S)" ;
+    vg:remasterOf vg:Grand_Theft_Auto_V ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_5> , <http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S> .
+vg:Mass_Effect_Legendary_Edition rdfs:label "Mass Effect Legendary Edition" ;
+    vg:remasterOf vg:Mass_Effect , vg:Mass_Effect_2 , vg:Mass_Effect_3 ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> .
+vg:Halo_The_Master_Chief_Collection rdfs:label "Halo: The Master Chief Collection" ;
+    vg:remasterOf vg:Halo_Reach , vg:Halo_4 ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Xbox_One> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> .
+vg:The_Witcher_3_Wild_Hunt_Complete_Edition_PlayStation_5_and_Xbox_Series_X_S rdfs:label "The Witcher 3: Wild Hunt - Complete Edition (PlayStation 5 and Xbox Series X/S)" ;
+    vg:remasterOf vg:The_Witcher_3_Wild_Hunt ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_5> , <http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S> .
+vg:Dark_Souls_Remastered rdfs:label "Dark Souls: Remastered" ;
+    vg:remasterOf vg:Dark_Souls ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/PlayStation_4> , <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> , <http://www.videogame-ontology.org/ontology#platform/Xbox_One> , <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> .
+vg:Portal_Companion_Collection rdfs:label "Portal: Companion Collection" ;
+    vg:remasterOf vg:Portal , vg:Portal_2 ;
+    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> .
+
+# Personaggi
+<http://www.videogame-ontology.org/ontology#character/Abbas_Sofian> rdfs:label "Abbas Sofian" ;
+    vg:antagonistOf vg:Assassins_Creed_Revelations ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> .
+<http://www.videogame-ontology.org/ontology#character/Abul_Nuquod> rdfs:label "Abu'l Nuquod" ;
+    vg:appearsIn vg:Assassins_Creed ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> .
+<http://www.videogame-ontology.org/ontology#character/Achilles_Davenport> rdfs:label "Achilles Davenport" ;
+    vg:antagonistOf vg:Assassins_Creed_Rogue .
+<http://www.videogame-ontology.org/ontology#character/Adewale> rdfs:label "Adéwalé" ;
+    vg:appearsIn vg:Assassins_Creed_Rogue ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Shay_Patrick_Cormac> .
+<http://www.videogame-ontology.org/ontology#character/Agahnim> rdfs:label "Agahnim" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_A_Link_to_the_Past .
+<http://www.videogame-ontology.org/ontology#character/Ahmet> rdfs:label "Ahmet" ;
+    vg:antagonistOf vg:Assassins_Creed_Revelations ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Selim_I> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Sehzade_Ahmet> .
+<http://www.videogame-ontology.org/ontology#character/Akechi_Mitsuhide> rdfs:label "Akechi Mitsuhide" ;
+    vg:appearsIn vg:Assassins_Creed_Shadows ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Akechi_Mitsuhide> .
+<http://www.videogame-ontology.org/ontology#character/Al_Mualim> a vg:Human ;
+    rdfs:label "Al Mualim" ;
+    vg:antagonistOf vg:Assassins_Creed ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> .
+<http://www.videogame-ontology.org/ontology#character/Alcibiades> rdfs:label "Alcibiades" ;
+    vg:appearsIn vg:Assassins_Creed_Odyssey ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Alcibiades> .
+<http://www.videogame-ontology.org/ontology#character/Aldo_Mendez> rdfs:label "Aldo Mendez" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_VI .
+<http://www.videogame-ontology.org/ontology#character/Alexander_Graham_Bell> rdfs:label "Alexander Graham Bell" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Alexander_Graham_Bell> .
+<http://www.videogame-ontology.org/ontology#character/Alfred_the_Great> rdfs:label "Alfred the Great" ;
+    vg:appearsIn vg:Assassins_Creed_Valhalla ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Alfred_the_Great> .
+<http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> rdfs:label "Altaïr Ibn-La'Ahad" ;
+    vg:protagonistOf vg:Assassins_Creed , vg:Assassins_Creed_Revelations .
+<http://www.videogame-ontology.org/ontology#character/Anne_Bonny> rdfs:label "Anne Bonny" ;
+    vg:appearsIn vg:Assassins_Creed_IV_Black_Flag ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Anne_Bonny> .
+<http://www.videogame-ontology.org/ontology#character/Apollodorus> rdfs:label "Apollodorus" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Apollodorus_of_Sicily> .
+<http://www.videogame-ontology.org/ontology#character/Arno_Dorian> a vg:Human ;
+    rdfs:label "Arno Dorian" ;
+    vg:protagonistOf vg:Assassins_Creed_Unity .
+<http://www.videogame-ontology.org/ontology#character/Ashen_One> rdfs:label "Ashen One" ;
+    vg:protagonistOf vg:Dark_Souls_III .
+<http://www.videogame-ontology.org/ontology#character/Aspasia> rdfs:label "Aspasia" ;
+    vg:appearsIn vg:Assassins_Creed_Odyssey ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Aspasia> .
+<http://www.videogame-ontology.org/ontology#character/Asuka_Kasen> a vg:Human ;
+    rdfs:label "Asuka Kasen" ;
+    vg:appearsIn vg:Grand_Theft_Auto_III ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Catalina> .
+<http://www.videogame-ontology.org/ontology#character/Aya> a vg:Human ;
+    rdfs:label "Aya" ;
+    vg:protagonistOf vg:Assassins_Creed_Origins .
+<http://www.videogame-ontology.org/ontology#character/Aya_and_the_conspirators> rdfs:label "Aya and the conspirators" ;
+    vg:appearsIn vg:Assassins_Creed_Origins .
+<http://www.videogame-ontology.org/ontology#character/Azar_Javed> rdfs:label "Azar Javed" ;
+    vg:antagonistOf vg:The_Witcher ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Geralt_of_Rivia> .
+<http://www.videogame-ontology.org/ontology#character/Banu_Musa_brothers> rdfs:label "Banū Mūsā brothers" ;
+    vg:appearsIn vg:Assassins_Creed_Mirage ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Banu_Musa> .
+<http://www.videogame-ontology.org/ontology#character/Bartholomew_Roberts> a vg:Human ;
+    rdfs:label "Bartholomew Roberts" ;
+    vg:antagonistOf vg:Assassins_Creed_IV_Black_Flag ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Edward_Kenway> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Bartholomew_Roberts> .
+<http://www.videogame-ontology.org/ontology#character/Bartolomeo_dAlviano> rdfs:label "Bartolomeo d'Alviano" ;
+    vg:appearsIn vg:Assassins_Creed_II ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Bartolomeo_dAlviano> .
+<http://www.videogame-ontology.org/ontology#character/Basim_Ibn_Ishaq> rdfs:label "Basim Ibn Ishaq" ;
+    vg:protagonistOf vg:Assassins_Creed_Mirage .
+<http://www.videogame-ontology.org/ontology#character/Bayek_of_Siwa> rdfs:label "Bayek of Siwa" ;
+    vg:protagonistOf vg:Assassins_Creed_Origins .
+<http://www.videogame-ontology.org/ontology#character/Bayezid_II> rdfs:label "Bayezid II" ;
+    vg:appearsIn vg:Assassins_Creed_Revelations ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Bayezid_II> .
+<http://www.videogame-ontology.org/ontology#character/Bearer_of_the_Curse> rdfs:label "Bearer of the Curse" ;
+    vg:protagonistOf vg:Dark_Souls_II .
+<http://www.videogame-ontology.org/ontology#character/Bellum> rdfs:label "Bellum" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Phantom_Hourglass ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Link> .
+<http://www.videogame-ontology.org/ontology#character/Benezia> rdfs:label "Benezia" ;
+    vg:antagonistOf vg:Mass_Effect .
+<http://www.videogame-ontology.org/ontology#character/Benjamin_Church> rdfs:label "Benjamin Church" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Benjamin_Church> .
+<http://www.videogame-ontology.org/ontology#character/Benjamin_Disraeli> rdfs:label "Benjamin Disraeli" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Benjamin_Disraeli> .
+<http://www.videogame-ontology.org/ontology#character/Benjamin_Franklin> rdfs:label "Benjamin Franklin" ;
+    vg:appearsIn vg:Assassins_Creed_III , vg:Assassins_Creed_Rogue ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Benjamin_Franklin> .
+<http://www.videogame-ontology.org/ontology#character/Benjamin_Hornigold> rdfs:label "Benjamin Hornigold" ;
+    vg:appearsIn vg:Assassins_Creed_IV_Black_Flag ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Benjamin_Hornigold> .
+<http://www.videogame-ontology.org/ontology#character/Benny> rdfs:label "Benny" ;
+    vg:antagonistOf vg:Fallout_New_Vegas .
+<http://www.videogame-ontology.org/ontology#character/Big_Smoke> a vg:Human ;
+    rdfs:label "Big Smoke" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_San_Andreas ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Carl_CJ_Johnson> .
+<http://www.videogame-ontology.org/ontology#character/Blackbeard> rdfs:label "Blackbeard" ;
+    vg:appearsIn vg:Assassins_Creed_IV_Black_Flag ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Edward_Thatch> .
+<http://www.videogame-ontology.org/ontology#character/Bowser> rdfs:label "Bowser" ;
+    vg:antagonistOf vg:Super_Mario_Bros , vg:Super_Mario_Bros_3 , vg:Super_Mario_World , vg:Super_Mario_64 , vg:Super_Mario_Sunshine , vg:New_Super_Mario_Bros , vg:Super_Mario_Galaxy , vg:Super_Mario_Galaxy_2 , vg:Super_Mario_3D_Land , vg:Super_Mario_3D_World , vg:Super_Mario_Odyssey , vg:Super_Mario_Bros_Wonder .
+<http://www.videogame-ontology.org/ontology#character/Bowser_Jr> rdfs:label "Bowser Jr." ;
+    vg:antagonistOf vg:Super_Mario_Sunshine , vg:New_Super_Mario_Bros .
+<http://www.videogame-ontology.org/ontology#character/Brasidas> rdfs:label "Brasidas" ;
+    vg:appearsIn vg:Assassins_Creed_Odyssey ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Brasidas> .
+<http://www.videogame-ontology.org/ontology#character/Brutus> rdfs:label "Brutus" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Marcus_Junius_Brutus> .
+<http://www.videogame-ontology.org/ontology#character/Barid_mac_Imair> rdfs:label "Bárid mac Ímair" ;
+    vg:appearsIn vg:Assassins_Creed_Valhalla ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Barid_mac_Imair> .
+<http://www.videogame-ontology.org/ontology#character/Calico_Jack_Rackham> rdfs:label "Calico Jack Rackham" ;
+    vg:appearsIn vg:Assassins_Creed_IV_Black_Flag ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Calico_Jack_Rackham> .
+<http://www.videogame-ontology.org/ontology#character/Carl_CJ_Johnson> a vg:Human ;
+    rdfs:label "Carl 'CJ' Johnson" ;
+    vg:protagonistOf vg:Grand_Theft_Auto_San_Andreas .
+<http://www.videogame-ontology.org/ontology#character/Cassius> rdfs:label "Cassius" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Gaius_Cassius_Longinus> .
+<http://www.videogame-ontology.org/ontology#character/Catalina> a vg:Human ;
+    rdfs:label "Catalina" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_III ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Claude> .
+<http://www.videogame-ontology.org/ontology#character/Caterina_Sforza> rdfs:label "Caterina Sforza" ;
+    vg:appearsIn vg:Assassins_Creed_II , vg:Assassins_Creed_Brotherhood ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Caterina_Sforza> .
+<http://www.videogame-ontology.org/ontology#character/Ceolwulf_II> rdfs:label "Ceolwulf II" ;
+    vg:appearsIn vg:Assassins_Creed_Valhalla ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Ceolwulf_II_of_Mercia> .
+<http://www.videogame-ontology.org/ontology#character/Cesare_Borgia> a vg:Human ;
+    rdfs:label "Cesare Borgia" ;
+    vg:antagonistOf vg:Assassins_Creed_Brotherhood ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Ezio_Auditore_da_Firenze> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Cesare_Borgia> .
+<http://www.videogame-ontology.org/ontology#character/Chancellor_Cole> rdfs:label "Chancellor Cole" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Spirit_Tracks .
+<http://www.videogame-ontology.org/ontology#character/Charles_Darwin> rdfs:label "Charles Darwin" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Charles_Darwin> .
+<http://www.videogame-ontology.org/ontology#character/Charles_Dickens> rdfs:label "Charles Dickens" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Charles_Dickens> .
+<http://www.videogame-ontology.org/ontology#character/Charles_Dorian> rdfs:label "Charles Dorian" ;
+    vg:appearsIn vg:Assassins_Creed_Rogue ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Shay_Patrick_Cormac> .
+<http://www.videogame-ontology.org/ontology#character/Charles_Lee> a vg:Human ;
+    rdfs:label "Charles Lee" ;
+    vg:antagonistOf vg:Assassins_Creed_III ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Connor> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Charles_Lee> .
+<http://www.videogame-ontology.org/ontology#character/Charles_Vane> rdfs:label "Charles Vane" ;
+    vg:appearsIn vg:Assassins_Creed_IV_Black_Flag ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Charles_Vane> .
+<http://www.videogame-ontology.org/ontology#character/Checco_Orsi> rdfs:label "Checco Orsi" ;
+    vg:appearsIn vg:Assassins_Creed_II ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Ezio_Auditore_da_Firenze> .
+<http://www.videogame-ontology.org/ontology#character/Chell> a vg:Human ;
+    rdfs:label "Chell" ;
+    vg:protagonistOf vg:Portal , vg:Portal_2 .
+<http://www.videogame-ontology.org/ontology#character/Chosen_Undead> a vg:Human ;
+    rdfs:label "Chosen Undead" ;
+    vg:protagonistOf vg:Dark_Souls .
+<http://www.videogame-ontology.org/ontology#character/Claude> a vg:Human ;
+    rdfs:label "Claude" ;
+    vg:protagonistOf vg:Grand_Theft_Auto_III .
+<http://www.videogame-ontology.org/ontology#character/Cleopatra> rdfs:label "Cleopatra" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Cleopatra_VII> .
+<http://www.videogame-ontology.org/ontology#character/Colonel_Augustus_Autumn> rdfs:label "Colonel Augustus Autumn" ;
+    vg:antagonistOf vg:Fallout_3 .
+<http://www.videogame-ontology.org/ontology#character/Commander_Shepard> a vg:Human ;
+    rdfs:label "Commander Shepard" ;
+    vg:protagonistOf vg:Mass_Effect , vg:Mass_Effect_2 , vg:Mass_Effect_3 .
+<http://www.videogame-ontology.org/ontology#character/Connor> a vg:Human ;
+    rdfs:label "Connor" ;
+    vg:protagonistOf vg:Assassins_Creed_III .
+<http://www.videogame-ontology.org/ontology#character/Conrad_Kellogg> rdfs:label "Conrad Kellogg" ;
+    vg:antagonistOf vg:Fallout_4 ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Sole_Survivor> .
+<http://www.videogame-ontology.org/ontology#character/Cortana> a vg:ArtificialIntelligence ;
+    rdfs:label "Cortana" ;
+    vg:protagonistOf vg:Halo_4 .
+<http://www.videogame-ontology.org/ontology#character/Crawford_Starrick> rdfs:label "Crawford Starrick" ;
+    vg:antagonistOf vg:Assassins_Creed_Syndicate .
+<http://www.videogame-ontology.org/ontology#character/Daniel_Cross> rdfs:label "Daniel Cross" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Desmond_Miles> .
+<http://www.videogame-ontology.org/ontology#character/David_Brewster> rdfs:label "David Brewster" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Evie_Frye> .
+<http://www.videogame-ontology.org/ontology#character/Deimos> a vg:Human ;
+    rdfs:label "Deimos" ;
+    vg:antagonistOf vg:Assassins_Creed_Odyssey .
+<http://www.videogame-ontology.org/ontology#character/Demise> rdfs:label "Demise" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Skyward_Sword ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Link> .
+<http://www.videogame-ontology.org/ontology#character/Desmond_Miles> a vg:Human ;
+    rdfs:label "Desmond Miles" ;
+    vg:protagonistOf vg:Assassins_Creed , vg:Assassins_Creed_II , vg:Assassins_Creed_Brotherhood , vg:Assassins_Creed_Revelations , vg:Assassins_Creed_III .
+<http://www.videogame-ontology.org/ontology#character/Devin_Weston> rdfs:label "Devin Weston" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_V .
+<http://www.videogame-ontology.org/ontology#character/Dimitri_Rascalov> a vg:Human ;
+    rdfs:label "Dimitri Rascalov" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_IV ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Niko_Bellic> .
+<http://www.videogame-ontology.org/ontology#character/Donald_Love> a vg:Human ;
+    rdfs:label "Donald Love" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_III .
+<http://www.videogame-ontology.org/ontology#character/Dr_John_Elliotson> rdfs:label "Dr. John Elliotson" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Jacob_Frye> .
+<http://www.videogame-ontology.org/ontology#character/Duarte_de_Melo> rdfs:label "Duarte de Melo" ;
+    vg:antagonistOf vg:Assassins_Creed_Shadows ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Yasuke> .
+<http://www.videogame-ontology.org/ontology#character/Duleep_Singh> rdfs:label "Duleep Singh" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Duleep_Singh> .
+<http://www.videogame-ontology.org/ontology#character/Duncan_Walpole> rdfs:label "Duncan Walpole" ;
+    vg:appearsIn vg:Assassins_Creed_IV_Black_Flag ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Edward_Kenway> .
+<http://www.videogame-ontology.org/ontology#character/Edward_Braddock> rdfs:label "Edward Braddock" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Edward_Braddock> .
+<http://www.videogame-ontology.org/ontology#character/Edward_Kenway> a vg:Human ;
+    rdfs:label "Edward Kenway" ;
+    vg:protagonistOf vg:Assassins_Creed_IV_Black_Flag .
+<http://www.videogame-ontology.org/ontology#character/Eivor_Varinsdottir> rdfs:label "Eivor Varinsdottir" ;
+    vg:protagonistOf vg:Assassins_Creed_Valhalla .
+<http://www.videogame-ontology.org/ontology#character/Elpenor> rdfs:label "Elpenor" ;
+    vg:antagonistOf vg:Assassins_Creed_Odyssey ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/The_Eagle_Bearer> .
+<http://www.videogame-ontology.org/ontology#character/Eredin> rdfs:label "Eredin" ;
+    vg:antagonistOf vg:The_Witcher_3_Wild_Hunt ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Geralt_of_Rivia> .
+<http://www.videogame-ontology.org/ontology#character/Eudoros> rdfs:label "Eudoros" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Bayek_of_Siwa> .
+<http://www.videogame-ontology.org/ontology#character/Evie_Frye> a vg:Human ;
+    rdfs:label "Evie Frye" ;
+    vg:protagonistOf vg:Assassins_Creed_Syndicate .
+<http://www.videogame-ontology.org/ontology#character/Ezio_Auditore_da_Firenze> rdfs:label "Ezio Auditore da Firenze" ;
+    vg:protagonistOf vg:Assassins_Creed_II , vg:Assassins_Creed_Brotherhood , vg:Assassins_Creed_Revelations .
+<http://www.videogame-ontology.org/ontology#character/Flann_Sinna> rdfs:label "Flann Sinna" ;
+    vg:appearsIn vg:Assassins_Creed_Valhalla ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Flann_Sinna> .
+<http://www.videogame-ontology.org/ontology#character/Flavius_Metellus> rdfs:label "Flavius Metellus" ;
+    vg:antagonistOf vg:Assassins_Creed_Origins ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Bayek_of_Siwa> .
+<http://www.videogame-ontology.org/ontology#character/Florence_Nightingale> rdfs:label "Florence Nightingale" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Florence_Nightingale> .
+<http://www.videogame-ontology.org/ontology#character/Francesco_de_Pazzi> rdfs:label "Francesco de' Pazzi" ;
+    vg:appearsIn vg:Assassins_Creed_II ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Francesco_de_Pazzi> .
+<http://www.videogame-ontology.org/ontology#character/Frank_Tenpenny> a vg:Human ;
+    rdfs:label "Frank Tenpenny" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_San_Andreas .
+<http://www.videogame-ontology.org/ontology#character/Franklin_Clinton> a vg:Human ;
+    rdfs:label "Franklin Clinton" ;
+    vg:protagonistOf vg:Grand_Theft_Auto_V .
+<http://www.videogame-ontology.org/ontology#character/Francois_Thomas_Germain> a vg:Human ;
+    rdfs:label "François-Thomas Germain" ;
+    vg:antagonistOf vg:Assassins_Creed_Unity ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Arno_Dorian> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Francois_Thomas_Germain> .
+<http://www.videogame-ontology.org/ontology#character/Frederick_Abberline> rdfs:label "Frederick Abberline" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Frederick_Abberline> .
+<http://www.videogame-ontology.org/ontology#character/Fujibayashi_Naoe> rdfs:label "Fujibayashi Naoe" ;
+    vg:protagonistOf vg:Assassins_Creed_Shadows .
+<http://www.videogame-ontology.org/ontology#character/Fulke> rdfs:label "Fulke" ;
+    vg:antagonistOf vg:Assassins_Creed_Valhalla .
+<http://www.videogame-ontology.org/ontology#character/GLaDOS> a vg:ArtificialIntelligence ;
+    rdfs:label "GLaDOS" ;
+    vg:antagonistOf vg:Portal , vg:Portal_2 .
+<http://www.videogame-ontology.org/ontology#character/Gamilat> rdfs:label "Gamilat" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Bayek_of_Siwa> .
+<http://www.videogame-ontology.org/ontology#character/Ganondorf> rdfs:label "Ganondorf" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda , vg:Zelda_II_The_Adventure_of_Link , vg:The_Legend_of_Zelda_A_Link_to_the_Past , vg:The_Legend_of_Zelda_Ocarina_of_Time , vg:The_Legend_of_Zelda_The_Wind_Waker , vg:The_Legend_of_Zelda_Twilight_Princess , vg:The_Legend_of_Zelda_A_Link_Between_Worlds , vg:The_Legend_of_Zelda_Breath_of_the_Wild , vg:The_Legend_of_Zelda_Tears_of_the_Kingdom ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Link> .
+<http://www.videogame-ontology.org/ontology#character/Garnier_de_Nablus> rdfs:label "Garnier de Nablus" ;
+    vg:appearsIn vg:Assassins_Creed ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Garnier_of_Nablus> .
+<http://www.videogame-ontology.org/ontology#character/George_Monro> rdfs:label "George Monro" ;
+    vg:appearsIn vg:Assassins_Creed_Rogue ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/George_Monro> .
+<http://www.videogame-ontology.org/ontology#character/George_Washington> rdfs:label "George Washington" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/George_Washington> .
+<http://www.videogame-ontology.org/ontology#character/Geralt_of_Rivia> a vg:Human ;
+    rdfs:label "Geralt of Rivia" ;
+    vg:protagonistOf vg:The_Witcher , vg:The_Witcher_2_Assassins_of_Kings , vg:The_Witcher_3_Wild_Hunt .
+<http://www.videogame-ontology.org/ontology#character/Ghirahim> rdfs:label "Ghirahim" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Skyward_Sword .
+<http://www.videogame-ontology.org/ontology#character/Girolamo_Savonarola> rdfs:label "Girolamo Savonarola" ;
+    vg:appearsIn vg:Assassins_Creed_II ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Girolamo_Savonarola> .
+<http://www.videogame-ontology.org/ontology#character/Guthrum> rdfs:label "Guthrum" ;
+    vg:appearsIn vg:Assassins_Creed_Valhalla ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Guthrum> .
+<http://www.videogame-ontology.org/ontology#character/Gwyn_Lord_of_Sunlight> rdfs:label "Gwyn, Lord of Sunlight" ;
+    vg:antagonistOf vg:Dark_Souls ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Chosen_Undead> .
+<http://www.videogame-ontology.org/ontology#character/Halfdan_Ragnarsson> rdfs:label "Halfdan Ragnarsson" ;
+    vg:appearsIn vg:Assassins_Creed_Valhalla ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Halfdan_Ragnarsson> .
+<http://www.videogame-ontology.org/ontology#character/Harald_Fairhair> rdfs:label "Harald Fairhair" ;
+    vg:appearsIn vg:Assassins_Creed_Valhalla ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Harald_Fairhair> .
+<http://www.videogame-ontology.org/ontology#character/Haytham_Kenway> a vg:Human ;
+    rdfs:label "Haytham Kenway" ;
+    vg:protagonistOf vg:Assassins_Creed_III ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Connor> .
+<http://www.videogame-ontology.org/ontology#character/Herodotus> rdfs:label "Herodotus" ;
+    vg:appearsIn vg:Assassins_Creed_Odyssey ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Herodotus> .
+<http://www.videogame-ontology.org/ontology#character/Hilda> rdfs:label "Hilda" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_A_Link_Between_Worlds .
+<http://www.videogame-ontology.org/ontology#character/Hippocrates> rdfs:label "Hippocrates" ;
+    vg:appearsIn vg:Assassins_Creed_Odyssey ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Hippocrates> .
+<http://www.videogame-ontology.org/ontology#character/Hope_Jensen> rdfs:label "Hope Jensen" ;
+    vg:antagonistOf vg:Assassins_Creed_Rogue ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Shay_Patrick_Cormac> .
+<http://www.videogame-ontology.org/ontology#character/Human_Reaper> rdfs:label "Human-Reaper" ;
+    vg:antagonistOf vg:Mass_Effect_2 ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Commander_Shepard> .
+<http://www.videogame-ontology.org/ontology#character/Imlerith> rdfs:label "Imlerith" ;
+    vg:antagonistOf vg:The_Witcher_3_Wild_Hunt .
+<http://www.videogame-ontology.org/ontology#character/Israel_Putnam> rdfs:label "Israel Putnam" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Israel_Putnam> .
+<http://www.videogame-ontology.org/ontology#character/Ivar_the_Boneless> rdfs:label "Ivar the Boneless" ;
+    vg:appearsIn vg:Assassins_Creed_Valhalla ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Eivor_Varinsdottir> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Ivar_the_Boneless> .
+<http://www.videogame-ontology.org/ontology#character/Jacob_Frye> a vg:Human ;
+    rdfs:label "Jacob Frye" ;
+    vg:protagonistOf vg:Assassins_Creed_Syndicate .
+<http://www.videogame-ontology.org/ontology#character/Jacopo_de_Pazzi> rdfs:label "Jacopo de' Pazzi" ;
+    vg:appearsIn vg:Assassins_Creed_II ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Jacopo_de_Pazzi> .
+<http://www.videogame-ontology.org/ontology#character/Jacques_de_Aldersberg> a vg:Human ;
+    rdfs:label "Jacques de Aldersberg" ;
+    vg:appearsIn vg:The_Witcher ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Geralt_of_Rivia> .
+<http://www.videogame-ontology.org/ontology#character/James_Brudenell_7th_Earl_of_Cardigan> rdfs:label "James Brudenell, 7th Earl of Cardigan" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Jacob_Frye> .
+<http://www.videogame-ontology.org/ontology#character/Jason_Duval> a vg:Human ;
+    rdfs:label "Jason Duval" ;
+    vg:protagonistOf vg:Grand_Theft_Auto_VI .
+<http://www.videogame-ontology.org/ontology#character/Jimmy_Pegorino> rdfs:label "Jimmy Pegorino" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_IV .
+<http://www.videogame-ontology.org/ontology#character/John_Pitcairn> rdfs:label "John Pitcairn" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/John_Pitcairn> .
+<http://www.videogame-ontology.org/ontology#character/Jubair_al_Hakim> rdfs:label "Jubair al Hakim" ;
+    vg:appearsIn vg:Assassins_Creed ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> .
+<http://www.videogame-ontology.org/ontology#character/Jul_Mdama> rdfs:label "Jul 'Mdama" ;
+    vg:antagonistOf vg:Halo_4 .
+<http://www.videogame-ontology.org/ontology#character/Julius_Caesar> rdfs:label "Julius Caesar" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Aya_and_the_conspirators> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Julius_Caesar> .
+<http://www.videogame-ontology.org/ontology#character/Kai_Leng> a vg:Human ;
+    rdfs:label "Kai Leng" ;
+    vg:antagonistOf vg:Mass_Effect_3 ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Commander_Shepard> .
+<http://www.videogame-ontology.org/ontology#character/Kanento_kon> rdfs:label "Kanen'tó:kon" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Connor> .
+<http://www.videogame-ontology.org/ontology#character/Karl_Marx> rdfs:label "Karl Marx" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Karl_Marx> .
+<http://www.videogame-ontology.org/ontology#character/Kenji_Kasen> rdfs:label "Kenji Kasen" ;
+    vg:appearsIn vg:Grand_Theft_Auto_III ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Claude> .
+<http://www.videogame-ontology.org/ontology#character/Kesegowaase> rdfs:label "Kesegowaase" ;
+    vg:appearsIn vg:Assassins_Creed_Rogue ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Shay_Patrick_Cormac> .
+<http://www.videogame-ontology.org/ontology#character/Khemu> rdfs:label "Khemu" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Bayek_of_Siwa> .
+<http://www.videogame-ontology.org/ontology#character/Kimura_Kei> rdfs:label "Kimura Kei" ;
+    vg:appearsIn vg:Assassins_Creed_Shadows ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Yasuke> .
+<http://www.videogame-ontology.org/ontology#character/King_Foltest> rdfs:label "King Foltest" ;
+    vg:appearsIn vg:The_Witcher_2_Assassins_of_Kings ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Letho> .
+<http://www.videogame-ontology.org/ontology#character/Kjotve_the_Cruel> rdfs:label "Kjotve the Cruel" ;
+    vg:antagonistOf vg:Assassins_Creed_Valhalla .
+<http://www.videogame-ontology.org/ontology#character/Kleon> rdfs:label "Kleon" ;
+    vg:appearsIn vg:Assassins_Creed_Odyssey ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Cleon> .
+<http://www.videogame-ontology.org/ontology#character/Lady_Maud> rdfs:label "Lady Maud" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Tri_Force_Heroes .
+<http://www.videogame-ontology.org/ontology#character/Lafreniere> rdfs:label "Lafreniere" ;
+    vg:appearsIn vg:Assassins_Creed_Unity ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Arno_Dorian> .
+<http://www.videogame-ontology.org/ontology#character/Lance_Vance> a vg:Human ;
+    rdfs:label "Lance Vance" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_Vice_City ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Tommy_Vercetti> .
+<http://www.videogame-ontology.org/ontology#character/Laureano_Torres> rdfs:label "Laureano Torres" ;
+    vg:antagonistOf vg:Assassins_Creed_IV_Black_Flag ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Edward_Kenway> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Laureano_de_Torres_y_Ayala> .
+<http://www.videogame-ontology.org/ontology#character/Layla_Hassan> a vg:Human ;
+    rdfs:label "Layla Hassan" ;
+    vg:protagonistOf vg:Assassins_Creed_Origins , vg:Assassins_Creed_Odyssey , vg:Assassins_Creed_Valhalla .
+<http://www.videogame-ontology.org/ontology#character/Leader_of_the_Zanj_Rebellion> rdfs:label "Leader of the Zanj Rebellion" ;
+    vg:appearsIn vg:Assassins_Creed_Mirage ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Ali_ibn_Muhammad> .
+<http://www.videogame-ontology.org/ontology#character/Leonardo_da_Vinci> a vg:Human ;
+    rdfs:label "Leonardo da Vinci" ;
+    vg:appearsIn vg:Assassins_Creed_II , vg:Assassins_Creed_Brotherhood ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Leonardo_da_Vinci> .
+<http://www.videogame-ontology.org/ontology#character/Letho> a vg:Human ;
+    rdfs:label "Letho" ;
+    vg:antagonistOf vg:The_Witcher_2_Assassins_of_Kings .
+<http://www.videogame-ontology.org/ontology#character/Liam_OBrien> rdfs:label "Liam O'Brien" ;
+    vg:antagonistOf vg:Assassins_Creed_Rogue ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Shay_Patrick_Cormac> .
+<http://www.videogame-ontology.org/ontology#character/Link> a vg:Human ;
+    rdfs:label "Link" ;
+    vg:protagonistOf vg:The_Legend_of_Zelda , vg:Zelda_II_The_Adventure_of_Link , vg:The_Legend_of_Zelda_A_Link_to_the_Past , vg:The_Legend_of_Zelda_Links_Awakening , vg:The_Legend_of_Zelda_Ocarina_of_Time , vg:The_Legend_of_Zelda_Majoras_Mask , vg:The_Legend_of_Zelda_Oracle_of_Seasons , vg:The_Legend_of_Zelda_Oracle_of_Ages , vg:The_Legend_of_Zelda_Four_Swords , vg:The_Legend_of_Zelda_The_Wind_Waker , vg:The_Legend_of_Zelda_Four_Swords_Adventures , vg:The_Legend_of_Zelda_The_Minish_Cap , vg:The_Legend_of_Zelda_Twilight_Princess , vg:The_Legend_of_Zelda_Phantom_Hourglass , vg:The_Legend_of_Zelda_Spirit_Tracks , vg:The_Legend_of_Zelda_Skyward_Sword , vg:The_Legend_of_Zelda_A_Link_Between_Worlds , vg:The_Legend_of_Zelda_Tri_Force_Heroes , vg:The_Legend_of_Zelda_Breath_of_the_Wild , vg:The_Legend_of_Zelda_Tears_of_the_Kingdom .
+<http://www.videogame-ontology.org/ontology#character/Lone_Wanderer> a vg:Human ;
+    rdfs:label "Lone Wanderer" ;
+    vg:protagonistOf vg:Fallout_3 .
+<http://www.videogame-ontology.org/ontology#character/Lorenzo_de_Medici> rdfs:label "Lorenzo de' Medici" ;
+    vg:appearsIn vg:Assassins_Creed_II ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Lorenzo_de_Medici> .
+<http://www.videogame-ontology.org/ontology#character/Louis_XVI> rdfs:label "Louis XVI" ;
+    vg:appearsIn vg:Assassins_Creed_Unity ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Louis_XVI> .
+<http://www.videogame-ontology.org/ontology#character/Louis_Joseph_Gaultier_de_La_Verendrye> rdfs:label "Louis-Joseph Gaultier de La Vérendrye" ;
+    vg:appearsIn vg:Assassins_Creed_Rogue ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Shay_Patrick_Cormac> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Louis_Joseph_Gaultier_de_La_Verendrye> .
+<http://www.videogame-ontology.org/ontology#character/Lucia_Caminos> a vg:Human ;
+    rdfs:label "Lucia Caminos" ;
+    vg:protagonistOf vg:Grand_Theft_Auto_VI .
+<http://www.videogame-ontology.org/ontology#character/Lucius_Septimius> rdfs:label "Lucius Septimius" ;
+    vg:antagonistOf vg:Assassins_Creed_Origins ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Aya> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Lucius_Septimius> .
+<http://www.videogame-ontology.org/ontology#character/Lucy_Stillman> rdfs:label "Lucy Stillman" ;
+    vg:appearsIn vg:Assassins_Creed_Brotherhood ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Desmond_Miles> .
+<http://www.videogame-ontology.org/ontology#character/Lucy_Thorne> rdfs:label "Lucy Thorne" ;
+    vg:antagonistOf vg:Assassins_Creed_Syndicate ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Evie_Frye> .
+<http://www.videogame-ontology.org/ontology#character/Ludovico_Orsi> rdfs:label "Ludovico Orsi" ;
+    vg:appearsIn vg:Assassins_Creed_II ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Ezio_Auditore_da_Firenze> .
+<http://www.videogame-ontology.org/ontology#character/Majd_Addin> rdfs:label "Majd Addin" ;
+    vg:appearsIn vg:Assassins_Creed ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> .
+<http://www.videogame-ontology.org/ontology#character/Malcolm_Milner> rdfs:label "Malcolm Milner" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Jacob_Frye> .
+<http://www.videogame-ontology.org/ontology#character/Malik_Al_Sayf> rdfs:label "Malik Al-Sayf" ;
+    vg:appearsIn vg:Assassins_Creed_Revelations ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Abbas_Sofian> .
+<http://www.videogame-ontology.org/ontology#character/Malladus> rdfs:label "Malladus" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Spirit_Tracks .
+<http://www.videogame-ontology.org/ontology#character/Manuel_Palaiologos> rdfs:label "Manuel Palaiologos" ;
+    vg:antagonistOf vg:Assassins_Creed_Revelations ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Ezio_Auditore_da_Firenze> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Manuel_Palaiologos> .
+<http://www.videogame-ontology.org/ontology#character/Mario> a vg:Human ;
+    rdfs:label "Mario" ;
+    vg:protagonistOf vg:Super_Mario_Bros , vg:Super_Mario_Bros_2 , vg:Super_Mario_Bros_3 , vg:Super_Mario_World , vg:Super_Mario_64 , vg:Super_Mario_Sunshine , vg:New_Super_Mario_Bros , vg:Super_Mario_Galaxy , vg:Super_Mario_Galaxy_2 , vg:Super_Mario_3D_Land , vg:Super_Mario_3D_World , vg:Super_Mario_Odyssey , vg:Super_Mario_Bros_Wonder .
+<http://www.videogame-ontology.org/ontology#character/Mario_Auditore> rdfs:label "Mario Auditore" ;
+    vg:appearsIn vg:Assassins_Creed_Brotherhood ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Cesare_Borgia> .
+<http://www.videogame-ontology.org/ontology#character/Marquis_de_Lafayette> rdfs:label "Marquis de Lafayette" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Marquis_de_Lafayette> .
+<http://www.videogame-ontology.org/ontology#character/Marquis_de_Sade> rdfs:label "Marquis de Sade" ;
+    vg:appearsIn vg:Assassins_Creed_Unity ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Marquis_de_Sade> .
+<http://www.videogame-ontology.org/ontology#character/Martin_Madrazo> rdfs:label "Martin Madrazo" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_V .
+<http://www.videogame-ontology.org/ontology#character/Mary_Read> rdfs:label "Mary Read" ;
+    vg:appearsIn vg:Assassins_Creed_IV_Black_Flag ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Mary_Read> .
+<http://www.videogame-ontology.org/ontology#character/Master_Chief> a vg:Human ;
+    rdfs:label "Master Chief" ;
+    vg:protagonistOf vg:Halo_4 .
+<http://www.videogame-ontology.org/ontology#character/Master_Sibrand> rdfs:label "Master Sibrand" ;
+    vg:appearsIn vg:Assassins_Creed ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> .
+<http://www.videogame-ontology.org/ontology#character/Maxwell_Roth> rdfs:label "Maxwell Roth" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Jacob_Frye> .
+<http://www.videogame-ontology.org/ontology#character/Michael_De_Santa> a vg:Human ;
+    rdfs:label "Michael De Santa" ;
+    vg:protagonistOf vg:Grand_Theft_Auto_V .
+<http://www.videogame-ontology.org/ontology#character/Midna> rdfs:label "Midna" ;
+    vg:appearsIn vg:The_Legend_of_Zelda_Twilight_Princess .
+<http://www.videogame-ontology.org/ontology#character/Miguel> rdfs:label "Miguel" ;
+    vg:appearsIn vg:Grand_Theft_Auto_III ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Catalina> .
+<http://www.videogame-ontology.org/ontology#character/Mikhail_Faustin> rdfs:label "Mikhail Faustin" ;
+    vg:appearsIn vg:Grand_Theft_Auto_IV ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Niko_Bellic> .
+<http://www.videogame-ontology.org/ontology#character/Mirabeau> rdfs:label "Mirabeau" ;
+    vg:appearsIn vg:Assassins_Creed_Unity ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Pierre_Bellec> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Comte_de_Mirabeau> .
+<http://www.videogame-ontology.org/ontology#character/Momochi_Sandayu> rdfs:label "Momochi Sandayu" ;
+    vg:appearsIn vg:Assassins_Creed_Shadows ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Yasuke> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Momochi_Sandayu> .
+<http://www.videogame-ontology.org/ontology#character/Muhammad_ibn_Abdallah_ibn_Tahir> rdfs:label "Muhammad ibn Abdallah ibn Tahir" ;
+    vg:appearsIn vg:Assassins_Creed_Mirage ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Muhammad_ibn_Abdallah_ibn_Tahir> .
+<http://www.videogame-ontology.org/ontology#character/Napoleon_Bonaparte> rdfs:label "Napoleon Bonaparte" ;
+    vg:appearsIn vg:Assassins_Creed_Unity ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Napoleon_Bonaparte> .
+<http://www.videogame-ontology.org/ontology#character/Nashandra> rdfs:label "Nashandra" ;
+    vg:antagonistOf vg:Dark_Souls_II ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Bearer_of_the_Curse> .
+<http://www.videogame-ontology.org/ontology#character/Niccolo_Machiavelli> rdfs:label "Niccolò Machiavelli" ;
+    vg:appearsIn vg:Assassins_Creed_II , vg:Assassins_Creed_Brotherhood ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Niccolo_Machiavelli> .
+<http://www.videogame-ontology.org/ontology#character/Niccolo_and_Maffeo_Polo> rdfs:label "Niccolò and Maffeo Polo" ;
+    vg:appearsIn vg:Assassins_Creed_Revelations ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Niccolo_and_Maffeo_Polo> .
+<http://www.videogame-ontology.org/ontology#character/Niko_Bellic> a vg:Human ;
+    rdfs:label "Niko Bellic" ;
+    vg:protagonistOf vg:Grand_Theft_Auto_IV .
+<http://www.videogame-ontology.org/ontology#character/Noble_Six> a vg:Human ;
+    rdfs:label "Noble Six" ;
+    vg:protagonistOf vg:Halo_Reach .
+<http://www.videogame-ontology.org/ontology#character/Null> rdfs:label "Null" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Echoes_of_Wisdom ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Zelda> .
+<http://www.videogame-ontology.org/ontology#character/Nuno_Caro> rdfs:label "Nuno Caro" ;
+    vg:antagonistOf vg:Assassins_Creed_Shadows ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Yasuke> .
+<http://www.videogame-ontology.org/ontology#character/Oda_Nobunaga> rdfs:label "Oda Nobunaga" ;
+    vg:appearsIn vg:Assassins_Creed_Shadows ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Oda_Nobunaga> .
+<http://www.videogame-ontology.org/ontology#character/Onox> rdfs:label "Onox" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Oracle_of_Seasons .
+<http://www.videogame-ontology.org/ontology#character/Paul_Revere> rdfs:label "Paul Revere" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Paul_Revere> .
+<http://www.videogame-ontology.org/ontology#character/Pearl_Attaway> rdfs:label "Pearl Attaway" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Jacob_Frye> .
+<http://www.videogame-ontology.org/ontology#character/Pericles> rdfs:label "Pericles" ;
+    vg:appearsIn vg:Assassins_Creed_Odyssey ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Pericles> .
+<http://www.videogame-ontology.org/ontology#character/Philip_Twopenny> rdfs:label "Philip Twopenny" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Jacob_Frye> .
+<http://www.videogame-ontology.org/ontology#character/Philippa_Eilhart> rdfs:label "Philippa Eilhart" ;
+    vg:antagonistOf vg:The_Witcher_2_Assassins_of_Kings .
+<http://www.videogame-ontology.org/ontology#character/Philippe_Rose> rdfs:label "Philippe Rose" ;
+    vg:appearsIn vg:Assassins_Creed_Unity ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Arno_Dorian> .
+<http://www.videogame-ontology.org/ontology#character/Pierre_Bellec> rdfs:label "Pierre Bellec" ;
+    vg:antagonistOf vg:Assassins_Creed_Unity .
+<http://www.videogame-ontology.org/ontology#character/Piri_Reis> rdfs:label "Piri Reis" ;
+    vg:appearsIn vg:Assassins_Creed_Revelations ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Piri_Reis> .
+<http://www.videogame-ontology.org/ontology#character/Pompey> rdfs:label "Pompey" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Lucius_Septimius> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Pompey_the_Great> .
+<http://www.videogame-ontology.org/ontology#character/Pothinus> rdfs:label "Pothinus" ;
+    vg:antagonistOf vg:Assassins_Creed_Origins ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Bayek_of_Siwa> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Pothinus> .
+<http://www.videogame-ontology.org/ontology#character/President_John_Henry_Eden> rdfs:label "President John Henry Eden" ;
+    vg:antagonistOf vg:Fallout_3 .
+<http://www.videogame-ontology.org/ontology#character/Ptolemy_XIII> rdfs:label "Ptolemy XIII" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Ptolemy_XIII> .
+<http://www.videogame-ontology.org/ontology#character/Qabiha> rdfs:label "Qabiha" ;
+    vg:antagonistOf vg:Assassins_Creed_Mirage ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Roshan> .
+<http://www.videogame-ontology.org/ontology#character/Queen_Victoria> rdfs:label "Queen Victoria" ;
+    vg:appearsIn vg:Assassins_Creed_Syndicate ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Queen_Victoria> .
+<http://www.videogame-ontology.org/ontology#character/Ray_Bulgarin> rdfs:label "Ray Bulgarin" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_IV .
+<http://www.videogame-ontology.org/ontology#character/Rhodri> rdfs:label "Rhodri" ;
+    vg:appearsIn vg:Assassins_Creed_Valhalla ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Rhodri_Mawr> .
+<http://www.videogame-ontology.org/ontology#character/Ricardo_Diaz> a vg:Human ;
+    rdfs:label "Ricardo Diaz" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_Vice_City ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Tommy_Vercetti> .
+<http://www.videogame-ontology.org/ontology#character/Richard_I> rdfs:label "Richard I" ;
+    vg:appearsIn vg:Assassins_Creed ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Richard_I_of_England> .
+<http://www.videogame-ontology.org/ontology#character/Robert_de_Sable> rdfs:label "Robert de Sablé" ;
+    vg:antagonistOf vg:Assassins_Creed ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Robert_de_Sable> .
+<http://www.videogame-ontology.org/ontology#character/Robespierre> rdfs:label "Robespierre" ;
+    vg:appearsIn vg:Assassins_Creed_Unity ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Maximilien_Robespierre> .
+<http://www.videogame-ontology.org/ontology#character/Rodrigo_Borgia> a vg:Human ;
+    rdfs:label "Rodrigo Borgia" ;
+    vg:antagonistOf vg:Assassins_Creed_II , vg:Assassins_Creed_Brotherhood ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Cesare_Borgia> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Rodrigo_Borgia> .
+<http://www.videogame-ontology.org/ontology#character/Roshan> a vg:Human ;
+    rdfs:label "Roshan" ;
+    vg:appearsIn vg:Assassins_Creed_Mirage .
+<http://www.videogame-ontology.org/ontology#character/Rufio> rdfs:label "Rufio" ;
+    vg:appearsIn vg:Assassins_Creed_Origins ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Bayek_of_Siwa> .
+<http://www.videogame-ontology.org/ontology#character/Ryder> rdfs:label "Ryder" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_San_Andreas .
+<http://www.videogame-ontology.org/ontology#character/Salvatore_Leone> a vg:Human ;
+    rdfs:label "Salvatore Leone" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_III ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Claude> .
+<http://www.videogame-ontology.org/ontology#character/Samuel_Adams> rdfs:label "Samuel Adams" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Samuel_Adams> .
+<http://www.videogame-ontology.org/ontology#character/Saren_Arterius> rdfs:label "Saren Arterius" ;
+    vg:antagonistOf vg:Mass_Effect .
+<http://www.videogame-ontology.org/ontology#character/Scorchbeast_Queen> rdfs:label "Scorchbeast Queen" ;
+    vg:antagonistOf vg:Fallout_76 .
+<http://www.videogame-ontology.org/ontology#character/Selim_I> rdfs:label "Selim I" ;
+    vg:appearsIn vg:Assassins_Creed_Revelations ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Selim_I> .
+<http://www.videogame-ontology.org/ontology#character/Shadow_Link> rdfs:label "Shadow Link" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Four_Swords_Adventures .
+<http://www.videogame-ontology.org/ontology#character/Shadow_Mario> rdfs:label "Shadow Mario" ;
+    vg:antagonistOf vg:Super_Mario_Sunshine .
+<http://www.videogame-ontology.org/ontology#character/Shaun> a vg:Human ;
+    rdfs:label "Shaun" ;
+    vg:antagonistOf vg:Fallout_4 .
+<http://www.videogame-ontology.org/ontology#character/Shay_Patrick_Cormac> rdfs:label "Shay Patrick Cormac" ;
+    vg:protagonistOf vg:Assassins_Creed_Rogue .
+<http://www.videogame-ontology.org/ontology#character/Sile_de_Tansarville> rdfs:label "Sile de Tansarville" ;
+    vg:antagonistOf vg:The_Witcher_2_Assassins_of_Kings .
+<http://www.videogame-ontology.org/ontology#character/Skull_Kid> rdfs:label "Skull Kid" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Majoras_Mask .
+<http://www.videogame-ontology.org/ontology#character/Socrates> rdfs:label "Socrates" ;
+    vg:appearsIn vg:Assassins_Creed_Odyssey ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Socrates> .
+<http://www.videogame-ontology.org/ontology#character/Sole_Survivor> a vg:Human ;
+    rdfs:label "Sole Survivor" ;
+    vg:protagonistOf vg:Fallout_4 .
+<http://www.videogame-ontology.org/ontology#character/Sole_Survivors_spouse> rdfs:label "Sole Survivor's spouse" ;
+    vg:appearsIn vg:Fallout_4 ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Conrad_Kellogg> .
+<http://www.videogame-ontology.org/ontology#character/Sonny_Forelli> a vg:Human ;
+    rdfs:label "Sonny Forelli" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_Vice_City ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Tommy_Vercetti> .
+<http://www.videogame-ontology.org/ontology#character/Soul_of_Cinder> rdfs:label "Soul of Cinder" ;
+    vg:antagonistOf vg:Dark_Souls_III .
+<http://www.videogame-ontology.org/ontology#character/Sovereign> rdfs:label "Sovereign" ;
+    vg:antagonistOf vg:Mass_Effect .
+<http://www.videogame-ontology.org/ontology#character/Stede_Bonnet> rdfs:label "Stede Bonnet" ;
+    vg:appearsIn vg:Assassins_Creed_IV_Black_Flag ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Stede_Bonnet> .
+<http://www.videogame-ontology.org/ontology#character/Steve_Haines> rdfs:label "Steve Haines" ;
+    vg:antagonistOf vg:Grand_Theft_Auto_V .
+<http://www.videogame-ontology.org/ontology#character/Suleiman> rdfs:label "Suleiman" ;
+    vg:appearsIn vg:Assassins_Creed_Revelations ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Suleiman_the_Magnificent> .
+<http://www.videogame-ontology.org/ontology#character/Talal> rdfs:label "Talal" ;
+    vg:appearsIn vg:Assassins_Creed ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> .
+<http://www.videogame-ontology.org/ontology#character/Tamir> rdfs:label "Tamir" ;
+    vg:appearsIn vg:Assassins_Creed ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> .
+<http://www.videogame-ontology.org/ontology#character/The_Chosen_One> a vg:Human ;
+    rdfs:label "The Chosen One" ;
+    vg:protagonistOf vg:Fallout_2 .
+<http://www.videogame-ontology.org/ontology#character/The_Courier> a vg:Human ;
+    rdfs:label "The Courier" ;
+    vg:protagonistOf vg:Fallout_New_Vegas .
+<http://www.videogame-ontology.org/ontology#character/The_Didact> rdfs:label "The Didact" ;
+    vg:antagonistOf vg:Halo_4 .
+<http://www.videogame-ontology.org/ontology#character/The_Eagle_Bearer> rdfs:label "The Eagle Bearer" ;
+    vg:protagonistOf vg:Assassins_Creed_Odyssey .
+<http://www.videogame-ontology.org/ontology#character/The_Illusive_Man> a vg:Human ;
+    rdfs:label "The Illusive Man" ;
+    vg:antagonistOf vg:Mass_Effect_3 .
+<http://www.videogame-ontology.org/ontology#character/The_Master> rdfs:label "The Master" ;
+    vg:antagonistOf vg:Fallout .
+<http://www.videogame-ontology.org/ontology#character/The_Professor> rdfs:label "The Professor" ;
+    vg:antagonistOf vg:The_Witcher ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Geralt_of_Rivia> .
+<http://www.videogame-ontology.org/ontology#character/Thomas_Hickey> rdfs:label "Thomas Hickey" ;
+    vg:antagonistOf vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Thomas_Hickey> .
+<http://www.videogame-ontology.org/ontology#character/Thomas_Jefferson> rdfs:label "Thomas Jefferson" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Thomas_Jefferson> .
+<http://www.videogame-ontology.org/ontology#character/Tommy_Vercetti> a vg:Human ;
+    rdfs:label "Tommy Vercetti" ;
+    vg:protagonistOf vg:Grand_Theft_Auto_Vice_City .
+<http://www.videogame-ontology.org/ontology#character/Trevor_Philips> a vg:Human ;
+    rdfs:label "Trevor Philips" ;
+    vg:protagonistOf vg:Grand_Theft_Auto_V .
+<http://www.videogame-ontology.org/ontology#character/Twinrova> rdfs:label "Twinrova" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Oracle_of_Seasons , vg:The_Legend_of_Zelda_Oracle_of_Ages .
+<http://www.videogame-ontology.org/ontology#character/Ubba> rdfs:label "Ubba" ;
+    vg:appearsIn vg:Assassins_Creed_Valhalla ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Ubba> .
+<http://www.videogame-ontology.org/ontology#character/Uberto_Alberti> rdfs:label "Uberto Alberti" ;
+    vg:antagonistOf vg:Assassins_Creed_II ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Ezio_Auditore_da_Firenze> .
+<http://www.videogame-ontology.org/ontology#character/Vaati> rdfs:label "Vaati" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Four_Swords , vg:The_Legend_of_Zelda_Four_Swords_Adventures , vg:The_Legend_of_Zelda_The_Minish_Cap .
+<http://www.videogame-ontology.org/ontology#character/Vault_Dweller> a vg:Human ;
+    rdfs:label "Vault Dweller" ;
+    vg:protagonistOf vg:Fallout .
+<http://www.videogame-ontology.org/ontology#character/Veran> rdfs:label "Veran" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Oracle_of_Ages .
+<http://www.videogame-ontology.org/ontology#character/Vesemir> a vg:Human ;
+    rdfs:label "Vesemir" ;
+    vg:appearsIn vg:The_Witcher_3_Wild_Hunt ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Imlerith> .
+<http://www.videogame-ontology.org/ontology#character/Vieri_de_Pazzi> rdfs:label "Vieri de' Pazzi" ;
+    vg:antagonistOf vg:Assassins_Creed_II .
+<http://www.videogame-ontology.org/ontology#character/Vlad_Glebov> rdfs:label "Vlad Glebov" ;
+    vg:appearsIn vg:Grand_Theft_Auto_IV ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Niko_Bellic> .
+<http://www.videogame-ontology.org/ontology#character/Warren_Vidic> rdfs:label "Warren Vidic" ;
+    vg:antagonistOf vg:Assassins_Creed ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Desmond_Miles> .
+<http://www.videogame-ontology.org/ontology#character/Wart> rdfs:label "Wart" ;
+    vg:antagonistOf vg:Super_Mario_Bros_2 .
+<http://www.videogame-ontology.org/ontology#character/Wheatley> a vg:ArtificialIntelligence ;
+    rdfs:label "Wheatley" ;
+    vg:antagonistOf vg:Portal_2 .
+<http://www.videogame-ontology.org/ontology#character/William_Johnson> rdfs:label "William Johnson" ;
+    vg:appearsIn vg:Assassins_Creed_III ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/William_Johnson> .
+<http://www.videogame-ontology.org/ontology#character/William_V_of_Montferrat> rdfs:label "William V of Montferrat" ;
+    vg:appearsIn vg:Assassins_Creed ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Altair_Ibn_LaAhad> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/William_V_Marquess_of_Montferrat> .
+<http://www.videogame-ontology.org/ontology#character/Woodes_Rogers> rdfs:label "Woodes Rogers" ;
+    vg:antagonistOf vg:Assassins_Creed_IV_Black_Flag ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Edward_Kenway> ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Woodes_Rogers> .
+<http://www.videogame-ontology.org/ontology#character/Yasuke> a vg:Human ;
+    rdfs:label "Yasuke" ;
+    vg:protagonistOf vg:Assassins_Creed_Shadows ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Yasuke> .
+<http://www.videogame-ontology.org/ontology#character/Yuga> rdfs:label "Yuga" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_A_Link_Between_Worlds .
+<http://www.videogame-ontology.org/ontology#character/Yusuf_Tazim> rdfs:label "Yusuf Tazim" ;
+    vg:appearsIn vg:Assassins_Creed_Revelations ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Ahmet> .
+<http://www.videogame-ontology.org/ontology#character/Zant> rdfs:label "Zant" ;
+    vg:antagonistOf vg:The_Legend_of_Zelda_Twilight_Princess ;
+    vg:killedBy <http://www.videogame-ontology.org/ontology#character/Midna> .
+<http://www.videogame-ontology.org/ontology#character/Zelda> a vg:Human ;
+    rdfs:label "Zelda" ;
+    vg:protagonistOf vg:The_Legend_of_Zelda_Echoes_of_Wisdom .
+<http://www.videogame-ontology.org/ontology#character/al_Mutawakkil> rdfs:label "al-Mutawakkil" ;
+    vg:appearsIn vg:Assassins_Creed_Mirage ;
+    vg:portrays <http://www.videogame-ontology.org/ontology#person/Al_Mutawakkil> .
+<http://www.videogame-ontology.org/ontology#character/Elise_de_la_Serre> rdfs:label "Élise de la Serre" ;
+    vg:protagonistOf vg:Assassins_Creed_Unity .
+
+# Persone
+<http://www.videogame-ontology.org/ontology#person/Adam_Badowski> rdfs:label "Adam Badowski" .
+<http://www.videogame-ontology.org/ontology#person/Akechi_Mitsuhide> rdfs:label "Akechi Mitsuhide" .
+<http://www.videogame-ontology.org/ontology#person/Al_Mutawakkil> rdfs:label "Al-Mutawakkil" .
+<http://www.videogame-ontology.org/ontology#person/Alcibiades> rdfs:label "Alcibiades" .
+<http://www.videogame-ontology.org/ontology#person/Alex_Hutchinson> rdfs:label "Alex Hutchinson" .
+<http://www.videogame-ontology.org/ontology#person/Alexander_Graham_Bell> rdfs:label "Alexander Graham Bell" .
+<http://www.videogame-ontology.org/ontology#person/Alexandre_Amancio> rdfs:label "Alexandre Amancio" .
+<http://www.videogame-ontology.org/ontology#person/Alfred_the_Great> rdfs:label "Alfred the Great" .
+<http://www.videogame-ontology.org/ontology#person/Ali_ibn_Muhammad> rdfs:label "Ali ibn Muhammad" .
+<http://www.videogame-ontology.org/ontology#person/Anne_Bonny> rdfs:label "Anne Bonny" .
+<http://www.videogame-ontology.org/ontology#person/Apollodorus_of_Sicily> rdfs:label "Apollodorus of Sicily" .
+<http://www.videogame-ontology.org/ontology#person/Ashraf_Ismail> rdfs:label "Ashraf Ismail" .
+<http://www.videogame-ontology.org/ontology#person/Aspasia> rdfs:label "Aspasia" .
+<http://www.videogame-ontology.org/ontology#person/Banu_Musa> rdfs:label "Banu Musa" .
+<http://www.videogame-ontology.org/ontology#person/Bartholomew_Roberts> rdfs:label "Bartholomew Roberts" .
+<http://www.videogame-ontology.org/ontology#person/Bartolomeo_dAlviano> rdfs:label "Bartolomeo d'Alviano" .
+<http://www.videogame-ontology.org/ontology#person/Bayezid_II> rdfs:label "Bayezid II" .
+<http://www.videogame-ontology.org/ontology#person/Benjamin_Church> rdfs:label "Benjamin Church" .
+<http://www.videogame-ontology.org/ontology#person/Benjamin_Disraeli> rdfs:label "Benjamin Disraeli" .
+<http://www.videogame-ontology.org/ontology#person/Benjamin_Franklin> rdfs:label "Benjamin Franklin" .
+<http://www.videogame-ontology.org/ontology#person/Benjamin_Hornigold> rdfs:label "Benjamin Hornigold" .
+<http://www.videogame-ontology.org/ontology#person/Brasidas> rdfs:label "Brasidas" .
+<http://www.videogame-ontology.org/ontology#person/Barid_mac_Imair> rdfs:label "Bárid mac Ímair" .
+<http://www.videogame-ontology.org/ontology#person/Calico_Jack_Rackham> rdfs:label "Calico Jack Rackham" .
+<http://www.videogame-ontology.org/ontology#person/Casey_Hudson> rdfs:label "Casey Hudson" .
+<http://www.videogame-ontology.org/ontology#person/Caterina_Sforza> rdfs:label "Caterina Sforza" .
+<http://www.videogame-ontology.org/ontology#person/Ceolwulf_II_of_Mercia> rdfs:label "Ceolwulf II of Mercia" .
+<http://www.videogame-ontology.org/ontology#person/Cesare_Borgia> rdfs:label "Cesare Borgia" .
+<http://www.videogame-ontology.org/ontology#person/Charles_Benoit> rdfs:label "Charles Benoit" .
+<http://www.videogame-ontology.org/ontology#person/Charles_Darwin> rdfs:label "Charles Darwin" .
+<http://www.videogame-ontology.org/ontology#person/Charles_Dickens> rdfs:label "Charles Dickens" .
+<http://www.videogame-ontology.org/ontology#person/Charles_Lee> rdfs:label "Charles Lee" .
+<http://www.videogame-ontology.org/ontology#person/Charles_Vane> rdfs:label "Charles Vane" .
+<http://www.videogame-ontology.org/ontology#person/Chris_Avellone> rdfs:label "Chris Avellone" ;
+    vg:formerEmployeeOf <http://www.videogame-ontology.org/ontology#company/Black_Isle_Studios> .
+<http://www.videogame-ontology.org/ontology#person/Chris_Jones> rdfs:label "Chris Jones" ;
+    vg:formerEmployeeOf <http://www.videogame-ontology.org/ontology#company/Black_Isle_Studios> .
+<http://www.videogame-ontology.org/ontology#person/Chris_Parker> rdfs:label "Chris Parker" ;
+    vg:formerEmployeeOf <http://www.videogame-ontology.org/ontology#company/Black_Isle_Studios> .
+<http://www.videogame-ontology.org/ontology#person/Cleon> rdfs:label "Cleon" .
+<http://www.videogame-ontology.org/ontology#person/Cleopatra_VII> rdfs:label "Cleopatra VII" .
+<http://www.videogame-ontology.org/ontology#person/Comte_de_Mirabeau> rdfs:label "Comte de Mirabeau" .
+<http://www.videogame-ontology.org/ontology#person/Daiki_Iwamoto> rdfs:label "Daiki Iwamoto" .
+<http://www.videogame-ontology.org/ontology#person/Damien_Kieken> rdfs:label "Damien Kieken" .
+<http://www.videogame-ontology.org/ontology#person/Darren_Monahan> rdfs:label "Darren Monahan" ;
+    vg:formerEmployeeOf <http://www.videogame-ontology.org/ontology#company/Black_Isle_Studios> .
+<http://www.videogame-ontology.org/ontology#person/Duleep_Singh> rdfs:label "Duleep Singh" .
+<http://www.videogame-ontology.org/ontology#person/Edward_Braddock> rdfs:label "Edward Braddock" .
+<http://www.videogame-ontology.org/ontology#person/Edward_Thatch> rdfs:label "Edward Thatch" .
+<http://www.videogame-ontology.org/ontology#person/Eiji_Aonuma> rdfs:label "Eiji Aonuma" .
+<http://www.videogame-ontology.org/ontology#person/Feargus_Urquhart> rdfs:label "Feargus Urquhart" ;
+    vg:formerEmployeeOf <http://www.videogame-ontology.org/ontology#company/Black_Isle_Studios> .
+<http://www.videogame-ontology.org/ontology#person/Flann_Sinna> rdfs:label "Flann Sinna" .
+<http://www.videogame-ontology.org/ontology#person/Florence_Nightingale> rdfs:label "Florence Nightingale" .
+<http://www.videogame-ontology.org/ontology#person/Francesco_de_Pazzi> rdfs:label "Francesco de' Pazzi" .
+<http://www.videogame-ontology.org/ontology#person/Francois_Thomas_Germain> rdfs:label "François-Thomas Germain" .
+<http://www.videogame-ontology.org/ontology#person/Frederick_Abberline> rdfs:label "Frederick Abberline" .
+<http://www.videogame-ontology.org/ontology#person/Gabe_Newell> rdfs:label "Gabe Newell" ;
+    vg:formerEmployeeOf <http://www.videogame-ontology.org/ontology#company/Microsoft> .
+<http://www.videogame-ontology.org/ontology#person/Gaius_Cassius_Longinus> rdfs:label "Gaius Cassius Longinus" .
+<http://www.videogame-ontology.org/ontology#person/Garnier_of_Nablus> rdfs:label "Garnier of Nablus" .
+<http://www.videogame-ontology.org/ontology#person/George_Monro> rdfs:label "George Monro" .
+<http://www.videogame-ontology.org/ontology#person/George_Washington> rdfs:label "George Washington" .
+<http://www.videogame-ontology.org/ontology#person/Girolamo_Savonarola> rdfs:label "Girolamo Savonarola" .
+<http://www.videogame-ontology.org/ontology#person/Guthrum> rdfs:label "Guthrum" .
+<http://www.videogame-ontology.org/ontology#person/Halfdan_Ragnarsson> rdfs:label "Halfdan Ragnarsson" .
+<http://www.videogame-ontology.org/ontology#person/Harald_Fairhair> rdfs:label "Harald Fairhair" .
+<http://www.videogame-ontology.org/ontology#person/Herodotus> rdfs:label "Herodotus" .
+<http://www.videogame-ontology.org/ontology#person/Hidemaro_Fujibayashi> rdfs:label "Hidemaro Fujibayashi" .
+<http://www.videogame-ontology.org/ontology#person/Hidetaka_Miyazaki> rdfs:label "Hidetaka Miyazaki" ;
+    vg:heads <http://www.videogame-ontology.org/ontology#company/FromSoftware> .
+<http://www.videogame-ontology.org/ontology#person/Hippocrates> rdfs:label "Hippocrates" .
+<http://www.videogame-ontology.org/ontology#person/Hiromasa_Shikata> rdfs:label "Hiromasa Shikata" .
+<http://www.videogame-ontology.org/ontology#person/Isamu_Okano> rdfs:label "Isamu Okano" .
+<http://www.videogame-ontology.org/ontology#person/Israel_Putnam> rdfs:label "Israel Putnam" .
+<http://www.videogame-ontology.org/ontology#person/Ivar_the_Boneless> rdfs:label "Ivar the Boneless" .
+<http://www.videogame-ontology.org/ontology#person/Jacek_Brzezinski> rdfs:label "Jacek Brzezinski" .
+<http://www.videogame-ontology.org/ontology#person/Jacopo_de_Pazzi> rdfs:label "Jacopo de' Pazzi" .
+<http://www.videogame-ontology.org/ontology#person/Jean_Guesdon> rdfs:label "Jean Guesdon" .
+<http://www.videogame-ontology.org/ontology#person/Jeff_Gardiner> rdfs:label "Jeff Gardiner" .
+<http://www.videogame-ontology.org/ontology#person/Jim_Woods> rdfs:label "Jim Woods" .
+<http://www.videogame-ontology.org/ontology#person/John_Pitcairn> rdfs:label "John Pitcairn" .
+<http://www.videogame-ontology.org/ontology#person/Jonathan_Dumont> rdfs:label "Jonathan Dumont" .
+<http://www.videogame-ontology.org/ontology#person/Jonathan_Rush> rdfs:label "Jonathan Rush" .
+<http://www.videogame-ontology.org/ontology#person/Josh_Holmes> rdfs:label "Josh Holmes" .
+<http://www.videogame-ontology.org/ontology#person/Josh_Sawyer> rdfs:label "Josh Sawyer" .
+<http://www.videogame-ontology.org/ontology#person/Julius_Caesar> rdfs:label "Julius Caesar" .
+<http://www.videogame-ontology.org/ontology#person/Karl_Marx> rdfs:label "Karl Marx" .
+<http://www.videogame-ontology.org/ontology#person/Keith_R_Hamilton> rdfs:label "Keith R. Hamilton" .
+<http://www.videogame-ontology.org/ontology#person/Kensuke_Tanabe> rdfs:label "Kensuke Tanabe" .
+<http://www.videogame-ontology.org/ontology#person/Kenta_Motokura> rdfs:label "Kenta Motokura" .
+<http://www.videogame-ontology.org/ontology#person/Kenta_Usui> rdfs:label "Kenta Usui" .
+<http://www.videogame-ontology.org/ontology#person/Kim_Swift> rdfs:label "Kim Swift" .
+<http://www.videogame-ontology.org/ontology#person/Koichi_Hayashida> rdfs:label "Koichi Hayashida" .
+<http://www.videogame-ontology.org/ontology#person/Konrad_Tomaszkiewicz> rdfs:label "Konrad Tomaszkiewicz" .
+<http://www.videogame-ontology.org/ontology#person/Laureano_de_Torres_y_Ayala> rdfs:label "Laureano de Torres y Ayala" .
+<http://www.videogame-ontology.org/ontology#person/Leonardo_da_Vinci> rdfs:label "Leonardo da Vinci" .
+<http://www.videogame-ontology.org/ontology#person/Lorenzo_de_Medici> rdfs:label "Lorenzo de' Medici" .
+<http://www.videogame-ontology.org/ontology#person/Louis_XVI> rdfs:label "Louis XVI" .
+<http://www.videogame-ontology.org/ontology#person/Louis_Joseph_Gaultier_de_La_Verendrye> rdfs:label "Louis-Joseph Gaultier de La Vérendrye" .
+<http://www.videogame-ontology.org/ontology#person/Lucius_Septimius> rdfs:label "Lucius Septimius" .
+<http://www.videogame-ontology.org/ontology#person/Manuel_Palaiologos> rdfs:label "Manuel Palaiologos" .
+<http://www.videogame-ontology.org/ontology#person/Marc_Albinet> rdfs:label "Marc Albinet" .
+<http://www.videogame-ontology.org/ontology#person/Marc_Alexis_Cote> rdfs:label "Marc-Alexis Côté" .
+<http://www.videogame-ontology.org/ontology#person/Marcus_Junius_Brutus> rdfs:label "Marcus Junius Brutus" .
+<http://www.videogame-ontology.org/ontology#person/Marcus_Lehto> rdfs:label "Marcus Lehto" .
+<http://www.videogame-ontology.org/ontology#person/Marquis_de_Lafayette> rdfs:label "Marquis de Lafayette" .
+<http://www.videogame-ontology.org/ontology#person/Marquis_de_Sade> rdfs:label "Marquis de Sade" .
+<http://www.videogame-ontology.org/ontology#person/Martin_Capel> rdfs:label "Martin Capel" .
+<http://www.videogame-ontology.org/ontology#person/Mary_Read> rdfs:label "Mary Read" .
+<http://www.videogame-ontology.org/ontology#person/Maximilien_Robespierre> rdfs:label "Maximilien Robespierre" .
+<http://www.videogame-ontology.org/ontology#person/Mike_Harrington> rdfs:label "Mike Harrington" ;
+    vg:formerEmployeeOf <http://www.videogame-ontology.org/ontology#company/Microsoft> .
+<http://www.videogame-ontology.org/ontology#person/Mikhail_Lozanov> rdfs:label "Mikhail Lozanov" .
+<http://www.videogame-ontology.org/ontology#person/Momochi_Sandayu> rdfs:label "Momochi Sandayu" .
+<http://www.videogame-ontology.org/ontology#person/Muhammad_ibn_Abdallah_ibn_Tahir> rdfs:label "Muhammad ibn Abdallah ibn Tahir" .
+<http://www.videogame-ontology.org/ontology#person/Napoleon_Bonaparte> rdfs:label "Napoleon Bonaparte" .
+<http://www.videogame-ontology.org/ontology#person/Niccolo_Machiavelli> rdfs:label "Niccolò Machiavelli" .
+<http://www.videogame-ontology.org/ontology#person/Niccolo_and_Maffeo_Polo> rdfs:label "Niccolò and Maffeo Polo" .
+<http://www.videogame-ontology.org/ontology#person/Oda_Nobunaga> rdfs:label "Oda Nobunaga" .
+<http://www.videogame-ontology.org/ontology#person/Patrice_Desilets> rdfs:label "Patrice Désilets" .
+<http://www.videogame-ontology.org/ontology#person/Patrick_Plourde> rdfs:label "Patrick Plourde" .
+<http://www.videogame-ontology.org/ontology#person/Paul_Revere> rdfs:label "Paul Revere" .
+<http://www.videogame-ontology.org/ontology#person/Pericles> rdfs:label "Pericles" .
+<http://www.videogame-ontology.org/ontology#person/Piri_Reis> rdfs:label "Piri Reis" .
+<http://www.videogame-ontology.org/ontology#person/Pompey_the_Great> rdfs:label "Pompey the Great" .
+<http://www.videogame-ontology.org/ontology#person/Pothinus> rdfs:label "Pothinus" .
+<http://www.videogame-ontology.org/ontology#person/Ptolemy_XIII> rdfs:label "Ptolemy XIII" .
+<http://www.videogame-ontology.org/ontology#person/Queen_Victoria> rdfs:label "Queen Victoria" .
+<http://www.videogame-ontology.org/ontology#person/Rhodri_Mawr> rdfs:label "Rhodri Mawr" .
+<http://www.videogame-ontology.org/ontology#person/Richard_I_of_England> rdfs:label "Richard I of England" .
+<http://www.videogame-ontology.org/ontology#person/Robert_de_Sable> rdfs:label "Robert de Sablé" .
+<http://www.videogame-ontology.org/ontology#person/Rodrigo_Borgia> rdfs:label "Rodrigo Borgia" .
+<http://www.videogame-ontology.org/ontology#person/Samuel_Adams> rdfs:label "Samuel Adams" .
+<http://www.videogame-ontology.org/ontology#person/Satoshi_Terada> rdfs:label "Satoshi Terada" .
+<http://www.videogame-ontology.org/ontology#person/Scott_Phillips> rdfs:label "Scott Phillips" .
+<http://www.videogame-ontology.org/ontology#person/Selim_I> rdfs:label "Selim I" .
+<http://www.videogame-ontology.org/ontology#person/Shigeru_Miyamoto> rdfs:label "Shigeru Miyamoto" .
+<http://www.videogame-ontology.org/ontology#person/Shigeyuki_Asuke> rdfs:label "Shigeyuki Asuke" .
+<http://www.videogame-ontology.org/ontology#person/Shiro_Mouri> rdfs:label "Shiro Mouri" .
+<http://www.videogame-ontology.org/ontology#person/Socrates> rdfs:label "Socrates" .
+<http://www.videogame-ontology.org/ontology#person/Spass_Kroushkov> rdfs:label "Spass Kroushkov" .
+<http://www.videogame-ontology.org/ontology#person/Stede_Bonnet> rdfs:label "Stede Bonnet" .
+<http://www.videogame-ontology.org/ontology#person/Stephane_Boudon> rdfs:label "Stéphane Boudon" .
+<http://www.videogame-ontology.org/ontology#person/Suleiman_the_Magnificent> rdfs:label "Suleiman the Magnificent" .
+<http://www.videogame-ontology.org/ontology#person/Tadashi_Sugiyama> rdfs:label "Tadashi Sugiyama" .
+<http://www.videogame-ontology.org/ontology#person/Takashi_Tezuka> rdfs:label "Takashi Tezuka" .
+<http://www.videogame-ontology.org/ontology#person/Thomas_Hickey> rdfs:label "Thomas Hickey" .
+<http://www.videogame-ontology.org/ontology#person/Thomas_Jefferson> rdfs:label "Thomas Jefferson" .
+<http://www.videogame-ontology.org/ontology#person/Todd_Howard> rdfs:label "Todd Howard" .
+<http://www.videogame-ontology.org/ontology#person/Tomohiro_Shibuya> rdfs:label "Tomohiro Shibuya" .
+<http://www.videogame-ontology.org/ontology#person/Tomomi_Sano> rdfs:label "Tomomi Sano" .
+<http://www.videogame-ontology.org/ontology#person/Toru_Osawa> rdfs:label "Toru Osawa" .
+<http://www.videogame-ontology.org/ontology#person/Toshiaki_Suzuki> rdfs:label "Toshiaki Suzuki" .
+<http://www.videogame-ontology.org/ontology#person/Toshio_Iwawaki> rdfs:label "Toshio Iwawaki" .
+<http://www.videogame-ontology.org/ontology#person/Ubba> rdfs:label "Ubba" .
+<http://www.videogame-ontology.org/ontology#person/Wesley_Pincombe> rdfs:label "Wesley Pincombe" .
+<http://www.videogame-ontology.org/ontology#person/William_Johnson> rdfs:label "William Johnson" .
+<http://www.videogame-ontology.org/ontology#person/William_V_Marquess_of_Montferrat> rdfs:label "William V, Marquess of Montferrat" .
+<http://www.videogame-ontology.org/ontology#person/Woodes_Rogers> rdfs:label "Woodes Rogers" .
+<http://www.videogame-ontology.org/ontology#person/Yasuhisa_Yamamura> rdfs:label "Yasuhisa Yamamura" .
+<http://www.videogame-ontology.org/ontology#person/Yasuke> rdfs:label "Yasuke" .
+<http://www.videogame-ontology.org/ontology#person/Yoichi_Yamada> rdfs:label "Yoichi Yamada" .
+<http://www.videogame-ontology.org/ontology#person/Yoshiaki_Koizumi> rdfs:label "Yoshiaki Koizumi" .
+<http://www.videogame-ontology.org/ontology#person/Yui_Tanimura> rdfs:label "Yui Tanimura" .
+<http://www.videogame-ontology.org/ontology#person/Sehzade_Ahmet> rdfs:label "Şehzade Ahmet" .
+
+# Aziende
+<http://www.videogame-ontology.org/ontology#company/Atari> a vg:Company ;
+    rdfs:label "Atari" .
+<http://www.videogame-ontology.org/ontology#company/Bandai_Namco_Entertainment> a vg:Company ;
+    rdfs:label "Bandai Namco Entertainment" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Bandai_Namco_Holdings> .
+<http://www.videogame-ontology.org/ontology#company/Bandai_Namco_Holdings> a vg:Company ;
+    rdfs:label "Bandai Namco Holdings" .
+<http://www.videogame-ontology.org/ontology#company/Bethesda_Game_Studios> a vg:Company ;
+    rdfs:label "Bethesda Game Studios" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Bethesda_Softworks> .
+<http://www.videogame-ontology.org/ontology#company/Bethesda_Softworks> a vg:Company ;
+    rdfs:label "Bethesda Softworks" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/ZeniMax_Media> .
+<http://www.videogame-ontology.org/ontology#company/BioWare> a vg:Company ;
+    rdfs:label "BioWare" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Electronic_Arts> .
+<http://www.videogame-ontology.org/ontology#company/Black_Isle_Studios> a vg:Company ;
+    rdfs:label "Black Isle Studios" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Interplay_Productions> .
+<http://www.videogame-ontology.org/ontology#company/Bungie> a vg:Company ;
+    rdfs:label "Bungie" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Sony_Interactive_Entertainment> .
+<http://www.videogame-ontology.org/ontology#company/CD_Projekt> a vg:Company ;
+    rdfs:label "CD Projekt" .
+<http://www.videogame-ontology.org/ontology#company/CD_Projekt_Red> a vg:Company ;
+    rdfs:label "CD Projekt Red" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/CD_Projekt> .
+<http://www.videogame-ontology.org/ontology#company/Capcom> a vg:Company ;
+    rdfs:label "Capcom" .
+<http://www.videogame-ontology.org/ontology#company/Criterion_Games> a vg:Company ;
+    rdfs:label "Criterion Games" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Electronic_Arts> .
+<http://www.videogame-ontology.org/ontology#company/Electronic_Arts> a vg:Company ;
+    rdfs:label "Electronic Arts" .
+<http://www.videogame-ontology.org/ontology#company/Epic_Games> a vg:Company ;
+    rdfs:label "Epic Games" .
+<http://www.videogame-ontology.org/ontology#company/Flagship> a vg:Company ;
+    rdfs:label "Flagship" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Capcom> .
+<http://www.videogame-ontology.org/ontology#company/FromSoftware> a vg:Company ;
+    rdfs:label "FromSoftware" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Kadokawa_Corporation> .
+<http://www.videogame-ontology.org/ontology#company/Gamebase> a vg:Company ;
+    rdfs:label "Gamebase" .
+<http://www.videogame-ontology.org/ontology#company/Halo_Studios> a vg:Company ;
+    rdfs:label "Halo Studios" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Xbox_Game_Studios> .
+<http://www.videogame-ontology.org/ontology#company/Interplay_Productions> a vg:Company ;
+    rdfs:label "Interplay Productions" .
+<http://www.videogame-ontology.org/ontology#company/Kadokawa_Corporation> a vg:Company ;
+    rdfs:label "Kadokawa Corporation" .
+<http://www.videogame-ontology.org/ontology#company/Microsoft> a vg:Company ;
+    rdfs:label "Microsoft" .
+<http://www.videogame-ontology.org/ontology#company/Nintendo> a vg:Company ;
+    rdfs:label "Nintendo" .
+<http://www.videogame-ontology.org/ontology#company/Nintendo_EAD> a vg:Company ;
+    rdfs:label "Nintendo EAD" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#company/Nintendo_EAD_Tokyo> a vg:Company ;
+    rdfs:label "Nintendo EAD Tokyo" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#company/Nintendo_EPD> a vg:Company ;
+    rdfs:label "Nintendo EPD" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#company/Nintendo_RD2> a vg:Company ;
+    rdfs:label "Nintendo R&D2" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#company/Nintendo_RD4> a vg:Company ;
+    rdfs:label "Nintendo R&D4" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#company/Obsidian_Entertainment> a vg:Company ;
+    rdfs:label "Obsidian Entertainment" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Xbox_Game_Studios> ;
+    vg:foundedBy <http://www.videogame-ontology.org/ontology#person/Feargus_Urquhart> , <http://www.videogame-ontology.org/ontology#person/Chris_Avellone> , <http://www.videogame-ontology.org/ontology#person/Chris_Parker> , <http://www.videogame-ontology.org/ontology#person/Darren_Monahan> , <http://www.videogame-ontology.org/ontology#person/Chris_Jones> .
+<http://www.videogame-ontology.org/ontology#company/RAGE_Technology_Group> a vg:Company ;
+    rdfs:label "RAGE Technology Group" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Rockstar_Games> .
+<http://www.videogame-ontology.org/ontology#company/Rockstar_Games> a vg:Company ;
+    rdfs:label "Rockstar Games" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Take_Two_Interactive> .
+<http://www.videogame-ontology.org/ontology#company/Rockstar_North> a vg:Company ;
+    rdfs:label "Rockstar North" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Rockstar_Games> .
+<http://www.videogame-ontology.org/ontology#company/Sega> a vg:Company ;
+    rdfs:label "Sega" .
+<http://www.videogame-ontology.org/ontology#company/Sony_Group> a vg:Company ;
+    rdfs:label "Sony Group" .
+<http://www.videogame-ontology.org/ontology#company/Sony_Interactive_Entertainment> a vg:Company ;
+    rdfs:label "Sony Interactive Entertainment" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Sony_Group> .
+<http://www.videogame-ontology.org/ontology#company/Take_Two_Interactive> a vg:Company ;
+    rdfs:label "Take-Two Interactive" .
+<http://www.videogame-ontology.org/ontology#company/Ubisoft> a vg:Company ;
+    rdfs:label "Ubisoft" .
+<http://www.videogame-ontology.org/ontology#company/Ubisoft_Bordeaux> a vg:Company ;
+    rdfs:label "Ubisoft Bordeaux" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Ubisoft> .
+<http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> a vg:Company ;
+    rdfs:label "Ubisoft Montreal" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Ubisoft> .
+<http://www.videogame-ontology.org/ontology#company/Ubisoft_Quebec> a vg:Company ;
+    rdfs:label "Ubisoft Quebec" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Ubisoft> .
+<http://www.videogame-ontology.org/ontology#company/Ubisoft_Sofia> a vg:Company ;
+    rdfs:label "Ubisoft Sofia" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Ubisoft> .
+<http://www.videogame-ontology.org/ontology#company/Valve> a vg:Company ;
+    rdfs:label "Valve" ;
+    vg:foundedBy <http://www.videogame-ontology.org/ontology#person/Gabe_Newell> , <http://www.videogame-ontology.org/ontology#person/Mike_Harrington> .
+<http://www.videogame-ontology.org/ontology#company/Xbox_Game_Studios> a vg:Company ;
+    rdfs:label "Xbox Game Studios" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Microsoft> .
+<http://www.videogame-ontology.org/ontology#company/ZeniMax_Media> a vg:Company ;
+    rdfs:label "ZeniMax Media" ;
+    vg:subsidiaryOf <http://www.videogame-ontology.org/ontology#company/Xbox_Game_Studios> .
+<http://www.videogame-ontology.org/ontology#company/cdp_pl> a vg:Company ;
+    rdfs:label "cdp.pl" .
+
+# Piattaforme
+<http://www.videogame-ontology.org/ontology#platform/Classic_Mac_OS> a vg:PCPlatform ;
+    rdfs:label "Classic Mac OS" .
+<http://www.videogame-ontology.org/ontology#platform/Dreamcast> a vg:ConsolePlatform ;
+    rdfs:label "Dreamcast" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Sega> .
+<http://www.videogame-ontology.org/ontology#platform/Famicom_Disk_System> a vg:ConsolePlatform ;
+    rdfs:label "Famicom Disk System" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Game_Boy> a vg:ConsolePlatform ;
+    rdfs:label "Game Boy" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Game_Boy_Advance> a vg:ConsolePlatform ;
+    rdfs:label "Game Boy Advance" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Game_Boy_Color> a vg:ConsolePlatform ;
+    rdfs:label "Game Boy Color" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Google_Stadia> a vg:Platform ;
+    rdfs:label "Google Stadia" .
+<http://www.videogame-ontology.org/ontology#platform/Linux> a vg:PCPlatform ;
+    rdfs:label "Linux" .
+<http://www.videogame-ontology.org/ontology#platform/MS-DOS> a vg:PCPlatform ;
+    rdfs:label "MS-DOS" .
+<http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows> a vg:PCPlatform ;
+    rdfs:label "Microsoft Windows" .
+<http://www.videogame-ontology.org/ontology#platform/NES> a vg:ConsolePlatform ;
+    rdfs:label "Nintendo Entertainment System" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Nintendo_3DS> a vg:ConsolePlatform ;
+    rdfs:label "Nintendo 3DS" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Nintendo_64> a vg:ConsolePlatform ;
+    rdfs:label "Nintendo 64" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Nintendo_DS> a vg:ConsolePlatform ;
+    rdfs:label "Nintendo DS" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Nintendo_GameCube> a vg:ConsolePlatform ;
+    rdfs:label "GameCube" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> a vg:ConsolePlatform ;
+    rdfs:label "Nintendo Switch" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch_2> a vg:CurrentGenerationConsole ;
+    rdfs:label "Nintendo Switch 2" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/PlayStation> a vg:ConsolePlatform ;
+    rdfs:label "PlayStation" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Sony_Interactive_Entertainment> .
+<http://www.videogame-ontology.org/ontology#platform/PlayStation_2> a vg:ConsolePlatform ;
+    rdfs:label "PlayStation 2" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Sony_Interactive_Entertainment> .
+<http://www.videogame-ontology.org/ontology#platform/PlayStation_3> a vg:ConsolePlatform ;
+    rdfs:label "PlayStation 3" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Sony_Interactive_Entertainment> .
+<http://www.videogame-ontology.org/ontology#platform/PlayStation_4> a vg:ConsolePlatform ;
+    rdfs:label "PlayStation 4" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Sony_Interactive_Entertainment> .
+<http://www.videogame-ontology.org/ontology#platform/PlayStation_5> a vg:CurrentGenerationConsole ;
+    rdfs:label "PlayStation 5" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Sony_Interactive_Entertainment> .
+<http://www.videogame-ontology.org/ontology#platform/SNES> a vg:ConsolePlatform ;
+    rdfs:label "Super Nintendo Entertainment System" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Wii> a vg:ConsolePlatform ;
+    rdfs:label "Wii" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Wii_U> a vg:ConsolePlatform ;
+    rdfs:label "Wii U" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Nintendo> .
+<http://www.videogame-ontology.org/ontology#platform/Xbox> a vg:ConsolePlatform ;
+    rdfs:label "Xbox" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Microsoft> .
+<http://www.videogame-ontology.org/ontology#platform/Xbox_360> a vg:ConsolePlatform ;
+    rdfs:label "Xbox 360" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Microsoft> .
+<http://www.videogame-ontology.org/ontology#platform/Xbox_One> a vg:ConsolePlatform ;
+    rdfs:label "Xbox One" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Microsoft> .
+<http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S> a vg:CurrentGenerationConsole ;
+    rdfs:label "Xbox Series X/S" ;
+    vg:manufacturedBy <http://www.videogame-ontology.org/ontology#company/Microsoft> .
+<http://www.videogame-ontology.org/ontology#platform/macOS> a vg:PCPlatform ;
+    rdfs:label "macOS" .
+
+# Motori, premi, serie, opere, generi, modalità
+<http://www.videogame-ontology.org/ontology#engine/Anvil> a vg:GameEngine ;
+    rdfs:label "Anvil" ;
+    vg:engineDevelopedBy <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal> .
+<http://www.videogame-ontology.org/ontology#engine/Aurora_Engine> a vg:GameEngine ;
+    rdfs:label "Aurora Engine" ;
+    vg:engineDevelopedBy <http://www.videogame-ontology.org/ontology#company/BioWare> .
+<http://www.videogame-ontology.org/ontology#engine/Creation_Engine> a vg:GameEngine ;
+    rdfs:label "Creation Engine" ;
+    vg:engineDevelopedBy <http://www.videogame-ontology.org/ontology#company/Bethesda_Game_Studios> .
+<http://www.videogame-ontology.org/ontology#engine/Gamebryo> a vg:GameEngine ;
+    rdfs:label "Gamebryo" ;
+    vg:engineDevelopedBy <http://www.videogame-ontology.org/ontology#company/Gamebase> .
+<http://www.videogame-ontology.org/ontology#engine/REDengine> a vg:GameEngine ;
+    rdfs:label "REDengine" ;
+    vg:engineDevelopedBy <http://www.videogame-ontology.org/ontology#company/CD_Projekt_Red> .
+<http://www.videogame-ontology.org/ontology#engine/RenderWare> a vg:GameEngine ;
+    rdfs:label "RenderWare" ;
+    vg:engineDevelopedBy <http://www.videogame-ontology.org/ontology#company/Criterion_Games> .
+<http://www.videogame-ontology.org/ontology#engine/Rockstar_Advanced_Game_Engine> a vg:GameEngine ;
+    rdfs:label "Rockstar Advanced Game Engine" ;
+    vg:engineDevelopedBy <http://www.videogame-ontology.org/ontology#company/RAGE_Technology_Group> .
+<http://www.videogame-ontology.org/ontology#engine/Source> a vg:GameEngine ;
+    rdfs:label "Source" ;
+    vg:engineDevelopedBy <http://www.videogame-ontology.org/ontology#company/Valve> .
+<http://www.videogame-ontology.org/ontology#engine/Unreal_Engine_3> a vg:GameEngine ;
+    rdfs:label "Unreal Engine 3" ;
+    vg:engineDevelopedBy <http://www.videogame-ontology.org/ontology#company/Epic_Games> .
+<http://www.videogame-ontology.org/ontology#award/BAFTA_Best_Game> a vg:GameOfTheYearAward ;
+    rdfs:label "BAFTA - Best Game" .
+<http://www.videogame-ontology.org/ontology#award/D_I_C_E_Awards_Game_of_the_Year> a vg:GameOfTheYearAward ;
+    rdfs:label "D.I.C.E. Awards - Game of the Year" .
+<http://www.videogame-ontology.org/ontology#award/Game_Developers_Choice_Awards_Game_of_the_Year> a vg:GameOfTheYearAward ;
+    rdfs:label "Game Developers Choice Awards - Game of the Year" .
+<http://www.videogame-ontology.org/ontology#award/Golden_Joystick_Awards_Game_of_the_Year> a vg:GameOfTheYearAward ;
+    rdfs:label "Golden Joystick Awards - Game of the Year" .
+<http://www.videogame-ontology.org/ontology#award/Japan_Game_Awards_Grand_Award> a vg:GameOfTheYearAward ;
+    rdfs:label "Japan Game Awards - Grand Award" .
+<http://www.videogame-ontology.org/ontology#award/Spike_Video_Game_Awards_Game_of_the_Year> a vg:GameOfTheYearAward ;
+    rdfs:label "Spike Video Game Awards - Game of the Year" .
+<http://www.videogame-ontology.org/ontology#award/The_Game_Awards_Game_of_the_Year> a vg:GameOfTheYearAward ;
+    rdfs:label "The Game Awards - Game of the Year" .
+<http://www.videogame-ontology.org/ontology#franchise/Grand_Theft_Auto> a vg:Franchise ;
+    rdfs:label "Grand Theft Auto" .
+<http://www.videogame-ontology.org/ontology#franchise/The_Legend_of_Zelda> a vg:Franchise ;
+    rdfs:label "The Legend of Zelda" .
+<http://www.videogame-ontology.org/ontology#franchise/Super_Mario> a vg:Franchise ;
+    rdfs:label "Super Mario" ;
+    vg:adaptedInto <http://www.videogame-ontology.org/ontology#work/Super_Mario_Bros_1993_film> , <http://www.videogame-ontology.org/ontology#work/The_Super_Mario_Bros_Movie> , <http://www.videogame-ontology.org/ontology#work/The_Super_Mario_Galaxy_Movie> , <http://www.videogame-ontology.org/ontology#work/The_Super_Mario_Bros_Super_Show> .
+<http://www.videogame-ontology.org/ontology#franchise/Fallout> a vg:Franchise ;
+    rdfs:label "Fallout" ;
+    vg:adaptedInto <http://www.videogame-ontology.org/ontology#work/Fallout_TV_series> .
+<http://www.videogame-ontology.org/ontology#franchise/Assassins_Creed> a vg:Franchise ;
+    rdfs:label "Assassin's Creed" ;
+    vg:adaptedInto <http://www.videogame-ontology.org/ontology#work/Assassins_Creed_film> .
+<http://www.videogame-ontology.org/ontology#franchise/The_Witcher> a vg:Franchise ;
+    rdfs:label "The Witcher" ;
+    vg:adaptedInto <http://www.videogame-ontology.org/ontology#work/The_Witcher_Netflix_series> .
+<http://www.videogame-ontology.org/ontology#franchise/Mass_Effect> a vg:Franchise ;
+    rdfs:label "Mass Effect" ;
+    vg:adaptedInto <http://www.videogame-ontology.org/ontology#work/Mass_Effect_Paragon_Lost> .
+<http://www.videogame-ontology.org/ontology#franchise/Dark_Souls> a vg:Franchise ;
+    rdfs:label "Dark Souls" .
+<http://www.videogame-ontology.org/ontology#franchise/Portal> a vg:Franchise ;
+    rdfs:label "Portal" .
+<http://www.videogame-ontology.org/ontology#franchise/Halo> a vg:Franchise ;
+    rdfs:label "Halo" ;
+    vg:adaptedInto <http://www.videogame-ontology.org/ontology#work/Halo_TV_series> .
+<http://www.videogame-ontology.org/ontology#work/The_Witcher_Netflix_series> a vg:TVSeries ;
+    rdfs:label "The Witcher (Netflix series)" .
+<http://www.videogame-ontology.org/ontology#work/Halo_TV_series> a vg:TVSeries ;
+    rdfs:label "Halo (TV series)" .
+<http://www.videogame-ontology.org/ontology#work/Fallout_TV_series> a vg:TVSeries ;
+    rdfs:label "Fallout (TV series)" .
+<http://www.videogame-ontology.org/ontology#work/Assassins_Creed_film> a vg:Film ;
+    rdfs:label "Assassin's Creed (film)" .
+<http://www.videogame-ontology.org/ontology#work/Mass_Effect_Paragon_Lost> a vg:Film ;
+    rdfs:label "Mass Effect: Paragon Lost" .
+<http://www.videogame-ontology.org/ontology#work/Super_Mario_Bros_1993_film> a vg:Film ;
+    rdfs:label "Super Mario Bros. (1993 film)" .
+<http://www.videogame-ontology.org/ontology#work/The_Super_Mario_Bros_Movie> a vg:Film ;
+    rdfs:label "The Super Mario Bros. Movie" .
+<http://www.videogame-ontology.org/ontology#work/The_Super_Mario_Galaxy_Movie> a vg:Film ;
+    rdfs:label "The Super Mario Galaxy Movie" .
+<http://www.videogame-ontology.org/ontology#work/The_Super_Mario_Bros_Super_Show> a vg:TVSeries ;
+    rdfs:label "The Super Mario Bros. Super Show!" .
+<http://www.videogame-ontology.org/ontology#work/The_Witcher_saga_Andrzej_Sapkowski> a vg:Novel ;
+    rdfs:label "The Witcher saga (Andrzej Sapkowski)" .
+vg:Action a vg:Genre ;
+    rdfs:label "Action" .
+vg:Adventure a vg:Genre ;
+    rdfs:label "Adventure" .
+vg:Platformer a vg:Genre ;
+    rdfs:label "Platformer" .
+vg:Puzzle a vg:Genre ;
+    rdfs:label "Puzzle" .
+vg:RPG a vg:Genre ;
+    rdfs:label "RPG" .
+vg:Shooter a vg:Genre ;
+    rdfs:label "Shooter" .
+vg:SinglePlayer a vg:GameMode ;
+    rdfs:label "SinglePlayer" .
+vg:Multiplayer a vg:GameMode ;
+    rdfs:label "Multiplayer" .
+vg:Coop a vg:GameMode ;
+    rdfs:label "Coop" .
+
+# OWL non assume che nomi diversi indichino individui diversi: lo dichiariamo
+[] a owl:AllDifferent ;
+    owl:distinctMembers ( vg:Mass_Effect_3
+        vg:Grand_Theft_Auto_2
+        vg:Grand_Theft_Auto_Vice_City
+        vg:Grand_Theft_Auto_III
+        vg:Grand_Theft_Auto_V
+        vg:Dark_Souls_III
+        vg:Grand_Theft_Auto_VI
+        vg:Halo_4
+        vg:Dark_Souls
+        vg:Portal_2
+        vg:Dark_Souls_II
+        vg:The_Witcher_2_Assassins_of_Kings
+        vg:Mass_Effect_2
+        vg:Grand_Theft_Auto_San_Andreas
+        vg:Portal
+        vg:The_Witcher
+        vg:The_Witcher_3_Wild_Hunt
+        vg:Grand_Theft_Auto
+        vg:Mass_Effect
+        vg:Grand_Theft_Auto_IV
+        vg:Halo_Reach
+        vg:The_Legend_of_Zelda
+        vg:Zelda_II_The_Adventure_of_Link
+        vg:The_Legend_of_Zelda_A_Link_to_the_Past
+        vg:The_Legend_of_Zelda_Links_Awakening
+        vg:The_Legend_of_Zelda_Ocarina_of_Time
+        vg:The_Legend_of_Zelda_Majoras_Mask
+        vg:The_Legend_of_Zelda_Oracle_of_Seasons
+        vg:The_Legend_of_Zelda_Oracle_of_Ages
+        vg:The_Legend_of_Zelda_Four_Swords
+        vg:The_Legend_of_Zelda_The_Wind_Waker
+        vg:The_Legend_of_Zelda_Four_Swords_Adventures
+        vg:The_Legend_of_Zelda_The_Minish_Cap
+        vg:The_Legend_of_Zelda_Twilight_Princess
+        vg:The_Legend_of_Zelda_Phantom_Hourglass
+        vg:The_Legend_of_Zelda_Spirit_Tracks
+        vg:The_Legend_of_Zelda_Skyward_Sword
+        vg:The_Legend_of_Zelda_A_Link_Between_Worlds
+        vg:The_Legend_of_Zelda_Tri_Force_Heroes
+        vg:The_Legend_of_Zelda_Breath_of_the_Wild
+        vg:The_Legend_of_Zelda_Tears_of_the_Kingdom
+        vg:The_Legend_of_Zelda_Echoes_of_Wisdom
+        vg:Super_Mario_Bros
+        vg:Super_Mario_Bros_2
+        vg:Super_Mario_Bros_3
+        vg:Super_Mario_World
+        vg:Super_Mario_64
+        vg:Super_Mario_Sunshine
+        vg:New_Super_Mario_Bros
+        vg:Super_Mario_Galaxy
+        vg:Super_Mario_Galaxy_2
+        vg:Super_Mario_3D_Land
+        vg:Super_Mario_3D_World
+        vg:Super_Mario_Odyssey
+        vg:Super_Mario_Bros_Wonder
+        vg:Fallout
+        vg:Fallout_2
+        vg:Fallout_3
+        vg:Fallout_New_Vegas
+        vg:Fallout_4
+        vg:Fallout_76
+        vg:Assassins_Creed
+        vg:Assassins_Creed_II
+        vg:Assassins_Creed_Brotherhood
+        vg:Assassins_Creed_Revelations
+        vg:Assassins_Creed_III
+        vg:Assassins_Creed_IV_Black_Flag
+        vg:Assassins_Creed_Rogue
+        vg:Assassins_Creed_Unity
+        vg:Assassins_Creed_Syndicate
+        vg:Assassins_Creed_Origins
+        vg:Assassins_Creed_Odyssey
+        vg:Assassins_Creed_Valhalla
+        vg:Assassins_Creed_Mirage
+        vg:Assassins_Creed_Shadows
+        vg:The_Legend_of_Zelda_Ocarina_of_Time_3D
+        vg:The_Legend_of_Zelda_Majoras_Mask_3D
+        vg:The_Legend_of_Zelda_The_Wind_Waker_HD
+        vg:The_Legend_of_Zelda_Twilight_Princess_HD
+        vg:The_Legend_of_Zelda_Skyward_Sword_HD
+        vg:The_Legend_of_Zelda_Links_Awakening_2019
+        vg:The_Legend_of_Zelda_Breath_of_the_Wild_Nintendo_Switch_2_Edition
+        vg:The_Legend_of_Zelda_Tears_of_the_Kingdom_Nintendo_Switch_2_Edition
+        vg:Super_Mario_All_Stars
+        vg:Super_Mario_3D_All_Stars
+        vg:Super_Mario_Galaxy_Super_Mario_Galaxy_2
+        vg:Super_Mario_3D_World_Bowsers_Fury
+        vg:Super_Mario_Bros_Wonder_Nintendo_Switch_2_Edition
+        vg:Assassins_Creed_The_Ezio_Collection
+        vg:Assassins_Creed_III_Remastered
+        vg:Assassins_Creed_Rogue_Remastered
+        vg:Assassins_Creed_Black_Flag_Resynced
+        vg:Fallout_4_Anniversary_Edition
+        vg:Grand_Theft_Auto_The_Trilogy_The_Definitive_Edition
+        vg:Grand_Theft_Auto_V_PlayStation_5_and_Xbox_Series_X_S
+        vg:Mass_Effect_Legendary_Edition
+        vg:Halo_The_Master_Chief_Collection
+        vg:The_Witcher_3_Wild_Hunt_Complete_Edition_PlayStation_5_and_Xbox_Series_X_S
+        vg:Dark_Souls_Remastered
+        vg:Portal_Companion_Collection ) .
+[] a owl:AllDifferent ;
+    owl:distinctMembers ( <http://www.videogame-ontology.org/ontology#company/Atari>
+        <http://www.videogame-ontology.org/ontology#company/Bandai_Namco_Entertainment>
+        <http://www.videogame-ontology.org/ontology#company/Bandai_Namco_Holdings>
+        <http://www.videogame-ontology.org/ontology#company/Bethesda_Game_Studios>
+        <http://www.videogame-ontology.org/ontology#company/Bethesda_Softworks>
+        <http://www.videogame-ontology.org/ontology#company/BioWare>
+        <http://www.videogame-ontology.org/ontology#company/Black_Isle_Studios>
+        <http://www.videogame-ontology.org/ontology#company/Bungie>
+        <http://www.videogame-ontology.org/ontology#company/CD_Projekt>
+        <http://www.videogame-ontology.org/ontology#company/CD_Projekt_Red>
+        <http://www.videogame-ontology.org/ontology#company/Capcom>
+        <http://www.videogame-ontology.org/ontology#company/Criterion_Games>
+        <http://www.videogame-ontology.org/ontology#company/Electronic_Arts>
+        <http://www.videogame-ontology.org/ontology#company/Epic_Games>
+        <http://www.videogame-ontology.org/ontology#company/Flagship>
+        <http://www.videogame-ontology.org/ontology#company/FromSoftware>
+        <http://www.videogame-ontology.org/ontology#company/Gamebase>
+        <http://www.videogame-ontology.org/ontology#company/Halo_Studios>
+        <http://www.videogame-ontology.org/ontology#company/Interplay_Productions>
+        <http://www.videogame-ontology.org/ontology#company/Kadokawa_Corporation>
+        <http://www.videogame-ontology.org/ontology#company/Microsoft>
+        <http://www.videogame-ontology.org/ontology#company/Nintendo>
+        <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD>
+        <http://www.videogame-ontology.org/ontology#company/Nintendo_EAD_Tokyo>
+        <http://www.videogame-ontology.org/ontology#company/Nintendo_EPD>
+        <http://www.videogame-ontology.org/ontology#company/Nintendo_RD2>
+        <http://www.videogame-ontology.org/ontology#company/Nintendo_RD4>
+        <http://www.videogame-ontology.org/ontology#company/Obsidian_Entertainment>
+        <http://www.videogame-ontology.org/ontology#company/RAGE_Technology_Group>
+        <http://www.videogame-ontology.org/ontology#company/Rockstar_Games>
+        <http://www.videogame-ontology.org/ontology#company/Rockstar_North>
+        <http://www.videogame-ontology.org/ontology#company/Sega>
+        <http://www.videogame-ontology.org/ontology#company/Sony_Group>
+        <http://www.videogame-ontology.org/ontology#company/Sony_Interactive_Entertainment>
+        <http://www.videogame-ontology.org/ontology#company/Take_Two_Interactive>
+        <http://www.videogame-ontology.org/ontology#company/Ubisoft>
+        <http://www.videogame-ontology.org/ontology#company/Ubisoft_Bordeaux>
+        <http://www.videogame-ontology.org/ontology#company/Ubisoft_Montreal>
+        <http://www.videogame-ontology.org/ontology#company/Ubisoft_Quebec>
+        <http://www.videogame-ontology.org/ontology#company/Ubisoft_Sofia>
+        <http://www.videogame-ontology.org/ontology#company/Valve>
+        <http://www.videogame-ontology.org/ontology#company/Xbox_Game_Studios>
+        <http://www.videogame-ontology.org/ontology#company/ZeniMax_Media>
+        <http://www.videogame-ontology.org/ontology#company/cdp_pl> ) .
+[] a owl:AllDifferent ;
+    owl:distinctMembers ( <http://www.videogame-ontology.org/ontology#platform/Classic_Mac_OS>
+        <http://www.videogame-ontology.org/ontology#platform/Dreamcast>
+        <http://www.videogame-ontology.org/ontology#platform/Famicom_Disk_System>
+        <http://www.videogame-ontology.org/ontology#platform/Game_Boy>
+        <http://www.videogame-ontology.org/ontology#platform/Game_Boy_Advance>
+        <http://www.videogame-ontology.org/ontology#platform/Game_Boy_Color>
+        <http://www.videogame-ontology.org/ontology#platform/Google_Stadia>
+        <http://www.videogame-ontology.org/ontology#platform/Linux>
+        <http://www.videogame-ontology.org/ontology#platform/MS-DOS>
+        <http://www.videogame-ontology.org/ontology#platform/Microsoft_Windows>
+        <http://www.videogame-ontology.org/ontology#platform/NES>
+        <http://www.videogame-ontology.org/ontology#platform/Nintendo_3DS>
+        <http://www.videogame-ontology.org/ontology#platform/Nintendo_64>
+        <http://www.videogame-ontology.org/ontology#platform/Nintendo_DS>
+        <http://www.videogame-ontology.org/ontology#platform/Nintendo_GameCube>
+        <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch>
+        <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch_2>
+        <http://www.videogame-ontology.org/ontology#platform/PlayStation>
+        <http://www.videogame-ontology.org/ontology#platform/PlayStation_2>
+        <http://www.videogame-ontology.org/ontology#platform/PlayStation_3>
+        <http://www.videogame-ontology.org/ontology#platform/PlayStation_4>
+        <http://www.videogame-ontology.org/ontology#platform/PlayStation_5>
+        <http://www.videogame-ontology.org/ontology#platform/SNES>
+        <http://www.videogame-ontology.org/ontology#platform/Wii>
+        <http://www.videogame-ontology.org/ontology#platform/Wii_U>
+        <http://www.videogame-ontology.org/ontology#platform/Xbox>
+        <http://www.videogame-ontology.org/ontology#platform/Xbox_360>
+        <http://www.videogame-ontology.org/ontology#platform/Xbox_One>
+        <http://www.videogame-ontology.org/ontology#platform/Xbox_Series_X_and_Series_S>
+        <http://www.videogame-ontology.org/ontology#platform/macOS> ) .
+[] a owl:AllDifferent ;
+    owl:distinctMembers ( <http://www.videogame-ontology.org/ontology#engine/Anvil>
+        <http://www.videogame-ontology.org/ontology#engine/Aurora_Engine>
+        <http://www.videogame-ontology.org/ontology#engine/Creation_Engine>
+        <http://www.videogame-ontology.org/ontology#engine/Gamebryo>
+        <http://www.videogame-ontology.org/ontology#engine/REDengine>
+        <http://www.videogame-ontology.org/ontology#engine/RenderWare>
+        <http://www.videogame-ontology.org/ontology#engine/Rockstar_Advanced_Game_Engine>
+        <http://www.videogame-ontology.org/ontology#engine/Source>
+        <http://www.videogame-ontology.org/ontology#engine/Unreal_Engine_3> ) .

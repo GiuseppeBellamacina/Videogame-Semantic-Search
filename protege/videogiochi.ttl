@@ -1,0 +1,8 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://www.videogame-ontology.org/ontology/videogiochi> a owl:Ontology ;
+    rdfs:label "Videogiochi: schema, dati e regole" ;
+    owl:imports <http://www.videogame-ontology.org/ontology> ,
+        <http://www.videogame-ontology.org/ontology/dati> ,
+        <http://www.videogame-ontology.org/ontology/regole> .

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri id="schema" name="http://www.videogame-ontology.org/ontology" uri="../schema.ttl"/>
+    <uri id="dati" name="http://www.videogame-ontology.org/ontology/dati" uri="../dati.ttl"/>
+    <uri id="regole" name="http://www.videogame-ontology.org/ontology/regole" uri="../regole.ttl"/>
+</catalog>
