@@ -524,5 +524,25 @@
   ],
   "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Tears_of_the_Kingdom",
   "nota": "The player controls Link as he searches for Princess Zelda and fights to prevent Ganondorf from destroying Hyrule."
+ },
+ {
+  "gioco": "The Legend of Zelda: Breath of the Wild",
+  "campo": "premi",
+  "valore": [
+   "The Game Awards - Game of the Year",
+   "D.I.C.E. Awards - Game of the Year",
+   "Japan Game Awards - Grand Award"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Golden_Joystick_Awards",
+  "nota": "ai Golden Joystick 2017 ha vinto solo 'Nintendo Game of the Year' e 'Best Audio', non il premio Ultimate Game of the Year"
+ },
+ {
+  "gioco": "The Legend of Zelda: Ocarina of Time",
+  "campo": "premi",
+  "valore": [
+   "D.I.C.E. Awards - Game of the Year"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Japan_Game_Awards",
+  "nota": "ai 3rd CESA Awards (1999) ha vinto solo il premio di categoria Programming, non il Grand Award"
  }
 ]

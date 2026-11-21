@@ -93,7 +93,7 @@ DEFINED = [
     ("FirstPartyGame", "VideoGame", "Un gioco pubblicato dal gruppo di un costruttore di console", and_("VideoGame", some("publishedByGroup", "PlatformHolder"))),
     ("SequelGame", "VideoGame", "Il seguito di un altro gioco", and_("VideoGame", some("sequelOf", "VideoGame"))),
     ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", and_("SequelGame", some("sequelOf", some("sequelOf", "VideoGame")))),
-    ("LongRunningOriginal", "VideoGame", "Il capostipite di una serie di almeno tre capitoli", and_("VideoGame", some("hasSequel", some("hasSequel", "VideoGame")))),
+    ("LongRunningOriginal", "VideoGame", "Un gioco seguito da almeno altri due capitoli della serie", and_("VideoGame", some("hasSequel", some("hasSequel", "VideoGame")))),
     ("ViolentStoryGame", "VideoGame", "Un gioco nella cui trama qualcuno viene ucciso", and_("VideoGame", some("hasKilling", "Killing"))),
     ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", and_("ViolentStoryGame", some("pegiRating", score(16)))),
     ("FantasyViolenceGame", "ViolentStoryGame", "Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici", and_("ViolentStoryGame", some("pegiRating", score_max(12)))),

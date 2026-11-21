@@ -142,7 +142,7 @@ vg:LongRunningFranchise a owl:Class ;
 
 vg:LongRunningOriginal a owl:Class ;
     rdfs:label "LongRunningOriginal" ;
-    rdfs:comment "Il capostipite di una serie di almeno tre capitoli" ;
+    rdfs:comment "Un gioco seguito da almeno altri due capitoli della serie" ;
     owl:equivalentClass [ a owl:Class ;
             owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
                         owl:onProperty vg:hasSequel ;
