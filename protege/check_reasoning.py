@@ -130,7 +130,7 @@ EXPECTED = [
     ("TragicProtagonist", ["character/Gustave", "character/Haytham_Kenway"], ["character/Link"]),
     ("Turncoat", ["character/Cortana"], ["character/Master_Chief"]),
     ("HistoricalGame", ["Assassins_Creed_II", "Assassins_Creed_Origins"], ["The_Witcher_3_Wild_Hunt"]),
-    ("SciFiGame", ["Halo_Infinite", "Portal_2"], ["The_Legend_of_Zelda_Breath_of_the_Wild"]),
+    ("SciFiGame", ["Halo_Infinite", "Portal_2", "Mass_Effect", "Mass_Effect_2", "Mass_Effect_3"], ["The_Legend_of_Zelda_Breath_of_the_Wild"]),
     ("RogueAIGame", ["Halo_5_Guardians", "Portal"], ["Halo_4"]),
     ("PreviousGenerationConsole", ["platform/Nintendo_Switch", "platform/PlayStation_4"], ["platform/PlayStation_5", "platform/Nintendo_Switch_2"]),
     ("CrossGenerationGame", ["The_Legend_of_Zelda_Ocarina_of_Time", "Grand_Theft_Auto_III", "Minecraft"], ["Mass_Effect", "The_Legend_of_Zelda_Majoras_Mask"]),

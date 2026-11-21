@@ -113,7 +113,7 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `character/Gustave`, `character/Haytham_Kenway` | `TragicProtagonist` | Protagonisti (`Protagonist`) che sono anche vittime (`DeceasedCharacter`). |
 | `character/Cortana` | `Turncoat` | Protagonista in Halo CE e Halo 4, antagonista in Halo 5. |
 | `Assassins_Creed_II` | `HistoricalGame` | Ha personaggi che interpretano persone reali: una specie di "genere" dedotto. |
-| `Portal_2`, `Halo_Infinite` | `SciFiGame` | Personaggi sintetici (GLaDOS, Wheatley) o alieni (Arbiter, Atriox). |
+| `Portal_2`, `Halo_Infinite`, `Mass_Effect_2` | `SciFiGame` | Personaggi sintetici (GLaDOS, Wheatley) o alieni (Arbiter, Atriox, Garrus, Liara). |
 | `Halo_5_Guardians`, `Portal` | `RogueAIGame` | L'antagonista è un'IA: serve l'inversa `hasAntagonist`. |
 | `person/Hidetaka_Miyazaki`, `person/Shigeru_Miyamoto` | `ProlificDirector` | Almeno tre giochi diretti (`≥3 directorOf.VideoGame`). |
 | `company/Bungie`, `company/Rockstar_North` | `ProlificDeveloper` | Almeno cinque giochi sviluppati. |

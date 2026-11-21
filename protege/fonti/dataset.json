@@ -3584,6 +3584,11 @@
    ],
    "giocabili": [
     "Commander Shepard"
+   ],
+   "altri_personaggi": [
+    "Garrus Vakarian",
+    "Liara T'Soni",
+    "Tali'Zorah"
    ]
   },
   {
@@ -3637,6 +3642,11 @@
    ],
    "giocabili": [
     "Commander Shepard"
+   ],
+   "altri_personaggi": [
+    "Garrus Vakarian",
+    "Liara T'Soni",
+    "Tali'Zorah"
    ]
   },
   {
@@ -3689,6 +3699,11 @@
    ],
    "giocabili": [
     "Commander Shepard"
+   ],
+   "altri_personaggi": [
+    "Garrus Vakarian",
+    "Liara T'Soni",
+    "Tali'Zorah"
    ]
   },
   {
@@ -5847,7 +5862,13 @@
   "Samuel Adams": {
    "interpreta": "Samuel Adams"
   },
-  "Saren Arterius": {},
+  "Saren Arterius": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Saren_Arterius",
+    "citazione": "Saren makes his first and only video game appearance in the 2007 video game Mass Effect, where he is depicted as a Turian member of the Spectres"
+   }
+  },
   "Scorchbeast Queen": {},
   "Selim I": {
    "interpreta": "Selim I"
@@ -5997,7 +6018,28 @@
   "al-Mutawakkil": {
    "interpreta": "Al-Mutawakkil"
   },
-  "Élise de la Serre": {}
+  "Élise de la Serre": {},
+  "Garrus Vakarian": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Garrus_Vakarian",
+    "citazione": "Garrus is a turian, one of the various alien species in Mass Effect"
+   }
+  },
+  "Liara T'Soni": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Liara_T'Soni",
+    "citazione": "Liara is an asari; a species of galactic hyperpower dominance within the Citadel Council"
+   }
+  },
+  "Tali'Zorah": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Tali'Zorah",
+    "citazione": "She is of the quarian alien race."
+   }
+  }
  },
  "persone": {
   "Adam Badowski": {},

@@ -243,7 +243,7 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 **Esempi.**
 - `HistoricalGame`: tutti i 14 *Assassin's Creed*.
-- `SciFiGame`: quasi tutti gli *Halo* e i due *Portal*.
+- `SciFiGame`: quasi tutti gli *Halo*, i due *Portal* e i tre *Mass Effect*.
 - `RogueAIGame`: *Portal*, *Portal 2*, *Halo 5*, ma anche *Halo: Combat Evolved* e *Halo 3*, dove l'antagonista è 343 Guilty Spark.
 
 **Nei dati.** Il genere "storico" o "fantascientifico" non c'è: ci sono i personaggi che interpretano persone reali, i personaggi alieni, i personaggi costruiti da qualcuno.
@@ -253,7 +253,7 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 - `SciFiGame ≡ VideoGame ⊓ ∃hasCharacter.(Alien ⊔ Synthetic)`
 - `RogueAIGame ≡ VideoGame ⊓ ∃hasAntagonist.RogueAI`, dove `hasAntagonist` è l'inversa di `antagonistOf`
 
-**Perché non è banale.** Il genere si deduce da chi abita il gioco, in tre o quattro passi (per `RogueAIGame`: `builtBy` → `Synthetic`, `antagonistOf` → `Antagonist`, i due insieme → `RogueAI`, e poi l'inversa fino al gioco). Sono condizioni sufficienti, non necessarie: *Mass Effect* non risulta di fantascienza perché nei dati non ci sono alieni, e in un mondo aperto un dato mancante non è una smentita.
+**Perché non è banale.** Il genere si deduce da chi abita il gioco, in tre o quattro passi (per `RogueAIGame`: `builtBy` → `Synthetic`, `antagonistOf` → `Antagonist`, i due insieme → `RogueAI`, e poi l'inversa fino al gioco). Sono condizioni sufficienti, non necessarie: tra i personaggi dei tre *Mass Effect* ci sono Garrus (turian), Liara (asari) e Tali'Zorah (quarian), ciascuno con la fonte, e per questo sono di fantascienza; un gioco i cui alieni non sono nei dati non lo sarebbe, perché in un mondo aperto un dato mancante non è una smentita.
 
 ---
 
