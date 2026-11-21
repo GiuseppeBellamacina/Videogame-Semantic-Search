@@ -15,7 +15,7 @@ Tutti i file `.ttl` sono generati da script Python con rdflib (`Graph.add`, `BNo
 | `fonti/correzioni.json` | Correzioni manuali, ognuna con l'URL della fonte (per esempio i PEGI presi da pegi.info). |
 | `fonti/wikidata/` | Le risposte di Wikidata salvate da `fetch_wikidata.py`. |
 | `fonti/agente/` | I fatti di trama estratti da `research_agent.py`, con URL e citazione per ciascuno. |
-| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 209 deduzioni attese. |
+| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 211 deduzioni attese. |
 | `relazione/` | La relazione LaTeX; le appendici sono generate. |
 
 ```bash

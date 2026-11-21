@@ -389,5 +389,140 @@
   ],
   "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
   "nota": "capitolo precedente in ordine di uscita (2006 -> 2007); nella storia Phantom Hourglass continua The Wind Waker, come indica Wikidata"
+ },
+ {
+  "gioco": "The Legend of Zelda",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda_(video_game)",
+  "nota": "It is set in the fantasy land of Hyrule and centers on an elf-like boy named Link, who aims to collect the eight fragments of the Triforce of Wisdom to rescue Princess Zelda from Ganon."
+ },
+ {
+  "gioco": "Zelda II: The Adventure of Link",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Zelda_II:_The_Adventure_of_Link",
+  "nota": "The Adventure of Link is a direct sequel to the original The Legend of Zelda, again involving the protagonist Link, on a quest to save Princess Zelda, who has fallen under a sleeping spell."
+ },
+ {
+  "gioco": "The Legend of Zelda: A Link to the Past",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_A_Link_to_the_Past",
+  "nota": "Before the events of the game, the descendants of the Seven Sages who imprisoned Ganon are captured, Princess Zelda included, and, one by one, sent to the Dark World."
+ },
+ {
+  "gioco": "The Legend of Zelda: Ocarina of Time",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Ocarina_of_Time",
+  "nota": "Link also meets Princess Zelda, who is under the watch of her Sheikah caretaker, Impa, and encounters the King of the Gerudo, Ganondorf."
+ },
+ {
+  "gioco": "The Legend of Zelda: Four Swords",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_A_Link_to_the_Past_and_Four_Swords",
+  "nota": "After Zelda explains its history and the evil sorcerer sealed within it, the sorcerer named Vaati breaks free, capturing Zelda to marry her."
+ },
+ {
+  "gioco": "The Legend of Zelda: The Wind Waker",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_The_Wind_Waker",
+  "nota": "Aided by allies including pirate captain Tetra – an incarnation of Princess Zelda – and a talking sailboat named the King of Red Lions, Link sails the ocean, explores islands, and traverses dungeons to acquire the power necessary to defeat Ganon."
+ },
+ {
+  "gioco": "The Legend of Zelda: Four Swords Adventures",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Four_Swords_Adventures",
+  "nota": "=== Story === Fearing that Vaati's seal is weakening, which has caused strange happenings through Hyrule, Princess Zelda summons Link as a guard while she and the Shrine Maidens open the portal to the Four Sword Sanctuary."
+ },
+ {
+  "gioco": "The Legend of Zelda: The Minish Cap",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_The_Minish_Cap",
+  "nota": "In the present, Link accompanies his childhood friend Princess Zelda to the Picori Festival to deliver a sword for the sword fighting champion who gets to touch the Picori Sword."
+ },
+ {
+  "gioco": "The Legend of Zelda: Twilight Princess",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Twilight_Princess",
+  "nota": "She guides him to Princess Zelda, who explains that Zant, the usurper king of the Twili, invaded Hyrule Castle and forced her to surrender."
+ },
+ {
+  "gioco": "The Legend of Zelda: Phantom Hourglass",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Phantom_Hourglass",
+  "nota": "Link's journey to save his friend Tetra from the story's primary antagonist, Bellum (Tetra è l'incarnazione di Zelda: \"pirate captain Tetra – an incarnation of Princess Zelda\", pagina di The Wind Waker)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Spirit Tracks",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Spirit_Tracks",
+  "nota": "Set a century after the events of Phantom Hourglass, the storyline follows a new Link and the great-great-granddaughter of Tetra, Princess Zelda, as they explore the land of New Hyrule to prevent the awakening of the Demon King Malladus."
+ },
+ {
+  "gioco": "The Legend of Zelda: Skyward Sword",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Skyward_Sword",
+  "nota": "The series main protagonist Link, a resident of a floating town called Skyloft, sets out to rescue his childhood friend Zelda after she is kidnapped and brought to the abandoned lands below the clouds."
+ },
+ {
+  "gioco": "The Legend of Zelda: A Link Between Worlds",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_A_Link_Between_Worlds",
+  "nota": "Players assume the role of Link, who sets out to restore peace to the kingdom of Hyrule after the evil sorcerer Yuga captures Princess Zelda and escapes through a rift into the parallel world of Lorule."
+ },
+ {
+  "gioco": "The Legend of Zelda: Breath of the Wild",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Breath_of_the_Wild",
+  "nota": "Set near the end of the Zelda timeline, it follows Link as he sets out to save Princess Zelda and prevent Calamity Ganon from destroying the world."
+ },
+ {
+  "gioco": "The Legend of Zelda: Tears of the Kingdom",
+  "campo": "altri_personaggi",
+  "valore": [
+   "Zelda"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Tears_of_the_Kingdom",
+  "nota": "The player controls Link as he searches for Princess Zelda and fights to prevent Ganondorf from destroying Hyrule."
  }
 ]
