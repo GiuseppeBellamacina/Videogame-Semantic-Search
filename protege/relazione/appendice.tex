@@ -1,7 +1,7 @@
 \section{Le componenti dell'ontologia}\label{app:componenti}
 
 \begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
-\caption{Le 77 classi}\\ \toprule
+\caption{Le 76 classi}\\ \toprule
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
@@ -62,7 +62,6 @@
 \texttt{HighlyRatedGame} & \texttt{VideoGame} & definita & Un gioco con almeno 90 su Metacritic \\
 \texttt{AcclaimedSequel} & \texttt{SequelGame} & definita & Un seguito acclamato \\
 \texttt{GOTYWinner} & \texttt{VideoGame} & definita & Un gioco premiato come gioco dell'anno \\
-\texttt{ConsensusGOTY} & \texttt{GOTYWinner} & definita & Un gioco dell'anno per almeno due cerimonie diverse \\
 \texttt{RemasteredClassic} & \texttt{VideoGame} & definita & Un gioco che ha avuto una nuova edizione \\
 \texttt{RemasterCollection} & \texttt{Remaster} & definita & Una raccolta che rimasterizza almeno due giochi \\
 \texttt{StillPlayable} & \texttt{VideoGame} & definita & Un gioco giocabile su una console attuale \\
@@ -161,7 +160,6 @@
 \textsf{HighlyRatedGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{metacriticScore}.\texttt{integer}[\geq 90] \\
 \textsf{AcclaimedSequel} &\equiv \textsf{SequelGame} \sqcap \textsf{HighlyRatedGame} \\
 \textsf{GOTYWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{Award} \\
-\textsf{ConsensusGOTY} &\equiv \textsf{GOTYWinner} \sqcap {\geq}2\,\textit{wonAward}.\textsf{Award} \\
 \textsf{RemasteredClassic} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasRemaster}.\textsf{VideoGame} \\
 \textsf{RemasterCollection} &\equiv \textsf{Remaster} \sqcap {\geq}2\,\textit{remasterOf}.\textsf{VideoGame} \\
 \textsf{StillPlayable} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{playableOn}.\textsf{CurrentGenerationConsole} \\

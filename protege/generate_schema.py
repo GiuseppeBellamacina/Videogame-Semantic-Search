@@ -100,7 +100,6 @@ DEFINED = [
     ("HighlyRatedGame", "VideoGame", "Un gioco con almeno 90 su Metacritic", and_("VideoGame", some("metacriticScore", score(90)))),
     ("AcclaimedSequel", "SequelGame", "Un seguito acclamato", and_("SequelGame", "HighlyRatedGame")),
     ("GOTYWinner", "VideoGame", "Un gioco premiato come gioco dell'anno", and_("VideoGame", some("wonAward", "Award"))),
-    ("ConsensusGOTY", "GOTYWinner", "Un gioco dell'anno per almeno due cerimonie diverse", and_("GOTYWinner", at_least(2, "wonAward", "Award"))),
     ("RemasteredClassic", "VideoGame", "Un gioco che ha avuto una nuova edizione", and_("VideoGame", some("hasRemaster", "VideoGame"))),
     ("RemasterCollection", "Remaster", "Una raccolta che rimasterizza almeno due giochi", and_("Remaster", at_least(2, "remasterOf", "VideoGame"))),
     ("StillPlayable", "VideoGame", "Un gioco giocabile su una console attuale", and_("VideoGame", some("playableOn", "CurrentGenerationConsole"))),

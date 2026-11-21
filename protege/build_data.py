@@ -166,7 +166,6 @@ def build(ds):
     all_different(g, [iri("character", c) for c in ds["personaggi"]])
     all_different(g, [VG["platform/" + p] for p in ds["piattaforme"]])
     all_different(g, [iri("engine", e) for e in ds["motori"]])
-    all_different(g, [iri("award", a) for a in {a for x in ds["giochi"] for a in x.get("premi", [])}])
     all_different(g, [killing(x["titolo"], v, k) for x in ds["giochi"] for v, k in x.get("uccisioni", [])])
     return g
 

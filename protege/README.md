@@ -15,7 +15,7 @@ Tutti i file `.ttl` sono generati da script Python con rdflib (`Graph.add`, `BNo
 | `fonti/correzioni.json` | Correzioni manuali, ognuna con l'URL della fonte (per esempio i PEGI presi da pegi.info). |
 | `fonti/wikidata/` | Le risposte di Wikidata salvate da `fetch_wikidata.py`. |
 | `fonti/agente/` | I fatti di trama estratti da `research_agent.py`, con URL e citazione per ciascuno. |
-| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 211 deduzioni attese. |
+| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 208 deduzioni attese. |
 | `relazione/` | La relazione LaTeX; le appendici sono generate. |
 
 ```bash
@@ -93,7 +93,6 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `character/Cortana` | `Synthetic`, `RogueAI` | Nei dati c'è solo `builtBy` Catherine Halsey: chi è costruito da qualcuno è `Synthetic`. In Halo 5 è l'antagonista, quindi IA ribelle. Lo stesso per GLaDOS e Wheatley (Aperture Science). |
 | `character/Link`, `character/Chell` | `PlayerCharacter` | Il giocatore li controlla in almeno un gioco (`playableIn`). |
 | `platform/PlayStation_5` | `CurrentGenerationConsole` | Nei dati c'è solo la generazione (9): la classe è definita come console di generazione ≥ 9. |
-| `The_Witcher_3_Wild_Hunt` | `ConsensusGOTY` | Gioco dell'anno per almeno due cerimonie diverse. |
 | `character/Ganondorf` | `KilledMoreThanOnce`, `ReturningCharacter` | Ucciso in Twilight Princess e in Tears of the Kingdom; ricompare in giochi usciti dopo la sua morte. |
 | `Grand_Theft_Auto_San_Andreas`, `The_Legend_of_Zelda_Breath_of_the_Wild` | `ReturnAfterDeathGame`, `PrequelReturn` (solo San Andreas) | Catalina, uccisa in GTA III, ricompare in San Andreas, che è un prequel; Ganondorf ricompare in Breath of the Wild, che non lo è. |
 | `Halo_Combat_Evolved` | `StillPlayable`, `MustPlayGame`, `GOTYWinner` | Il remake Campaign Evolved è su PS5; Metacritic 97; D.I.C.E. 2002. |

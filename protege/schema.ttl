@@ -29,15 +29,6 @@ vg:AwardWinningFranchise a owl:Class ;
                         owl:onProperty vg:includes ;
                         owl:someValuesFrom vg:GOTYWinner ] ) ] .
 
-vg:ConsensusGOTY a owl:Class ;
-    rdfs:label "ConsensusGOTY" ;
-    rdfs:comment "Un gioco dell'anno per almeno due cerimonie diverse" ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:GOTYWinner [ a owl:Restriction ;
-                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
-                        owl:onClass vg:Award ;
-                        owl:onProperty vg:wonAward ] ) ] .
-
 vg:DefeatedVillain a owl:Class ;
     rdfs:label "DefeatedVillain" ;
     rdfs:comment "Un antagonista ucciso dal protagonista" ;
@@ -353,6 +344,14 @@ vg:FictionalOrganization a owl:Class ;
     rdfs:label "FictionalOrganization" ;
     rdfs:comment "Un'organizzazione del mondo di gioco (per esempio Aperture Science)" .
 
+vg:GOTYWinner a owl:Class ;
+    rdfs:label "GOTYWinner" ;
+    rdfs:comment "Un gioco premiato come gioco dell'anno" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:wonAward ;
+                        owl:someValuesFrom vg:Award ] ) ] .
+
 vg:HighlyRatedGame a owl:Class ;
     rdfs:label "HighlyRatedGame" ;
     rdfs:comment "Un gioco con almeno 90 su Metacritic" ;
@@ -595,6 +594,10 @@ vg:victim a owl:AsymmetricProperty,
     rdfs:domain vg:Killing ;
     rdfs:range vg:Character .
 
+vg:wonAward a owl:ObjectProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:Award .
+
 vg:Antagonist a owl:Class ;
     rdfs:label "Antagonist" ;
     rdfs:comment "L'antagonista di un gioco" ;
@@ -607,14 +610,6 @@ vg:Film a owl:Class ;
     rdfs:label "Film" ;
     rdfs:comment "Un film" ;
     rdfs:subClassOf vg:CreativeWork .
-
-vg:GOTYWinner a owl:Class ;
-    rdfs:label "GOTYWinner" ;
-    rdfs:comment "Un gioco premiato come gioco dell'anno" ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:wonAward ;
-                        owl:someValuesFrom vg:Award ] ) ] .
 
 vg:GameMode a owl:Class ;
     rdfs:label "GameMode" ;
@@ -695,9 +690,9 @@ vg:victimIn a owl:AsymmetricProperty,
         owl:ObjectProperty ;
     owl:inverseOf vg:victim .
 
-vg:wonAward a owl:ObjectProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:Award .
+vg:Award a owl:Class ;
+    rdfs:label "Award" ;
+    rdfs:comment "Il premio Gioco dell'anno di una cerimonia (The Game Awards, BAFTA, D.I.C.E....)" .
 
 vg:DeceasedCharacter a owl:Class ;
     rdfs:label "DeceasedCharacter" ;
@@ -726,10 +721,6 @@ vg:includes a owl:AsymmetricProperty,
 vg:remasterOf a owl:ObjectProperty ;
     rdfs:domain vg:VideoGame ;
     rdfs:range vg:VideoGame .
-
-vg:Award a owl:Class ;
-    rdfs:label "Award" ;
-    rdfs:comment "Il premio Gioco dell'anno di una cerimonia (The Game Awards, BAFTA, D.I.C.E....)" .
 
 vg:ConsolePlatform a owl:Class ;
     rdfs:label "ConsolePlatform" ;

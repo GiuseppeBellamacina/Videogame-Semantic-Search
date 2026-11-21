@@ -98,7 +98,6 @@ EXPECTED = [
     ("LateEntry", ["Assassins_Creed_Revelations", "The_Legend_of_Zelda_Spirit_Tracks", "Grand_Theft_Auto_III"], ["Super_Mario_Bros_2"]),
     ("AcclaimedSequel", ["Grand_Theft_Auto_IV", "Portal_2"], []),
     ("GOTYWinner", ["The_Witcher_3_Wild_Hunt", "Fallout_4"], ["The_Witcher"]),
-    ("ConsensusGOTY", ["The_Witcher_3_Wild_Hunt", "The_Legend_of_Zelda_Breath_of_the_Wild"], ["Halo_Combat_Evolved"]),
     ("RemasteredClassic", ["The_Legend_of_Zelda_Ocarina_of_Time", "Mass_Effect"], ["Fallout_3"]),
     ("RemasterCollection", ["Super_Mario_3D_All_Stars", "Mass_Effect_Legendary_Edition"], ["The_Legend_of_Zelda_Ocarina_of_Time_3D"]),
     ("StillPlayable", ["Grand_Theft_Auto_III", "The_Legend_of_Zelda_Breath_of_the_Wild", "Fallout_4", "Assassins_Creed_IV_Black_Flag", "Halo_Combat_Evolved"], ["Mass_Effect", "Halo_Reach"]),

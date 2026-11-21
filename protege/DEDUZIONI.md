@@ -154,23 +154,7 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 9. Giochi dell'anno "per consenso"
-
-**Esempio.** *The Witcher 3*, *Breath of the Wild*, *Elden Ring*, *Portal 2*, *Mass Effect 2* sono `ConsensusGOTY` (10 giochi in tutto).
-
-**Nei dati.**
-- *The Witcher 3* ha vinto il premio Gioco dell'anno ai Golden Joystick, a The Game Awards e ai Game Developers Choice Awards.
-- I premi sono dichiarati tutti diversi (`owl:AllDifferent`).
-
-**Assiomi.**
-- `GOTYWinner ≡ VideoGame ⊓ ∃wonAward.Award`
-- `ConsensusGOTY ≡ GOTYWinner ⊓ ≥2 wonAward.Award`
-
-**Perché non è banale.** Senza `AllDifferent` la cardinalità non scatterebbe: OWL non assume che nomi diversi indichino premi diversi (niente Unique Name Assumption). Ogni premio è stato verificato sulla tabella dei vincitori di Wikipedia; due erano sbagliati e sono corretti in `fonti/correzioni.json` (Breath of the Wild non ha vinto il Golden Joystick, Ocarina of Time non ha vinto il Grand Award dei Japan Game Awards).
-
----
-
-## 10. Dark Souls è un gioco d'autore
+## 9. Dark Souls è un gioco d'autore
 
 **Esempio.** *Dark Souls*, *Dark Souls III* ed *Elden Ring* sono `AuteurGame`.
 
@@ -185,7 +169,7 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 11. Seguiti che cambiano studio o motore
+## 10. Seguiti che cambiano studio o motore
 
 **Esempi.**
 - *Halo 4* (343 Industries dopo Bungie) e *Oracle of Seasons* (Flagship, studio di Capcom, dopo Nintendo) sono `SequelByDifferentStudio`.
@@ -198,7 +182,7 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 12. Serie che cambiano mano e serie diventate film o serie TV
+## 11. Serie che cambiano mano e serie diventate film o serie TV
 
 **Esempi.**
 - Halo, Fallout, Far Cry e Assassin's Creed sono `FranchiseWithStudioChange`.
@@ -210,7 +194,7 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 13. Personaggi storici e cattivi sconfitti
+## 12. Personaggi storici e cattivi sconfitti
 
 **Esempi.**
 - Leonardo da Vinci e Cesare Borgia sono `HistoricalCharacter`.
@@ -224,7 +208,7 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 14. Gli errori che il reasoner trova, e un'uguaglianza che deduce
+## 13. Gli errori che il reasoner trova, e un'uguaglianza che deduce
 
 I file in `test/` aggiungono pochi fatti e fanno scattare un assioma preciso.
 
