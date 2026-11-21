@@ -189,6 +189,9 @@
      "Miguel",
      "Catalina"
     ]
+   ],
+   "giocabili": [
+    "Claude"
    ]
   },
   {
@@ -244,6 +247,9 @@
      "Ricardo Diaz",
      "Tommy Vercetti"
     ]
+   ],
+   "giocabili": [
+    "Tommy Vercetti"
    ]
   },
   {
@@ -293,6 +299,12 @@
      "Big Smoke",
      "Carl 'CJ' Johnson"
     ]
+   ],
+   "giocabili": [
+    "Carl 'CJ' Johnson"
+   ],
+   "altri_personaggi": [
+    "Catalina"
    ]
   },
   {
@@ -349,6 +361,9 @@
      "Mikhail Faustin",
      "Niko Bellic"
     ]
+   ],
+   "giocabili": [
+    "Niko Bellic"
    ]
   },
   {
@@ -396,6 +411,11 @@
     "Steve Haines",
     "Devin Weston",
     "Martin Madrazo"
+   ],
+   "giocabili": [
+    "Michael De Santa",
+    "Franklin Clinton",
+    "Trevor Philips"
    ]
   },
   {
@@ -431,6 +451,10 @@
    ],
    "antagonisti": [
     "Aldo Mendez"
+   ],
+   "giocabili": [
+    "Jason Duval",
+    "Lucia Caminos"
    ]
   },
   {
@@ -463,6 +487,9 @@
    ],
    "antagonisti": [
     "Ganondorf"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -499,6 +526,9 @@
    ],
    "antagonisti": [
     "Ganondorf"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -532,6 +562,9 @@
    "antagonisti": [
     "Agahnim",
     "Ganondorf"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -560,6 +593,9 @@
     "Takashi Tezuka"
    ],
    "protagonisti": [
+    "Link"
+   ],
+   "giocabili": [
     "Link"
    ]
   },
@@ -602,6 +638,9 @@
    ],
    "antagonisti": [
     "Ganondorf"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -638,6 +677,9 @@
    ],
    "antagonisti": [
     "Skull Kid"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -671,6 +713,9 @@
    "antagonisti": [
     "Onox",
     "Twinrova"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -703,6 +748,9 @@
    "antagonisti": [
     "Veran",
     "Twinrova"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -737,6 +785,9 @@
    ],
    "antagonisti": [
     "Vaati"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -771,6 +822,9 @@
    ],
    "antagonisti": [
     "Ganondorf"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -807,6 +861,9 @@
    "antagonisti": [
     "Shadow Link",
     "Vaati"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -839,6 +896,9 @@
    ],
    "antagonisti": [
     "Vaati"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -880,6 +940,9 @@
      "Zant",
      "Midna"
     ]
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -923,6 +986,9 @@
      "Bellum",
      "Link"
     ]
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -961,6 +1027,9 @@
    "antagonisti": [
     "Malladus",
     "Chancellor Cole"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -1001,6 +1070,9 @@
      "Demise",
      "Link"
     ]
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -1036,6 +1108,9 @@
     "Yuga",
     "Hilda",
     "Ganondorf"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -1071,6 +1146,9 @@
    ],
    "antagonisti": [
     "Lady Maud"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -1111,6 +1189,9 @@
    ],
    "antagonisti": [
     "Ganondorf"
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -1156,6 +1237,9 @@
      "Ganondorf",
      "Link"
     ]
+   ],
+   "giocabili": [
+    "Link"
    ]
   },
   {
@@ -1195,6 +1279,9 @@
      "Null",
      "Zelda"
     ]
+   ],
+   "giocabili": [
+    "Zelda"
    ]
   },
   {
@@ -1227,6 +1314,9 @@
    ],
    "antagonisti": [
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1258,6 +1348,9 @@
    ],
    "antagonisti": [
     "Wart"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1291,6 +1384,9 @@
    ],
    "antagonisti": [
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1323,6 +1419,9 @@
    ],
    "antagonisti": [
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1360,6 +1459,9 @@
    ],
    "antagonisti": [
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1397,6 +1499,9 @@
     "Shadow Mario",
     "Bowser Jr.",
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1430,6 +1535,9 @@
    "antagonisti": [
     "Bowser Jr.",
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1469,6 +1577,9 @@
    ],
    "antagonisti": [
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1508,6 +1619,9 @@
    ],
    "antagonisti": [
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1540,6 +1654,9 @@
    ],
    "antagonisti": [
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1578,6 +1695,9 @@
    ],
    "antagonisti": [
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1614,6 +1734,9 @@
    ],
    "antagonisti": [
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1648,6 +1771,9 @@
    ],
    "antagonisti": [
     "Bowser"
+   ],
+   "giocabili": [
+    "Mario"
    ]
   },
   {
@@ -1679,6 +1805,9 @@
    ],
    "antagonisti": [
     "The Master"
+   ],
+   "giocabili": [
+    "Vault Dweller"
    ]
   },
   {
@@ -1707,6 +1836,9 @@
     "Fallout"
    ],
    "protagonisti": [
+    "The Chosen One"
+   ],
+   "giocabili": [
     "The Chosen One"
    ]
   },
@@ -1752,6 +1884,9 @@
    "antagonisti": [
     "Colonel Augustus Autumn",
     "President John Henry Eden"
+   ],
+   "giocabili": [
+    "Lone Wanderer"
    ]
   },
   {
@@ -1788,6 +1923,9 @@
    ],
    "antagonisti": [
     "Benny"
+   ],
+   "giocabili": [
+    "The Courier"
    ]
   },
   {
@@ -1842,6 +1980,9 @@
      "Conrad Kellogg",
      "Sole Survivor"
     ]
+   ],
+   "giocabili": [
+    "Sole Survivor"
    ]
   },
   {
@@ -1975,6 +2116,10 @@
      "Garnier de Nablus",
      "Garnier of Nablus"
     ]
+   ],
+   "giocabili": [
+    "Altaïr Ibn-La'Ahad",
+    "Desmond Miles"
    ]
   },
   {
@@ -2068,6 +2213,10 @@
      "Bartolomeo d'Alviano",
      "Bartolomeo d'Alviano"
     ]
+   ],
+   "giocabili": [
+    "Ezio Auditore da Firenze",
+    "Desmond Miles"
    ]
   },
   {
@@ -2149,6 +2298,10 @@
      "Leonardo da Vinci",
      "Leonardo da Vinci"
     ]
+   ],
+   "giocabili": [
+    "Ezio Auditore da Firenze",
+    "Desmond Miles"
    ]
   },
   {
@@ -2244,6 +2397,11 @@
      "Niccolò and Maffeo Polo",
      "Niccolò and Maffeo Polo"
     ]
+   ],
+   "giocabili": [
+    "Ezio Auditore da Firenze",
+    "Altaïr Ibn-La'Ahad",
+    "Desmond Miles"
    ]
   },
   {
@@ -2363,6 +2521,11 @@
      "Thomas Hickey",
      "Thomas Hickey"
     ]
+   ],
+   "giocabili": [
+    "Connor",
+    "Haytham Kenway",
+    "Desmond Miles"
    ]
   },
   {
@@ -2467,6 +2630,9 @@
      "Laureano Torres",
      "Laureano de Torres y Ayala"
     ]
+   ],
+   "giocabili": [
+    "Edward Kenway"
    ]
   },
   {
@@ -2549,6 +2715,9 @@
      "Louis-Joseph Gaultier de La Vérendrye",
      "Louis-Joseph Gaultier de La Vérendrye"
     ]
+   ],
+   "giocabili": [
+    "Shay Patrick Cormac"
    ]
   },
   {
@@ -2637,6 +2806,9 @@
      "François-Thomas Germain",
      "François-Thomas Germain"
     ]
+   ],
+   "giocabili": [
+    "Arno Dorian"
    ]
   },
   {
@@ -2751,6 +2923,10 @@
      "Duleep Singh",
      "Duleep Singh"
     ]
+   ],
+   "giocabili": [
+    "Jacob Frye",
+    "Evie Frye"
    ]
   },
   {
@@ -2871,6 +3047,11 @@
      "Apollodorus",
      "Apollodorus of Sicily"
     ]
+   ],
+   "giocabili": [
+    "Bayek of Siwa",
+    "Aya",
+    "Layla Hassan"
    ]
   },
   {
@@ -2952,6 +3133,10 @@
      "Aspasia",
      "Aspasia"
     ]
+   ],
+   "giocabili": [
+    "The Eagle Bearer",
+    "Layla Hassan"
    ]
   },
   {
@@ -3040,6 +3225,10 @@
      "Bárid mac Ímair",
      "Bárid mac Ímair"
     ]
+   ],
+   "giocabili": [
+    "Eivor Varinsdottir",
+    "Layla Hassan"
    ]
   },
   {
@@ -3105,6 +3294,9 @@
      "Leader of the Zanj Rebellion",
      "Ali ibn Muhammad"
     ]
+   ],
+   "giocabili": [
+    "Basim Ibn Ishaq"
    ]
   },
   {
@@ -3184,6 +3376,10 @@
      "Momochi Sandayu",
      "Momochi Sandayu"
     ]
+   ],
+   "giocabili": [
+    "Fujibayashi Naoe",
+    "Yasuke"
    ]
   },
   {
@@ -3235,6 +3431,9 @@
      "The Professor",
      "Geralt of Rivia"
     ]
+   ],
+   "giocabili": [
+    "Geralt of Rivia"
    ]
   },
   {
@@ -3282,6 +3481,9 @@
      "King Foltest",
      "Letho"
     ]
+   ],
+   "giocabili": [
+    "Geralt of Rivia"
    ]
   },
   {
@@ -3338,6 +3540,9 @@
      "Vesemir",
      "Imlerith"
     ]
+   ],
+   "giocabili": [
+    "Geralt of Rivia"
    ]
   },
   {
@@ -3376,6 +3581,9 @@
     "Saren Arterius",
     "Sovereign",
     "Benezia"
+   ],
+   "giocabili": [
+    "Commander Shepard"
    ]
   },
   {
@@ -3426,6 +3634,9 @@
      "Human-Reaper",
      "Commander Shepard"
     ]
+   ],
+   "giocabili": [
+    "Commander Shepard"
    ]
   },
   {
@@ -3475,6 +3686,9 @@
      "Kai Leng",
      "Commander Shepard"
     ]
+   ],
+   "giocabili": [
+    "Commander Shepard"
    ]
   },
   {
@@ -3518,6 +3732,9 @@
      "Gwyn, Lord of Sunlight",
      "Chosen Undead"
     ]
+   ],
+   "giocabili": [
+    "Chosen Undead"
    ]
   },
   {
@@ -3566,6 +3783,9 @@
      "Nashandra",
      "Bearer of the Curse"
     ]
+   ],
+   "giocabili": [
+    "Bearer of the Curse"
    ]
   },
   {
@@ -3609,6 +3829,9 @@
    ],
    "antagonisti": [
     "Soul of Cinder"
+   ],
+   "giocabili": [
+    "Ashen One"
    ]
   },
   {
@@ -3649,6 +3872,9 @@
    ],
    "antagonisti": [
     "GLaDOS"
+   ],
+   "giocabili": [
+    "Chell"
    ]
   },
   {
@@ -3694,6 +3920,9 @@
    "antagonisti": [
     "GLaDOS",
     "Wheatley"
+   ],
+   "giocabili": [
+    "Chell"
    ]
   },
   {
@@ -3732,6 +3961,9 @@
    ],
    "antagonisti": [
     "343 Guilty Spark"
+   ],
+   "giocabili": [
+    "Master Chief"
    ]
   },
   {
@@ -3779,6 +4011,10 @@
      "Tartarus",
      "Arbiter"
     ]
+   ],
+   "giocabili": [
+    "Master Chief",
+    "Arbiter"
    ]
   },
   {
@@ -3829,6 +4065,10 @@
      "343 Guilty Spark",
      "Master Chief"
     ]
+   ],
+   "giocabili": [
+    "Master Chief",
+    "Arbiter"
    ]
   },
   {
@@ -3861,6 +4101,9 @@
     "Joseph Staten"
    ],
    "protagonisti": [
+    "The Rookie"
+   ],
+   "giocabili": [
     "The Rookie"
    ]
   },
@@ -3895,6 +4138,9 @@
     "Marcus Lehto"
    ],
    "protagonisti": [
+    "Noble Six"
+   ],
+   "giocabili": [
     "Noble Six"
    ]
   },
@@ -3934,6 +4180,9 @@
    "antagonisti": [
     "The Didact",
     "Jul 'Mdama"
+   ],
+   "giocabili": [
+    "Master Chief"
    ]
   },
   {
@@ -3971,6 +4220,10 @@
    "antagonisti": [
     "Cortana",
     "Warden Eternal"
+   ],
+   "giocabili": [
+    "Master Chief",
+    "Jameson Locke"
    ]
   },
   {
@@ -4018,6 +4271,9 @@
      "Despondent Pyre",
      "The Harbinger"
     ]
+   ],
+   "giocabili": [
+    "Master Chief"
    ]
   },
   {
@@ -4068,6 +4324,9 @@
      "Dr. Krieger",
      "Jack Carver"
     ]
+   ],
+   "giocabili": [
+    "Jack Carver"
    ]
   },
   {
@@ -4164,6 +4423,9 @@
      "Sam Becker",
      "Hoyt Volker"
     ]
+   ],
+   "giocabili": [
+    "Jason Brody"
    ]
   },
   {
@@ -4206,6 +4468,9 @@
    ],
    "antagonisti": [
     "Pagan Min"
+   ],
+   "giocabili": [
+    "Ajay Ghale"
    ]
   },
   {
@@ -4260,6 +4525,9 @@
      "Dah",
      "Takkar"
     ]
+   ],
+   "giocabili": [
+    "Takkar"
    ]
   },
   {
@@ -4327,6 +4595,9 @@
      "Virgil Minkler",
      "Cameron Burke"
     ]
+   ],
+   "giocabili": [
+    "The Deputy"
    ]
   },
   {
@@ -4380,6 +4651,9 @@
      "Lou",
      "The Captain"
     ]
+   ],
+   "giocabili": [
+    "The Captain"
    ]
   },
   {
@@ -4440,6 +4714,9 @@
      "Edgar Reyes",
      "Dani Rojas"
     ]
+   ],
+   "giocabili": [
+    "Dani Rojas"
    ]
   },
   {
@@ -4520,6 +4797,9 @@
      "The Stranger",
      "Lee Everett"
     ]
+   ],
+   "giocabili": [
+    "Lee Everett"
    ]
   },
   {
@@ -4566,6 +4846,9 @@
      "Saburo Arasaka",
      "Yorinobu Arasaka"
     ]
+   ],
+   "giocabili": [
+    "V"
    ]
   },
   {
@@ -4606,6 +4889,9 @@
     "Golden Joystick Awards - Game of the Year"
    ],
    "protagonisti": [
+    "The Tarnished"
+   ],
+   "giocabili": [
     "The Tarnished"
    ]
   },
@@ -4654,6 +4940,9 @@
      "Gustave",
      "Renoir"
     ]
+   ],
+   "giocabili": [
+    "Gustave"
    ]
   },
   {
@@ -4687,6 +4976,9 @@
    ],
    "antagonisti": [
     "Shroud"
+   ],
+   "giocabili": [
+    "Robert Robertson III"
    ]
   }
  ],
@@ -4989,7 +5281,11 @@
  ],
  "personaggi": {
   "343 Guilty Spark": {
-   "natura": "ArtificialIntelligence"
+   "costruito_da": "Forerunners",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/343_Guilty_Spark",
+    "citazione": "343 Guilty Spark is an artificial intelligence entity created by an ancient highly advanced species known as the Forerunners."
+   }
   },
   "Abbas Sofian": {},
   "Abu'l Nuquod": {},
@@ -5027,7 +5323,13 @@
   "Apollodorus": {
    "interpreta": "Apollodorus of Sicily"
   },
-  "Arbiter": {},
+  "Arbiter": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Halo_(franchise)",
+    "nota": "specie aliena (Sangheili, San'Shyuum, Jiralhanae, Forerunner, Endless) secondo la trama dei giochi Halo su Wikipedia"
+   }
+  },
   "Arno Dorian": {
    "natura": "Human"
   },
@@ -5038,7 +5340,13 @@
   "Asuka Kasen": {
    "natura": "Human"
   },
-  "Atriox": {},
+  "Atriox": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Halo_(franchise)",
+    "nota": "specie aliena (Sangheili, San'Shyuum, Jiralhanae, Forerunner, Endless) secondo la trama dei giochi Halo su Wikipedia"
+   }
+  },
   "Avery Johnson": {
    "natura": "Human"
   },
@@ -5160,7 +5468,11 @@
   },
   "Conrad Kellogg": {},
   "Cortana": {
-   "mente_copiata_da": "Catherine Halsey"
+   "costruito_da": "Catherine Halsey",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Cortana_(Halo)",
+    "citazione": "By cloning herself and then copying her clone's brain patterns (which also kills her), Halsey is able to bring Cortana to life and then implant her directly into Master Chief's neural pathways."
+   }
   },
   "Crawford Starrick": {},
   "Crowe": {},
@@ -5177,9 +5489,7 @@
   "Desmond Miles": {
    "natura": "Human"
   },
-  "Despondent Pyre": {
-   "natura": "ArtificialIntelligence"
-  },
+  "Despondent Pyre": {},
   "Devin Weston": {},
   "Diego Castillo": {},
   "Dimitri Rascalov": {
@@ -5240,7 +5550,11 @@
   "Fujibayashi Naoe": {},
   "Fulke": {},
   "GLaDOS": {
-   "natura": "ArtificialIntelligence"
+   "costruito_da": "Aperture Science",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/GLaDOS",
+    "citazione": "GLaDOS is revealed to be responsible for the desertion of the Enrichment Center after going rogue and killing the scientists who created her, before being defeated in a final boss fight."
+   }
   },
   "Gamilat": {},
   "Ganondorf": {},
@@ -5477,8 +5791,20 @@
    "interpreta": "Pothinus"
   },
   "President John Henry Eden": {},
-  "Prophet of Regret": {},
-  "Prophet of Truth": {},
+  "Prophet of Regret": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Halo_(franchise)",
+    "nota": "specie aliena (Sangheili, San'Shyuum, Jiralhanae, Forerunner, Endless) secondo la trama dei giochi Halo su Wikipedia"
+   }
+  },
+  "Prophet of Truth": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Halo_(franchise)",
+    "nota": "specie aliena (Sangheili, San'Shyuum, Jiralhanae, Forerunner, Endless) secondo la trama dei giochi Halo su Wikipedia"
+   }
+  },
   "Ptolemy XIII": {
    "interpreta": "Ptolemy XIII"
   },
@@ -5559,7 +5885,13 @@
   },
   "Talal": {},
   "Tamir": {},
-  "Tartarus": {},
+  "Tartarus": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Halo_(franchise)",
+    "nota": "specie aliena (Sangheili, San'Shyuum, Jiralhanae, Forerunner, Endless) secondo la trama dei giochi Halo su Wikipedia"
+   }
+  },
   "The Captain": {
    "natura": "Human"
   },
@@ -5572,9 +5904,21 @@
   "The Deputy": {
    "natura": "Human"
   },
-  "The Didact": {},
+  "The Didact": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Halo_(franchise)",
+    "nota": "specie aliena (Sangheili, San'Shyuum, Jiralhanae, Forerunner, Endless) secondo la trama dei giochi Halo su Wikipedia"
+   }
+  },
   "The Eagle Bearer": {},
-  "The Harbinger": {},
+  "The Harbinger": {
+   "natura": "Alien",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Halo_(franchise)",
+    "nota": "specie aliena (Sangheili, San'Shyuum, Jiralhanae, Forerunner, Endless) secondo la trama dei giochi Halo su Wikipedia"
+   }
+  },
   "The Illusive Man": {
    "natura": "Human"
   },
@@ -5588,9 +5932,7 @@
   },
   "The Stranger": {},
   "The Tarnished": {},
-  "The Weapon": {
-   "natura": "ArtificialIntelligence"
-  },
+  "The Weapon": {},
   "Thomas Hickey": {
    "interpreta": "Thomas Hickey"
   },
@@ -5626,7 +5968,11 @@
   "Warren Vidic": {},
   "Wart": {},
   "Wheatley": {
-   "natura": "ArtificialIntelligence"
+   "costruito_da": "Aperture Science",
+   "fonte": {
+    "url": "https://en.wikipedia.org/wiki/Wheatley_(Portal)",
+    "citazione": "In the Portal narrative, Wheatley is one of several spherical \"personality cores\" developed to restrain GLaDOS, the main artificial intelligence that operates the Aperture Science facility"
+   }
   },
   "William Johnson": {
    "interpreta": "William Johnson"
@@ -5996,7 +6342,12 @@
   "Dreamcast": {
    "nome": "Dreamcast",
    "classe": "ConsolePlatform",
-   "costruttore": "Sega"
+   "costruttore": "Sega",
+   "generazione": 6,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Dreamcast",
+    "citazione": "It succeeded the Sega Saturn and was the first sixth-generation console, preceding Sony's PlayStation 2, Nintendo's GameCube, and Microsoft's Xbox."
+   }
   },
   "Famicom_Disk_System": {
    "nome": "Famicom Disk System",
@@ -6006,17 +6357,32 @@
   "Game_Boy": {
    "nome": "Game Boy",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 4,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Game_Boy",
+    "citazione": "Nintendo's first handheld to use ROM cartridges, it succeeded the Game & Watch line of handheld electronic games and competed with Sega's Game Gear, Atari's Lynx, and NEC's TurboExpress in the fourth generation of video game consoles."
+   }
   },
   "Game_Boy_Advance": {
    "nome": "Game Boy Advance",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 6,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Game_Boy_Advance",
+    "citazione": "The 32-bit GBA is part of the sixth generation of video game consoles, competing against Nokia's N-Gage and Bandai's Japan-only WonderSwan."
+   }
   },
   "Game_Boy_Color": {
    "nome": "Game Boy Color",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 5,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Game_Boy_Color",
+    "citazione": "The Game Boy Color was released during the fifth generation of video game consoles and competed with Bandai's Japan-only WonderSwan and SNK's Neo Geo Pocket Color."
+   }
   },
   "Google_Stadia": {
    "nome": "Google Stadia",
@@ -6037,97 +6403,193 @@
   "NES": {
    "nome": "Nintendo Entertainment System",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 3,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Nintendo_Entertainment_System",
+    "citazione": "It was Nintendo's first programmable home console, succeeding the Color TV-Game line of dedicated consoles, and primarily competed with Sega's Master System in the third generation of video game consoles."
+   }
   },
   "Nintendo_3DS": {
    "nome": "Nintendo 3DS",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 8,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Nintendo_3DS",
+    "citazione": "As an eighth-generation console, its primary competitor was Sony's PlayStation Vita."
+   }
   },
   "Nintendo_64": {
    "nome": "Nintendo 64",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 5,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Nintendo_64",
+    "citazione": "It was Nintendo's third major home console, following the Super Nintendo Entertainment System, and competed with Sony's PlayStation and the Sega Saturn in the fifth generation of consoles."
+   }
   },
   "Nintendo_DS": {
    "nome": "Nintendo DS",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 7,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Nintendo_DS",
+    "citazione": "Its primary competitor during the seventh generation of video game consoles was Sony's PlayStation Portable."
+   }
   },
   "Nintendo_GameCube": {
    "nome": "GameCube",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 6,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/GameCube",
+    "citazione": "In May 1998, ArtX entered into a partnership with Nintendo to undertake the complete design of the system logic and graphics processor, codenamed \"Flipper\", for Nintendo's sixth-generation video game console."
+   }
   },
   "Nintendo_Switch": {
    "nome": "Nintendo Switch",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 8,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Nintendo_Switch",
+    "citazione": "Released in the middle of the eighth generation of home consoles, the Switch succeeded the Wii U and competed with Sony's PlayStation 4 and Microsoft's Xbox One; it also competes with the ninth-generation consoles, the PlayStation 5 and Xbox Series X/S."
+   }
   },
   "Nintendo_Switch_2": {
    "nome": "Nintendo Switch 2",
-   "classe": "CurrentGenerationConsole",
-   "costruttore": "Nintendo"
+   "classe": "ConsolePlatform",
+   "costruttore": "Nintendo",
+   "generazione": 9,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Ninth_generation_of_video_game_consoles",
+    "citazione": "a successor, the Nintendo Switch 2, was released in June 2025.",
+    "nota": "Wikipedia la elenca tra le piattaforme correlate alla nona generazione, senza classificarla: la consideriamo attuale per scelta"
+   }
   },
   "PlayStation": {
    "nome": "PlayStation",
    "classe": "ConsolePlatform",
-   "costruttore": "Sony Interactive Entertainment"
+   "costruttore": "Sony Interactive Entertainment",
+   "generazione": 5,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/PlayStation",
+    "citazione": "It was part of the fifth generation of video game consoles competing against the Sega Saturn and the Nintendo 64."
+   }
   },
   "PlayStation_2": {
    "nome": "PlayStation 2",
    "classe": "ConsolePlatform",
-   "costruttore": "Sony Interactive Entertainment"
+   "costruttore": "Sony Interactive Entertainment",
+   "generazione": 6,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/PlayStation_2",
+    "citazione": "As a sixth-generation console, it competed primarily against Nintendo's GameCube, Sega's Dreamcast, and Microsoft's Xbox."
+   }
   },
   "PlayStation_3": {
    "nome": "PlayStation 3",
    "classe": "ConsolePlatform",
-   "costruttore": "Sony Interactive Entertainment"
+   "costruttore": "Sony Interactive Entertainment",
+   "generazione": 7,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/PlayStation_3",
+    "citazione": "It competed primarily with Microsoft's Xbox 360 and Nintendo's Wii as part of the seventh generation of video game consoles."
+   }
   },
   "PlayStation_4": {
    "nome": "PlayStation 4",
    "classe": "ConsolePlatform",
-   "costruttore": "Sony Interactive Entertainment"
+   "costruttore": "Sony Interactive Entertainment",
+   "generazione": 8,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/PlayStation_4",
+    "citazione": "A console of the eighth generation, it competed with Microsoft's Xbox One and Nintendo's Wii U and Switch."
+   }
   },
   "PlayStation_5": {
    "nome": "PlayStation 5",
-   "classe": "CurrentGenerationConsole",
-   "costruttore": "Sony Interactive Entertainment"
+   "classe": "ConsolePlatform",
+   "costruttore": "Sony Interactive Entertainment",
+   "generazione": 9,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/PlayStation_5",
+    "citazione": "The PS5 is part of the ninth generation of video game consoles, along with Microsoft's Xbox Series X/S consoles, which were released the same month."
+   }
   },
   "SNES": {
    "nome": "Super Nintendo Entertainment System",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 4,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Super_Nintendo_Entertainment_System",
+    "citazione": "A fourth-generation console, the SNES primarily competed with the Sega Genesis in the console war, a fierce battle for market share in the United States and Europe."
+   }
   },
   "Wii": {
    "nome": "Wii",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 7,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Wii",
+    "citazione": "It is Nintendo's fifth major home game console, following the GameCube, and is a seventh-generation console alongside Microsoft's Xbox 360 and Sony's PlayStation 3."
+   }
   },
   "Wii_U": {
    "nome": "Wii U",
    "classe": "ConsolePlatform",
-   "costruttore": "Nintendo"
+   "costruttore": "Nintendo",
+   "generazione": 8,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Wii_U",
+    "citazione": "Released in late 2012, it was the first eighth-generation video game console and competed with Microsoft's Xbox One and Sony's PlayStation 4."
+   }
   },
   "Xbox": {
    "nome": "Xbox",
    "classe": "ConsolePlatform",
-   "costruttore": "Microsoft"
+   "costruttore": "Microsoft",
+   "generazione": 6,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Xbox_(console)",
+    "citazione": "It was the first major American-produced console since the Atari Jaguar in 1993, and as a sixth-generation console, competed with Sony's PlayStation 2 and Nintendo's GameCube."
+   }
   },
   "Xbox_360": {
    "nome": "Xbox 360",
    "classe": "ConsolePlatform",
-   "costruttore": "Microsoft"
+   "costruttore": "Microsoft",
+   "generazione": 7,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Xbox_360",
+    "citazione": "As a seventh-generation console, it primarily competed with Sony's PlayStation 3 and Nintendo's Wii."
+   }
   },
   "Xbox_One": {
    "nome": "Xbox One",
    "classe": "ConsolePlatform",
-   "costruttore": "Microsoft"
+   "costruttore": "Microsoft",
+   "generazione": 8,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/Xbox_One",
+    "citazione": "An eighth-generation console, it mainly competed against Sony's PlayStation 4 and Nintendo's Wii U and Switch."
+   }
   },
   "Xbox_Series_X_and_Series_S": {
    "nome": "Xbox Series X/S",
-   "classe": "CurrentGenerationConsole",
-   "costruttore": "Microsoft"
+   "classe": "ConsolePlatform",
+   "costruttore": "Microsoft",
+   "generazione": 9,
+   "fonte_generazione": {
+    "fonte": "https://en.wikipedia.org/wiki/PlayStation_5",
+    "citazione": "The PS5 is part of the ninth generation of video game consoles, along with Microsoft's Xbox Series X/S consoles, which were released the same month."
+   }
   },
   "macOS": {
    "nome": "macOS",

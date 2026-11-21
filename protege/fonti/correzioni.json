@@ -346,5 +346,48 @@
   ],
   "fonte": "https://en.wikipedia.org/wiki/Fallout_(franchise)",
   "nota": "capitolo precedente della serie in ordine di uscita (Wikidata non indica il predecessore)"
+ },
+ {
+  "gioco": "The Legend of Zelda: Twilight Princess",
+  "campo": "uccisioni",
+  "valore": [
+   [
+    "Zant",
+    "Midna"
+   ],
+   [
+    "Ganondorf",
+    "Link"
+   ]
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Twilight_Princess",
+  "nota": "Link eventually knocks Ganondorf off his horse, before dueling him sword to sword on foot and eventually running the Master Sword through Ganondorf's chest."
+ },
+ {
+  "gioco": "Halo: Reach",
+  "campo": "prequel_di",
+  "valore": [
+   "Halo: Combat Evolved"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Halo:_Reach",
+  "nota": "It is the sixth installment in the Halo series, and a direct prequel to Halo: Combat Evolved."
+ },
+ {
+  "gioco": "Grand Theft Auto: San Andreas",
+  "campo": "prequel_di",
+  "valore": [
+   "Grand Theft Auto III"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/Grand_Theft_Auto:_San_Andreas",
+  "nota": "ambientato nel 1992 (\"state of San Andreas ... in 1992\"), prima del 2001 di Grand Theft Auto III; Catalina, antagonista di III, vi compare: \"Dan Houser enjoyed the inclusion of III's antagonist Catalina in San Andreas\""
+ },
+ {
+  "gioco": "The Legend of Zelda: Phantom Hourglass",
+  "campo": "seguito_di",
+  "valore": [
+   "The Legend of Zelda: Twilight Princess"
+  ],
+  "fonte": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda",
+  "nota": "capitolo precedente in ordine di uscita (2006 -> 2007); nella storia Phantom Hourglass continua The Wind Waker, come indica Wikidata"
  }
 ]

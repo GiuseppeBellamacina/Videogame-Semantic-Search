@@ -76,6 +76,10 @@ def build(ds):
         add(g, s, VG.madeWith, x.get("motore") and iri("engine", x["motore"]))
         add(g, s, VG.wonAward, [iri("award", a) for a in x.get("premi", [])])
         add(g, s, VG.basedOn, x.get("basato_su") and iri("work", x["basato_su"]))
+        add(g, s, VG.prequelOf, [iri(None, t) for t in x.get("prequel_di", [])])
+        for c in x.get("giocabili", []):
+            g.add((iri("character", c), VG.playableIn, s))
+            own.setdefault(c, set()).add(s)
         for c in x.get("protagonisti", []):
             g.add((iri("character", c), VG.protagonistOf, s))
             own.setdefault(c, set()).add(s)
@@ -91,6 +95,8 @@ def build(ds):
             g.add((k, VG.inGame, s))
             for c in (victim, killer):
                 appears.setdefault(c, set()).add(s)
+        for c in x.get("altri_personaggi", []):
+            appears.setdefault(c, set()).add(s)
         for c, real in x.get("personaggi_storici", []):
             g.add((iri("character", c), VG.portrays, iri("person", real)))
             appears.setdefault(c, set()).add(s)
@@ -108,7 +114,13 @@ def build(ds):
         g.add((s, RDFS.label, Literal(c)))
         add(g, s, RDF.type, d.get("natura") and VG[d["natura"]])
         add(g, s, VG.portrays, d.get("interpreta") and iri("person", d["interpreta"]))
-        add(g, s, VG.mindCopiedFrom, d.get("mente_copiata_da") and iri("character", d["mente_copiata_da"]))
+        builder = d.get("costruito_da")
+        if builder in ds["personaggi"]:
+            g.add((s, VG.builtBy, iri("character", builder)))
+        elif builder:
+            g.add((s, VG.builtBy, iri("organization", builder)))
+            g.add((iri("organization", builder), RDF.type, VG.FictionalOrganization))
+            g.add((iri("organization", builder), RDFS.label, Literal(builder)))
     for p, d in ds["persone"].items():
         s = iri("person", p)
         g.add((s, RDFS.label, Literal(p)))
@@ -125,6 +137,7 @@ def build(ds):
         g.add((s, RDF.type, VG[d["classe"]]))
         g.add((s, RDFS.label, Literal(d["nome"])))
         add(g, s, VG.manufacturedBy, d.get("costruttore") and iri("company", d["costruttore"]))
+        add(g, s, VG.generation, d.get("generazione") and Literal(d["generazione"]))
     for e, dev in ds["motori"].items():
         g.add((iri("engine", e), RDF.type, VG.GameEngine))
         g.add((iri("engine", e), RDFS.label, Literal(e)))

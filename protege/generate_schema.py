@@ -26,27 +26,27 @@ TOP = [
     ("Genre", "Un genere"),
     ("GameMode", "Una modalità di gioco"),
     ("Killing", "Un'uccisione nella trama di un gioco: vittima, assassino e gioco (relazione n-aria)"),
+    ("FictionalOrganization", "Un'organizzazione del mondo di gioco (per esempio Aperture Science)"),
     ("CreativeWork", "Un'opera di un altro medium (romanzo, film, serie TV)"),
 ]
 
 PRIMITIVE = [
     ("ConsolePlatform", "Platform", "Una console"),
     ("PCPlatform", "Platform", "Un personal computer"),
-    ("CurrentGenerationConsole", "ConsolePlatform", "Una console dell'attuale generazione"),
     ("Novel", "CreativeWork", "Un romanzo"),
     ("Film", "CreativeWork", "Un film"),
     ("TVSeries", "CreativeWork", "Una serie televisiva"),
     ("Comic", "CreativeWork", "Un fumetto"),
     ("TabletopGame", "CreativeWork", "Un gioco da tavolo o di ruolo cartaceo"),
     ("Human", "Character", "Un personaggio umano"),
-    ("ArtificialIntelligence", "Character", "Un'intelligenza artificiale"),
+    ("Alien", "Character", "Un personaggio di una specie non umana del mondo di gioco"),
 ]
 
 DISJOINT = [
     [name for name, _ in TOP],
     ["ConsolePlatform", "PCPlatform"],
     ["Novel", "Film", "TVSeries", "Comic", "TabletopGame"],
-    ["Human", "ArtificialIntelligence"],
+    ["Human", "Alien", "Synthetic"],
 ]
 
 
@@ -75,6 +75,12 @@ def or_(*xs):
 
 
 DEFINED = [
+    ("CurrentGenerationConsole", "ConsolePlatform", "Una console della nona generazione, l'attuale", and_("ConsolePlatform", some("generation", score(9)))),
+    ("PrequelGame", "VideoGame", "Un gioco la cui storia precede quella di un altro", and_("VideoGame", some("prequelOf", "VideoGame"))),
+    ("PrequelReturn", "ReturnAfterDeathGame", "Un gioco in cui ricompare un personaggio già morto, spiegato dal fatto che è un prequel", and_("ReturnAfterDeathGame", "PrequelGame")),
+    ("Synthetic", "Character", "Un personaggio costruito da qualcuno nel mondo di gioco: un'intelligenza artificiale o un robot", and_("Character", some("builtBy", "owl:Thing"))),
+    ("PlayerCharacter", "Character", "Un personaggio controllato dal giocatore in almeno un gioco", and_("Character", some("playableIn", "VideoGame"))),
+    ("KilledMoreThanOnce", "DeceasedCharacter", "Un personaggio ucciso in almeno due giochi: torna sempre", and_("DeceasedCharacter", at_least(2, "victimIn", "Killing"))),
     ("Remaster", "VideoGame", "La nuova edizione di un altro gioco", and_("VideoGame", some("remasterOf", "VideoGame"))),
     ("GameDirector", "Person", "Chi ha diretto almeno un gioco", and_("Person", some("directorOf", "VideoGame"))),
     ("StudioHead", "Person", "Chi guida un'azienda", and_("Person", some("heads", "Company"))),
@@ -110,8 +116,7 @@ DEFINED = [
     ("Antagonist", "Character", "L'antagonista di un gioco", and_("Character", some("antagonistOf", "VideoGame"))),
     ("RecurringCharacter", "Character", "Un personaggio presente in almeno due giochi", and_("Character", at_least(2, "appearsIn", "VideoGame"))),
     ("RecurringVillain", "RecurringCharacter", "Un antagonista ricorrente", and_("RecurringCharacter", "Antagonist")),
-    ("RogueAI", "ArtificialIntelligence", "Un'intelligenza artificiale antagonista", and_("ArtificialIntelligence", "Antagonist")),
-    ("DigitalMind", "ArtificialIntelligence", "Un'intelligenza artificiale nata dalla mente di un umano", and_("ArtificialIntelligence", some("mindCopiedFrom", "Human"))),
+    ("RogueAI", "Synthetic", "Un'intelligenza artificiale o un robot antagonista", and_("Synthetic", "Antagonist")),
     ("MultipleKiller", "Killer", "Un personaggio che ha ucciso almeno due personaggi", and_("Killer", at_least(2, "kills", "Character"))),
     ("HistoricalCharacter", "Character", "Un personaggio che interpreta una persona reale", and_("Character", some("portrays", "Person"))),
 ]
@@ -124,7 +129,9 @@ RULE_TARGETS = [
     ("ExternalEngineGame", "VideoGame", "Un gioco fatto con un motore sviluppato da un'altra azienda"),
     ("InHouseEngineGame", "VideoGame", "Un gioco fatto con il motore dello stesso studio"),
     ("ReturningDirectorSequel", "VideoGame", "Un seguito con lo stesso regista del predecessore"),
-    ("DefeatedVillain", "Character", "Un antagonista ucciso dal protagonista"),
+    ("DefeatedVillain", "DeceasedCharacter", "Un antagonista ucciso dal protagonista"),
+    ("ReturningCharacter", "DeceasedCharacter", "Un personaggio che ricompare in un gioco uscito dopo quello in cui è stato ucciso"),
+    ("ReturnAfterDeathGame", "VideoGame", "Un gioco uscito dopo la morte di un suo personaggio: prequel, linea temporale alternativa o resurrezione"),
     ("MustPlayGame", "VideoGame", "Un gioco con almeno 95 su Metacritic"),
 ]
 
@@ -158,11 +165,14 @@ OBJECT_PROPS = [
     ("killer", "Killing", "Character", "killerIn", [], None),
     ("inGame", "Killing", "VideoGame", "hasKilling", [], None),
     ("portrays", "Character", "Person", None, [], None),
-    ("mindCopiedFrom", "ArtificialIntelligence", "Human", None, [], "L'IA è stata costruita a partire dalla mente di questo personaggio"),
+    ("builtBy", "Character", "owl:Thing", None, [], "Chi ha costruito il personaggio nel mondo di gioco (un altro personaggio o un'organizzazione)"),
+    ("playableIn", "Character", "VideoGame", None, [], "Il personaggio è controllato dal giocatore in quel gioco"),
+    ("prequelOf", "VideoGame", "VideoGame", None, [], "La storia del gioco si svolge prima di quella dell'altro, anche se è uscito dopo"),
+    ("releasedAfter", "VideoGame", "VideoGame", None, [], "Derivata dalle regole: uscito dopo, nella stessa serie"),
     ("playableOn", "VideoGame", "Platform", None, [], "Disponibile, anche tramite una nuova edizione"),
     ("techLinkedTo", "VideoGame", "VideoGame", None, [], "Giochi dello studio che ha fatto il motore usato"),
 ]
-SUBPROPERTIES = [("availableOn", "playableOn"), ("protagonistOf", "appearsIn"), ("antagonistOf", "appearsIn")]
+SUBPROPERTIES = [("availableOn", "playableOn"), ("protagonistOf", "appearsIn"), ("antagonistOf", "appearsIn"), ("playableIn", "appearsIn")]
 CHAINS = [("playableOn", ["hasRemaster", "availableOn"]), ("techLinkedTo", ["madeWith", "engineDevelopedBy", "developerOf"])]
 
 # name, domain, range, functional
@@ -170,6 +180,7 @@ DATA_PROPS = [
     ("releaseDate", "VideoGame", "xsd:dateTime", True),
     ("metacriticScore", "VideoGame", "xsd:integer", True),
     ("pegiRating", "VideoGame", "xsd:integer", True),
+    ("generation", "ConsolePlatform", "xsd:integer", True),
     ("hasWikidataId", "owl:Thing", "xsd:string", False),
 ]
 KEYS = [("VideoGame", "hasWikidataId")]
@@ -187,6 +198,10 @@ RULES = [
     ("ReturningDirector", [("sequelOf", "?a", "?b"), ("directedBy", "?a", "?p"), ("directedBy", "?b", "?p")], [("ReturningDirectorSequel", "?a")]),
     ("KillingEvent", [("victim", "?k", "?v"), ("killer", "?k", "?a")], [("killedBy", "?v", "?a")]),
     ("DefeatedVillain", [("antagonistOf", "?v", "?g"), ("protagonistOf", "?h", "?g"), ("killedBy", "?v", "?h")], [("DefeatedVillain", "?v")]),
+    ("ReleaseOrder", [("sequelOf", "?a", "?b")], [("releasedAfter", "?a", "?b")]),
+    ("ReleaseOrderChain", [("releasedAfter", "?a", "?b"), ("sequelOf", "?b", "?c")], [("releasedAfter", "?a", "?c")]),
+    ("ReturnAfterDeath", [("victim", "?k", "?c"), ("inGame", "?k", "?g"), ("appearsIn", "?c", "?h"), ("releasedAfter", "?h", "?g")],
+     [("ReturningCharacter", "?c"), ("ReturnAfterDeathGame", "?h")]),
     ("MustPlay", [("metacriticScore", "?g", "?s"), ("xsd:integer", "xsd:minInclusive", 95, "?s")], [("MustPlayGame", "?g")]),
 ]
 
@@ -279,8 +294,8 @@ def schema():
         loose = [OWL.IrreflexiveProperty, OWL.AsymmetricProperty] if inv and dom != rng else []
         for t in [OWL.ObjectProperty, *loose, *(OWL[f"{c}Property"] for c in chars)]:
             g.add((VG[name], RDF.type, t))
-        g.add((VG[name], RDFS.domain, VG[dom]))
-        g.add((VG[name], RDFS.range, VG[rng]))
+        g.add((VG[name], RDFS.domain, term(dom)))
+        g.add((VG[name], RDFS.range, term(rng)))
         if comment:
             g.add((VG[name], RDFS.comment, Literal(comment)))
         if inv:
@@ -384,7 +399,7 @@ def appendix():
     out += [rf"\textsf{{{n}}} &\equiv {dl(d)} \\" for n, _, _, d in DEFINED]
     out.append(r"\end{align*}\endgroup" + "\n" + rf"\noindent Disgiunzioni: " + "; ".join(", ".join(block) for block in DISJOINT) + ".\n")
     out.append(r"\subsection*{Regole SWRL}" + "\n" + r"\begin{itemize}\footnotesize")
-    out += [rf"\item \textbf{{{name}}}: \texttt{{{rule_text(body, ' $\\wedge$ ')} $\rightarrow$ {rule_text(head)}}}" for name, body, head in RULES]
+    out += [rf"\item \textbf{{{name}}}: \texttt{{{rule_text(body, ' $\\wedge$ ')} $\rightarrow$ {rule_text(head, ' $\\wedge$ ')}}}" for name, body, head in RULES]
     out.append(r"\end{itemize}" + "\n")
     data = HERE / "dati.ttl"
     if data.exists():

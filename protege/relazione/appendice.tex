@@ -1,7 +1,7 @@
 \section{Le componenti dell'ontologia}\label{app:componenti}
 
 \begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
-\caption{Le 70 classi}\\ \toprule
+\caption{Le 77 classi}\\ \toprule
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
@@ -15,17 +15,17 @@
 \texttt{Genre} & \texttt{--} & primitiva & Un genere \\
 \texttt{GameMode} & \texttt{--} & primitiva & Una modalità di gioco \\
 \texttt{Killing} & \texttt{--} & primitiva & Un'uccisione nella trama di un gioco: vittima, assassino e gioco (relazione n-aria) \\
+\texttt{FictionalOrganization} & \texttt{--} & primitiva & Un'organizzazione del mondo di gioco (per esempio Aperture Science) \\
 \texttt{CreativeWork} & \texttt{--} & primitiva & Un'opera di un altro medium (romanzo, film, serie TV) \\
 \texttt{ConsolePlatform} & \texttt{Platform} & primitiva & Una console \\
 \texttt{PCPlatform} & \texttt{Platform} & primitiva & Un personal computer \\
-\texttt{CurrentGenerationConsole} & \texttt{ConsolePlatform} & primitiva & Una console dell'attuale generazione \\
 \texttt{Novel} & \texttt{CreativeWork} & primitiva & Un romanzo \\
 \texttt{Film} & \texttt{CreativeWork} & primitiva & Un film \\
 \texttt{TVSeries} & \texttt{CreativeWork} & primitiva & Una serie televisiva \\
 \texttt{Comic} & \texttt{CreativeWork} & primitiva & Un fumetto \\
 \texttt{TabletopGame} & \texttt{CreativeWork} & primitiva & Un gioco da tavolo o di ruolo cartaceo \\
 \texttt{Human} & \texttt{Character} & primitiva & Un personaggio umano \\
-\texttt{ArtificialIntelligence} & \texttt{Character} & primitiva & Un'intelligenza artificiale \\
+\texttt{Alien} & \texttt{Character} & primitiva & Un personaggio di una specie non umana del mondo di gioco \\
 \texttt{FirstPartyOnRivalConsole} & \texttt{VideoGame} & regola SWRL & Un gioco first-party uscito su una console di un concorrente \\
 \texttt{SequelByDifferentStudio} & \texttt{VideoGame} & regola SWRL & Un seguito sviluppato da uno studio diverso \\
 \texttt{VeteransReturn} & \texttt{VideoGame} & regola SWRL & Un gioco fatto da uno studio fondato da chi aveva lavorato alla serie \\
@@ -33,8 +33,16 @@
 \texttt{ExternalEngineGame} & \texttt{VideoGame} & regola SWRL & Un gioco fatto con un motore sviluppato da un'altra azienda \\
 \texttt{InHouseEngineGame} & \texttt{VideoGame} & regola SWRL & Un gioco fatto con il motore dello stesso studio \\
 \texttt{ReturningDirectorSequel} & \texttt{VideoGame} & regola SWRL & Un seguito con lo stesso regista del predecessore \\
-\texttt{DefeatedVillain} & \texttt{Character} & regola SWRL & Un antagonista ucciso dal protagonista \\
+\texttt{DefeatedVillain} & \texttt{DeceasedCharacter} & regola SWRL & Un antagonista ucciso dal protagonista \\
+\texttt{ReturningCharacter} & \texttt{DeceasedCharacter} & regola SWRL & Un personaggio che ricompare in un gioco uscito dopo quello in cui è stato ucciso \\
+\texttt{ReturnAfterDeathGame} & \texttt{VideoGame} & regola SWRL & Un gioco uscito dopo la morte di un suo personaggio: prequel, linea temporale alternativa o resurrezione \\
 \texttt{MustPlayGame} & \texttt{VideoGame} & regola SWRL & Un gioco con almeno 95 su Metacritic \\
+\texttt{CurrentGenerationConsole} & \texttt{ConsolePlatform} & definita & Una console della nona generazione, l'attuale \\
+\texttt{PrequelGame} & \texttt{VideoGame} & definita & Un gioco la cui storia precede quella di un altro \\
+\texttt{PrequelReturn} & \texttt{ReturnAfterDeathGame} & definita & Un gioco in cui ricompare un personaggio già morto, spiegato dal fatto che è un prequel \\
+\texttt{Synthetic} & \texttt{Character} & definita & Un personaggio costruito da qualcuno nel mondo di gioco: un'intelligenza artificiale o un robot \\
+\texttt{PlayerCharacter} & \texttt{Character} & definita & Un personaggio controllato dal giocatore in almeno un gioco \\
+\texttt{KilledMoreThanOnce} & \texttt{DeceasedCharacter} & definita & Un personaggio ucciso in almeno due giochi: torna sempre \\
 \texttt{Remaster} & \texttt{VideoGame} & definita & La nuova edizione di un altro gioco \\
 \texttt{GameDirector} & \texttt{Person} & definita & Chi ha diretto almeno un gioco \\
 \texttt{StudioHead} & \texttt{Person} & definita & Chi guida un'azienda \\
@@ -70,14 +78,13 @@
 \texttt{Antagonist} & \texttt{Character} & definita & L'antagonista di un gioco \\
 \texttt{RecurringCharacter} & \texttt{Character} & definita & Un personaggio presente in almeno due giochi \\
 \texttt{RecurringVillain} & \texttt{RecurringCharacter} & definita & Un antagonista ricorrente \\
-\texttt{RogueAI} & \texttt{ArtificialIntelligence} & definita & Un'intelligenza artificiale antagonista \\
-\texttt{DigitalMind} & \texttt{ArtificialIntelligence} & definita & Un'intelligenza artificiale nata dalla mente di un umano \\
+\texttt{RogueAI} & \texttt{Synthetic} & definita & Un'intelligenza artificiale o un robot antagonista \\
 \texttt{MultipleKiller} & \texttt{Killer} & definita & Un personaggio che ha ucciso almeno due personaggi \\
 \texttt{HistoricalCharacter} & \texttt{Character} & definita & Un personaggio che interpreta una persona reale \\
 \end{longtable}\endgroup
 
 \begingroup\footnotesize\begin{longtable}{lllp{6cm}}
-\caption{Le 44 object property}\\ \toprule
+\caption{Le 47 object property}\\ \toprule
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endfirsthead
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{developedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{developerOf} \\
@@ -108,23 +115,33 @@
 \texttt{killer} & \texttt{Killing} & \texttt{Character} & inversa \texttt{killerIn} \\
 \texttt{inGame} & \texttt{Killing} & \texttt{VideoGame} & inversa \texttt{hasKilling} \\
 \texttt{portrays} & \texttt{Character} & \texttt{Person} &  \\
-\texttt{mindCopiedFrom} & \texttt{ArtificialIntelligence} & \texttt{Human} &  \\
+\texttt{builtBy} & \texttt{Character} & \texttt{owl:Thing} &  \\
+\texttt{playableIn} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
+\texttt{prequelOf} & \texttt{VideoGame} & \texttt{VideoGame} &  \\
+\texttt{releasedAfter} & \texttt{VideoGame} & \texttt{VideoGame} &  \\
 \texttt{playableOn} & \texttt{VideoGame} & \texttt{Platform} & catena hasRemaster $\circ$ availableOn \\
 \texttt{techLinkedTo} & \texttt{VideoGame} & \texttt{VideoGame} & catena madeWith $\circ$ engineDevelopedBy $\circ$ developerOf \\
 \end{longtable}\endgroup
 
 \begingroup\footnotesize\begin{longtable}{lllp{6cm}}
-\caption{Le 4 datatype property}\\ \toprule
+\caption{Le 5 datatype property}\\ \toprule
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endfirsthead
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{releaseDate} & \texttt{VideoGame} & \texttt{xsd:dateTime} & funzionale \\
 \texttt{metacriticScore} & \texttt{VideoGame} & \texttt{xsd:integer} & funzionale \\
 \texttt{pegiRating} & \texttt{VideoGame} & \texttt{xsd:integer} & funzionale \\
+\texttt{generation} & \texttt{ConsolePlatform} & \texttt{xsd:integer} & funzionale \\
 \texttt{hasWikidataId} & \texttt{owl:Thing} & \texttt{xsd:string} & chiave di \texttt{VideoGame} \\
 \end{longtable}\endgroup
 
 \subsection*{Classi definite}
 \begingroup\small\begin{align*}
+\textsf{CurrentGenerationConsole} &\equiv \textsf{ConsolePlatform} \sqcap \exists\,\textit{generation}.\texttt{integer}[\geq 9] \\
+\textsf{PrequelGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{prequelOf}.\textsf{VideoGame} \\
+\textsf{PrequelReturn} &\equiv \textsf{ReturnAfterDeathGame} \sqcap \textsf{PrequelGame} \\
+\textsf{Synthetic} &\equiv \textsf{Character} \sqcap \exists\,\textit{builtBy}.\textsf{owl:Thing} \\
+\textsf{PlayerCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{playableIn}.\textsf{VideoGame} \\
+\textsf{KilledMoreThanOnce} &\equiv \textsf{DeceasedCharacter} \sqcap {\geq}2\,\textit{victimIn}.\textsf{Killing} \\
 \textsf{Remaster} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{remasterOf}.\textsf{VideoGame} \\
 \textsf{GameDirector} &\equiv \textsf{Person} \sqcap \exists\,\textit{directorOf}.\textsf{VideoGame} \\
 \textsf{StudioHead} &\equiv \textsf{Person} \sqcap \exists\,\textit{heads}.\textsf{Company} \\
@@ -160,12 +177,11 @@
 \textsf{Antagonist} &\equiv \textsf{Character} \sqcap \exists\,\textit{antagonistOf}.\textsf{VideoGame} \\
 \textsf{RecurringCharacter} &\equiv \textsf{Character} \sqcap {\geq}2\,\textit{appearsIn}.\textsf{VideoGame} \\
 \textsf{RecurringVillain} &\equiv \textsf{RecurringCharacter} \sqcap \textsf{Antagonist} \\
-\textsf{RogueAI} &\equiv \textsf{ArtificialIntelligence} \sqcap \textsf{Antagonist} \\
-\textsf{DigitalMind} &\equiv \textsf{ArtificialIntelligence} \sqcap \exists\,\textit{mindCopiedFrom}.\textsf{Human} \\
+\textsf{RogueAI} &\equiv \textsf{Synthetic} \sqcap \textsf{Antagonist} \\
 \textsf{MultipleKiller} &\equiv \textsf{Killer} \sqcap {\geq}2\,\textit{kills}.\textsf{Character} \\
 \textsf{HistoricalCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{portrays}.\textsf{Person} \\
 \end{align*}\endgroup
-\noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, Killing, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries, Comic, TabletopGame; Human, ArtificialIntelligence.
+\noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, Killing, FictionalOrganization, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries, Comic, TabletopGame; Human, Alien, Synthetic.
 
 \subsection*{Regole SWRL}
 \begin{itemize}\footnotesize
@@ -180,6 +196,9 @@
 \item \textbf{ReturningDirector}: \texttt{sequelOf(?a, ?b) $\wedge$ directedBy(?a, ?p) $\wedge$ directedBy(?b, ?p) $\rightarrow$ ReturningDirectorSequel(?a)}
 \item \textbf{KillingEvent}: \texttt{victim(?k, ?v) $\wedge$ killer(?k, ?a) $\rightarrow$ killedBy(?v, ?a)}
 \item \textbf{DefeatedVillain}: \texttt{antagonistOf(?v, ?g) $\wedge$ protagonistOf(?h, ?g) $\wedge$ killedBy(?v, ?h) $\rightarrow$ DefeatedVillain(?v)}
+\item \textbf{ReleaseOrder}: \texttt{sequelOf(?a, ?b) $\rightarrow$ releasedAfter(?a, ?b)}
+\item \textbf{ReleaseOrderChain}: \texttt{releasedAfter(?a, ?b) $\wedge$ sequelOf(?b, ?c) $\rightarrow$ releasedAfter(?a, ?c)}
+\item \textbf{ReturnAfterDeath}: \texttt{victim(?k, ?c) $\wedge$ inGame(?k, ?g) $\wedge$ appearsIn(?c, ?h) $\wedge$ releasedAfter(?h, ?g) $\rightarrow$ ReturningCharacter(?c) $\wedge$ ReturnAfterDeathGame(?h)}
 \item \textbf{MustPlay}: \texttt{metacriticScore(?g, ?s) $\wedge$ xsd:integer[>= 95](?s) $\rightarrow$ MustPlayGame(?g)}
 \end{itemize}
 

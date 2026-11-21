@@ -43,9 +43,10 @@ class Evidence(BaseModel):
 class Character(BaseModel):
     name: str
     role: Literal["protagonist", "antagonist", "other"]
-    nature: Literal["Human", "ArtificialIntelligence"] | None = Field(None, description="Solo se la pagina lo dice esplicitamente")
+    species: Literal["Human", "Alien"] | None = Field(None, description="Umano o specie non umana del mondo di gioco, solo se la pagina lo dice")
+    built_by: str | None = Field(None, description="Per un'IA o un robot: chi l'ha costruito nel mondo di gioco (personaggio o organizzazione)")
+    playable: bool = Field(description="Vero se in questo gioco il giocatore controlla il personaggio")
     portrays_real_person: str | None = Field(None, description="Persona storica reale interpretata dal personaggio")
-    mind_copied_from: str | None = Field(None, description="Per un'IA: il personaggio umano da cui è copiata la mente")
     evidence: Evidence
 
 
@@ -56,11 +57,17 @@ class Kill(BaseModel):
     evidence: Evidence
 
 
+class Prequel(BaseModel):
+    game: str = Field(description="Il gioco la cui storia viene dopo quella di questo gioco")
+    evidence: Evidence
+
+
 class GameFacts(BaseModel):
     qid: str = Field(description="Identificativo Wikidata del gioco (se non è dato, trovalo con wikidata_search)")
     title: str
     characters: list[Character]
     kills: list[Kill]
+    prequel_of: list[Prequel] = Field(default_factory=list)
 
 
 def wikipedia_search(query: str) -> list[str]:
@@ -98,8 +105,9 @@ def wikidata_facts(qid: str) -> dict:
 
 PROMPT = """Sei un assistente di ricerca per un'ontologia OWL dei videogiochi. Per il gioco indicato:
 1. se l'identificativo Wikidata non è dato, trovalo (wikidata_search); trova la pagina Wikipedia del gioco (wikipedia_search) e leggi la trama (wikipedia_section);
-2. elenca protagonisti e antagonisti principali, la loro natura (umano o intelligenza artificiale) solo se è detta esplicitamente,
-   i personaggi che interpretano persone storiche reali e, per le IA, l'eventuale umano da cui è copiata la mente;
+2. elenca protagonisti e antagonisti principali, se il giocatore li controlla in questo gioco, la loro specie (umano o specie aliena)
+   solo se è detta esplicitamente, chi ha costruito le IA e i robot, e i personaggi che interpretano persone storiche reali;
+   se la pagina dice che il gioco è un prequel di un altro gioco, indicalo;
 3. elenca le uccisioni: vittima e assassino devono essere personaggi con nome (mai gruppi come "the Covenant").
    Segna certain_in_all_endings=false se l'uccisione dipende dal finale o da una scelta; escludi i suicidi.
 Ogni fatto deve avere come evidence l'URL letto e una frase copiata ALLA LETTERA da quella pagina.
@@ -125,15 +133,18 @@ def research(agent, title, qid=None):
     facts: GameFacts = agent.invoke({"messages": [{"role": "user", "content": request}]})["structured_response"]
     chars = [c for c in facts.characters if verified(c.evidence)]
     kills = [k for k in facts.kills if k.certain_in_all_endings and k.killer != k.victim and verified(k.evidence)]
+    prequels = [x for x in facts.prequel_of if verified(x.evidence)]
     out = {
         "titolo": title, "qid": qid or facts.qid, "modello": os.environ["RESEARCH_MODEL"],
         "protagonisti": [c.name for c in chars if c.role == "protagonist"],
         "antagonisti": [c.name for c in chars if c.role == "antagonist"],
         "uccisioni": [[k.victim, k.killer] for k in kills],
         "personaggi_storici": [[c.name, c.portrays_real_person] for c in chars if c.portrays_real_person],
-        "personaggi": {c.name: {k: v for k, v in {"natura": c.nature, "mente_copiata_da": c.mind_copied_from}.items() if v} for c in chars},
-        "prove": [x.model_dump() for x in chars + kills],
-        "scartati": [x.model_dump() for x in facts.characters + facts.kills if x not in chars and x not in kills],
+        "giocabili": [c.name for c in chars if c.playable],
+        "prequel_di": [x.game for x in prequels],
+        "personaggi": {c.name: {k: v for k, v in {"natura": c.species, "costruito_da": c.built_by}.items() if v} for c in chars},
+        "prove": [x.model_dump() for x in chars + kills + prequels],
+        "scartati": [x.model_dump() for x in facts.characters + facts.kills + facts.prequel_of if x not in chars + kills + prequels],
     }
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / f"{out['qid']}.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -169,7 +180,7 @@ def apply(ds):
     for f in sorted(OUT.glob("*.json")):
         found = json.loads(f.read_text(encoding="utf-8"))
         game = games.get(found["qid"]) or new_game(ds, found)
-        for key in ("protagonisti", "antagonisti", "uccisioni", "personaggi_storici"):
+        for key in ("protagonisti", "antagonisti", "giocabili", "uccisioni", "personaggi_storici", "prequel_di"):
             game[key] = found[key]
         for name, d in found["personaggi"].items():
             ds["personaggi"].setdefault(name, {}).update(d)

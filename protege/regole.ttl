@@ -239,6 +239,77 @@ var:PublisherGroup a swrl:Imp ;
                     swrl:propertyPredicate vg:publishedByGroup ] ;
             rdf:rest () ] .
 
+var:ReleaseOrder a swrl:Imp ;
+    rdfs:label "ReleaseOrder" ;
+    rdfs:comment "sequelOf(?a, ?b) -> releasedAfter(?a, ?b)" ;
+    swrl:body [ a swrl:AtomList ;
+            rdf:first [ a swrl:IndividualPropertyAtom ;
+                    swrl:argument1 var:a ;
+                    swrl:argument2 var:b ;
+                    swrl:propertyPredicate vg:sequelOf ] ;
+            rdf:rest () ] ;
+    swrl:head [ a swrl:AtomList ;
+            rdf:first [ a swrl:IndividualPropertyAtom ;
+                    swrl:argument1 var:a ;
+                    swrl:argument2 var:b ;
+                    swrl:propertyPredicate vg:releasedAfter ] ;
+            rdf:rest () ] .
+
+var:ReleaseOrderChain a swrl:Imp ;
+    rdfs:label "ReleaseOrderChain" ;
+    rdfs:comment "releasedAfter(?a, ?b) ^ sequelOf(?b, ?c) -> releasedAfter(?a, ?c)" ;
+    swrl:body [ a swrl:AtomList ;
+            rdf:first [ a swrl:IndividualPropertyAtom ;
+                    swrl:argument1 var:a ;
+                    swrl:argument2 var:b ;
+                    swrl:propertyPredicate vg:releasedAfter ] ;
+            rdf:rest [ a swrl:AtomList ;
+                    rdf:first [ a swrl:IndividualPropertyAtom ;
+                            swrl:argument1 var:b ;
+                            swrl:argument2 var:c ;
+                            swrl:propertyPredicate vg:sequelOf ] ;
+                    rdf:rest () ] ] ;
+    swrl:head [ a swrl:AtomList ;
+            rdf:first [ a swrl:IndividualPropertyAtom ;
+                    swrl:argument1 var:a ;
+                    swrl:argument2 var:c ;
+                    swrl:propertyPredicate vg:releasedAfter ] ;
+            rdf:rest () ] .
+
+var:ReturnAfterDeath a swrl:Imp ;
+    rdfs:label "ReturnAfterDeath" ;
+    rdfs:comment "victim(?k, ?c) ^ inGame(?k, ?g) ^ appearsIn(?c, ?h) ^ releasedAfter(?h, ?g) -> ReturningCharacter(?c) ^ ReturnAfterDeathGame(?h)" ;
+    swrl:body [ a swrl:AtomList ;
+            rdf:first [ a swrl:IndividualPropertyAtom ;
+                    swrl:argument1 var:k ;
+                    swrl:argument2 var:c ;
+                    swrl:propertyPredicate vg:victim ] ;
+            rdf:rest [ a swrl:AtomList ;
+                    rdf:first [ a swrl:IndividualPropertyAtom ;
+                            swrl:argument1 var:k ;
+                            swrl:argument2 var:g ;
+                            swrl:propertyPredicate vg:inGame ] ;
+                    rdf:rest [ a swrl:AtomList ;
+                            rdf:first [ a swrl:IndividualPropertyAtom ;
+                                    swrl:argument1 var:c ;
+                                    swrl:argument2 var:h ;
+                                    swrl:propertyPredicate vg:appearsIn ] ;
+                            rdf:rest [ a swrl:AtomList ;
+                                    rdf:first [ a swrl:IndividualPropertyAtom ;
+                                            swrl:argument1 var:h ;
+                                            swrl:argument2 var:g ;
+                                            swrl:propertyPredicate vg:releasedAfter ] ;
+                                    rdf:rest () ] ] ] ] ;
+    swrl:head [ a swrl:AtomList ;
+            rdf:first [ a swrl:ClassAtom ;
+                    swrl:argument1 var:c ;
+                    swrl:classPredicate vg:ReturningCharacter ] ;
+            rdf:rest [ a swrl:AtomList ;
+                    rdf:first [ a swrl:ClassAtom ;
+                            swrl:argument1 var:h ;
+                            swrl:classPredicate vg:ReturnAfterDeathGame ] ;
+                    rdf:rest () ] ] .
+
 var:ReturningDirector a swrl:Imp ;
     rdfs:label "ReturningDirector" ;
     rdfs:comment "sequelOf(?a, ?b) ^ directedBy(?a, ?p) ^ directedBy(?b, ?p) -> ReturningDirectorSequel(?a)" ;
@@ -335,8 +406,6 @@ var:VeteransReturn a swrl:Imp ;
 
 var:f a swrl:Variable .
 
-var:k a swrl:Variable .
-
 var:o a swrl:Variable .
 
 var:q a swrl:Variable .
@@ -347,6 +416,8 @@ var:d a swrl:Variable .
 
 var:e a swrl:Variable .
 
+var:k a swrl:Variable .
+
 var:m a swrl:Variable .
 
 var:x a swrl:Variable .
@@ -355,13 +426,13 @@ var:y a swrl:Variable .
 
 var:v a swrl:Variable .
 
-var:b a swrl:Variable .
+var:p a swrl:Variable .
 
-var:c a swrl:Variable .
+var:b a swrl:Variable .
 
 var:h a swrl:Variable .
 
-var:p a swrl:Variable .
+var:c a swrl:Variable .
 
 var:a a swrl:Variable .
 
