@@ -7,7 +7,7 @@ Tutti i file `.ttl` sono generati da script Python con rdflib (`Graph.add`, `BNo
 | File | Contenuto |
 |---|---|
 | `schema.ttl` | **Lo schema vuoto**: classi, proprietà e assiomi, nessun gioco. Generato da `generate_schema.py`. |
-| `regole.ttl` | Le 12 regole SWRL. Generate da `generate_schema.py`. |
+| `regole.ttl` | Le 15 regole SWRL. Generate da `generate_schema.py`. |
 | `dati.ttl` | **Solo le asserzioni**: 95 giochi (11 serie e 6 titoli singoli), 28 nuove edizioni, PEGI, personaggi, persone, aziende e piattaforme. Nessuna conclusione. Generato da `build_data.py`. |
 | `videogiochi.ttl` | **Il file da aprire in Protégé**: importa schema, dati e regole. Generato da `generate_tests.py`. |
 | `test/` | Quattro errori da far trovare a HermiT e un caso di `sameAs` corretto. Generati da `generate_tests.py`. |
@@ -15,7 +15,7 @@ Tutti i file `.ttl` sono generati da script Python con rdflib (`Graph.add`, `BNo
 | `fonti/correzioni.json` | Correzioni manuali, ognuna con l'URL della fonte (per esempio i PEGI presi da pegi.info). |
 | `fonti/wikidata/` | Le risposte di Wikidata salvate da `fetch_wikidata.py`. |
 | `fonti/agente/` | I fatti di trama estratti da `research_agent.py`, con URL e citazione per ciascuno. |
-| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 184 deduzioni attese. |
+| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 209 deduzioni attese. |
 | `relazione/` | La relazione LaTeX; le appendici sono generate. |
 
 ```bash
@@ -85,17 +85,22 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 
 | Individuo o classe | Cosa compare in giallo | Perché |
 |---|---|---|
-| `character/Gwyn_Lord_of_Sunlight` | `DeceasedCharacter`, `DefeatedVillain` | Nei dati c'è un `Killing` con vittima Gwyn e assassino il Prescelto: il range di `victim` lo fa morto, la regola `KillingEvent` ricava `killedBy`, la regola `DefeatedVillain` lo rende cattivo sconfitto dall'eroe. |
-| `character/Chosen_Undead` | `Killer` | Lo stesso fatto, letto dall'altra parte: il range di `killer`. |
+| `character/Gwyn_Lord_of_Sunlight` | `DeceasedCharacter`, `DefeatedVillain` | Nei dati c'è un `Killing` con vittima Gwyn e assassino il Prescelto. `DeceasedCharacter ≡ Character ⊓ ∃victimIn.Killing` (si vede in "Equivalent To"); la regola `DefeatedVillain` lo rende cattivo sconfitto dall'eroe. |
+| `character/Chosen_Undead` | `Killer` | Lo stesso fatto, letto dall'altra parte: `Killer ≡ Character ⊓ ∃killerIn.Killing`. |
 | `character/Jason_Brody`, `character/Link` | `MultipleKiller` | Hanno ucciso almeno due personaggi (inversa `kills`, cardinalità ≥ 2). |
 | `Far_Cry_3`, `The_Legend_of_Zelda_Twilight_Princess` | `ViolentStoryGame` | Ha almeno un `Killing` con `inGame` uguale al gioco: l'uccisione conta solo nel gioco in cui avviene. |
 | `Grand_Theft_Auto_IV` / `The_Legend_of_Zelda_Skyward_Sword` | `RealisticViolenceGame` / `FantasyViolenceGame` | Stessa violenza nella storia, la distingue il PEGI: ≥ 16 realistica, ≤ 12 di fantasia. |
-| `character/Cortana` | `ArtificialIntelligence`, `DigitalMind`, `RogueAI` | Nei dati c'è solo `mindCopiedFrom` Catherine Halsey: il dominio la fa IA, e Halsey è umana. In Halo 5 è l'antagonista, quindi IA ribelle. |
+| `character/Cortana` | `Synthetic`, `RogueAI` | Nei dati c'è solo `builtBy` Catherine Halsey: chi è costruito da qualcuno è `Synthetic`. In Halo 5 è l'antagonista, quindi IA ribelle. Lo stesso per GLaDOS e Wheatley (Aperture Science). |
+| `character/Link`, `character/Chell` | `PlayerCharacter` | Il giocatore li controlla in almeno un gioco (`playableIn`). |
+| `platform/PlayStation_5` | `CurrentGenerationConsole` | Nei dati c'è solo la generazione (9): la classe è definita come console di generazione ≥ 9. |
+| `The_Witcher_3_Wild_Hunt` | `ConsensusGOTY` | Gioco dell'anno per almeno due cerimonie diverse. |
+| `character/Ganondorf` | `KilledMoreThanOnce`, `ReturningCharacter` | Ucciso in Twilight Princess e in Tears of the Kingdom; ricompare in giochi usciti dopo la sua morte. |
+| `Grand_Theft_Auto_San_Andreas`, `The_Legend_of_Zelda_Breath_of_the_Wild` | `ReturnAfterDeathGame`, `PrequelReturn` (solo San Andreas) | Catalina, uccisa in GTA III, ricompare in San Andreas, che è un prequel; Ganondorf ricompare in Breath of the Wild, che non lo è. |
 | `Halo_Combat_Evolved` | `StillPlayable`, `MustPlayGame`, `GOTYWinner` | Il remake Campaign Evolved è su PS5; Metacritic 97; D.I.C.E. 2002. |
 | `Far_Cry_2`, `Far_Cry_6` | `SequelByDifferentStudio`, `EngineChangeSequel` (FC2), `ExternalEngineGame` (FC6) | FC2 passa da Crytek/CryEngine a Ubisoft Montreal/Dunia; FC6 è di Ubisoft Toronto con il motore di Montreal. |
 | `Cyberpunk_2077`, `The_Walking_Dead` | `Adaptation` | Sono tratti da un gioco da tavolo e da un fumetto (`basedOn`). |
 | `Minecraft` | `FirstPartyOnRivalConsole` | Mojang → Xbox Game Studios → Microsoft, ed è uscito su PlayStation e Switch. |
-| `person/Hidetaka_Miyazaki` | `GameDirector`, `StudioHead` | Il range di `directedBy` e il dominio di `heads`. |
+| `person/Hidetaka_Miyazaki` | `GameDirector`, `StudioHead` | Le definizioni `∃directorOf.VideoGame` e `∃heads.Company`. |
 | `Mass_Effect` | `FirstPartyGame`, `FirstPartyOnRivalConsole`, `RemasteredClassic` | Xbox Game Studios → Microsoft, costruttore della Xbox 360; il gioco è uscito anche su PS3; ha la Legendary Edition. |
 | `Fallout_New_Vegas` | `VeteransReturn`, `FirstPartyOnRivalConsole`, `ExternalEngineGame` | Obsidian, fondata da ex Black Isle (che aveva fatto Fallout 2); Bethesda Softworks → ZeniMax → Microsoft; motore Gamebryo. |
 | `company/Obsidian_Entertainment`, `company/AdHoc_Studio` | `FoundedByVeterans` | I fondatori lavoravano per uno sviluppatore (Black Isle, Telltale). |
