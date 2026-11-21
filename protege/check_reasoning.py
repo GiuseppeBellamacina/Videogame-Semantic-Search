@@ -18,6 +18,7 @@ VG = "http://www.videogame-ontology.org/ontology#"
 JAVA = HERE.parent / "Protege-5.6.9-win" / "Protege-5.6.9" / "jre" / "bin" / "java.exe"
 o.JAVA_EXE = os.environ.get("JAVA_EXE") or (str(JAVA) if JAVA.exists() else "java")
 failures = []
+total = 0
 
 
 def merged(file, extra=()):
@@ -51,6 +52,8 @@ def reason(name, file, extra=()):
 
 
 def check(ok, what):
+    global total
+    total += 1
     print(f"   {'ok  ' if ok else 'FAIL'} {what}")
     if not ok:
         failures.append(what)
@@ -120,6 +123,20 @@ EXPECTED = [
     ("DefeatedVillain", ["character/Cesare_Borgia", "character/Eredin", "character/Gwyn_Lord_of_Sunlight", "character/Demise"], ["character/Bowser"]),
     ("MustPlayGame", ["The_Legend_of_Zelda_Ocarina_of_Time", "Grand_Theft_Auto_IV", "Halo_Combat_Evolved"], ["Fallout_4", "Halo_3"]),
     ("Remaster", ["The_Legend_of_Zelda_Ocarina_of_Time_2026", "Halo_Campaign_Evolved"], []),
+    ("ProlificDirector", ["person/Hidetaka_Miyazaki", "person/Shigeru_Miyamoto"], ["person/Josh_Holmes"]),
+    ("ProlificDeveloper", ["company/Bungie", "company/Rockstar_North"], ["company/Obsidian_Entertainment"]),
+    ("FirstPartyStudio", ["company/Halo_Studios", "company/Mojang_Studios", "company/Nintendo_EPD", "company/Bethesda_Game_Studios"], ["company/BioWare", "company/Capcom", "company/Ubisoft_Montreal"]),
+    ("VillainSlayer", ["character/Link", "character/Ezio_Auditore_da_Firenze", "character/Geralt_of_Rivia"], ["character/Mario", "character/Chell"]),
+    ("TragicProtagonist", ["character/Gustave", "character/Haytham_Kenway"], ["character/Link"]),
+    ("Turncoat", ["character/Cortana"], ["character/Master_Chief"]),
+    ("HistoricalGame", ["Assassins_Creed_II", "Assassins_Creed_Origins"], ["The_Witcher_3_Wild_Hunt"]),
+    ("SciFiGame", ["Halo_Infinite", "Portal_2"], ["The_Legend_of_Zelda_Breath_of_the_Wild"]),
+    ("RogueAIGame", ["Halo_5_Guardians", "Portal"], ["Halo_4"]),
+    ("PreviousGenerationConsole", ["platform/Nintendo_Switch", "platform/PlayStation_4"], ["platform/PlayStation_5", "platform/Nintendo_Switch_2"]),
+    ("CrossGenerationGame", ["The_Legend_of_Zelda_Ocarina_of_Time", "Grand_Theft_Auto_III", "Minecraft"], ["Mass_Effect", "The_Legend_of_Zelda_Majoras_Mask"]),
+    ("GroupEngineGame", ["Grand_Theft_Auto_V", "Assassins_Creed_Mirage", "Far_Cry_6"], ["Grand_Theft_Auto_III", "Mass_Effect", "Assassins_Creed_II", "The_Witcher_3_Wild_Hunt"]),
+    ("SameGroupSequel", ["Assassins_Creed_Origins", "Super_Mario_World", "Fallout_New_Vegas"], ["Halo_4", "Fallout_3"]),
+    ("SelfPublishedGame", ["Portal_2", "Minecraft", "Dispatch"], ["Halo_4", "Grand_Theft_Auto_V"]),
 ]
 RELATIONS = [
     ("Grand_Theft_Auto_V", "sequelOf", "Grand_Theft_Auto"),
@@ -128,6 +145,8 @@ RELATIONS = [
     ("Grand_Theft_Auto_III", "playableOn", "platform/PlayStation_5"),
     ("Fallout_4", "publishedByGroup", "company/Microsoft"),
     ("character/Vaas_Montenegro", "killedBy", "character/Jason_Brody"),
+    ("company/Obsidian_Entertainment", "inGroupOf", "company/Microsoft"),
+    ("company/Bethesda_Game_Studios", "inGroupOf", "company/Microsoft"),
 ]
 
 
@@ -149,6 +168,8 @@ def main():
     check(reason("deduzione_sameas", test / "deduzione_sameas.ttl") is not None, "deduzione_sameas consistente")
     nx, switch = URIRef(VG + "platform/Nintendo_NX"), URIRef(VG + "platform/Nintendo_Switch")
     check(reason("sameas_negato", test / "deduzione_sameas.ttl", [(nx, OWL.differentFrom, switch)]) is None, "deduzione_sameas implica NX = Nintendo Switch")
+    if not failures:
+        (HERE / "relazione" / "controlli.tex").write_text(f"\\newcommand{{\\nControlli}}{{{total}}}\n", encoding="utf-8")
     print("\nTUTTI I CONTROLLI SUPERATI" if not failures else f"\n{len(failures)} FALLITI: " + "; ".join(failures))
     sys.exit(1 if failures else 0)
 

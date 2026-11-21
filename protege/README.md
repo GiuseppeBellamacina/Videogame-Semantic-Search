@@ -7,7 +7,7 @@ Tutti i file `.ttl` sono generati da script Python con rdflib (`Graph.add`, `BNo
 | File | Contenuto |
 |---|---|
 | `schema.ttl` | **Lo schema vuoto**: classi, proprietà e assiomi, nessun gioco. Generato da `generate_schema.py`. |
-| `regole.ttl` | Le 15 regole SWRL. Generate da `generate_schema.py`. |
+| `regole.ttl` | Le regole SWRL. Generate da `generate_schema.py`. |
 | `dati.ttl` | **Solo le asserzioni**: 95 giochi (11 serie e 6 titoli singoli), 28 nuove edizioni, PEGI, personaggi, persone, aziende e piattaforme. Nessuna conclusione. Generato da `build_data.py`. |
 | `videogiochi.ttl` | **Il file da aprire in Protégé**: importa schema, dati e regole. Generato da `generate_tests.py`. |
 | `test/` | Quattro errori da far trovare a HermiT e un caso di `sameAs` corretto. Generati da `generate_tests.py`. |
@@ -15,8 +15,8 @@ Tutti i file `.ttl` sono generati da script Python con rdflib (`Graph.add`, `BNo
 | `fonti/correzioni.json` | Correzioni manuali, ognuna con l'URL della fonte (per esempio i PEGI presi da pegi.info). |
 | `fonti/wikidata/` | Le risposte di Wikidata salvate da `fetch_wikidata.py`. |
 | `fonti/agente/` | I fatti di trama estratti da `research_agent.py`, con URL e citazione per ciascuno. |
-| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le 208 deduzioni attese. |
-| `relazione/` | La relazione LaTeX; le appendici sono generate. |
+| `check_reasoning.py` | Strumento extra: lancia HermiT da Python e controlla le deduzioni attese (quanti, lo scrive in `relazione/controlli.tex`). |
+| `relazione/` | La relazione LaTeX; appendici e numeri (`numeri.tex`, `controlli.tex`) sono generati dagli script. |
 
 ```bash
 uv run python protege/generate_schema.py      # schema.ttl, regole.ttl, relazione/appendice.tex
@@ -101,7 +101,7 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `Minecraft` | `FirstPartyOnRivalConsole` | Mojang → Xbox Game Studios → Microsoft, ed è uscito su PlayStation e Switch. |
 | `person/Hidetaka_Miyazaki` | `GameDirector`, `StudioHead` | Le definizioni `∃directorOf.VideoGame` e `∃heads.Company`. |
 | `Mass_Effect` | `FirstPartyGame`, `FirstPartyOnRivalConsole`, `RemasteredClassic` | Xbox Game Studios → Microsoft, costruttore della Xbox 360; il gioco è uscito anche su PS3; ha la Legendary Edition. |
-| `Fallout_New_Vegas` | `VeteransReturn`, `FirstPartyOnRivalConsole`, `ExternalEngineGame` | Obsidian, fondata da ex Black Isle (che aveva fatto Fallout 2); Bethesda Softworks → ZeniMax → Microsoft; motore Gamebryo. |
+| `Fallout_New_Vegas` | `VeteransReturn`, `FirstPartyOnRivalConsole`, `ExternalEngineGame`, `SameGroupSequel` | Obsidian, fondata da ex Black Isle (che aveva fatto Fallout 2); Bethesda Softworks → ZeniMax → Microsoft; motore Gamebryo. `SameGroupSequel` solo perché oggi Obsidian e Bethesda sono entrambe di Microsoft (limite del tempo). |
 | `company/Obsidian_Entertainment`, `company/AdHoc_Studio` | `FoundedByVeterans` | I fondatori lavoravano per uno sviluppatore (Black Isle, Telltale). |
 | `Grand_Theft_Auto_III` | `StillPlayable`, `LateEntry`, `ExternalEngineGame` | La Definitive Edition è uscita su PS5; è il terzo capitolo; usa RenderWare di Criterion. |
 | `The_Witcher` | `LiteraryAdaptation`, relazione `techLinkedTo Mass_Effect` | È tratto dalla saga di Sapkowski e usa il motore Aurora di BioWare. |
@@ -109,6 +109,20 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `character/GLaDOS` | `RogueAI`, `RecurringVillain` | È un'IA antagonista, presente in Portal e Portal 2. |
 | `franchise/Halo`, `franchise/Fallout` | `FranchiseWithStudioChange`, `TransmediaFranchise` | Halo 4 è di 343 Industries dopo Bungie, Fallout 3 di Bethesda dopo Black Isle; da entrambe è nata una serie TV. |
 | `Grand_Theft_Auto` | `VideoGame` | Il tipo non è asserito; deriva da dominio e range delle sue proprietà. |
+| `character/Link`, `character/Ezio_Auditore_da_Firenze` | `VillainSlayer` | Protagonisti che hanno ucciso un `DefeatedVillain` (classe a sua volta dedotta da una regola). |
+| `character/Gustave`, `character/Haytham_Kenway` | `TragicProtagonist` | Protagonisti (`Protagonist`) che sono anche vittime (`DeceasedCharacter`). |
+| `character/Cortana` | `Turncoat` | Protagonista in Halo CE e Halo 4, antagonista in Halo 5. |
+| `Assassins_Creed_II` | `HistoricalGame` | Ha personaggi che interpretano persone reali: una specie di "genere" dedotto. |
+| `Portal_2`, `Halo_Infinite` | `SciFiGame` | Personaggi sintetici (GLaDOS, Wheatley) o alieni (Arbiter, Atriox). |
+| `Halo_5_Guardians`, `Portal` | `RogueAIGame` | L'antagonista è un'IA: serve l'inversa `hasAntagonist`. |
+| `person/Hidetaka_Miyazaki`, `person/Shigeru_Miyamoto` | `ProlificDirector` | Almeno tre giochi diretti (`≥3 directorOf.VideoGame`). |
+| `company/Bungie`, `company/Rockstar_North` | `ProlificDeveloper` | Almeno cinque giochi sviluppati. |
+| `company/Halo_Studios`, `company/Nintendo_EPD` | `FirstPartyStudio` | Fanno parte del gruppo di un costruttore di console (`∃inGroupOf.PlatformHolder`); BioWare e Capcom no. |
+| `The_Legend_of_Zelda_Ocarina_of_Time`, `Grand_Theft_Auto_III` | `CrossGenerationGame` | Giocabili oggi su una console attuale (anche via remake) e usciti su una di generazione precedente. |
+| `Grand_Theft_Auto_V`, `Far_Cry_6`, `Assassins_Creed_Mirage` | `GroupEngineGame` (oltre a `ExternalEngineGame`) | Il motore è di un'altra azienda dello stesso gruppo (`inGroupOf` ricavata dalle regole `GroupSelf` e `GroupParent`). |
+| `Assassins_Creed_Origins`, `Super_Mario_World` | `SameGroupSequel` (oltre a `SequelByDifferentStudio`) | Seguito passato a un altro studio dello stesso gruppo; Halo 4 no. |
+| `Portal_2`, `Minecraft`, `Dispatch` | `SelfPublishedGame` | Sviluppatore ed editore sono la stessa azienda (regola `SelfPublished`). |
+| `franchise/Super_Mario`, `franchise/The_Legend_of_Zelda` | `FranchiseWithStudioChange` | Per Mario il cambio è sempre tra divisioni Nintendo (seguiti anche `SameGroupSequel`); per Zelda ci sono anche passaggi esterni, gli episodi di Flagship (Capcom). |
 | `Grand_Theft_Auto_IV`, `Fallout_4` | `EngineChangeSequel` | GTA IV passa da RenderWare a RAGE; Fallout 4 da Gamebryo a Creation Engine. |
 
 ## Test
@@ -125,11 +139,16 @@ Apri un file di `test/` e avvia HermiT. Per i quattro errori Protégé segnala l
 
 ## Screenshot per la relazione
 
-Salvali in `relazione/figure/` con questi nomi:
-- `gerarchia_inferita.png`: la vista "Inferred" delle classi;
-- `spiegazione_gwyn.png`: la spiegazione di Gwyn come `DeceasedCharacter`;
-- `individuo_fallout_new_vegas.png`: Fallout: New Vegas con i tipi dedotti in giallo;
-- `swrl_rules.png`: il tab SWRLTab;
-- `inconsistenza.png`: la spiegazione di `errore_cardinalita.ttl`.
+Salvali in `relazione/figure/` con questi nomi; appena il file esiste, il riquadro segnaposto nel PDF viene sostituito dall'immagine. Le stesse istruzioni sono scritte dentro i riquadri della relazione.
+
+Prima di tutto: File > Open > `protege/videogiochi.ttl`, poi Reasoner > HermiT > Start reasoner e attendi la fine. Se dopo una modifica i colori gialli non compaiono, Reasoner > Synchronize reasoner.
+
+1. **`gerarchia_inferita.png`.** Tab Entities > Classes. Cambia il menu sopra l'albero da *Asserted* a *Inferred*, espandi `Character`, `Company` e `Franchise`, ritaglia il solo pannello dell'albero.
+2. **`spiegazione_gwyn.png`.** Tab Entities > Individuals, cerca *Gwyn* e seleziona *Gwyn, Lord of Sunlight*. Nel pannello Description, sotto Types, la riga gialla `DeceasedCharacter` è dedotta: clicca il punto interrogativo accanto e fotografa la finestra della spiegazione.
+3. **`individuo_fallout_new_vegas.png`.** Tab Individuals, cerca *New Vegas*, selezionalo e fotografa il pannello Description: in giallo devono esserci `VeteransReturn`, `FirstPartyOnRivalConsole`, `ExternalEngineGame` e `SameGroupSequel`.
+4. **`swrl_rules.png`.** Window > Tabs > SWRLTab. Allarga la colonna *Rule* e fotografa la tabella delle regole. Se è vuota, controlla in Active ontology > Ontology imports che `regole` sia importata.
+5. **`inconsistenza.png`.** File > Open > `protege/test/errore_cardinalita.ttl` (in una nuova finestra se lo chiede), Reasoner > HermiT > Start reasoner. Dall'avviso di ontologia inconsistente scegli *Explain inconsistent ontology* e fotografa gli assiomi in conflitto.
+
+Altre schermate che fanno bella figura dal vivo, ma non servono alla relazione: DL Query (Window > Tabs > DL Query) con `SequelByDifferentStudio and SameGroupSequel` e *Instances* spuntato; la spiegazione di `character/Cortana` come `RogueAI`.
 
 Nessun plugin aggiuntivo è necessario.

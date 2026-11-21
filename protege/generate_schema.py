@@ -76,6 +76,17 @@ def or_(*xs):
 
 DEFINED = [
     ("CurrentGenerationConsole", "ConsolePlatform", "Una console della nona generazione, l'attuale", and_("ConsolePlatform", some("generation", score(9)))),
+    ("PreviousGenerationConsole", "ConsolePlatform", "Una console di ottava generazione o precedente", and_("ConsolePlatform", some("generation", score_max(8)))),
+    ("CrossGenerationGame", "StillPlayable", "Un gioco giocabile oggi che è uscito anche su una console di una generazione precedente", and_("StillPlayable", some("playableOn", "PreviousGenerationConsole"))),
+    ("ProlificDirector", "GameDirector", "Chi ha diretto almeno tre giochi", and_("GameDirector", at_least(3, "directorOf", "VideoGame"))),
+    ("ProlificDeveloper", "Developer", "Un'azienda che ha sviluppato almeno cinque giochi", and_("Developer", at_least(5, "developerOf", "VideoGame"))),
+    ("FirstPartyStudio", "Developer", "Uno studio che fa parte del gruppo di un costruttore di console", and_("Developer", some("inGroupOf", "PlatformHolder"))),
+    ("VillainSlayer", "Protagonist", "Un protagonista che ha ucciso un cattivo sconfitto", and_("Protagonist", some("kills", "DefeatedVillain"))),
+    ("TragicProtagonist", "Protagonist", "Un protagonista che muore nella trama di un gioco", and_("Protagonist", "DeceasedCharacter")),
+    ("Turncoat", "Protagonist", "Un personaggio che è protagonista in un gioco e antagonista in un altro", and_("Protagonist", "Antagonist")),
+    ("HistoricalGame", "VideoGame", "Un gioco con personaggi realmente esistiti: probabilmente ambientato nel passato", and_("VideoGame", some("hasCharacter", "HistoricalCharacter"))),
+    ("SciFiGame", "VideoGame", "Un gioco con personaggi alieni o sintetici: probabilmente fantascienza", and_("VideoGame", some("hasCharacter", or_("Alien", "Synthetic")))),
+    ("RogueAIGame", "VideoGame", "Un gioco il cui antagonista è un'intelligenza artificiale", and_("VideoGame", some("hasAntagonist", "RogueAI"))),
     ("PrequelGame", "VideoGame", "Un gioco la cui storia precede quella di un altro", and_("VideoGame", some("prequelOf", "VideoGame"))),
     ("PrequelReturn", "ReturnAfterDeathGame", "Un gioco in cui ricompare un personaggio già morto, spiegato dal fatto che è un prequel", and_("ReturnAfterDeathGame", "PrequelGame")),
     ("Synthetic", "Character", "Un personaggio costruito da qualcuno nel mondo di gioco: un'intelligenza artificiale o un robot", and_("Character", some("builtBy", "owl:Thing"))),
@@ -93,7 +104,6 @@ DEFINED = [
     ("FirstPartyGame", "VideoGame", "Un gioco pubblicato dal gruppo di un costruttore di console", and_("VideoGame", some("publishedByGroup", "PlatformHolder"))),
     ("SequelGame", "VideoGame", "Il seguito di un altro gioco", and_("VideoGame", some("sequelOf", "VideoGame"))),
     ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", and_("SequelGame", some("sequelOf", some("sequelOf", "VideoGame")))),
-    ("LongRunningOriginal", "VideoGame", "Un gioco seguito da almeno altri due capitoli della serie", and_("VideoGame", some("hasSequel", some("hasSequel", "VideoGame")))),
     ("ViolentStoryGame", "VideoGame", "Un gioco nella cui trama qualcuno viene ucciso", and_("VideoGame", some("hasKilling", "Killing"))),
     ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", and_("ViolentStoryGame", some("pegiRating", score(16)))),
     ("FantasyViolenceGame", "ViolentStoryGame", "Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici", and_("ViolentStoryGame", some("pegiRating", score_max(12)))),
@@ -125,7 +135,10 @@ RULE_TARGETS = [
     ("SequelByDifferentStudio", "VideoGame", "Un seguito sviluppato da uno studio diverso"),
     ("VeteransReturn", "VideoGame", "Un gioco fatto da uno studio fondato da chi aveva lavorato alla serie"),
     ("EngineChangeSequel", "VideoGame", "Un seguito che cambia motore"),
-    ("ExternalEngineGame", "VideoGame", "Un gioco fatto con un motore sviluppato da un'altra azienda"),
+    ("ExternalEngineGame", "VideoGame", "Un gioco fatto con un motore sviluppato da un'altra azienda, anche dello stesso gruppo (vedi GroupEngineGame)"),
+    ("GroupEngineGame", "VideoGame", "Un gioco fatto con il motore di un'altra azienda dello stesso gruppo"),
+    ("SameGroupSequel", "VideoGame", "Un seguito sviluppato da un altro studio dello stesso gruppo"),
+    ("SelfPublishedGame", "VideoGame", "Un gioco sviluppato e pubblicato dalla stessa azienda"),
     ("InHouseEngineGame", "VideoGame", "Un gioco fatto con il motore dello stesso studio"),
     ("ReturningDirectorSequel", "VideoGame", "Un seguito con lo stesso regista del predecessore"),
     ("DefeatedVillain", "DeceasedCharacter", "Un antagonista ucciso dal protagonista"),
@@ -150,6 +163,7 @@ OBJECT_PROPS = [
     ("manufacturedBy", "Platform", "Company", "manufacturerOf", [], None),
     ("subsidiaryOf", "Company", "Company", None, ["Transitive"], None),
     ("publishedByGroup", "VideoGame", "Company", None, [], "Derivata dalle regole: l'editore e i gruppi che lo controllano"),
+    ("inGroupOf", "Company", "Company", None, [], "Derivata dalle regole: l'azienda stessa e tutte quelle che la controllano"),
     ("directedBy", "VideoGame", "Person", "directorOf", [], None),
     ("heads", "Person", "Company", None, [], None),
     ("foundedBy", "Company", "Person", None, [], None),
@@ -158,7 +172,7 @@ OBJECT_PROPS = [
     ("adaptedInto", "Franchise", "CreativeWork", None, [], None),
     ("appearsIn", "Character", "VideoGame", "hasCharacter", [], None),
     ("protagonistOf", "Character", "VideoGame", None, [], None),
-    ("antagonistOf", "Character", "VideoGame", None, [], None),
+    ("antagonistOf", "Character", "VideoGame", "hasAntagonist", [], None),
     ("killedBy", "Character", "Character", "kills", [], "Dedotta dalla regola KillingEvent"),
     ("victim", "Killing", "Character", "victimIn", [], None),
     ("killer", "Killing", "Character", "killerIn", [], None),
@@ -201,6 +215,13 @@ RULES = [
     ("ReleaseOrderChain", [("releasedAfter", "?a", "?b"), ("sequelOf", "?b", "?c")], [("releasedAfter", "?a", "?c")]),
     ("ReturnAfterDeath", [("victim", "?k", "?c"), ("inGame", "?k", "?g"), ("appearsIn", "?c", "?h"), ("releasedAfter", "?h", "?g")],
      [("ReturningCharacter", "?c"), ("ReturnAfterDeathGame", "?h")]),
+    ("GroupSelf", [("Company", "?c")], [("inGroupOf", "?c", "?c")]),
+    ("GroupParent", [("inGroupOf", "?c", "?p"), ("subsidiaryOf", "?p", "?q")], [("inGroupOf", "?c", "?q")]),
+    ("GroupEngine", [("madeWith", "?g", "?e"), ("engineDevelopedBy", "?e", "?m"), ("developedBy", "?g", "?d"), ("differentFrom", "?m", "?d"), ("inGroupOf", "?m", "?r"), ("inGroupOf", "?d", "?r")],
+     [("GroupEngineGame", "?g")]),
+    ("SameGroupSequel", [("sequelOf", "?a", "?b"), ("developedBy", "?a", "?x"), ("developedBy", "?b", "?y"), ("differentFrom", "?x", "?y"), ("inGroupOf", "?x", "?r"), ("inGroupOf", "?y", "?r")],
+     [("SameGroupSequel", "?a")]),
+    ("SelfPublished", [("developedBy", "?g", "?c"), ("publishedBy", "?g", "?c")], [("SelfPublishedGame", "?g")]),
     ("MustPlay", [("metacriticScore", "?g", "?s"), ("xsd:integer", "xsd:minInclusive", 95, "?s")], [("MustPlayGame", "?g")]),
 ]
 
@@ -408,16 +429,22 @@ def appendix():
                OPTIONAL { ?g vg:belongsTo/rdfs:label ?s } OPTIONAL { ?g vg:releaseDate ?d } OPTIONAL { ?g vg:developedBy/rdfs:label ?dev } }
                ORDER BY ?serie ?d"""
         rows = [[esc(x) if x is not None else "--" for x in row] for row in g.query(q, initNs={"vg": VG, "rdfs": RDFS})]
+        NUMERI["Giochi"] = len(rows)
         out.append(latex_table(f"I {len(rows)} giochi del dataset", "p{6.5cm}p{3cm}lp{3.5cm}", r"\textbf{Gioco} & \textbf{Serie} & \textbf{Anno} & \textbf{Sviluppatore}", rows))
     return "\n".join(out)
+
+
+NUMERI = {}
 
 
 def main():
     for name, g in {"schema.ttl": schema(), "regole.ttl": rules()}.items():
         g.serialize(destination=HERE / name, format="turtle")
     (HERE / "relazione" / "appendice.tex").write_text(appendix(), encoding="utf-8")
-    print(f"classi {len(TOP) + len(PRIMITIVE) + len(RULE_TARGETS) + len(DEFINED)} (definite {len(DEFINED)}), "
-          f"object property {len(OBJECT_PROPS) + sum(1 for p in OBJECT_PROPS if p[3])}, datatype property {len(DATA_PROPS)}, regole {len(RULES)}")
+    NUMERI.update(Top=len(TOP), Classi=len(TOP) + len(PRIMITIVE) + len(RULE_TARGETS) + len(DEFINED), Definite=len(DEFINED), Regole=len(RULES),
+                  ObjProp=len(OBJECT_PROPS) + sum(1 for p in OBJECT_PROPS if p[3]), DataProp=len(DATA_PROPS))
+    (HERE / "relazione" / "numeri.tex").write_text("".join(f"\\newcommand{{\\n{k}}}{{{v}}}\n" for k, v in NUMERI.items()), encoding="utf-8")
+    print(" ".join(f"{k}={v}" for k, v in NUMERI.items()))
 
 
 if __name__ == "__main__":

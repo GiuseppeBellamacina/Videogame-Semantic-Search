@@ -23,14 +23,16 @@
 \lstset{basicstyle=\ttfamily\footnotesize,backgroundcolor=\color{black!4},frame=single,rulecolor=\color{black!25},
   breaklines=true,columns=fullflexible,keepspaces=true,showstringspaces=false,aboveskip=4pt,belowskip=4pt}
 
-\newcommand{\screenshot}[3][0.85\linewidth]{%
+\newcommand{\screenshot}[4][0.85\linewidth]{%
   \begin{figure}[htbp]\centering
   \IfFileExists{figure/#2.png}{\includegraphics[width=#1]{#2}}%
-    {\fbox{\parbox[c][3cm][c]{0.6\linewidth}{\centering\small Screenshot da inserire:\\\texttt{figure/\detokenize{#2}.png}}}}%
+    {\fbox{\parbox{0.92\linewidth}{\small\textbf{Screenshot da inserire:} \texttt{figure/\detokenize{#2}.png}\par\smallskip\textit{Come ottenerlo.} #4}}}%
   \caption{#3}\label{fig:#2}
   \end{figure}}
 \newcommand{\cls}[1]{\textsf{#1}}
 \newcommand{\prop}[1]{\textit{#1}}
+\input{numeri}
+\input{controlli}
 
 \title{\textbf{Videogame Ontology}\\[2pt]\large}
 \author{Giuseppe Bellamacina}
@@ -41,7 +43,7 @@
 
 \begin{abstract}
 \noindent
-Questa relazione racconta la costruzione di un'ontologia OWL~2 dei videogiochi nell'ordine in cui è avvenuta: le domande da cui siamo partiti, i nomi delle cose (le classi), i loro collegamenti (le proprietà), il loro significato (le classi definite e le regole). Schema, regole e dati sono generati da script Python con rdflib; i dati, 95 giochi di undici serie più sei titoli singoli, vengono da Wikidata e da Wikipedia, letta da un agente LLM che deve citare la fonte di ogni fatto. Il cuore della relazione sono le deduzioni che il reasoner HermiT ottiene in Protégé: fatti mai scritti nei dati, come ``se un gioco contiene più di un omicidio e ha una classificazione PEGI elevata, esso è un gioco violento'', ``Un gioco è un first-party se è prodotto da un'azienda produttrice di console'', o ``un gioco è stato fatto da veterani della serie''.
+Questa relazione racconta la costruzione di un'ontologia OWL~2 dei videogiochi nell'ordine in cui è avvenuta: le domande da cui siamo partiti, i nomi delle cose (le classi), i loro collegamenti (le proprietà), il loro significato (le classi definite e le regole). Schema, regole e dati sono generati da script Python con rdflib; i dati, \nGiochi{} giochi, di undici serie e sei titoli singoli, vengono da Wikidata e da Wikipedia, letta da un agente LLM che deve citare la fonte di ogni fatto. Il cuore della relazione sono le deduzioni che il reasoner HermiT ottiene in Protégé: fatti mai scritti nei dati, come ``se un gioco contiene più di un omicidio e ha una classificazione PEGI elevata, esso è un gioco violento'', ``Un gioco è un first-party se è prodotto da un'azienda produttrice di console'', o ``un gioco è stato fatto da veterani della serie''.
 \end{abstract}
 
 % ---------------------------------------------------------------------------
@@ -65,11 +67,11 @@ Nessuna risposta è scritta nei dati. Che \emph{Mass Effect} (2007) sia un gioco
 
 Abbiamo diviso l'ontologia in due parti, tenute in due file distinti: lo \emph{schema} (classi, proprietà, assiomi; nessun gioco) e i \emph{dati} (solo fatti asseriti, nessuna conclusione). Il reasoner unisce le due parti e ne ricava il resto.
 
-Lo schema parte da tredici classi di primo livello, disgiunte a due a due: \cls{VideoGame}, \cls{Company}, \cls{Person}, \cls{Character}, \cls{Platform}, \cls{Franchise}, \cls{GameEngine}, \cls{Award}, \cls{Genre}, \cls{GameMode}, \cls{CreativeWork} (romanzi, film, serie TV) e \cls{Killing} (un'uccisione avvenuta in un gioco) e \cls{FictionalOrganization} (le organizzazioni del mondo di gioco, come Aperture Science). La disgiunzione non è una formalità: un individuo usato sia come gioco sia come opera letteraria rende l'ontologia inconsistente, e il reasoner lo segnala.
+Lo schema parte da \nTop{} classi di primo livello, disgiunte a due a due: \cls{VideoGame}, \cls{Company}, \cls{Person}, \cls{Character}, \cls{Platform}, \cls{Franchise}, \cls{GameEngine}, \cls{Award}, \cls{Genre}, \cls{GameMode}, \cls{CreativeWork} (romanzi, film, serie TV) e \cls{Killing} (un'uccisione avvenuta in un gioco) e \cls{FictionalOrganization} (le organizzazioni del mondo di gioco, come Aperture Science). La disgiunzione non è una formalità: un individuo usato sia come gioco sia come opera letteraria rende l'ontologia inconsistente, e il reasoner lo segnala.
 
-Abbiamo resistito alla tentazione di creare una classe per ogni cosa. Le piattaforme si dividono solo in console e PC (disgiunte), ognuna con la sua generazione (la PS5 è di nona); le marche (PlayStation, Xbox, Nintendo) non sono classi, ma si ricavano da \emph{chi costruisce} la console. Dei personaggi si scrive solo la specie, umana o aliena. I ruoli, invece, non si asseriscono mai: sviluppatore, editore, regista, assassino, personaggio giocabile, intelligenza artificiale, console attuale sono classi che il reasoner riempie da solo, come si vedrà. Il risultato è un'ontologia piccola (77 classi) ma profonda: quasi metà delle classi è definita da assiomi e si popola per deduzione (figura~\ref{fig:gerarchia_inferita}).
+Abbiamo resistito alla tentazione di creare una classe per ogni cosa. Le piattaforme si dividono solo in console e PC (disgiunte), ognuna con la sua generazione (la PS5 è di nona); le marche (PlayStation, Xbox, Nintendo) non sono classi, ma si ricavano da \emph{chi costruisce} la console. Dei personaggi si scrive solo la specie, umana o aliena. I ruoli, invece, non si asseriscono mai: sviluppatore, editore, regista, assassino, personaggio giocabile, intelligenza artificiale, console attuale sono classi che il reasoner riempie da solo, come si vedrà. Il risultato è un'ontologia compatta (\nClassi{} classi) ma profonda: più della metà (\nDefinite{}) è definita da assiomi e si popola per deduzione (figura~\ref{fig:gerarchia_inferita}).
 
-\screenshot[0.6\linewidth]{gerarchia_inferita}{La gerarchia inferita da HermiT in Protégé.}
+\screenshot[0.6\linewidth]{gerarchia_inferita}{La gerarchia inferita da HermiT in Protégé.}{Apri \texttt{protege/videogiochi.ttl} (File > Open). Avvia \texttt{Reasoner > HermiT > Start reasoner} e attendi la fine. Nel tab \texttt{Entities > Classes} cambia il menu sopra l'albero da \emph{Asserted} a \emph{Inferred}, espandi \texttt{Character}, \texttt{Company} e \texttt{Franchise} e ritaglia solo il pannello dell'albero. Salva come \texttt{figure/gerarchia\_inferita.png}.}
 
 % ---------------------------------------------------------------------------
 \section{Secondo passo: collegare le cose}\label{sec:proprieta}
@@ -89,12 +91,12 @@ Abbiamo resistito alla tentazione di creare una classe per ogni cosa. Le piattaf
 \]
 La prima dice che un gioco è giocabile anche dove è uscita una sua nuova edizione; la seconda collega un gioco ai giochi dello studio che ha fatto il suo motore.
 
-\paragraph{I valori.} Cinque datatype property: data di uscita (\texttt{xsd:dateTime}), punteggio Metacritic, classificazione PEGI, generazione di una console (tutte funzionali) e identificativo Wikidata, che è la \emph{chiave} di \cls{VideoGame} (\texttt{owl:hasKey}~\cite{owl2primer}): due record con lo stesso identificativo sono lo stesso gioco. In tutto ci sono 47 object property e 5 datatype property (appendice~\ref{app:componenti}).
+\paragraph{I valori.} Cinque datatype property: data di uscita (\texttt{xsd:dateTime}), punteggio Metacritic, classificazione PEGI, generazione di una console (tutte funzionali) e identificativo Wikidata, che è la \emph{chiave} di \cls{VideoGame} (\texttt{owl:hasKey}~\cite{owl2primer}): due record con lo stesso identificativo sono lo stesso gioco. In tutto ci sono \nObjProp{} object property e \nDataProp{} datatype property (appendice~\ref{app:componenti}).
 
 % ---------------------------------------------------------------------------
 \section{Terzo passo: dare un significato}\label{sec:definite}
 
-Una classe primitiva ha solo condizioni necessarie; una classe \emph{definita} ($\equiv$) ha condizioni necessarie e sufficienti, e il reasoner vi classifica chiunque le soddisfi. Le 44 classi definite sono costruite le une sulle altre (tabella~\ref{tab:costrutti}); l'elenco completo è nell'appendice.
+Una classe primitiva ha solo condizioni necessarie; una classe \emph{definita} ($\equiv$) ha condizioni necessarie e sufficienti, e il reasoner vi classifica chiunque le soddisfi. Le \nDefinite{} classi definite sono costruite le une sulle altre (tabella~\ref{tab:costrutti}); l'elenco completo è nell'appendice.
 
 \begin{table}[htbp]\centering\small
 \begin{tabularx}{\linewidth}{@{}lY@{}}
@@ -126,7 +128,7 @@ su una catena & $\cls{StillPlayable} \equiv \cls{VideoGame} \sqcap \exists\,\pro
  and_("VideoGame", some("publishedByGroup", "PlatformHolder"))),
 \end{lstlisting}
 
-\paragraph{I dati.} Il dataset contiene 95 giochi: undici serie (Zelda, Super Mario, Grand Theft Auto, Assassin's Creed, Fallout, Halo, Far Cry, The Witcher, Mass Effect, Dark Souls, Portal), sei titoli singoli (Dispatch, Elden Ring, Cyberpunk~2077, Clair Obscur, Minecraft, The Walking Dead) e 28 nuove edizioni, fino al remake di Ocarina of Time uscito nel novembre 2026. Per ogni gioco c'è anche la classificazione PEGI ufficiale.
+\paragraph{I dati.} Il dataset contiene \nGiochi{} giochi: undici serie (Zelda, Super Mario, Grand Theft Auto, Assassin's Creed, Fallout, Halo, Far Cry, The Witcher, Mass Effect, Dark Souls, Portal), sei titoli singoli (Dispatch, Elden Ring, Cyberpunk~2077, Clair Obscur, Minecraft, The Walking Dead) e 28 nuove edizioni, fino al remake di Ocarina of Time uscito nel novembre 2026. Per ogni gioco c'è anche la classificazione PEGI ufficiale.
 
 \paragraph{Da dove vengono i dati.} Anche i dati sono prodotti da script, in tre passi.
 \begin{enumerate}
@@ -143,9 +145,9 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
     vg:victim character:Gwyn_Lord_of_Sunlight ; vg:killer character:Chosen_Undead ;
     vg:inGame vg:Dark_Souls .
 \end{lstlisting}
-Nessuno di questi fatti dice che Gwyn è morto, che Miyazaki è un regista o che Dark Souls è un gioco violento: lo deduce il reasoner (sezione~\ref{sec:inferenze}). Il file dei dati contiene circa 5\,300 triple asserite; HermiT aggiunge circa 2\,400 fatti nuovi, tra tipi e relazioni.
+Nessuno di questi fatti dice che Gwyn è morto, che Miyazaki è un regista o che Dark Souls è un gioco violento: lo deduce il reasoner (sezione~\ref{sec:inferenze}). Il file dei dati contiene circa 5\,500 triple asserite; HermiT aggiunge circa 3\,800 fatti nuovi, tra tipi e relazioni.
 
-\paragraph{Verifica.} In Protégé~\cite{protege} si apre \texttt{videogiochi.ttl}, che importa schema, dati e regole tramite il \texttt{catalog-v001.xml}. HermiT~\cite{hermit} li ragiona in pochi secondi: l'ontologia è consistente e nessuna classe è insoddisfacibile. Uno script ripete il ragionamento dalla riga di comando e controlla 208 condizioni attese.
+\paragraph{Verifica.} In Protégé~\cite{protege} si apre \texttt{videogiochi.ttl}, che importa schema, dati e regole tramite il \texttt{catalog-v001.xml}. HermiT~\cite{hermit} li ragiona: l'ontologia è consistente e nessuna classe è insoddisfacibile. Il ragionamento completo, con tutte le relazioni dedotte, richiede un paio di minuti. Uno script ripete il ragionamento dalla riga di comando e controlla \nControlli{} condizioni attese.
 
 % ---------------------------------------------------------------------------
 \section{Quinto passo: che cosa sa dedurre l'ontologia}\label{sec:inferenze}
@@ -162,7 +164,7 @@ Il caso più semplice: un'uccisione dice qualcosa di tutti e due i personaggi co
   \item \textbf{Link, Chell e l'Arbiter sono personaggi giocabili} (\cls{PlayerCharacter}), dal fatto che il giocatore li controlla in un gioco. Il contrario, ``personaggio non giocabile'', non si deduce: ciò che non è scritto è sconosciuto, non falso.
 \end{itemize}
 
-\screenshot[0.7\linewidth]{spiegazione_gwyn}{La spiegazione di Protégé per ``Gwyn è \cls{DeceasedCharacter}'': un'uccisione e la definizione della classe.}
+\screenshot[0.7\linewidth]{spiegazione_gwyn}{La spiegazione di Protégé per ``Gwyn è \cls{DeceasedCharacter}'': un'uccisione e la definizione della classe.}{Con HermiT avviato, vai nel tab \texttt{Entities > Individuals}, scrivi \emph{Gwyn} nella casella di ricerca e seleziona \emph{Gwyn, Lord of Sunlight}. Nel pannello \emph{Description}, sotto \emph{Types}, la riga gialla \texttt{DeceasedCharacter} è dedotta: clicca il punto interrogativo accanto e fotografa la finestra di spiegazione (compaiono l'uccisione, con \texttt{victim} e \texttt{killer}, e la definizione della classe).}
 
 \subsection{Due o tre passi}
 Qui il tipo di un individuo nasce dal tipo di \emph{un altro} individuo, a sua volta dedotto.
@@ -176,36 +178,47 @@ Qui il tipo di un individuo nasce dal tipo di \emph{un altro} individuo, a sua v
   \item \textbf{Bowser, Ganondorf e GLaDOS sono cattivi ricorrenti}: antagonisti presenti in almeno due giochi diversi.
 \end{itemize}
 
+\subsection{Profili, generi e industria}
+Sopra queste classi se ne appoggiano altre, che descrivono profili di personaggi, di persone e di aziende e perfino il ``genere'' di un gioco.
+\begin{itemize}
+  \item \textbf{Eroe, traditore, vittima.} Un \cls{VillainSlayer} è un protagonista che ha ucciso un cattivo sconfitto (Link, Ezio, Geralt, il Master Chief); un \cls{TragicProtagonist} è un protagonista che muore (Gustave in \emph{Clair Obscur}, Haytham Kenway in \emph{Assassin's Creed~III}); un \cls{Turncoat} è protagonista in un gioco e antagonista in un altro, e nei dati c'è solo Cortana. Sono classi definite sopra classi a loro volta dedotte (\cls{Protagonist}, \cls{DefeatedVillain}, \cls{DeceasedCharacter}): il reasoner le riempie a cascata.
+  \item \textbf{Il genere dai personaggi.} I dati non dicono se un gioco è storico o di fantascienza, dicono chi lo abita. Un \cls{HistoricalGame} ha personaggi che interpretano persone reali (tutti gli Assassin's Creed); un \cls{SciFiGame} ha personaggi alieni o sintetici (quasi tutti gli Halo e i due Portal); un \cls{RogueAIGame} ha come antagonista un'intelligenza artificiale (Portal, Halo~5 e anche Halo: Combat Evolved e Halo~3, dove lo è 343 Guilty Spark). Sono condizioni sufficienti, non necessarie: Mass Effect non risulta di fantascienza perché nei dati non ci sono personaggi alieni, e in un mondo aperto un dato mancante non è una smentita.
+  \item \textbf{Registi e studi prolifici.} Con la cardinalità qualificata, \cls{ProlificDirector} (almeno tre giochi diretti: Miyazaki, Miyamoto, Aonuma) e \cls{ProlificDeveloper} (almeno cinque giochi: Bungie, Rockstar North, Ubisoft Montreal e le divisioni Nintendo). \cls{FirstPartyStudio} è uno studio che fa parte del gruppo di un costruttore di console (Halo Studios, Mojang, Nintendo EPD, Bethesda Game Studios); BioWare e Capcom no, pur avendo sviluppato giochi pubblicati da un costruttore.
+  \item \textbf{Giochi che attraversano le generazioni.} \cls{CrossGenerationGame} è un gioco giocabile oggi su una console attuale e uscito anche su una di generazione precedente. Ocarina of Time esce su Nintendo~64 (quinta generazione) e, con il remake del 2026, su Switch~2 (nona); lo stesso vale per GTA~III e per Halo: Combat Evolved. Basta aggiungere a \cls{StillPlayable} la classe \cls{PreviousGenerationConsole} (generazione $\leq 8$), definita come \cls{CurrentGenerationConsole} ma con la soglia dall'altra parte.
+\end{itemize}
+
 \subsection{Catene, transitività e serie}
 \begin{itemize}
   \item \textbf{GTA III si gioca ancora su PS5}, anche se è uscito nel 2001 su PS2: la sua Definitive Edition è uscita su PS5, e la catena $\prop{hasRemaster} \circ \prop{availableOn}$ lo rende \cls{StillPlayable}. Lo stesso vale per Breath of the Wild (Switch~2), Fallout~4 e Halo: Combat Evolved, del 2001, che con il remake \emph{Campaign Evolved} arriva perfino su PS5; non per Mass Effect, la cui raccolta è ferma a PS4.
   \item \textbf{The Witcher è legato a Mass Effect}: è fatto con il motore Aurora di BioWare, che ha sviluppato Mass Effect (catena \prop{techLinkedTo}).
-  \item \textbf{GTA, Assassin's Creed, Fallout, Zelda, Super Mario e le altre serie con almeno tre capitoli sono serie lunghe}; Portal, con due, no. \textbf{Halo e Fallout sono serie passate di mano}; \textbf{The Witcher, Fallout, Halo e Super Mario sono diventati film o serie TV}, GTA e Zelda no.
+  \item \textbf{GTA, Assassin's Creed, Fallout, Zelda, Super Mario e le altre serie con almeno tre capitoli sono serie lunghe}; Portal, con due, no. Sette serie sono diventate film o serie TV (\cls{TransmediaFranchise}: The Witcher, Fallout, Halo, Assassin's Creed, Far Cry, Mass Effect e Super Mario), GTA e Zelda no. Sei serie sono passate di mano (\cls{FranchiseWithStudioChange}: Halo, Fallout, Far Cry, Assassin's Creed, Super Mario e Zelda). Per Super Mario il cambio è sempre tra divisioni dello stesso gruppo, per Zelda anche verso uno studio esterno, Flagship di Capcom: si veda più avanti.
 \end{itemize}
 
-\screenshot[0.7\linewidth]{individuo_fallout_new_vegas}{\emph{Fallout: New Vegas} in Protégé: in giallo i tipi dedotti, tra cui \cls{VeteransReturn} e \cls{FirstPartyOnRivalConsole}.}
+\screenshot[0.7\linewidth]{individuo_fallout_new_vegas}{\emph{Fallout: New Vegas} in Protégé: in giallo i tipi dedotti, tra cui \cls{VeteransReturn}, \cls{FirstPartyOnRivalConsole} e \cls{SameGroupSequel}.}{Con HermiT avviato, nel tab \texttt{Entities > Individuals} cerca \emph{New Vegas} e selezionalo. Fotografa il pannello \emph{Description}: tra i \emph{Types} devono comparire in giallo \texttt{VeteransReturn}, \texttt{FirstPartyOnRivalConsole}, \texttt{ExternalEngineGame} e \texttt{SameGroupSequel}. Se non sono gialli, premi \texttt{Reasoner > Synchronize reasoner}.}
 
 \subsection{Regole SWRL}
-Alcune conclusioni richiedono di confrontare due variabili (``lo stesso studio'', ``un'azienda diversa'') e non si esprimono con una classe: servono regole SWRL~\cite{swrl}, nella forma \emph{DL-safe}~\cite{dlsafe}, che HermiT applica durante il ragionamento. La soglia di punteggio usa un intervallo di dati, come negli esempi del corso. Le quindici regole sono nell'appendice; le più interessanti:
+Alcune conclusioni richiedono di confrontare due variabili (``lo stesso studio'', ``un'azienda diversa'') e non si esprimono con una classe: servono regole SWRL~\cite{swrl}, nella forma \emph{DL-safe}~\cite{dlsafe}, che HermiT applica durante il ragionamento. La soglia di punteggio usa un intervallo di dati, come negli esempi del corso. Le \nRegole{} regole sono nell'appendice; le più interessanti:
 \begin{itemize}
   \item \textbf{Veterani che tornano.} \emph{Fallout: New Vegas} è sviluppato da uno studio fondato da persone che lavoravano per lo sviluppatore di un altro gioco della stessa serie (Fallout~2): \cls{VeteransReturn}.
   \item \textbf{First-party su console rivale.} \emph{Mass Effect}, del gruppo Microsoft, è uscito su PS3; \emph{Fallout~4} su PS4. Due regole calcolano il gruppo dell'editore risalendo \prop{subsidiaryOf} un passo alla volta, perché HermiT, nelle regole, vede solo le relazioni asserite e non quelle ottenute per transitività.
-  \item \textbf{Seguiti di un altro studio} (Halo~4, Fallout~3, Far Cry~2 passato da Crytek a Ubisoft), \textbf{seguiti che cambiano motore} (GTA~IV da RenderWare a RAGE, Far Cry~2 da CryEngine a Dunia, Fallout~4), Far Cry~6 \textbf{fatto con un motore esterno} anche se di un'altra sede della stessa Ubisoft, \textbf{seguiti con lo stesso regista} (Mass Effect~2, Dark Souls~III), \textbf{motori interni o esterni} (The Witcher~3 contro Mass Effect, fatto con Unreal Engine di Epic).
+  \item \textbf{Seguiti di un altro studio e motori di un'altra azienda.} Halo~4 (343 Industries dopo Bungie), Fallout~3 e Far Cry~2 (da Crytek a Ubisoft) sono \cls{SequelByDifferentStudio}; GTA~IV, Far Cry~2 e Fallout~4 cambiano motore (\cls{EngineChangeSequel}); Mass Effect~2 e Dark Souls~III hanno lo stesso regista del predecessore (\cls{ReturningDirectorSequel}); \cls{ExternalEngineGame} e \cls{InHouseEngineGame} dicono se il motore è di un'altra azienda o dello stesso studio.
+  \item \textbf{Stesso gruppo, studio diverso.} \cls{ExternalEngineGame} ha un difetto che il reasoner aiuta a vedere: GTA~V usa RAGE, sviluppato da una divisione di Rockstar Games, e Far Cry~6 il motore di Ubisoft Montreal, ma in entrambi i casi lo sviluppatore è un altro studio dello stesso gruppo. Una regola ricava per ogni azienda i gruppi a cui appartiene (\prop{inGroupOf}), un passo alla volta come per gli editori; altre due riconoscono i \cls{GroupEngineGame} (GTA~IV, V e VI, Far Cry~6, cinque Assassin's Creed) e i \cls{SameGroupSequel}, i seguiti passati a un altro studio del gruppo: le divisioni Nintendo dei Mario e degli Zelda, le sedi Ubisoft. Halo~4 invece non lo è, perché Bungie e 343 Industries non hanno un gruppo in comune, e come lui Fallout~3, Far Cry~2 e, negli Zelda, i passaggi da e verso Flagship (Capcom): sono i veri passaggi di mano. In Protégé una query DL come \texttt{SequelByDifferentStudio and SameGroupSequel} separa i passaggi interni; non si può chiedere ``senza gruppo in comune'', perché servirebbe una negazione.
+  \item \textbf{Giochi autopubblicati.} Sviluppatore ed editore sono la stessa azienda (\cls{SelfPublishedGame}: Portal, Minecraft, Dispatch).
   \item \textbf{Cattivi sconfitti dall'eroe.} Un antagonista ucciso dal protagonista dello stesso gioco è \cls{DefeatedVillain}, e quindi un personaggio morto: Cesare Borgia per mano di Ezio, Eredin per mano di Geralt, Gwyn per mano del Prescelto.
   \item \textbf{Morti che ritornano.} Un personaggio ucciso non dovrebbe ricomparire in un gioco uscito dopo. Due regole ricavano ``uscito dopo'' (\prop{releasedAfter}) risalendo i seguiti un passo alla volta; una terza segnala chi ricompare dopo la propria morte (\cls{ReturningCharacter}) e il gioco in cui succede (\cls{ReturnAfterDeathGame}). Catalina, uccisa in GTA~III, ricompare in San Andreas: il reasoner lo spiega, perché San Andreas è un prequel (\cls{PrequelReturn}). Ganondorf, ucciso in Twilight Princess (ed è \cls{KilledMoreThanOnce}: muore anche in Tears of the Kingdom), ricompare in A Link Between Worlds, Breath of the Wild e Tears of the Kingdom, che non sono prequel: resurrezione o altra linea temporale, il reasoner non può dire quale.
 \end{itemize}
 
-\screenshot[0.7\linewidth]{swrl_rules}{Le regole nel tab SWRLTab di Protégé.}
+\screenshot[0.7\linewidth]{swrl_rules}{Le regole nel tab SWRLTab di Protégé.}{Apri \texttt{Window > Tabs > SWRLTab}. Il tab elenca le \nRegole{} regole di \texttt{regole.ttl}: allarga la colonna \emph{Rule} per leggerle per intero e fotografa la tabella. Se l'elenco è vuoto, controlla nel tab \emph{Active ontology}, sezione \emph{Ontology imports}, che \texttt{regole} sia tra le ontologie importate.}
 
 \subsection{Errori che il reasoner trova}\label{sec:inconsistenze}
 Con quattro piccole aggiunte ai dati HermiT dichiara l'ontologia inconsistente e Protégé spiega perché (figura~\ref{fig:inconsistenza}): una piattaforma sia console sia PC (\emph{disgiunzione}); Portal~2 con due punteggi (\emph{proprietà funzionale}); Breath of the Wild ``su al più una piattaforma'' ma uscito su Wii~U e Switch, dichiarate diverse (\emph{cardinalità}); due giochi con lo stesso identificativo Wikidata dichiarati diversi (\emph{chiave}). Il caso di cardinalità ha un gemello che non è un errore: Splatoon~2, esclusiva Switch, collegato anche a ``NX'', il nome in codice della Switch. Il reasoner conclude che NX \emph{è} la Switch: una deduzione corretta, che mostra mondo aperto e assenza di Unique Name Assumption.
 
-\screenshot[0.7\linewidth]{inconsistenza}{La spiegazione di un'inconsistenza in Protégé (test di cardinalità).}
+\screenshot[0.7\linewidth]{inconsistenza}{La spiegazione di un'inconsistenza in Protégé (test di cardinalità).}{Apri \texttt{protege/test/errore\_cardinalita.ttl} (File > Open, in una nuova finestra se lo chiede) e avvia \texttt{Reasoner > HermiT > Start reasoner}: compare l'avviso di ontologia inconsistente. Scegli \emph{Explain inconsistent ontology} e fotografa la finestra con gli assiomi in conflitto: la restrizione ``al più una piattaforma'' su \emph{Breath of the Wild}, le sue due piattaforme (Wii U e Switch) e la loro diversità.}
 
 % ---------------------------------------------------------------------------
 \section{Limiti e sviluppi}
 \begin{itemize}
-  \item \textbf{Tempo.} OWL non rappresenta il tempo. Fallout~4 risulta first-party Microsoft perché oggi ZeniMax appartiene a Microsoft, ma nel 2015, quando è uscito, non era così; Bungie oggi è di Sony. Servirebbero relazioni datate (per esempio con il pattern delle relazioni n-arie).
+  \item \textbf{Tempo.} OWL non rappresenta il tempo. Fallout~4 risulta first-party Microsoft perché oggi ZeniMax appartiene a Microsoft, ma nel 2015, quando è uscito, non era così; Bungie oggi è di Sony, e Fallout: New Vegas risulta un seguito interno al gruppo (\cls{SameGroupSequel}) solo perché oggi Obsidian e Bethesda appartengono entrambe a Microsoft. Servirebbero relazioni datate (per esempio con il pattern delle relazioni n-arie).
   \item \textbf{Mondo aperto.} Negazioni e cardinalità massime non sono controlli: ``personaggio non giocabile'', ``ultima console'' o ``gioco che non è un prequel'' non si deducono. Per vincoli a mondo chiuso serve un linguaggio come SHACL, accanto a OWL.
   \item \textbf{Regole.} HermiT non vede, dentro le regole, le relazioni dedotte da catene e transitività, e non sa confrontare date: gruppi societari e ordine di uscita sono ricostruiti da regole, un passo alla volta.
   \item \textbf{Personaggi senza contesto.} Le uccisioni sono legate al gioco, ma il resto no: un personaggio è lo stesso individuo in tutta la serie, quindi la sua natura, il suo ruolo o il fatto di essere giocabile valgono per tutti i giochi. Lo stesso pattern n-ario potrebbe servire anche per i ruoli (Cortana alleata o antagonista a seconda del gioco).
