@@ -1,6 +1,6 @@
 """Genera videogiochi.ttl (il file da aprire in Protégé) e i casi di test in test/.
 
-    uv run python protege/generate_tests.py
+uv run python protege/generate_tests.py
 """
 
 from pathlib import Path
@@ -63,20 +63,67 @@ def sameas(g):
     at_most_one_platform(g, VG.Splatoon_2)
 
 
+def proprieta_disgiunte(g):
+    g.add(
+        (
+            VG.The_Legend_of_Zelda_Ocarina_of_Time_3D,
+            VG.prequelOf,
+            VG.The_Legend_of_Zelda_Ocarina_of_Time,
+        )
+    )
+
+
 TESTS = [
-    ("errore_disgiunzione", "disgiunzione", "Atteso: inconsistente (console e PC sono classi disgiunte)", disgiunzione),
-    ("errore_funzionale", "funzionale", "Atteso: inconsistente (metacriticScore è funzionale e Portal 2 ha già 95)", funzionale),
-    ("errore_cardinalita", "cardinalita", "Atteso: inconsistente (al più una piattaforma, ma Breath of the Wild è uscito su Wii U e Switch, dichiarate diverse)", cardinalita),
-    ("errore_chiave", "chiave", "Atteso: inconsistente (stesso hasWikidataId, chiave di VideoGame, ma dichiarati diversi)", chiave),
-    ("deduzione_sameas", "sameas", "Atteso: consistente; il reasoner deduce NX = Nintendo Switch (NX è il nome in codice della Switch)", sameas),
+    (
+        "errore_disgiunzione",
+        "disgiunzione",
+        "Atteso: inconsistente (console e PC sono classi disgiunte)",
+        disgiunzione,
+    ),
+    (
+        "errore_funzionale",
+        "funzionale",
+        "Atteso: inconsistente (metacriticScore è funzionale e Portal 2 ha già 95)",
+        funzionale,
+    ),
+    (
+        "errore_cardinalita",
+        "cardinalita",
+        "Atteso: inconsistente (al più una piattaforma, ma Breath of the Wild è uscito su Wii U e Switch, dichiarate diverse)",
+        cardinalita,
+    ),
+    (
+        "errore_chiave",
+        "chiave",
+        "Atteso: inconsistente (stesso hasWikidataId, chiave di VideoGame, ma dichiarati diversi)",
+        chiave,
+    ),
+    (
+        "errore_proprieta_disgiunte",
+        "proprieta_disgiunte",
+        "Atteso: inconsistente (remasterOf e prequelOf sono disgiunte: Ocarina of Time 3D è remaster di Ocarina of Time, non può esserne il prequel)",
+        proprieta_disgiunte,
+    ),
+    (
+        "deduzione_sameas",
+        "sameas",
+        "Atteso: consistente; il reasoner deduce NX = Nintendo Switch (NX è il nome in codice della Switch)",
+        sameas,
+    ),
 ]
 
 
 def main():
-    g = ontology(BASE["ontology/videogiochi"], "Videogiochi: schema, dati e regole", ["ontology", "ontology/dati", "ontology/regole"])
+    g = ontology(
+        BASE["ontology/videogiochi"],
+        "Videogiochi: schema, dati e regole",
+        ["ontology", "ontology/dati", "ontology/regole"],
+    )
     g.serialize(destination=HERE / "videogiochi.ttl", format="turtle")
     for file, name, comment, fill in TESTS:
-        g = ontology(BASE[f"ontology/test/{name}"], comment, ["ontology/dati", "ontology/regole"])
+        g = ontology(
+            BASE[f"ontology/test/{name}"], comment, ["ontology/dati", "ontology/regole"]
+        )
         fill(g)
         g.serialize(destination=HERE / "test" / f"{file}.ttl", format="turtle")
     print(f"videogiochi.ttl e {len(TESTS)} test generati")

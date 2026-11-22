@@ -1,0 +1,11 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vg: <http://www.videogame-ontology.org/ontology#> .
+
+vg:The_Legend_of_Zelda_Ocarina_of_Time_3D vg:prequelOf vg:The_Legend_of_Zelda_Ocarina_of_Time .
+
+<http://www.videogame-ontology.org/ontology/test/proprieta_disgiunte> a owl:Ontology ;
+    rdfs:comment "Atteso: inconsistente (remasterOf e prequelOf sono disgiunte: Ocarina of Time 3D è remaster di Ocarina of Time, non può esserne il prequel)" ;
+    owl:imports <http://www.videogame-ontology.org/ontology/dati>,
+        <http://www.videogame-ontology.org/ontology/regole> .
+

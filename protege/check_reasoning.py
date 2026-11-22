@@ -1,6 +1,6 @@
-"""Verifica con HermiT le deduzioni attese (strumento extra, usa owlready2).
+"""Verifica con HermiT (via owlready2) le deduzioni attese e i test di inconsistenza.
 
-    uv run --with owlready2==0.46 python protege/check_reasoning.py
+uv run --with owlready2==0.46 python protege/check_reasoning.py
 """
 
 import os
@@ -9,71 +9,88 @@ import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-import owlready2 as o
+import owlready2 as owl2
 from rdflib import Graph, URIRef
 from rdflib.namespace import OWL
 
 HERE = Path(__file__).resolve().parent
 VG = "http://www.videogame-ontology.org/ontology#"
-JAVA = HERE.parent / "Protege-5.6.9-win" / "Protege-5.6.9" / "jre" / "bin" / "java.exe"
-o.JAVA_EXE = os.environ.get("JAVA_EXE") or (str(JAVA) if JAVA.exists() else "java")
-failures = []
-total = 0
+CATALOG_URI = "{urn:oasis:names:tc:entity:xmlns:xml:catalog}uri"
+# il JRE incluso in Protégé (cartella scompattata con o senza il suffisso -win)
+BUNDLED_JAVA = [
+    HERE.parent / d / "jre" / "bin" / "java.exe"
+    for d in ("Protege-5.6.9", "Protege-5.6.9-win/Protege-5.6.9")
+]
+owl2.JAVA_EXE = os.environ.get("JAVA_EXE") or next(
+    (str(j) for j in BUNDLED_JAVA if j.exists()), "java"
+)
+
+results = []  # (superato, descrizione)
 
 
-def merged(file, extra=()):
-    g, todo, seen = Graph(), [Path(file)], set()
+def merge_imports(file, extra=()):
+    """Il file e tutte le ontologie che importa (risolte con il catalogo), in un solo grafo senza `owl:imports`."""
+    merged, todo, seen = Graph(), [Path(file)], set()
     while todo:
-        f = todo.pop()
-        if f not in seen:
-            seen.add(f)
-            part = Graph().parse(f)
-            catalog = {u.get("name"): (f.parent / u.get("uri")).resolve() for u in ET.parse(f.parent / "catalog-v001.xml").iter("{urn:oasis:names:tc:entity:xmlns:xml:catalog}uri")}
-            todo += [catalog[str(i)] for i in part.objects(None, OWL.imports)]
-            g += part
-    g.remove((None, OWL.imports, None))
-    for t in extra:
-        g.add(t)
-    return g
+        current = todo.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        part = Graph().parse(current)
+        catalog = {
+            u.get("name"): (current.parent / u.get("uri")).resolve()
+            for u in ET.parse(current.parent / "catalog-v001.xml").iter(CATALOG_URI)
+        }
+        todo += [catalog[str(imported)] for imported in part.objects(None, OWL.imports)]
+        merged += part
+    merged.remove((None, OWL.imports, None))
+    for triple in extra:
+        merged.add(triple)
+    return merged
 
 
 def reason(name, file, extra=()):
-    nt = Path(tempfile.gettempdir()) / f"vg_check_{name}.nt"
-    merged(file, extra).serialize(nt, format="nt", encoding="utf-8")
-    w = o.World()
+    """Avvia HermiT. Restituisce il mondo di owlready2, oppure None se l'ontologia è inconsistente."""
+    ntriples = Path(tempfile.gettempdir()) / f"vg_check_{name}.nt"
+    merge_imports(file, extra).serialize(ntriples, format="nt", encoding="utf-8")
+    world = owl2.World()
     try:
-        with w.get_ontology("file://" + nt.as_posix()).load():
-            o.sync_reasoner_hermit(w, infer_property_values=True, debug=0)
-    except o.OwlReadyInconsistentOntologyError:
+        with world.get_ontology("file://" + ntriples.as_posix()).load():
+            owl2.sync_reasoner_hermit(world, infer_property_values=True, debug=0)
+    except owl2.OwlReadyInconsistentOntologyError:
         print(f"[{name}] inconsistente")
         return None
     print(f"[{name}] consistente")
-    return w
+    return world
 
 
 def check(ok, what):
-    global total
-    total += 1
+    results.append((ok, what))
     print(f"   {'ok  ' if ok else 'FAIL'} {what}")
-    if not ok:
-        failures.append(what)
 
 
-def is_a(w, ind, cls):
-    return any(getattr(c, "iri", None) == VG + cls for c in w[VG + ind].INDIRECT_is_a)
+def is_a(world, individual, cls):
+    return any(
+        getattr(c, "iri", None) == VG + cls
+        for c in world[VG + individual].INDIRECT_is_a
+    )
 
 
-def related(w, s, p, obj):
-    return w[VG + obj] in getattr(w[VG + s], "INDIRECT_" + w[VG + p].python_name)
+def related(world, subject, prop, obj):
+    return world[VG + obj] in getattr(
+        world[VG + subject], "INDIRECT_" + world[VG + prop].python_name
+    )
 
 
-def types(w, cls, yes, no=()):
-    for i in yes:
-        check(is_a(w, i, cls), f"{i} è {cls}")
-    for i in no:
-        check(not is_a(w, i, cls), f"{i} non è {cls}")
+def check_types(world, cls, yes, no=()):
+    for individual in yes:
+        check(is_a(world, individual, cls), f"{individual} è {cls}")
+    for individual in no:
+        check(not is_a(world, individual, cls), f"{individual} non è {cls}")
 
 
+# attese e relazioni calcolate a parte dal dataset in Python, non dal reasoner; una riga per voce: black le lascia stare
+# fmt: off
 EXPECTED = [
     ("VideoGame", ["Grand_Theft_Auto"], []),
     ("GameDirector", ["person/Hidetaka_Miyazaki", "person/Casey_Hudson"], []),
@@ -137,7 +154,10 @@ EXPECTED = [
     ("GroupEngineGame", ["Grand_Theft_Auto_V", "Assassins_Creed_Mirage", "Far_Cry_6"], ["Grand_Theft_Auto_III", "Mass_Effect", "Assassins_Creed_II", "The_Witcher_3_Wild_Hunt"]),
     ("SameGroupSequel", ["Assassins_Creed_Origins", "Super_Mario_World", "Fallout_New_Vegas"], ["Halo_4", "Fallout_3"]),
     ("SelfPublishedGame", ["Portal_2", "Minecraft", "Dispatch"], ["Halo_4", "Grand_Theft_Auto_V"]),
+    ("ClassicGame", ["Grand_Theft_Auto_III", "The_Legend_of_Zelda_Ocarina_of_Time", "Halo_Combat_Evolved", "Super_Mario_Bros_2"], ["Grand_Theft_Auto_V", "Elden_Ring", "The_Legend_of_Zelda_Ocarina_of_Time_3D"]),
+    ("ClassicStillPlayable", ["Grand_Theft_Auto_III", "Grand_Theft_Auto_San_Andreas", "Grand_Theft_Auto_Vice_City", "Halo_Combat_Evolved", "The_Legend_of_Zelda_Ocarina_of_Time"], ["Grand_Theft_Auto_IV", "The_Legend_of_Zelda_Majoras_Mask", "Halo_Infinite"]),
 ]
+
 RELATIONS = [
     ("Grand_Theft_Auto_V", "sequelOf", "Grand_Theft_Auto"),
     ("company/Halo_Studios", "subsidiaryOf", "company/Microsoft"),
@@ -148,29 +168,58 @@ RELATIONS = [
     ("company/Obsidian_Entertainment", "inGroupOf", "company/Microsoft"),
     ("company/Bethesda_Game_Studios", "inGroupOf", "company/Microsoft"),
 ]
+# fmt: on
 
 
 def main():
-    w = reason("schema", HERE / "schema.ttl")
-    check(w is not None and not list(w.inconsistent_classes()), "schema consistente, nessuna classe insoddisfacibile")
-    w = reason("videogiochi", HERE / "videogiochi.ttl")
-    check(w is not None, "videogiochi.ttl consistente")
-    if w is None:
+    schema = reason("schema", HERE / "schema.ttl")
+    check(
+        schema is not None and not list(schema.inconsistent_classes()),
+        "schema consistente, nessuna classe insoddisfacibile",
+    )
+    world = reason("videogiochi", HERE / "videogiochi.ttl")
+    check(world is not None, "videogiochi.ttl consistente")
+    if world is None:
         sys.exit(1)
-    check(not list(w.inconsistent_classes()), "nessuna classe insoddisfacibile")
+    check(not list(world.inconsistent_classes()), "nessuna classe insoddisfacibile")
     for cls, yes, no in EXPECTED:
-        types(w, cls, yes, no)
-    for s, p, x in RELATIONS:
-        check(related(w, s, p, x), f"{s} {p} {x}")
-    test = HERE / "test"
-    for f in ["errore_disgiunzione", "errore_funzionale", "errore_cardinalita", "errore_chiave"]:
-        check(reason(f, test / f"{f}.ttl") is None, f"{f} inconsistente")
-    check(reason("deduzione_sameas", test / "deduzione_sameas.ttl") is not None, "deduzione_sameas consistente")
-    nx, switch = URIRef(VG + "platform/Nintendo_NX"), URIRef(VG + "platform/Nintendo_Switch")
-    check(reason("sameas_negato", test / "deduzione_sameas.ttl", [(nx, OWL.differentFrom, switch)]) is None, "deduzione_sameas implica NX = Nintendo Switch")
+        check_types(world, cls, yes, no)
+    for subject, prop, obj in RELATIONS:
+        check(related(world, subject, prop, obj), f"{subject} {prop} {obj}")
+
+    tests = HERE / "test"
+    for name in [
+        "errore_disgiunzione",
+        "errore_funzionale",
+        "errore_cardinalita",
+        "errore_chiave",
+        "errore_proprieta_disgiunte",
+    ]:
+        check(reason(name, tests / f"{name}.ttl") is None, f"{name} inconsistente")
+    check(
+        reason("deduzione_sameas", tests / "deduzione_sameas.ttl") is not None,
+        "deduzione_sameas consistente",
+    )
+    nx, switch = URIRef(VG + "platform/Nintendo_NX"), URIRef(
+        VG + "platform/Nintendo_Switch"
+    )
+    contradiction = reason(
+        "sameas_negato",
+        tests / "deduzione_sameas.ttl",
+        [(nx, OWL.differentFrom, switch)],
+    )
+    check(contradiction is None, "deduzione_sameas implica NX = Nintendo Switch")
+
+    failures = [what for ok, what in results if not ok]
     if not failures:
-        (HERE / "relazione" / "controlli.tex").write_text(f"\\newcommand{{\\nControlli}}{{{total}}}\n", encoding="utf-8")
-    print("\nTUTTI I CONTROLLI SUPERATI" if not failures else f"\n{len(failures)} FALLITI: " + "; ".join(failures))
+        (HERE / "relazione" / "controlli.tex").write_text(
+            f"\\newcommand{{\\nControlli}}{{{len(results)}}}\n", encoding="utf-8"
+        )
+    print(
+        "\nTUTTI I CONTROLLI SUPERATI"
+        if not failures
+        else f"\n{len(failures)} FALLITI: " + "; ".join(failures)
+    )
     sys.exit(1 if failures else 0)
 
 

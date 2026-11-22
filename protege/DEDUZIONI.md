@@ -274,7 +274,22 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 16. Gli errori che il reasoner trova, e un'uguaglianza che deduce
+## 16. I classici che si giocano ancora: data, catena e classe dedotta insieme
+
+**Esempio.** `Grand_Theft_Auto_III`, `Grand_Theft_Auto_San_Andreas`, `Grand_Theft_Auto_Vice_City`, `Halo_Combat_Evolved` e `The_Legend_of_Zelda_Ocarina_of_Time` sono `ClassicStillPlayable`.
+
+**Nei dati.** Solo la data di uscita, le piattaforme e i remaster (per esempio GTA III 2001 per PS2; la Definitive Edition uscita su PS5, dichiarata `remasterOf` GTA III).
+
+**Assiomi.**
+- `ClassicGame ≡ VideoGame ⊓ ∃releaseDate.dateTime[< 2005-01-01]`: restrizione su un intervallo di date
+- `StillPlayable ≡ VideoGame ⊓ ∃playableOn.CurrentGenerationConsole`, con la catena `hasRemaster ∘ availableOn ⊑ playableOn`
+- `ClassicStillPlayable ≡ ClassicGame ⊓ StillPlayable`
+
+**Perché non è banale.** Tre meccanismi diversi lavorano insieme: un confronto tra date (con SWRL non si può: HermiT non supporta le funzioni sulle date, qui basta un intervallo di valori), una catena di proprietà (la piattaforma del remaster) e una soglia di generazione. Nessun dato dice "classico" né "giocabile oggi".
+
+---
+
+## 17. Gli errori che il reasoner trova, e un'uguaglianza che deduce
 
 I file in `test/` aggiungono pochi fatti e fanno scattare un assioma preciso.
 
@@ -284,6 +299,17 @@ I file in `test/` aggiungono pochi fatti e fanno scattare un assioma preciso.
 | `errore_funzionale` | Portal 2 ha Metacritic 90 oltre a 95 | `metacriticScore` funzionale | inconsistente |
 | `errore_cardinalita` | Breath of the Wild "su al più una piattaforma" | cardinalità massima, Wii U e Switch dichiarate diverse | inconsistente |
 | `errore_chiave` | un secondo gioco con l'ID Wikidata di GTA V, dichiarato diverso | `VideoGame hasKey (hasWikidataId)` | inconsistente |
+| `errore_proprieta_disgiunte` | Ocarina of Time 3D (remaster di Ocarina of Time) dichiarato anche prequel dello stesso gioco | `remasterOf` e `prequelOf` disgiunte | inconsistente |
 | `deduzione_sameas` | Splatoon 2 "su al più una piattaforma", ma su Switch e su "NX" | stessa cardinalità, senza `differentFrom` | consistente: NX **è** la Switch |
 
 L'ultimo è il più interessante: lo stesso assioma che nel caso di Breath of the Wild produce un errore, qui produce una deduzione corretta (NX era il nome in codice della Switch). Mostra insieme il mondo aperto e l'assenza della Unique Name Assumption.
+
+---
+
+## 18. Provato e scartato: "tutti i giochi della serie" con una chiusura
+
+L'idea: `FirstPartyFranchise ≡ Franchise ⊓ ∃includes.VideoGame ⊓ ∀includes.FirstPartyGame`, con per ogni serie un'asserzione di chiusura `includes only {giochi della serie}` (un `owl:oneOf` con i giochi). Nel mondo aperto è l'unico modo per concludere "tutti": senza chiusura, un gioco non nominato potrebbe sempre esistere.
+
+**Funzionava.** HermiT classificava Halo, Super Mario e Zelda come serie interamente first-party, e non GTA, Fallout o Mass Effect (le attese erano calcolate dal dataset in Python, e tutti i 298 controlli passavano).
+
+**Non l'abbiamo tenuta.** Il ragionamento completo passa da circa 110 secondi a circa 580: lo stesso con la chiusura di tutte le serie, con quella di quattro o di una sola (Mass Effect, tre giochi: 575 secondi). Il costo non dipende da quanti giochi ci sono: basta un individuo con un universale su un insieme di nomi (nominali), insieme a inverse, cardinalità e chiavi. Un'ontologia che in Protégé richiede dieci minuti per ogni "Start reasoner" non si può mostrare dal vivo.

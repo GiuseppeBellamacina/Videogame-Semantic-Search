@@ -1,6 +1,6 @@
-"""Genera dati.ttl (solo asserzioni) da fonti/dataset.json.
+"""Genera dati.ttl (solo asserzioni) da fonti/dataset.json e fonti/correzioni.json.
 
-    uv run python protege/build_data.py
+uv run python protege/build_data.py
 """
 
 import json
@@ -15,173 +15,263 @@ HERE = Path(__file__).resolve().parent
 BASE = Namespace("http://www.videogame-ontology.org/")
 VG = Namespace("http://www.videogame-ontology.org/ontology#")
 WD = Namespace("http://www.wikidata.org/entity/")
-MODE = {"single-player": VG.SinglePlayer, "multiplayer": VG.Multiplayer, "co-op": VG.Coop}
+MODES = {
+    "single-player": VG.SinglePlayer,
+    "multiplayer": VG.Multiplayer,
+    "co-op": VG.Coop,
+}
 
 
-def slug(s):
-    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode()
-    return re.sub(r"[^A-Za-z0-9]+", "_", s.replace("'", "").replace("&", "")).strip("_")
+def slug(text):
+    text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
+    return re.sub(r"[^A-Za-z0-9]+", "_", text.replace("'", "").replace("&", "")).strip(
+        "_"
+    )
 
 
 def iri(kind, name):
     return VG[f"{kind}/{slug(name)}"] if kind else VG[slug(name)]
 
 
-def killing(game, victim, killer):
+def killing_iri(game, victim, killer):
     return VG["killing/" + slug(f"{victim} by {killer} in {game}")]
 
 
-def add(g, s, p, objs):
-    for o in objs if isinstance(objs, list) else [objs]:
-        if o is not None:
-            g.add((s, p, o))
+def add(g, subject, prop, objects):
+    """Aggiunge una o più triple, saltando i valori mancanti."""
+    for obj in objects if isinstance(objects, list) else [objects]:
+        if obj is not None:
+            g.add((subject, prop, obj))
 
 
 def all_different(g, members):
-    b = BNode()
-    head = BNode()
+    """OWL non assume che nomi diversi indichino individui diversi: lo dichiariamo."""
+    node, head = BNode(), BNode()
     Collection(g, head, sorted(members))
-    g.add((b, RDF.type, OWL.AllDifferent))
-    g.add((b, OWL.distinctMembers, head))
+    g.add((node, RDF.type, OWL.AllDifferent))
+    g.add((node, OWL.distinctMembers, head))
+
+
+def add_game(g, game):
+    s = iri(None, game["titolo"])
+    if not game.get("tipo_omesso"):  # il tipo del primo GTA resta da dedurre
+        g.add((s, RDF.type, VG.VideoGame))
+    g.add((s, RDFS.label, Literal(game["titolo"])))
+    qid, date = game.get("qid"), game.get("data")
+    add(g, s, VG.hasWikidataId, qid and Literal(qid))
+    add(g, s, RDFS.seeAlso, qid and WD[qid])
+    add(
+        g,
+        s,
+        VG.releaseDate,
+        date and Literal(date + "T00:00:00", datatype=XSD.dateTime),
+    )
+    add(
+        g, s, VG.metacriticScore, game.get("metacritic") and Literal(game["metacritic"])
+    )
+    add(g, s, VG.pegiRating, game.get("pegi") and Literal(game["pegi"]))
+    add(g, s, VG.developedBy, [iri("company", c) for c in game.get("sviluppatore", [])])
+    add(g, s, VG.publishedBy, [iri("company", c) for c in game.get("editore", [])])
+    add(
+        g, s, VG.availableOn, [VG["platform/" + p] for p in game.get("piattaforme", [])]
+    )
+    add(g, s, VG.hasGenre, [VG[name] for name in game.get("generi", [])])
+    add(g, s, VG.hasGameMode, [MODES[m] for m in game.get("modalita", [])])
+    add(g, s, VG.belongsTo, game.get("serie") and VG["franchise/" + game["serie"]])
+    add(g, s, VG.sequelOf, [iri(None, t) for t in game.get("seguito_di", [])])
+    add(g, s, VG.directedBy, [iri("person", p) for p in game.get("registi", [])])
+    add(g, s, VG.madeWith, game.get("motore") and iri("engine", game["motore"]))
+    add(g, s, VG.wonAward, [iri("award", a) for a in game.get("premi", [])])
+    add(g, s, VG.basedOn, game.get("basato_su") and iri("work", game["basato_su"]))
+    add(g, s, VG.prequelOf, [iri(None, t) for t in game.get("prequel_di", [])])
+    return s
+
+
+def add_cast(g, s, game, playing, appearing):
+    """Ruoli e uccisioni di un gioco. `playing`: personaggi con un ruolo asserito (non servono come "appare in");
+    `appearing`: giochi in cui un personaggio compare senza un ruolo."""
+    roles = [
+        ("giocabili", VG.playableIn),
+        ("protagonisti", VG.protagonistOf),
+        ("antagonisti", VG.antagonistOf),
+    ]
+    for key, prop in roles:
+        for name in game.get(key, []):
+            g.add((iri("character", name), prop, s))
+            playing.setdefault(name, set()).add(s)
+    for victim, killer in game.get("uccisioni", []):
+        k = killing_iri(game["titolo"], victim, killer)
+        g.add((k, RDF.type, VG.Killing))
+        g.add((k, RDFS.label, Literal(f"{killer} uccide {victim} ({game['titolo']})")))
+        g.add((k, VG.victim, iri("character", victim)))
+        g.add((k, VG.killer, iri("character", killer)))
+        g.add((k, VG.inGame, s))
+        for name in (victim, killer):
+            appearing.setdefault(name, set()).add(s)
+    for name in game.get("altri_personaggi", []):
+        appearing.setdefault(name, set()).add(s)
+    for name, real_person in game.get("personaggi_storici", []):
+        g.add((iri("character", name), VG.portrays, iri("person", real_person)))
+        appearing.setdefault(name, set()).add(s)
+
+
+def add_games(g, ds):
+    playing, appearing = {}, {}
+    for game in ds["giochi"]:
+        add_cast(g, add_game(g, game), game, playing, appearing)
+    for name, games in appearing.items():
+        add(
+            g,
+            iri("character", name),
+            VG.appearsIn,
+            sorted(games - playing.get(name, set())),
+        )
+
+
+def add_editions(g, ds):
+    for edition in ds["edizioni"]:
+        s = iri(None, edition["titolo"])
+        g.add((s, RDFS.label, Literal(edition["titolo"])))
+        add(g, s, VG.remasterOf, [iri(None, t) for t in edition["di"]])
+        add(g, s, VG.availableOn, [VG["platform/" + p] for p in edition["piattaforme"]])
+
+
+def add_characters(g, ds):
+    for name, info in ds["personaggi"].items():
+        s = iri("character", name)
+        g.add((s, RDFS.label, Literal(name)))
+        add(g, s, RDF.type, info.get("natura") and VG[info["natura"]])
+        add(
+            g,
+            s,
+            VG.portrays,
+            info.get("interpreta") and iri("person", info["interpreta"]),
+        )
+        builder = info.get("costruito_da")
+        if builder in ds["personaggi"]:
+            g.add((s, VG.builtBy, iri("character", builder)))
+        elif builder:
+            organization = iri("organization", builder)
+            g.add((s, VG.builtBy, organization))
+            g.add((organization, RDF.type, VG.FictionalOrganization))
+            g.add((organization, RDFS.label, Literal(builder)))
+
+
+def add_people_and_companies(g, ds):
+    for name, info in ds["persone"].items():
+        s = iri("person", name)
+        g.add((s, RDFS.label, Literal(name)))
+        add(
+            g,
+            s,
+            VG.formerEmployeeOf,
+            info.get("ex_dipendente_di") and iri("company", info["ex_dipendente_di"]),
+        )
+        add(g, s, VG.heads, info.get("guida") and iri("company", info["guida"]))
+    for name, info in ds["aziende"].items():
+        s = iri("company", name)
+        g.add((s, RDF.type, VG.Company))
+        g.add((s, RDFS.label, Literal(name)))
+        add(
+            g,
+            s,
+            VG.subsidiaryOf,
+            info.get("controllata_da") and iri("company", info["controllata_da"]),
+        )
+        add(g, s, VG.foundedBy, [iri("person", p) for p in info.get("fondatori", [])])
+
+
+def add_platforms_and_engines(g, ds):
+    for key, info in ds["piattaforme"].items():
+        s = VG["platform/" + key]
+        g.add((s, RDF.type, VG[info["classe"]]))
+        g.add((s, RDFS.label, Literal(info["nome"])))
+        add(
+            g,
+            s,
+            VG.manufacturedBy,
+            info.get("costruttore") and iri("company", info["costruttore"]),
+        )
+        add(
+            g,
+            s,
+            VG.generation,
+            info.get("generazione") and Literal(info["generazione"]),
+        )
+    for name, developer in ds["motori"].items():
+        s = iri("engine", name)
+        g.add((s, RDF.type, VG.GameEngine))
+        g.add((s, RDFS.label, Literal(name)))
+        add(g, s, VG.engineDevelopedBy, developer and iri("company", developer))
+
+
+def add_catalogue(g, ds):
+    """Premi, serie, opere, generi e modalità."""
+    for award in sorted({a for game in ds["giochi"] for a in game.get("premi", [])}):
+        g.add((iri("award", award), RDF.type, VG.Award))
+        g.add((iri("award", award), RDFS.label, Literal(award)))
+    for key, info in ds["serie"].items():
+        s = VG["franchise/" + key]
+        g.add((s, RDF.type, VG.Franchise))
+        g.add((s, RDFS.label, Literal(info["nome"])))
+        add(g, s, VG.adaptedInto, [iri("work", w) for w in info.get("adattamenti", [])])
+    for name, cls in ds["opere"].items():
+        g.add((iri("work", name), RDF.type, VG[cls]))
+        g.add((iri("work", name), RDFS.label, Literal(name)))
+    for genre in sorted({n for game in ds["giochi"] for n in game.get("generi", [])}):
+        g.add((VG[genre], RDF.type, VG.Genre))
+        g.add((VG[genre], RDFS.label, Literal(genre)))
+    for mode in MODES.values():
+        g.add((mode, RDF.type, VG.GameMode))
+        g.add((mode, RDFS.label, Literal(mode.split("#")[1])))
 
 
 def build(ds):
     g = Graph()
     g.bind("vg", VG)
     g.bind("owl", OWL)
-    onto = BASE["ontology/dati"]
-    g.add((onto, RDF.type, OWL.Ontology))
-    g.add((onto, RDFS.label, Literal("Videogiochi: dati (solo asserzioni)")))
-    g.add((onto, OWL.imports, BASE.ontology))
-
-    appears, own = {}, {}
-    for x in ds["giochi"]:
-        s = iri(None, x["titolo"])
-        if not x.get("tipo_omesso"):  # il tipo del primo GTA resta da dedurre
-            g.add((s, RDF.type, VG.VideoGame))
-        g.add((s, RDFS.label, Literal(x["titolo"])))
-        add(g, s, VG.hasWikidataId, x.get("qid") and Literal(x["qid"]))
-        add(g, s, RDFS.seeAlso, x.get("qid") and WD[x["qid"]])
-        add(g, s, VG.releaseDate, x.get("data") and Literal(x["data"] + "T00:00:00", datatype=XSD.dateTime))
-        add(g, s, VG.metacriticScore, x.get("metacritic") and Literal(x["metacritic"]))
-        add(g, s, VG.pegiRating, x.get("pegi") and Literal(x["pegi"]))
-        add(g, s, VG.developedBy, [iri("company", c) for c in x.get("sviluppatore", [])])
-        add(g, s, VG.publishedBy, [iri("company", c) for c in x.get("editore", [])])
-        add(g, s, VG.availableOn, [VG["platform/" + p] for p in x.get("piattaforme", [])])
-        add(g, s, VG.hasGenre, [VG[n] for n in x.get("generi", [])])
-        add(g, s, VG.hasGameMode, [MODE[m] for m in x.get("modalita", [])])
-        add(g, s, VG.belongsTo, x.get("serie") and VG["franchise/" + x["serie"]])
-        add(g, s, VG.sequelOf, [iri(None, t) for t in x.get("seguito_di", [])])
-        add(g, s, VG.directedBy, [iri("person", p) for p in x.get("registi", [])])
-        add(g, s, VG.madeWith, x.get("motore") and iri("engine", x["motore"]))
-        add(g, s, VG.wonAward, [iri("award", a) for a in x.get("premi", [])])
-        add(g, s, VG.basedOn, x.get("basato_su") and iri("work", x["basato_su"]))
-        add(g, s, VG.prequelOf, [iri(None, t) for t in x.get("prequel_di", [])])
-        for c in x.get("giocabili", []):
-            g.add((iri("character", c), VG.playableIn, s))
-            own.setdefault(c, set()).add(s)
-        for c in x.get("protagonisti", []):
-            g.add((iri("character", c), VG.protagonistOf, s))
-            own.setdefault(c, set()).add(s)
-        for c in x.get("antagonisti", []):
-            g.add((iri("character", c), VG.antagonistOf, s))
-            own.setdefault(c, set()).add(s)
-        for victim, killer in x.get("uccisioni", []):
-            k = killing(x["titolo"], victim, killer)
-            g.add((k, RDF.type, VG.Killing))
-            g.add((k, RDFS.label, Literal(f"{killer} uccide {victim} ({x['titolo']})")))
-            g.add((k, VG.victim, iri("character", victim)))
-            g.add((k, VG.killer, iri("character", killer)))
-            g.add((k, VG.inGame, s))
-            for c in (victim, killer):
-                appears.setdefault(c, set()).add(s)
-        for c in x.get("altri_personaggi", []):
-            appears.setdefault(c, set()).add(s)
-        for c, real in x.get("personaggi_storici", []):
-            g.add((iri("character", c), VG.portrays, iri("person", real)))
-            appears.setdefault(c, set()).add(s)
-    for c, games in appears.items():
-        add(g, iri("character", c), VG.appearsIn, sorted(games - own.get(c, set())))
-
-    for x in ds["edizioni"]:
-        s = iri(None, x["titolo"])
-        g.add((s, RDFS.label, Literal(x["titolo"])))
-        add(g, s, VG.remasterOf, [iri(None, t) for t in x["di"]])
-        add(g, s, VG.availableOn, [VG["platform/" + p] for p in x["piattaforme"]])
-
-    for c, d in ds["personaggi"].items():
-        s = iri("character", c)
-        g.add((s, RDFS.label, Literal(c)))
-        add(g, s, RDF.type, d.get("natura") and VG[d["natura"]])
-        add(g, s, VG.portrays, d.get("interpreta") and iri("person", d["interpreta"]))
-        builder = d.get("costruito_da")
-        if builder in ds["personaggi"]:
-            g.add((s, VG.builtBy, iri("character", builder)))
-        elif builder:
-            g.add((s, VG.builtBy, iri("organization", builder)))
-            g.add((iri("organization", builder), RDF.type, VG.FictionalOrganization))
-            g.add((iri("organization", builder), RDFS.label, Literal(builder)))
-    for p, d in ds["persone"].items():
-        s = iri("person", p)
-        g.add((s, RDFS.label, Literal(p)))
-        add(g, s, VG.formerEmployeeOf, d.get("ex_dipendente_di") and iri("company", d["ex_dipendente_di"]))
-        add(g, s, VG.heads, d.get("guida") and iri("company", d["guida"]))
-    for c, d in ds["aziende"].items():
-        s = iri("company", c)
-        g.add((s, RDF.type, VG.Company))
-        g.add((s, RDFS.label, Literal(c)))
-        add(g, s, VG.subsidiaryOf, d.get("controllata_da") and iri("company", d["controllata_da"]))
-        add(g, s, VG.foundedBy, [iri("person", p) for p in d.get("fondatori", [])])
-    for p, d in ds["piattaforme"].items():
-        s = VG["platform/" + p]
-        g.add((s, RDF.type, VG[d["classe"]]))
-        g.add((s, RDFS.label, Literal(d["nome"])))
-        add(g, s, VG.manufacturedBy, d.get("costruttore") and iri("company", d["costruttore"]))
-        add(g, s, VG.generation, d.get("generazione") and Literal(d["generazione"]))
-    for e, dev in ds["motori"].items():
-        g.add((iri("engine", e), RDF.type, VG.GameEngine))
-        g.add((iri("engine", e), RDFS.label, Literal(e)))
-        add(g, iri("engine", e), VG.engineDevelopedBy, dev and iri("company", dev))
-    for a in sorted({a for x in ds["giochi"] for a in x.get("premi", [])}):
-        g.add((iri("award", a), RDF.type, VG.Award))
-        g.add((iri("award", a), RDFS.label, Literal(a)))
-    for f, d in ds["serie"].items():
-        s = VG["franchise/" + f]
-        g.add((s, RDF.type, VG.Franchise))
-        g.add((s, RDFS.label, Literal(d["nome"])))
-        add(g, s, VG.adaptedInto, [iri("work", w) for w in d.get("adattamenti", [])])
-    for w, cls in ds["opere"].items():
-        g.add((iri("work", w), RDF.type, VG[cls]))
-        g.add((iri("work", w), RDFS.label, Literal(w)))
-    for n in sorted({n for x in ds["giochi"] for n in x.get("generi", [])}):
-        g.add((VG[n], RDF.type, VG.Genre))
-        g.add((VG[n], RDFS.label, Literal(n)))
-    for m in MODE.values():
-        g.add((m, RDF.type, VG.GameMode))
-        g.add((m, RDFS.label, Literal(m.split("#")[1])))
-
-    # OWL non assume che nomi diversi indichino individui diversi: lo dichiariamo
+    ontology = BASE["ontology/dati"]
+    g.add((ontology, RDF.type, OWL.Ontology))
+    g.add((ontology, RDFS.label, Literal("Videogiochi: dati (solo asserzioni)")))
+    g.add((ontology, OWL.imports, BASE.ontology))
+    add_games(g, ds)
+    add_editions(g, ds)
+    add_characters(g, ds)
+    add_people_and_companies(g, ds)
+    add_platforms_and_engines(g, ds)
+    add_catalogue(g, ds)
     all_different(g, [iri(None, x["titolo"]) for x in ds["giochi"] + ds["edizioni"]])
     all_different(g, [iri("company", c) for c in ds["aziende"]])
     all_different(g, [iri("character", c) for c in ds["personaggi"]])
     all_different(g, [VG["platform/" + p] for p in ds["piattaforme"]])
     all_different(g, [iri("engine", e) for e in ds["motori"]])
-    all_different(g, [killing(x["titolo"], v, k) for x in ds["giochi"] for v, k in x.get("uccisioni", [])])
+    all_different(
+        g,
+        [
+            killing_iri(x["titolo"], v, k)
+            for x in ds["giochi"]
+            for v, k in x.get("uccisioni", [])
+        ],
+    )
     return g
 
 
 def apply_corrections(ds, corrections):
-    games = {x["titolo"]: x for x in ds["giochi"]}
-    for c in corrections:
-        games[c["gioco"]][c["campo"]] = c["valore"]
+    games = {game["titolo"]: game for game in ds["giochi"]}
+    for correction in corrections:
+        games[correction["gioco"]][correction["campo"]] = correction["valore"]
 
 
 def main():
     ds = json.loads((HERE / "fonti" / "dataset.json").read_text(encoding="utf-8"))
-    apply_corrections(ds, json.loads((HERE / "fonti" / "correzioni.json").read_text(encoding="utf-8")))
+    apply_corrections(
+        ds, json.loads((HERE / "fonti" / "correzioni.json").read_text(encoding="utf-8"))
+    )
     g = build(ds)
     g.serialize(destination=HERE / "dati.ttl", format="turtle")
-    print(f"dati.ttl: {len(ds['giochi'])} giochi, {len(ds['edizioni'])} nuove edizioni, {len(ds['personaggi'])} personaggi, {len(g)} triple")
+    print(
+        f"dati.ttl: {len(ds['giochi'])} giochi, {len(ds['edizioni'])} nuove edizioni, {len(ds['personaggi'])} personaggi, {len(g)} triple"
+    )
 
 
 if __name__ == "__main__":

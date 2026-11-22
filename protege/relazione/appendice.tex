@@ -1,7 +1,7 @@
 \section{Le componenti dell'ontologia}\label{app:componenti}
 
 \begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
-\caption{Le 89 classi}\\ \toprule
+\caption{Le 91 classi}\\ \toprule
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
@@ -93,6 +93,8 @@
 \texttt{RogueAI} & \texttt{Synthetic} & definita & Un'intelligenza artificiale o un robot antagonista \\
 \texttt{MultipleKiller} & \texttt{Killer} & definita & Un personaggio che ha ucciso almeno due personaggi \\
 \texttt{HistoricalCharacter} & \texttt{Character} & definita & Un personaggio che interpreta una persona reale \\
+\texttt{ClassicGame} & \texttt{VideoGame} & definita & Un gioco uscito prima del 2005 \\
+\texttt{ClassicStillPlayable} & \texttt{ClassicGame} & definita & Un classico precedente al 2005 giocabile oggi su una console attuale \\
 \end{longtable}\endgroup
 
 \begingroup\footnotesize\begin{longtable}{lllp{6cm}}
@@ -202,8 +204,10 @@
 \textsf{RogueAI} &\equiv \textsf{Synthetic} \sqcap \textsf{Antagonist} \\
 \textsf{MultipleKiller} &\equiv \textsf{Killer} \sqcap {\geq}2\,\textit{kills}.\textsf{Character} \\
 \textsf{HistoricalCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{portrays}.\textsf{Person} \\
+\textsf{ClassicGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{releaseDate}.\texttt{date}[< 2005-01-01] \\
+\textsf{ClassicStillPlayable} &\equiv \textsf{ClassicGame} \sqcap \textsf{StillPlayable} \\
 \end{align*}\endgroup
-\noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, Killing, FictionalOrganization, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries, Comic, TabletopGame; Human, Alien, Synthetic.
+\noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, Killing, FictionalOrganization, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries, Comic, TabletopGame; Human, Alien, Synthetic. Proprietà disgiunte: remasterOf e prequelOf.
 
 \subsection*{Regole SWRL}
 \begin{itemize}\footnotesize

@@ -10,7 +10,7 @@ Tutti i file `.ttl` sono generati da script Python con rdflib (`Graph.add`, `BNo
 | `regole.ttl` | Le regole SWRL. Generate da `generate_schema.py`. |
 | `dati.ttl` | **Solo le asserzioni**: 95 giochi (11 serie e 6 titoli singoli), 28 nuove edizioni, PEGI, personaggi, persone, aziende e piattaforme. Nessuna conclusione. Generato da `build_data.py`. |
 | `videogiochi.ttl` | **Il file da aprire in Protégé**: importa schema, dati e regole. Generato da `generate_tests.py`. |
-| `test/` | Quattro errori da far trovare a HermiT e un caso di `sameAs` corretto. Generati da `generate_tests.py`. |
+| `test/` | Cinque errori da far trovare a HermiT e un caso di `sameAs` corretto. Generati da `generate_tests.py`. |
 | `fonti/dataset.json` | Il dataset revisionato da cui nasce `dati.ttl`. |
 | `fonti/correzioni.json` | Correzioni manuali, ognuna con l'URL della fonte (per esempio i PEGI presi da pegi.info). |
 | `fonti/wikidata/` | Le risposte di Wikidata salvate da `fetch_wikidata.py`. |
@@ -28,10 +28,10 @@ uv run --with owlready2==0.46 python protege/check_reasoning.py
 ### Da dove vengono i dati
 
 1. **Wikidata.** `uv run python protege/fetch_wikidata.py` scarica con una sola query SPARQL i dati strutturati di tutti i giochi (date, studi, piattaforme, registi, motori, PEGI, Metacritic, premi, seguiti), li salva in `fonti/wikidata/` ed elenca dove il dataset differisce da Wikidata.
-2. **Trama, con un agente.** Personaggi, uccisioni e natura dei personaggi non sono su Wikidata. `research_agent.py` usa un agente [deepagents](https://github.com/langchain-ai/deepagents) con quattro strumenti: `wikidata_search`, `wikidata_facts`, `wikipedia_search` e `wikipedia_section`. Funziona così:
+2. **Trama, con un agente.** Personaggi, uccisioni e natura dei personaggi non sono su Wikidata. `research_agent.py` è un agente [LangChain](https://docs.langchain.com/oss/python/langchain/agents) (`create_agent`) con due strumenti, `find_game` (Wikidata) e `read_plot` (la sezione della trama di Wikipedia), e risposta strutturata (pydantic). Tre limiti ne tengono sotto controllo il costo: al più 5 chiamate al modello (`ModelCallLimitMiddleware`), `recursion_limit` 12 (il valore predefinito di `create_agent` è 9.999) e 6.000 token in uscita. Una prova con deepagents, senza limiti stretti, non si fermava (574.000 token in ingresso per un solo gioco). Funziona così:
    - **la lista dei giochi** la prende dall'ontologia, con una query SPARQL su `dati.ttl`; per giochi nuovi basta un file con un titolo per riga;
-   - **per ogni gioco** l'agente trova la voce Wikidata (se manca) e la pagina Wikipedia, legge la trama e restituisce un JSON validato (pydantic) in cui ogni fatto ha l'URL e una frase citata alla lettera;
-   - **lo script controlla** che ogni citazione compaia davvero nel testo scaricato e scarta i fatti non verificabili, le uccisioni che dipendono dal finale e i suicidi; il risultato va in `fonti/agente/<qid>.json`, con l'elenco dei fatti scartati;
+   - **per ogni gioco** l'agente riceve il titolo, l'identificativo Wikidata e la pagina Wikipedia (per un gioco nuovo li trova con `find_game`), legge la trama con `read_plot` (sottosezioni comprese, al massimo 20.000 caratteri) e restituisce un JSON in cui ogni fatto ha l'URL e una frase citata alla lettera; riceve anche i nomi dei personaggi già presenti nella serie;
+   - **lo script controlla** che ogni citazione compaia davvero nel testo scaricato, che il personaggio compaia nella pagina (con Dark Souls il modello aveva scritto "Ashen One", il protagonista di un altro gioco, citando una frase vera) e riporta i nomi a quelli già nel dataset ("Gwyn" diventa "Gwyn, Lord of Sunlight"); scarta i fatti non verificabili, le uccisioni che dipendono dal finale e i suicidi; il risultato va in `fonti/agente/<qid>.json`, con l'elenco dei fatti scartati;
    - **`--applica`** porta i fatti nel dataset; per un gioco nuovo aggiunge anche i dati strutturati di Wikidata (date, studi, piattaforme, PEGI, Metacritic, registi, motore).
    ```bash
    # nel file .env alla radice: OPENAI_API_KEY=... (o ANTHROPIC_API_KEY=... con RESEARCH_MODEL=anthropic:<modello>)
@@ -123,11 +123,12 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `Assassins_Creed_Origins`, `Super_Mario_World` | `SameGroupSequel` (oltre a `SequelByDifferentStudio`) | Seguito passato a un altro studio dello stesso gruppo; Halo 4 no. |
 | `Portal_2`, `Minecraft`, `Dispatch` | `SelfPublishedGame` | Sviluppatore ed editore sono la stessa azienda (regola `SelfPublished`). |
 | `franchise/Super_Mario`, `franchise/The_Legend_of_Zelda` | `FranchiseWithStudioChange` | Per Mario il cambio è sempre tra divisioni Nintendo (seguiti anche `SameGroupSequel`); per Zelda ci sono anche passaggi esterni, gli episodi di Flagship (Capcom). |
+| `Grand_Theft_Auto_III`, `Halo_Combat_Evolved`, `The_Legend_of_Zelda_Ocarina_of_Time` | `ClassicGame`, `ClassicStillPlayable` | Usciti prima del 2005 (intervallo di date) e giocabili oggi su una console attuale (catena sul remaster). |
 | `Grand_Theft_Auto_IV`, `Fallout_4` | `EngineChangeSequel` | GTA IV passa da RenderWare a RAGE; Fallout 4 da Gamebryo a Creation Engine. |
 
 ## Test
 
-Apri un file di `test/` e avvia HermiT. Per i quattro errori Protégé segnala l'ontologia inconsistente e offre **Explain inconsistent ontology**.
+Apri un file di `test/` e avvia HermiT. Per i cinque errori Protégé segnala l'ontologia inconsistente e offre **Explain inconsistent ontology**.
 
 | File | Atteso |
 |---|---|
@@ -135,6 +136,7 @@ Apri un file di `test/` e avvia HermiT. Per i quattro errori Protégé segnala l
 | `errore_funzionale.ttl` | inconsistente: Portal 2 ha due punteggi Metacritic |
 | `errore_cardinalita.ttl` | inconsistente: Breath of the Wild è "su al più una piattaforma", ma è uscito su Wii U e Switch |
 | `errore_chiave.ttl` | inconsistente: due giochi hanno lo stesso identificativo Wikidata ma sono dichiarati diversi |
+| `errore_proprieta_disgiunte.ttl` | inconsistente: Ocarina of Time 3D è remaster di Ocarina of Time e anche suo prequel, ma `remasterOf` e `prequelOf` sono disgiunte |
 | `deduzione_sameas.ttl` | consistente: HermiT deduce che "NX" è la Nintendo Switch |
 
 ## Screenshot per la relazione

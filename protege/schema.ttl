@@ -29,6 +29,12 @@ vg:AwardWinningFranchise a owl:Class ;
                         owl:onProperty vg:includes ;
                         owl:someValuesFrom vg:GOTYWinner ] ) ] .
 
+vg:ClassicStillPlayable a owl:Class ;
+    rdfs:label "ClassicStillPlayable" ;
+    rdfs:comment "Un classico precedente al 2005 giocabile oggi su una console attuale" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:ClassicGame vg:StillPlayable ) ] .
+
 vg:CrossGenerationGame a owl:Class ;
     rdfs:label "CrossGenerationGame" ;
     rdfs:comment "Un gioco giocabile oggi che è uscito anche su una console di una generazione precedente" ;
@@ -322,11 +328,6 @@ vg:platformFor a owl:AsymmetricProperty,
         owl:ObjectProperty ;
     owl:inverseOf vg:availableOn .
 
-vg:releaseDate a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:dateTime .
-
 vg:releasedAfter a owl:ObjectProperty ;
     rdfs:comment "Derivata dalle regole: uscito dopo, nella stessa serie" ;
     rdfs:domain vg:VideoGame ;
@@ -350,6 +351,16 @@ vg:Adaptation a owl:Class ;
             owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
                         owl:onProperty vg:basedOn ;
                         owl:someValuesFrom vg:CreativeWork ] ) ] .
+
+vg:ClassicGame a owl:Class ;
+    rdfs:label "ClassicGame" ;
+    rdfs:comment "Un gioco uscito prima del 2005" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:releaseDate ;
+                        owl:someValuesFrom [ a rdfs:Datatype ;
+                                owl:onDatatype xsd:dateTime ;
+                                owl:withRestrictions ( [ xsd:maxExclusive "2005-01-01T00:00:00"^^xsd:dateTime ] ) ] ] ) ] .
 
 vg:Comic a owl:Class ;
     rdfs:label "Comic" ;
@@ -488,14 +499,6 @@ vg:SequelByDifferentStudio a owl:Class ;
     rdfs:comment "Un seguito sviluppato da uno studio diverso" ;
     rdfs:subClassOf vg:VideoGame .
 
-vg:StillPlayable a owl:Class ;
-    rdfs:label "StillPlayable" ;
-    rdfs:comment "Un gioco giocabile su una console attuale" ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:playableOn ;
-                        owl:someValuesFrom vg:CurrentGenerationConsole ] ) ] .
-
 vg:StudioHead a owl:Class ;
     rdfs:label "StudioHead" ;
     rdfs:comment "Chi guida un'azienda" ;
@@ -617,11 +620,6 @@ vg:portrays a owl:ObjectProperty ;
     rdfs:domain vg:Character ;
     rdfs:range vg:Person .
 
-vg:prequelOf a owl:ObjectProperty ;
-    rdfs:comment "La storia del gioco si svolge prima di quella dell'altro, anche se è uscito dopo" ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range vg:VideoGame .
-
 vg:protagonistOf a owl:ObjectProperty ;
     rdfs:domain vg:Character ;
     rdfs:range vg:VideoGame ;
@@ -642,6 +640,11 @@ vg:publisherOf a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
         owl:ObjectProperty ;
     owl:inverseOf vg:publishedBy .
+
+vg:releaseDate a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:dateTime .
 
 vg:victim a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
@@ -691,6 +694,14 @@ vg:SequelGame a owl:Class ;
             owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
                         owl:onProperty vg:sequelOf ;
                         owl:someValuesFrom vg:VideoGame ] ) ] .
+
+vg:StillPlayable a owl:Class ;
+    rdfs:label "StillPlayable" ;
+    rdfs:comment "Un gioco giocabile su una console attuale" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:playableOn ;
+                        owl:someValuesFrom vg:CurrentGenerationConsole ] ) ] .
 
 vg:TVSeries a owl:Class ;
     rdfs:label "TVSeries" ;
@@ -747,6 +758,11 @@ vg:pegiRating a owl:DatatypeProperty,
         owl:FunctionalProperty ;
     rdfs:domain vg:VideoGame ;
     rdfs:range xsd:integer .
+
+vg:prequelOf a owl:ObjectProperty ;
+    rdfs:comment "La storia del gioco si svolge prima di quella dell'altro, anche se è uscito dopo" ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range vg:VideoGame .
 
 vg:victimIn a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
@@ -818,7 +834,8 @@ vg:playableOn a owl:ObjectProperty ;
 
 vg:remasterOf a owl:ObjectProperty ;
     rdfs:domain vg:VideoGame ;
-    rdfs:range vg:VideoGame .
+    rdfs:range vg:VideoGame ;
+    owl:propertyDisjointWith vg:prequelOf .
 
 vg:DeceasedCharacter a owl:Class ;
     rdfs:label "DeceasedCharacter" ;

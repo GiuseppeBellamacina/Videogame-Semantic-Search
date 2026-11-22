@@ -18,8 +18,17 @@ HERE = Path(__file__).resolve().parent
 CACHE = HERE / "fonti" / "wikidata"
 ENDPOINT = "https://query.wikidata.org/sparql"
 PROPERTIES = {
-    "data": "P577", "sviluppatore": "P178", "editore": "P123", "piattaforme": "P400", "registi": "P57",
-    "motore": "P408", "pegi": "P908", "seguito_di": "P155", "serie": "P179", "premi": "P166", "basato_su": "P144",
+    "data": "P577",
+    "sviluppatore": "P178",
+    "editore": "P123",
+    "piattaforme": "P400",
+    "registi": "P57",
+    "motore": "P408",
+    "pegi": "P908",
+    "seguito_di": "P155",
+    "serie": "P179",
+    "premi": "P166",
+    "basato_su": "P144",
 }
 QUERY = """
 SELECT ?gioco ?campo ?valore ?valoreLabel WHERE {
@@ -38,7 +47,7 @@ def query(qids):
     sparql = SPARQLWrapper(ENDPOINT, agent="videogame-ontology-course-project/1.0")
     sparql.setQuery(QUERY % (" ".join("wd:" + q for q in qids), pairs))
     sparql.setReturnFormat(JSON)
-    for attempt in range(5):
+    for _ in range(5):
         try:
             return sparql.query().convert()["results"]["bindings"]
         except HTTPError as e:
@@ -60,15 +69,24 @@ def fetch(qids):
                 values.append(value)
         CACHE.mkdir(parents=True, exist_ok=True)
         for qid, data in out.items():
-            (CACHE / f"{qid}.json").write_text(json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True), encoding="utf-8")
-    return {q: json.loads((CACHE / f"{q}.json").read_text(encoding="utf-8")) for q in qids}
+            (CACHE / f"{qid}.json").write_text(
+                json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True),
+                encoding="utf-8",
+            )
+    return {
+        q: json.loads((CACHE / f"{q}.json").read_text(encoding="utf-8")) for q in qids
+    }
 
 
 def differences(game, wd):
     diffs = []
     if "pegi" in wd and game.get("pegi") and f"PEGI {game['pegi']}" not in wd["pegi"]:
         diffs.append(f"pegi: dataset {game['pegi']}, Wikidata {wd['pegi']}")
-    if "data" in wd and game.get("data") and not any(d.startswith(game["data"]) for d in wd["data"]):
+    if (
+        "data" in wd
+        and game.get("data")
+        and not any(d.startswith(game["data"]) for d in wd["data"])
+    ):
         diffs.append(f"data: dataset {game['data']}, Wikidata {sorted(wd['data'])[:2]}")
     for field in ("sviluppatore", "editore", "registi"):
         missing = [v for v in game.get(field, []) if v not in wd.get(field, [])]
@@ -79,7 +97,11 @@ def differences(game, wd):
 
 def main():
     ds = json.loads((HERE / "fonti" / "dataset.json").read_text(encoding="utf-8"))
-    games = [x for x in ds["giochi"] if x.get("qid") and (not sys.argv[1:] or x["qid"] in sys.argv[1:])]
+    games = [
+        x
+        for x in ds["giochi"]
+        if x.get("qid") and (not sys.argv[1:] or x["qid"] in sys.argv[1:])
+    ]
     wd = fetch([x["qid"] for x in games])
     for game in games:
         for d in differences(game, wd[game["qid"]]):

@@ -1,6 +1,6 @@
-"""Genera schema.ttl, regole.ttl e relazione/appendice.tex dalle tabelle qui sotto.
+"""Genera schema.ttl, regole.ttl e relazione/appendice.tex dalle tabelle di questo file.
 
-    uv run python protege/generate_schema.py
+uv run python protege/generate_schema.py
 """
 
 from pathlib import Path
@@ -14,6 +14,8 @@ VG = Namespace("http://www.videogame-ontology.org/ontology#")
 SWRL = Namespace("http://www.w3.org/2003/11/swrl#")
 VAR = Namespace("http://www.videogame-ontology.org/ontology/regole#")
 
+# le tabelle restano una riga per elemento: black le lascia stare
+# fmt: off
 TOP = [
     ("VideoGame", "Un videogioco"),
     ("Company", "Uno studio, un editore o un gruppo industriale"),
@@ -58,76 +60,82 @@ def at_least(n, p, c):
     return ("min", n, p, c)
 
 
-def score(n):
+def int_at_least(n):
     return ("range", "xsd:integer", "xsd:minInclusive", n)
 
 
-def score_max(n):
+def int_at_most(n):
     return ("range", "xsd:integer", "xsd:maxInclusive", n)
 
 
-def and_(*xs):
+def date_before(date):
+    return ("range", "xsd:dateTime", "xsd:maxExclusive", date)
+
+
+def all_of(*xs):
     return ("and", *xs)
 
 
-def or_(*xs):
+def any_of(*xs):
     return ("or", *xs)
 
 
 DEFINED = [
-    ("CurrentGenerationConsole", "ConsolePlatform", "Una console della nona generazione, l'attuale", and_("ConsolePlatform", some("generation", score(9)))),
-    ("PreviousGenerationConsole", "ConsolePlatform", "Una console di ottava generazione o precedente", and_("ConsolePlatform", some("generation", score_max(8)))),
-    ("CrossGenerationGame", "StillPlayable", "Un gioco giocabile oggi che è uscito anche su una console di una generazione precedente", and_("StillPlayable", some("playableOn", "PreviousGenerationConsole"))),
-    ("ProlificDirector", "GameDirector", "Chi ha diretto almeno tre giochi", and_("GameDirector", at_least(3, "directorOf", "VideoGame"))),
-    ("ProlificDeveloper", "Developer", "Un'azienda che ha sviluppato almeno cinque giochi", and_("Developer", at_least(5, "developerOf", "VideoGame"))),
-    ("FirstPartyStudio", "Developer", "Uno studio che fa parte del gruppo di un costruttore di console", and_("Developer", some("inGroupOf", "PlatformHolder"))),
-    ("VillainSlayer", "Protagonist", "Un protagonista che ha ucciso un cattivo sconfitto", and_("Protagonist", some("kills", "DefeatedVillain"))),
-    ("TragicProtagonist", "Protagonist", "Un protagonista che muore nella trama di un gioco", and_("Protagonist", "DeceasedCharacter")),
-    ("Turncoat", "Protagonist", "Un personaggio che è protagonista in un gioco e antagonista in un altro", and_("Protagonist", "Antagonist")),
-    ("HistoricalGame", "VideoGame", "Un gioco con personaggi realmente esistiti: probabilmente ambientato nel passato", and_("VideoGame", some("hasCharacter", "HistoricalCharacter"))),
-    ("SciFiGame", "VideoGame", "Un gioco con personaggi alieni o sintetici: probabilmente fantascienza", and_("VideoGame", some("hasCharacter", or_("Alien", "Synthetic")))),
-    ("RogueAIGame", "VideoGame", "Un gioco il cui antagonista è un'intelligenza artificiale", and_("VideoGame", some("hasAntagonist", "RogueAI"))),
-    ("PrequelGame", "VideoGame", "Un gioco la cui storia precede quella di un altro", and_("VideoGame", some("prequelOf", "VideoGame"))),
-    ("PrequelReturn", "ReturnAfterDeathGame", "Un gioco in cui ricompare un personaggio già morto, spiegato dal fatto che è un prequel", and_("ReturnAfterDeathGame", "PrequelGame")),
-    ("Synthetic", "Character", "Un personaggio costruito da qualcuno nel mondo di gioco: un'intelligenza artificiale o un robot", and_("Character", some("builtBy", "owl:Thing"))),
-    ("PlayerCharacter", "Character", "Un personaggio controllato dal giocatore in almeno un gioco", and_("Character", some("playableIn", "VideoGame"))),
-    ("KilledMoreThanOnce", "DeceasedCharacter", "Un personaggio ucciso in almeno due giochi: torna sempre", and_("DeceasedCharacter", at_least(2, "victimIn", "Killing"))),
-    ("Remaster", "VideoGame", "La nuova edizione di un altro gioco", and_("VideoGame", some("remasterOf", "VideoGame"))),
-    ("GameDirector", "Person", "Chi ha diretto almeno un gioco", and_("Person", some("directorOf", "VideoGame"))),
-    ("StudioHead", "Person", "Chi guida un'azienda", and_("Person", some("heads", "Company"))),
-    ("DeceasedCharacter", "Character", "Un personaggio ucciso nella trama di un gioco", and_("Character", some("victimIn", "Killing"))),
-    ("Killer", "Character", "Un personaggio che ha tolto la vita a qualcuno", and_("Character", some("killerIn", "Killing"))),
-    ("Developer", "Company", "Un'azienda che ha sviluppato almeno un gioco", and_("Company", some("developerOf", "VideoGame"))),
-    ("Publisher", "Company", "Un'azienda che ha pubblicato almeno un gioco", and_("Company", some("publisherOf", "VideoGame"))),
-    ("PlatformHolder", "Company", "Un'azienda che costruisce console", and_("Company", some("manufacturerOf", "ConsolePlatform"))),
-    ("FoundedByVeterans", "Company", "Un'azienda fondata da chi lavorava per uno sviluppatore", and_("Company", some("foundedBy", some("formerEmployeeOf", "Developer")))),
-    ("FirstPartyGame", "VideoGame", "Un gioco pubblicato dal gruppo di un costruttore di console", and_("VideoGame", some("publishedByGroup", "PlatformHolder"))),
-    ("SequelGame", "VideoGame", "Il seguito di un altro gioco", and_("VideoGame", some("sequelOf", "VideoGame"))),
-    ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", and_("SequelGame", some("sequelOf", some("sequelOf", "VideoGame")))),
-    ("ViolentStoryGame", "VideoGame", "Un gioco nella cui trama qualcuno viene ucciso", and_("VideoGame", some("hasKilling", "Killing"))),
-    ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", and_("ViolentStoryGame", some("pegiRating", score(16)))),
-    ("FantasyViolenceGame", "ViolentStoryGame", "Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici", and_("ViolentStoryGame", some("pegiRating", score_max(12)))),
-    ("HighlyRatedGame", "VideoGame", "Un gioco con almeno 90 su Metacritic", and_("VideoGame", some("metacriticScore", score(90)))),
-    ("AcclaimedSequel", "SequelGame", "Un seguito acclamato", and_("SequelGame", "HighlyRatedGame")),
-    ("GOTYWinner", "VideoGame", "Un gioco premiato come gioco dell'anno", and_("VideoGame", some("wonAward", "Award"))),
-    ("RemasteredClassic", "VideoGame", "Un gioco che ha avuto una nuova edizione", and_("VideoGame", some("hasRemaster", "VideoGame"))),
-    ("RemasterCollection", "Remaster", "Una raccolta che rimasterizza almeno due giochi", and_("Remaster", at_least(2, "remasterOf", "VideoGame"))),
-    ("StillPlayable", "VideoGame", "Un gioco giocabile su una console attuale", and_("VideoGame", some("playableOn", "CurrentGenerationConsole"))),
-    ("MultiPlatformGame", "VideoGame", "Un gioco uscito su almeno tre piattaforme", and_("VideoGame", at_least(3, "availableOn", "Platform"))),
-    ("Adaptation", "VideoGame", "Un gioco tratto da un'opera di un altro medium", and_("VideoGame", some("basedOn", "CreativeWork"))),
-    ("LiteraryAdaptation", "Adaptation", "Un gioco tratto da un romanzo", and_("Adaptation", some("basedOn", "Novel"))),
-    ("AuteurGame", "VideoGame", "Un gioco diretto da chi guida uno studio", and_("VideoGame", some("directedBy", "StudioHead"))),
-    ("LongRunningFranchise", "Franchise", "Una serie con almeno tre capitoli", and_("Franchise", some("includes", "LateEntry"))),
-    ("AwardWinningFranchise", "Franchise", "Una serie con un gioco dell'anno", and_("Franchise", some("includes", "GOTYWinner"))),
-    ("TransmediaFranchise", "Franchise", "Una serie diventata film o serie TV", and_("Franchise", some("adaptedInto", or_("Film", "TVSeries")))),
-    ("FranchiseWithStudioChange", "Franchise", "Una serie passata a un altro studio", and_("Franchise", some("includes", "SequelByDifferentStudio"))),
-    ("Protagonist", "Character", "Il protagonista di un gioco", and_("Character", some("protagonistOf", "VideoGame"))),
-    ("Antagonist", "Character", "L'antagonista di un gioco", and_("Character", some("antagonistOf", "VideoGame"))),
-    ("RecurringCharacter", "Character", "Un personaggio presente in almeno due giochi", and_("Character", at_least(2, "appearsIn", "VideoGame"))),
-    ("RecurringVillain", "RecurringCharacter", "Un antagonista ricorrente", and_("RecurringCharacter", "Antagonist")),
-    ("RogueAI", "Synthetic", "Un'intelligenza artificiale o un robot antagonista", and_("Synthetic", "Antagonist")),
-    ("MultipleKiller", "Killer", "Un personaggio che ha ucciso almeno due personaggi", and_("Killer", at_least(2, "kills", "Character"))),
-    ("HistoricalCharacter", "Character", "Un personaggio che interpreta una persona reale", and_("Character", some("portrays", "Person"))),
+    ("CurrentGenerationConsole", "ConsolePlatform", "Una console della nona generazione, l'attuale", all_of("ConsolePlatform", some("generation", int_at_least(9)))),
+    ("PreviousGenerationConsole", "ConsolePlatform", "Una console di ottava generazione o precedente", all_of("ConsolePlatform", some("generation", int_at_most(8)))),
+    ("CrossGenerationGame", "StillPlayable", "Un gioco giocabile oggi che è uscito anche su una console di una generazione precedente", all_of("StillPlayable", some("playableOn", "PreviousGenerationConsole"))),
+    ("ProlificDirector", "GameDirector", "Chi ha diretto almeno tre giochi", all_of("GameDirector", at_least(3, "directorOf", "VideoGame"))),
+    ("ProlificDeveloper", "Developer", "Un'azienda che ha sviluppato almeno cinque giochi", all_of("Developer", at_least(5, "developerOf", "VideoGame"))),
+    ("FirstPartyStudio", "Developer", "Uno studio che fa parte del gruppo di un costruttore di console", all_of("Developer", some("inGroupOf", "PlatformHolder"))),
+    ("VillainSlayer", "Protagonist", "Un protagonista che ha ucciso un cattivo sconfitto", all_of("Protagonist", some("kills", "DefeatedVillain"))),
+    ("TragicProtagonist", "Protagonist", "Un protagonista che muore nella trama di un gioco", all_of("Protagonist", "DeceasedCharacter")),
+    ("Turncoat", "Protagonist", "Un personaggio che è protagonista in un gioco e antagonista in un altro", all_of("Protagonist", "Antagonist")),
+    ("HistoricalGame", "VideoGame", "Un gioco con personaggi realmente esistiti: probabilmente ambientato nel passato", all_of("VideoGame", some("hasCharacter", "HistoricalCharacter"))),
+    ("SciFiGame", "VideoGame", "Un gioco con personaggi alieni o sintetici: probabilmente fantascienza", all_of("VideoGame", some("hasCharacter", any_of("Alien", "Synthetic")))),
+    ("RogueAIGame", "VideoGame", "Un gioco il cui antagonista è un'intelligenza artificiale", all_of("VideoGame", some("hasAntagonist", "RogueAI"))),
+    ("PrequelGame", "VideoGame", "Un gioco la cui storia precede quella di un altro", all_of("VideoGame", some("prequelOf", "VideoGame"))),
+    ("PrequelReturn", "ReturnAfterDeathGame", "Un gioco in cui ricompare un personaggio già morto, spiegato dal fatto che è un prequel", all_of("ReturnAfterDeathGame", "PrequelGame")),
+    ("Synthetic", "Character", "Un personaggio costruito da qualcuno nel mondo di gioco: un'intelligenza artificiale o un robot", all_of("Character", some("builtBy", "owl:Thing"))),
+    ("PlayerCharacter", "Character", "Un personaggio controllato dal giocatore in almeno un gioco", all_of("Character", some("playableIn", "VideoGame"))),
+    ("KilledMoreThanOnce", "DeceasedCharacter", "Un personaggio ucciso in almeno due giochi: torna sempre", all_of("DeceasedCharacter", at_least(2, "victimIn", "Killing"))),
+    ("Remaster", "VideoGame", "La nuova edizione di un altro gioco", all_of("VideoGame", some("remasterOf", "VideoGame"))),
+    ("GameDirector", "Person", "Chi ha diretto almeno un gioco", all_of("Person", some("directorOf", "VideoGame"))),
+    ("StudioHead", "Person", "Chi guida un'azienda", all_of("Person", some("heads", "Company"))),
+    ("DeceasedCharacter", "Character", "Un personaggio ucciso nella trama di un gioco", all_of("Character", some("victimIn", "Killing"))),
+    ("Killer", "Character", "Un personaggio che ha tolto la vita a qualcuno", all_of("Character", some("killerIn", "Killing"))),
+    ("Developer", "Company", "Un'azienda che ha sviluppato almeno un gioco", all_of("Company", some("developerOf", "VideoGame"))),
+    ("Publisher", "Company", "Un'azienda che ha pubblicato almeno un gioco", all_of("Company", some("publisherOf", "VideoGame"))),
+    ("PlatformHolder", "Company", "Un'azienda che costruisce console", all_of("Company", some("manufacturerOf", "ConsolePlatform"))),
+    ("FoundedByVeterans", "Company", "Un'azienda fondata da chi lavorava per uno sviluppatore", all_of("Company", some("foundedBy", some("formerEmployeeOf", "Developer")))),
+    ("FirstPartyGame", "VideoGame", "Un gioco pubblicato dal gruppo di un costruttore di console", all_of("VideoGame", some("publishedByGroup", "PlatformHolder"))),
+    ("SequelGame", "VideoGame", "Il seguito di un altro gioco", all_of("VideoGame", some("sequelOf", "VideoGame"))),
+    ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", all_of("SequelGame", some("sequelOf", some("sequelOf", "VideoGame")))),
+    ("ViolentStoryGame", "VideoGame", "Un gioco nella cui trama qualcuno viene ucciso", all_of("VideoGame", some("hasKilling", "Killing"))),
+    ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", all_of("ViolentStoryGame", some("pegiRating", int_at_least(16)))),
+    ("FantasyViolenceGame", "ViolentStoryGame", "Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici", all_of("ViolentStoryGame", some("pegiRating", int_at_most(12)))),
+    ("HighlyRatedGame", "VideoGame", "Un gioco con almeno 90 su Metacritic", all_of("VideoGame", some("metacriticScore", int_at_least(90)))),
+    ("AcclaimedSequel", "SequelGame", "Un seguito acclamato", all_of("SequelGame", "HighlyRatedGame")),
+    ("GOTYWinner", "VideoGame", "Un gioco premiato come gioco dell'anno", all_of("VideoGame", some("wonAward", "Award"))),
+    ("RemasteredClassic", "VideoGame", "Un gioco che ha avuto una nuova edizione", all_of("VideoGame", some("hasRemaster", "VideoGame"))),
+    ("RemasterCollection", "Remaster", "Una raccolta che rimasterizza almeno due giochi", all_of("Remaster", at_least(2, "remasterOf", "VideoGame"))),
+    ("StillPlayable", "VideoGame", "Un gioco giocabile su una console attuale", all_of("VideoGame", some("playableOn", "CurrentGenerationConsole"))),
+    ("MultiPlatformGame", "VideoGame", "Un gioco uscito su almeno tre piattaforme", all_of("VideoGame", at_least(3, "availableOn", "Platform"))),
+    ("Adaptation", "VideoGame", "Un gioco tratto da un'opera di un altro medium", all_of("VideoGame", some("basedOn", "CreativeWork"))),
+    ("LiteraryAdaptation", "Adaptation", "Un gioco tratto da un romanzo", all_of("Adaptation", some("basedOn", "Novel"))),
+    ("AuteurGame", "VideoGame", "Un gioco diretto da chi guida uno studio", all_of("VideoGame", some("directedBy", "StudioHead"))),
+    ("LongRunningFranchise", "Franchise", "Una serie con almeno tre capitoli", all_of("Franchise", some("includes", "LateEntry"))),
+    ("AwardWinningFranchise", "Franchise", "Una serie con un gioco dell'anno", all_of("Franchise", some("includes", "GOTYWinner"))),
+    ("TransmediaFranchise", "Franchise", "Una serie diventata film o serie TV", all_of("Franchise", some("adaptedInto", any_of("Film", "TVSeries")))),
+    ("FranchiseWithStudioChange", "Franchise", "Una serie passata a un altro studio", all_of("Franchise", some("includes", "SequelByDifferentStudio"))),
+    ("Protagonist", "Character", "Il protagonista di un gioco", all_of("Character", some("protagonistOf", "VideoGame"))),
+    ("Antagonist", "Character", "L'antagonista di un gioco", all_of("Character", some("antagonistOf", "VideoGame"))),
+    ("RecurringCharacter", "Character", "Un personaggio presente in almeno due giochi", all_of("Character", at_least(2, "appearsIn", "VideoGame"))),
+    ("RecurringVillain", "RecurringCharacter", "Un antagonista ricorrente", all_of("RecurringCharacter", "Antagonist")),
+    ("RogueAI", "Synthetic", "Un'intelligenza artificiale o un robot antagonista", all_of("Synthetic", "Antagonist")),
+    ("MultipleKiller", "Killer", "Un personaggio che ha ucciso almeno due personaggi", all_of("Killer", at_least(2, "kills", "Character"))),
+    ("HistoricalCharacter", "Character", "Un personaggio che interpreta una persona reale", all_of("Character", some("portrays", "Person"))),
+    ("ClassicGame", "VideoGame", "Un gioco uscito prima del 2005", all_of("VideoGame", some("releaseDate", date_before("2005-01-01T00:00:00")))),
+    ("ClassicStillPlayable", "ClassicGame", "Un classico precedente al 2005 giocabile oggi su una console attuale", all_of("ClassicGame", "StillPlayable")),
 ]
 
 RULE_TARGETS = [
@@ -187,6 +195,8 @@ OBJECT_PROPS = [
 ]
 SUBPROPERTIES = [("availableOn", "playableOn"), ("protagonistOf", "appearsIn"), ("antagonistOf", "appearsIn"), ("playableIn", "appearsIn")]
 CHAINS = [("playableOn", ["hasRemaster", "availableOn"]), ("techLinkedTo", ["madeWith", "engineDevelopedBy", "developerOf"])]
+# solo proprietà semplici (né transitive né super-proprietà di catene): per questo non sequelOf
+DISJOINT_PROPS = [("remasterOf", "prequelOf")]
 
 # name, domain, range, functional
 DATA_PROPS = [
@@ -224,11 +234,12 @@ RULES = [
     ("SelfPublished", [("developedBy", "?g", "?c"), ("publishedBy", "?g", "?c")], [("SelfPublishedGame", "?g")]),
     ("MustPlay", [("metacriticScore", "?g", "?s"), ("xsd:integer", "xsd:minInclusive", 95, "?s")], [("MustPlayGame", "?g")]),
 ]
+# fmt: on
 
 
-def term(x):
-    prefix, _, name = x.rpartition(":")
-    return {"xsd": XSD, "owl": OWL}[prefix][name] if prefix else VG[name]
+def term(name):
+    prefix, _, local = name.rpartition(":")
+    return {"xsd": XSD, "owl": OWL}[prefix][local] if prefix else VG[local]
 
 
 def rdf_list(g, items):
@@ -237,51 +248,57 @@ def rdf_list(g, items):
     return head
 
 
-def node(g, x):
-    if isinstance(x, str):
-        return term(x)
-    op, *a = x
-    b = BNode()
+def class_expression(g, expr):
+    """Costruisce nel grafo l'espressione di classe descritta da una tupla delle tabelle."""
+    if isinstance(expr, str):
+        return term(expr)
+    op, *args = expr
+    node = BNode()
     if op in ("and", "or"):
-        g.add((b, RDF.type, OWL.Class))
-        g.add((b, OWL.intersectionOf if op == "and" else OWL.unionOf, rdf_list(g, [node(g, y) for y in a])))
+        g.add((node, RDF.type, OWL.Class))
+        g.add(
+            (
+                node,
+                OWL.intersectionOf if op == "and" else OWL.unionOf,
+                rdf_list(g, [class_expression(g, x) for x in args]),
+            )
+        )
     elif op == "some":
-        g.add((b, RDF.type, OWL.Restriction))
-        g.add((b, OWL.onProperty, VG[a[0]]))
-        g.add((b, OWL.someValuesFrom, node(g, a[1])))
+        prop, cls = args
+        g.add((node, RDF.type, OWL.Restriction))
+        g.add((node, OWL.onProperty, VG[prop]))
+        g.add((node, OWL.someValuesFrom, class_expression(g, cls)))
     elif op == "min":
-        g.add((b, RDF.type, OWL.Restriction))
-        g.add((b, OWL.onProperty, VG[a[1]]))
-        g.add((b, OWL.minQualifiedCardinality, Literal(a[0], datatype=XSD.nonNegativeInteger)))
-        g.add((b, OWL.onClass, node(g, a[2])))
+        n, prop, cls = args
+        g.add((node, RDF.type, OWL.Restriction))
+        g.add((node, OWL.onProperty, VG[prop]))
+        g.add(
+            (
+                node,
+                OWL.minQualifiedCardinality,
+                Literal(n, datatype=XSD.nonNegativeInteger),
+            )
+        )
+        g.add((node, OWL.onClass, class_expression(g, cls)))
     else:
-        facet = BNode()
-        g.add((facet, term(a[1]), Literal(a[2])))
-        g.add((b, RDF.type, RDFS.Datatype))
-        g.add((b, OWL.onDatatype, term(a[0])))
-        g.add((b, OWL.withRestrictions, rdf_list(g, [facet])))
-    return b
-
-
-def dl(x):
-    if isinstance(x, str):
-        return rf"\textsf{{{x}}}"
-    op, *a = x
-    if op in ("and", "or"):
-        return (r" \sqcap " if op == "and" else r" \sqcup ").join(f"({dl(y)})" if isinstance(y, tuple) and y[0] == "or" else dl(y) for y in a)
-    if op == "some":
-        if isinstance(a[1], tuple) and a[1][0] == "range":
-            cmp = r"\geq" if a[1][2] == "xsd:minInclusive" else r"\leq"
-            return rf"\exists\,\textit{{{a[0]}}}.\texttt{{integer}}[{cmp} {a[1][3]}]"
-        return rf"\exists\,\textit{{{a[0]}}}." + (f"({dl(a[1])})" if isinstance(a[1], tuple) and a[1][0] == "or" else dl(a[1]))
-    if op == "min":
-        return rf"{{\geq}}{a[0]}\,\textit{{{a[1]}}}.{dl(a[2])}"
+        datatype, facet, value = args
+        literal = (
+            Literal(value)
+            if isinstance(value, int)
+            else Literal(value, datatype=term(datatype))
+        )
+        facet_node = BNode()
+        g.add((facet_node, term(facet), literal))
+        g.add((node, RDF.type, RDFS.Datatype))
+        g.add((node, OWL.onDatatype, term(datatype)))
+        g.add((node, OWL.withRestrictions, rdf_list(g, [facet_node])))
+    return node
 
 
 def new_graph():
     g = Graph()
-    for prefix, ns in [("vg", VG), ("owl", OWL), ("swrl", SWRL), ("var", VAR)]:
-        g.bind(prefix, ns)
+    for prefix, namespace in [("vg", VG), ("owl", OWL), ("swrl", SWRL), ("var", VAR)]:
+        g.bind(prefix, namespace)
     return g
 
 
@@ -289,10 +306,33 @@ def add_class(g, name, parent, comment, definition=None):
     g.add((VG[name], RDF.type, OWL.Class))
     g.add((VG[name], RDFS.label, Literal(name)))
     g.add((VG[name], RDFS.comment, Literal(comment)))
-    if definition:  # il padre di una classe definita è il primo termine della definizione
-        g.add((VG[name], OWL.equivalentClass, node(g, definition)))
+    if definition:
+        g.add((VG[name], OWL.equivalentClass, class_expression(g, definition)))
     elif parent:
         g.add((VG[name], RDFS.subClassOf, VG[parent]))
+
+
+def add_object_property(g, name, domain, range_, inverse, characteristics, comment):
+    """Le proprietà con inversa e dominio diverso dal range sono anche asimmetriche e irriflessive."""
+    strict = (
+        [OWL.IrreflexiveProperty, OWL.AsymmetricProperty]
+        if inverse and domain != range_
+        else []
+    )
+    for kind in [
+        OWL.ObjectProperty,
+        *strict,
+        *(OWL[f"{c}Property"] for c in characteristics),
+    ]:
+        g.add((VG[name], RDF.type, kind))
+    g.add((VG[name], RDFS.domain, term(domain)))
+    g.add((VG[name], RDFS.range, term(range_)))
+    if comment:
+        g.add((VG[name], RDFS.comment, Literal(comment)))
+    if inverse:
+        for kind in [OWL.ObjectProperty, *strict]:
+            g.add((VG[inverse], RDF.type, kind))
+        g.add((VG[inverse], OWL.inverseOf, VG[name]))
 
 
 def schema():
@@ -303,148 +343,327 @@ def schema():
         add_class(g, name, None, comment)
     for name, parent, comment in PRIMITIVE + RULE_TARGETS:
         add_class(g, name, parent, comment)
-    for row in DEFINED:
-        assert row[3][1] == row[1], f"{row[0]}: il padre deve essere il primo termine della definizione"
-        add_class(g, *row)
+    for name, parent, comment, definition in DEFINED:
+        assert (
+            definition[1] == parent
+        ), f"{name}: il padre deve essere il primo termine della definizione"
+        add_class(g, name, parent, comment, definition)
     for i, block in enumerate(DISJOINT):
-        b = BNode(f"disgiunte{i}")
-        g.add((b, RDF.type, OWL.AllDisjointClasses))
-        g.add((b, OWL.members, rdf_list(g, [VG[n] for n in block])))
-    for name, dom, rng, inv, chars, comment in OBJECT_PROPS:
-        loose = [OWL.IrreflexiveProperty, OWL.AsymmetricProperty] if inv and dom != rng else []
-        for t in [OWL.ObjectProperty, *loose, *(OWL[f"{c}Property"] for c in chars)]:
-            g.add((VG[name], RDF.type, t))
-        g.add((VG[name], RDFS.domain, term(dom)))
-        g.add((VG[name], RDFS.range, term(rng)))
-        if comment:
-            g.add((VG[name], RDFS.comment, Literal(comment)))
-        if inv:
-            for t in [OWL.ObjectProperty, *loose]:
-                g.add((VG[inv], RDF.type, t))
-            g.add((VG[inv], OWL.inverseOf, VG[name]))
+        node = BNode(f"disgiunte{i}")
+        g.add((node, RDF.type, OWL.AllDisjointClasses))
+        g.add((node, OWL.members, rdf_list(g, [VG[name] for name in block])))
+    for row in OBJECT_PROPS:
+        add_object_property(g, *row)
     for sub, sup in SUBPROPERTIES:
         g.add((VG[sub], RDFS.subPropertyOf, VG[sup]))
-    for p, chain in CHAINS:
-        g.add((VG[p], OWL.propertyChainAxiom, rdf_list(g, [VG[c] for c in chain])))
-    for name, dom, rng, functional in DATA_PROPS:
+    for prop, chain in CHAINS:
+        g.add((VG[prop], OWL.propertyChainAxiom, rdf_list(g, [VG[p] for p in chain])))
+    for a, b in DISJOINT_PROPS:
+        g.add((VG[a], OWL.propertyDisjointWith, VG[b]))
+    for name, domain, range_, functional in DATA_PROPS:
         g.add((VG[name], RDF.type, OWL.DatatypeProperty))
         if functional:
             g.add((VG[name], RDF.type, OWL.FunctionalProperty))
-        g.add((VG[name], RDFS.domain, term(dom)))
-        g.add((VG[name], RDFS.range, term(rng)))
-    for c, p in KEYS:
-        g.add((VG[c], OWL.hasKey, rdf_list(g, [VG[p]])))
+        g.add((VG[name], RDFS.domain, term(domain)))
+        g.add((VG[name], RDFS.range, term(range_)))
+    for cls, prop in KEYS:
+        g.add((VG[cls], OWL.hasKey, rdf_list(g, [VG[prop]])))
     return g
 
 
-def atom(g, pred, *args):
-    v = [VAR[a[1:]] for a in args if isinstance(a, str) and a.startswith("?")]
-    b = BNode()
+def swrl_atom(g, pred, *args):
+    variables = [VAR[a[1:]] for a in args if isinstance(a, str) and a.startswith("?")]
+    node = BNode()
     if pred == "differentFrom":
-        g.add((b, RDF.type, SWRL.DifferentIndividualsAtom))
+        g.add((node, RDF.type, SWRL.DifferentIndividualsAtom))
     elif pred.startswith("xsd:"):
-        g.add((b, RDF.type, SWRL.DataRangeAtom))
-        g.add((b, SWRL.dataRange, node(g, ("range", pred, args[0], args[1]))))
+        g.add((node, RDF.type, SWRL.DataRangeAtom))
+        g.add(
+            (
+                node,
+                SWRL.dataRange,
+                class_expression(g, ("range", pred, args[0], args[1])),
+            )
+        )
     elif len(args) == 1:
-        g.add((b, RDF.type, SWRL.ClassAtom))
-        g.add((b, SWRL.classPredicate, VG[pred]))
+        g.add((node, RDF.type, SWRL.ClassAtom))
+        g.add((node, SWRL.classPredicate, VG[pred]))
     else:
-        kind = SWRL.DatavaluedPropertyAtom if pred in {p[0] for p in DATA_PROPS} else SWRL.IndividualPropertyAtom
-        g.add((b, RDF.type, kind))
-        g.add((b, SWRL.propertyPredicate, VG[pred]))
-    for i, x in enumerate(v, 1):
-        g.add((b, SWRL[f"argument{i}"], x))
-    return b
+        kind = (
+            SWRL.DatavaluedPropertyAtom
+            if pred in {p[0] for p in DATA_PROPS}
+            else SWRL.IndividualPropertyAtom
+        )
+        g.add((node, RDF.type, kind))
+        g.add((node, SWRL.propertyPredicate, VG[pred]))
+    for i, variable in enumerate(variables, 1):
+        g.add((node, SWRL[f"argument{i}"], variable))
+    return node
 
 
-def atom_list(g, atoms):
+def swrl_atom_list(g, atoms):
     head = RDF.nil
-    for a in reversed(atoms):
+    for atom in reversed(atoms):
         cell = BNode()
         g.add((cell, RDF.type, SWRL.AtomList))
-        g.add((cell, RDF.first, a))
+        g.add((cell, RDF.first, atom))
         g.add((cell, RDF.rest, head))
         head = cell
     return head
 
 
-def rule_text(atoms, sep=" ^ "):
-    return sep.join(f"{a[0]}({', '.join(map(str, a[1:]))})" if not a[0].startswith("xsd:") else f"{a[0]}[>= {a[2]}]({a[3]})" for a in atoms)
+def rule_text(atoms, separator=" ^ "):
+    def text(atom):
+        if atom[0].startswith("xsd:"):
+            return f"{atom[0]}[>= {atom[2]}]({atom[3]})"
+        return f"{atom[0]}({', '.join(map(str, atom[1:]))})"
+
+    return separator.join(text(a) for a in atoms)
 
 
 def rules():
     g = new_graph()
-    onto = BASE["ontology/regole"]
-    g.add((onto, RDF.type, OWL.Ontology))
-    g.add((onto, RDFS.label, Literal("Videogiochi: regole SWRL")))
-    g.add((onto, OWL.imports, BASE.ontology))
+    ontology = BASE["ontology/regole"]
+    g.add((ontology, RDF.type, OWL.Ontology))
+    g.add((ontology, RDFS.label, Literal("Videogiochi: regole SWRL")))
+    g.add((ontology, OWL.imports, BASE.ontology))
     for _, body, head in RULES:
-        for at in body + head:
-            for a in at[1:]:
-                if isinstance(a, str) and a.startswith("?"):
-                    g.add((VAR[a[1:]], RDF.type, SWRL.Variable))
+        for atom in body + head:
+            for arg in atom[1:]:
+                if isinstance(arg, str) and arg.startswith("?"):
+                    g.add((VAR[arg[1:]], RDF.type, SWRL.Variable))
     for name, body, head in RULES:
         g.add((VAR[name], RDF.type, SWRL.Imp))
         g.add((VAR[name], RDFS.label, Literal(name)))
-        g.add((VAR[name], RDFS.comment, Literal(f"{rule_text(body)} -> {rule_text(head)}")))
-        g.add((VAR[name], SWRL.body, atom_list(g, [atom(g, *a) for a in body])))
-        g.add((VAR[name], SWRL.head, atom_list(g, [atom(g, *a) for a in head])))
+        g.add(
+            (
+                VAR[name],
+                RDFS.comment,
+                Literal(f"{rule_text(body)} -> {rule_text(head)}"),
+            )
+        )
+        g.add(
+            (VAR[name], SWRL.body, swrl_atom_list(g, [swrl_atom(g, *a) for a in body]))
+        )
+        g.add(
+            (VAR[name], SWRL.head, swrl_atom_list(g, [swrl_atom(g, *a) for a in head]))
+        )
     return g
 
 
+FACETS = {
+    "xsd:minInclusive": r"\geq",
+    "xsd:maxInclusive": r"\leq",
+    "xsd:maxExclusive": "<",
+}
+
+
+def latex(expr):
+    """L'espressione di classe in logica descrittiva, per l'appendice."""
+    if isinstance(expr, str):
+        return rf"\textsf{{{expr}}}"
+    op, *args = expr
+    if op in ("and", "or"):
+        joiner = r" \sqcap " if op == "and" else r" \sqcup "
+        return joiner.join(
+            f"({latex(x)})" if isinstance(x, tuple) and x[0] == "or" else latex(x)
+            for x in args
+        )
+    if op == "min":
+        n, prop, cls = args
+        return rf"{{\geq}}{n}\,\textit{{{prop}}}.{latex(cls)}"
+    prop, cls = args
+    if isinstance(cls, tuple) and cls[0] == "range":
+        _, datatype, facet, value = cls
+        value = value[:10] if isinstance(value, str) else value
+        name = datatype.split(":")[1].replace("dateTime", "date")
+        return rf"\exists\,\textit{{{prop}}}.\texttt{{{name}}}[{FACETS[facet]} {value}]"
+    inner = (
+        f"({latex(cls)})" if isinstance(cls, tuple) and cls[0] == "or" else latex(cls)
+    )
+    return rf"\exists\,\textit{{{prop}}}.{inner}"
+
+
+def esc(text):
+    return str(text).replace("&", r"\&").replace("_", r"\_").replace("#", r"\#")
+
+
+def tt(text):
+    return rf"\texttt{{{text}}}"
+
+
 def latex_table(caption, columns, header, rows):
-    lines = [rf"\begingroup\footnotesize\begin{{longtable}}{{{columns}}}", rf"\caption{{{caption}}}\\ \toprule", header + r" \\ \midrule \endfirsthead",
-             header + r" \\ \midrule \endhead \bottomrule \endfoot"]
-    return "\n".join(lines + [" & ".join(r) + r" \\" for r in rows] + [r"\end{longtable}\endgroup", ""])
+    lines = [
+        rf"\begingroup\footnotesize\begin{{longtable}}{{{columns}}}",
+        rf"\caption{{{caption}}}\\ \toprule",
+        header + r" \\ \midrule \endfirsthead",
+        header + r" \\ \midrule \endhead \bottomrule \endfoot",
+    ]
+    return "\n".join(
+        lines
+        + [" & ".join(row) + r" \\" for row in rows]
+        + [r"\end{longtable}\endgroup", ""]
+    )
 
 
-def esc(x):
-    return str(x).replace("&", r"\&").replace("_", r"\_").replace("#", r"\#")
+def class_table():
+    kinds = (
+        {n: "primitiva" for n, _ in TOP}
+        | {n: "primitiva" for n, _, _ in PRIMITIVE}
+        | {n: "regola SWRL" for n, _, _ in RULE_TARGETS}
+        | {n: "definita" for n, *_ in DEFINED}
+    )
+    parents = (
+        {n: "--" for n, _ in TOP}
+        | {n: p for n, p, _ in PRIMITIVE + RULE_TARGETS}
+        | {n: p for n, p, *_ in DEFINED}
+    )
+    comments = (
+        {n: c for n, c in TOP}
+        | {n: c for n, _, c in PRIMITIVE + RULE_TARGETS}
+        | {n: c for n, _, c, _ in DEFINED}
+    )
+    rows = [
+        [tt(name), tt(parents[name]), kinds[name], comments[name]] for name in kinds
+    ]
+    return latex_table(
+        f"Le {len(kinds)} classi",
+        "lllp{5.8cm}",
+        r"\textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione}",
+        rows,
+    )
 
 
-def appendix():
-    tt = lambda x: rf"\texttt{{{x}}}"  # noqa: E731
-    kinds = {n: "primitiva" for n, _ in TOP} | {n: "primitiva" for n, _, _ in PRIMITIVE} | {n: "regola SWRL" for n, _, _ in RULE_TARGETS} | {n: "definita" for n, *_ in DEFINED}
-    parents = {n: "--" for n, _ in TOP} | {n: p for n, p, _ in PRIMITIVE + RULE_TARGETS} | {n: p for n, p, *_ in DEFINED}
-    comments = {n: c for n, c in TOP} | {n: c for n, _, c in PRIMITIVE + RULE_TARGETS} | {n: c for n, _, c, _ in DEFINED}
-    out = [r"\section{Le componenti dell'ontologia}\label{app:componenti}", ""]
-    out.append(latex_table(f"Le {len(kinds)} classi", "lllp{5.8cm}", r"\textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione}",
-                           [[tt(n), tt(parents[n]), kinds[n], comments[n]] for n in kinds]))
-    out.append(latex_table(f"Le {len(OBJECT_PROPS) + sum(1 for p in OBJECT_PROPS if p[3])} object property", "lllp{6cm}", r"\textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche}",
-                           [[tt(n), tt(d), tt(r), ", ".join(([f"inversa {tt(i)}"] if i else []) + [{"Transitive": "transitiva", "Symmetric": "simmetrica"}[c] for c in ch] + [f"catena {' $\\circ$ '.join(c)}" for p, c in CHAINS if p == n] + [f"sotto-proprietà di {tt(s)}" for b, s in SUBPROPERTIES if b == n])]
-                            for n, d, r, i, ch, _ in OBJECT_PROPS]))
-    out.append(latex_table(f"Le {len(DATA_PROPS)} datatype property", "lllp{6cm}", r"\textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche}",
-                           [[tt(n), tt(d), tt(r), "funzionale" if f else ("chiave di " + tt("VideoGame") if n == "hasWikidataId" else "")] for n, d, r, f in DATA_PROPS]))
-    out.append(r"\subsection*{Classi definite}" + "\n" + r"\begingroup\small\begin{align*}")
-    out += [rf"\textsf{{{n}}} &\equiv {dl(d)} \\" for n, _, _, d in DEFINED]
-    out.append(r"\end{align*}\endgroup" + "\n" + rf"\noindent Disgiunzioni: " + "; ".join(", ".join(block) for block in DISJOINT) + ".\n")
-    out.append(r"\subsection*{Regole SWRL}" + "\n" + r"\begin{itemize}\footnotesize")
-    out += [rf"\item \textbf{{{name}}}: \texttt{{{rule_text(body, ' $\\wedge$ ')} $\rightarrow$ {rule_text(head, ' $\\wedge$ ')}}}" for name, body, head in RULES]
-    out.append(r"\end{itemize}" + "\n")
-    data = HERE / "dati.ttl"
-    if data.exists():
-        g = Graph()
-        g.parse(data, format="turtle")
-        q = """SELECT ?label (COALESCE(?s, "Giochi singoli") AS ?serie) (YEAR(?d) AS ?anno) ?dev WHERE { ?g vg:hasWikidataId ?id ; rdfs:label ?label .
+def object_property_table():
+    chains = {prop: chain for prop, chain in CHAINS}
+    rows = []
+    for name, domain, range_, inverse, characteristics, _ in OBJECT_PROPS:
+        features = [f"inversa {tt(inverse)}"] if inverse else []
+        features += [
+            {"Transitive": "transitiva", "Symmetric": "simmetrica"}[c]
+            for c in characteristics
+        ]
+        if name in chains:
+            features.append("catena " + " $\\circ$ ".join(chains[name]))
+        features += [
+            f"sotto-proprietà di {tt(sup)}" for sub, sup in SUBPROPERTIES if sub == name
+        ]
+        rows.append([tt(name), tt(domain), tt(range_), ", ".join(features)])
+    count = len(OBJECT_PROPS) + sum(1 for p in OBJECT_PROPS if p[3])
+    return latex_table(
+        f"Le {count} object property",
+        "lllp{6cm}",
+        r"\textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche}",
+        rows,
+    )
+
+
+def data_property_table():
+    rows = [
+        [
+            tt(name),
+            tt(domain),
+            tt(range_),
+            (
+                "funzionale"
+                if functional
+                else ("chiave di " + tt("VideoGame") if name == "hasWikidataId" else "")
+            ),
+        ]
+        for name, domain, range_, functional in DATA_PROPS
+    ]
+    return latex_table(
+        f"Le {len(DATA_PROPS)} datatype property",
+        "lllp{6cm}",
+        r"\textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche}",
+        rows,
+    )
+
+
+def game_rows():
+    g = Graph()
+    g.parse(HERE / "dati.ttl", format="turtle")
+    query = """SELECT ?label (COALESCE(?s, "Giochi singoli") AS ?serie) (YEAR(?d) AS ?anno) ?dev WHERE { ?g vg:hasWikidataId ?id ; rdfs:label ?label .
                OPTIONAL { ?g vg:belongsTo/rdfs:label ?s } OPTIONAL { ?g vg:releaseDate ?d } OPTIONAL { ?g vg:developedBy/rdfs:label ?dev } }
                ORDER BY ?serie ?d"""
-        rows = [[esc(x) if x is not None else "--" for x in row] for row in g.query(q, initNs={"vg": VG, "rdfs": RDFS})]
-        NUMERI["Giochi"] = len(rows)
-        out.append(latex_table(f"I {len(rows)} giochi del dataset", "p{6.5cm}p{3cm}lp{3.5cm}", r"\textbf{Gioco} & \textbf{Serie} & \textbf{Anno} & \textbf{Sviluppatore}", rows))
-    return "\n".join(out)
+    return [
+        [esc(x) if x is not None else "--" for x in row]
+        for row in g.query(query, initNs={"vg": VG, "rdfs": RDFS})
+    ]
 
 
-NUMERI = {}
+def appendix(games):
+    parts = [
+        r"\section{Le componenti dell'ontologia}\label{app:componenti}",
+        "",
+        class_table(),
+        object_property_table(),
+        data_property_table(),
+    ]
+    definitions = "\n".join(
+        rf"\textsf{{{name}}} &\equiv {latex(definition)} \\"
+        for name, _, _, definition in DEFINED
+    )
+    parts.append(
+        r"\subsection*{Classi definite}"
+        + "\n"
+        + r"\begingroup\small\begin{align*}"
+        + "\n"
+        + definitions
+    )
+    disjoint = "; ".join(", ".join(block) for block in DISJOINT)
+    disjoint_props = "; ".join(f"{a} e {b}" for a, b in DISJOINT_PROPS)
+    parts.append(
+        r"\end{align*}\endgroup"
+        + "\n"
+        + rf"\noindent Disgiunzioni: {disjoint}. Proprietà disgiunte: {disjoint_props}."
+        + "\n"
+    )
+    items = "\n".join(
+        rf"\item \textbf{{{name}}}: \texttt{{{rule_text(body, ' $\\wedge$ ')} $\rightarrow$ {rule_text(head, ' $\\wedge$ ')}}}"
+        for name, body, head in RULES
+    )
+    parts.append(
+        r"\subsection*{Regole SWRL}"
+        + "\n"
+        + r"\begin{itemize}\footnotesize"
+        + "\n"
+        + items
+        + "\n"
+        + r"\end{itemize}"
+        + "\n"
+    )
+    if games:
+        parts.append(
+            latex_table(
+                f"I {len(games)} giochi del dataset",
+                "p{6.5cm}p{3cm}lp{3.5cm}",
+                r"\textbf{Gioco} & \textbf{Serie} & \textbf{Anno} & \textbf{Sviluppatore}",
+                games,
+            )
+        )
+    return "\n".join(parts)
 
 
 def main():
-    for name, g in {"schema.ttl": schema(), "regole.ttl": rules()}.items():
-        g.serialize(destination=HERE / name, format="turtle")
-    (HERE / "relazione" / "appendice.tex").write_text(appendix(), encoding="utf-8")
-    NUMERI.update(Top=len(TOP), Classi=len(TOP) + len(PRIMITIVE) + len(RULE_TARGETS) + len(DEFINED), Definite=len(DEFINED), Regole=len(RULES),
-                  ObjProp=len(OBJECT_PROPS) + sum(1 for p in OBJECT_PROPS if p[3]), DataProp=len(DATA_PROPS))
-    (HERE / "relazione" / "numeri.tex").write_text("".join(f"\\newcommand{{\\n{k}}}{{{v}}}\n" for k, v in NUMERI.items()), encoding="utf-8")
-    print(" ".join(f"{k}={v}" for k, v in NUMERI.items()))
+    for name, graph in {"schema.ttl": schema(), "regole.ttl": rules()}.items():
+        graph.serialize(destination=HERE / name, format="turtle")
+    games = game_rows() if (HERE / "dati.ttl").exists() else []
+    (HERE / "relazione" / "appendice.tex").write_text(appendix(games), encoding="utf-8")
+    numbers = {"Giochi": len(games)} if games else {}
+    numbers |= {
+        "Top": len(TOP),
+        "Classi": len(TOP) + len(PRIMITIVE) + len(RULE_TARGETS) + len(DEFINED),
+        "Definite": len(DEFINED),
+        "Regole": len(RULES),
+        "ObjProp": len(OBJECT_PROPS) + sum(1 for p in OBJECT_PROPS if p[3]),
+        "DataProp": len(DATA_PROPS),
+    }
+    (HERE / "relazione" / "numeri.tex").write_text(
+        "".join(f"\\newcommand{{\\n{k}}}{{{v}}}\n" for k, v in numbers.items()),
+        encoding="utf-8",
+    )
+    print(" ".join(f"{k}={v}" for k, v in numbers.items()))
 
 
 if __name__ == "__main__":
