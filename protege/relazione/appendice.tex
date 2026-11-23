@@ -1,7 +1,7 @@
 \section{Le componenti dell'ontologia}\label{app:componenti}
 
 \begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
-\caption{Le 96 classi}\\ \toprule
+\caption{Le 91 classi}\\ \toprule
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
@@ -72,13 +72,8 @@
 \texttt{ViolentStoryGame} & \texttt{VideoGame} & definita & Un gioco nella cui trama qualcuno viene ucciso \\
 \texttt{RealisticViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori \\
 \texttt{FantasyViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici \\
-\texttt{HighlyRatedGame} & \texttt{VideoGame} & definita & Un gioco con almeno 90 su Metacritic \\
-\texttt{AcclaimedSequel} & \texttt{SequelGame} & definita & Un seguito acclamato \\
 \texttt{GOTYWinner} & \texttt{VideoGame} & definita & Un gioco premiato come gioco dell'anno \\
-\texttt{RemasteredClassic} & \texttt{VideoGame} & definita & Un gioco che ha avuto una nuova edizione \\
-\texttt{RemasterCollection} & \texttt{Remaster} & definita & Una raccolta che rimasterizza almeno due giochi \\
 \texttt{StillPlayable} & \texttt{VideoGame} & definita & Un gioco giocabile su una console attuale \\
-\texttt{MultiPlatformGame} & \texttt{VideoGame} & definita & Un gioco uscito su almeno tre piattaforme \\
 \texttt{Adaptation} & \texttt{VideoGame} & definita & Un gioco tratto da un'opera di un altro medium \\
 \texttt{LiteraryAdaptation} & \texttt{Adaptation} & definita & Un gioco tratto da un romanzo \\
 \texttt{AuteurGame} & \texttt{VideoGame} & definita & Un gioco diretto da chi guida uno studio \\
@@ -188,13 +183,8 @@
 \textsf{ViolentStoryGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasKilling}.\textsf{Killing} \\
 \textsf{RealisticViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\geq 16] \\
 \textsf{FantasyViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\leq 12] \\
-\textsf{HighlyRatedGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{metacriticScore}.\texttt{integer}[\geq 90] \\
-\textsf{AcclaimedSequel} &\equiv \textsf{SequelGame} \sqcap \textsf{HighlyRatedGame} \\
 \textsf{GOTYWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{Award} \\
-\textsf{RemasteredClassic} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasRemaster}.\textsf{VideoGame} \\
-\textsf{RemasterCollection} &\equiv \textsf{Remaster} \sqcap {\geq}2\,\textit{remasterOf}.\textsf{VideoGame} \\
 \textsf{StillPlayable} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{playableOn}.\textsf{CurrentGenerationConsole} \\
-\textsf{MultiPlatformGame} &\equiv \textsf{VideoGame} \sqcap {\geq}3\,\textit{availableOn}.\textsf{Platform} \\
 \textsf{Adaptation} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{basedOn}.\textsf{CreativeWork} \\
 \textsf{LiteraryAdaptation} &\equiv \textsf{Adaptation} \sqcap \exists\,\textit{basedOn}.\textsf{Novel} \\
 \textsf{AuteurGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{directedBy}.\textsf{StudioHead} \\
@@ -223,7 +213,7 @@
 \begin{itemize}\footnotesize
 \item \textbf{PublisherGroup}: \texttt{publishedBy(?g, ?c) $\rightarrow$ publishedByGroup(?g, ?c)}
 \item \textbf{ParentGroup}: \texttt{publishedByGroup(?g, ?c) $\wedge$ subsidiaryOf(?c, ?p) $\rightarrow$ publishedByGroup(?g, ?p)}
-\item \textbf{FirstPartyOnRivalConsole}: \texttt{publishedByGroup(?g, ?h) $\wedge$ availableOn(?g, ?p) $\wedge$ ConsolePlatform(?p) $\wedge$ manufacturedBy(?p, ?m) $\wedge$ manufacturerOf(?h, ?q) $\wedge$ ConsolePlatform(?q) $\wedge$ differentFrom(?h, ?m) $\rightarrow$ FirstPartyOnRivalConsole(?g)}
+\item \textbf{FirstPartyOnRivalConsole}: \texttt{publishedByGroup(?g, ?h) $\wedge$ availableOn(?g, ?p) $\wedge$ ConsolePlatform(?p) $\wedge$ manufacturedBy(?p, ?m) $\wedge$ PlatformHolder(?h) $\wedge$ differentFrom(?h, ?m) $\rightarrow$ FirstPartyOnRivalConsole(?g)}
 \item \textbf{SequelByDifferentStudio}: \texttt{sequelOf(?a, ?b) $\wedge$ developedBy(?a, ?x) $\wedge$ developedBy(?b, ?y) $\wedge$ differentFrom(?x, ?y) $\rightarrow$ SequelByDifferentStudio(?a)}
 \item \textbf{VeteransReturn}: \texttt{developedBy(?g, ?c) $\wedge$ foundedBy(?c, ?p) $\wedge$ formerEmployeeOf(?p, ?o) $\wedge$ developerOf(?o, ?h) $\wedge$ belongsTo(?g, ?f) $\wedge$ belongsTo(?h, ?f) $\rightarrow$ VeteransReturn(?g)}
 \item \textbf{EngineChangeSequel}: \texttt{sequelOf(?a, ?b) $\wedge$ madeWith(?a, ?x) $\wedge$ madeWith(?b, ?y) $\wedge$ differentFrom(?x, ?y) $\rightarrow$ EngineChangeSequel(?a)}

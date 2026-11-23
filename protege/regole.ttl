@@ -95,7 +95,7 @@ var:ExternalEngine a swrl:Imp ;
 
 var:FirstPartyOnRivalConsole a swrl:Imp ;
     rdfs:label "FirstPartyOnRivalConsole" ;
-    rdfs:comment "publishedByGroup(?g, ?h) ^ availableOn(?g, ?p) ^ ConsolePlatform(?p) ^ manufacturedBy(?p, ?m) ^ manufacturerOf(?h, ?q) ^ ConsolePlatform(?q) ^ differentFrom(?h, ?m) -> FirstPartyOnRivalConsole(?g)" ;
+    rdfs:comment "publishedByGroup(?g, ?h) ^ availableOn(?g, ?p) ^ ConsolePlatform(?p) ^ manufacturedBy(?p, ?m) ^ PlatformHolder(?h) ^ differentFrom(?h, ?m) -> FirstPartyOnRivalConsole(?g)" ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:g ;
@@ -116,19 +116,14 @@ var:FirstPartyOnRivalConsole a swrl:Imp ;
                                             swrl:argument2 var:m ;
                                             swrl:propertyPredicate vg:manufacturedBy ] ;
                                     rdf:rest [ a swrl:AtomList ;
-                                            rdf:first [ a swrl:IndividualPropertyAtom ;
+                                            rdf:first [ a swrl:ClassAtom ;
                                                     swrl:argument1 var:h ;
-                                                    swrl:argument2 var:q ;
-                                                    swrl:propertyPredicate vg:manufacturerOf ] ;
+                                                    swrl:classPredicate vg:PlatformHolder ] ;
                                             rdf:rest [ a swrl:AtomList ;
-                                                    rdf:first [ a swrl:ClassAtom ;
-                                                            swrl:argument1 var:q ;
-                                                            swrl:classPredicate vg:ConsolePlatform ] ;
-                                                    rdf:rest [ a swrl:AtomList ;
-                                                            rdf:first [ a swrl:DifferentIndividualsAtom ;
-                                                                    swrl:argument1 var:h ;
-                                                                    swrl:argument2 var:m ] ;
-                                                            rdf:rest () ] ] ] ] ] ] ] ;
+                                                    rdf:first [ a swrl:DifferentIndividualsAtom ;
+                                                            swrl:argument1 var:h ;
+                                                            swrl:argument2 var:m ] ;
+                                                    rdf:rest () ] ] ] ] ] ] ;
     swrl:head [ a swrl:AtomList ;
             rdf:first [ a swrl:ClassAtom ;
                     swrl:argument1 var:g ;
@@ -542,11 +537,11 @@ var:f a swrl:Variable .
 
 var:o a swrl:Variable .
 
+var:q a swrl:Variable .
+
 var:s a swrl:Variable .
 
 var:k a swrl:Variable .
-
-var:q a swrl:Variable .
 
 var:r a swrl:Variable .
 

@@ -108,7 +108,7 @@ classe su classe definita & $\cls{FirstPartyGame} \equiv \cls{VideoGame} \sqcap 
 esistenziali annidati & $\cls{FoundedByVeterans} \equiv \cls{Company} \sqcap \exists\,\prop{foundedBy}.(\exists\,\prop{formerEmployeeOf}.\cls{Developer})$ \\
 unione & $\cls{TransmediaFranchise} \equiv \cls{Franchise} \sqcap \exists\,\prop{adaptedInto}.(\cls{Film} \sqcup \cls{TVSeries})$ \\
 cardinalità qualificata & $\cls{RecurringCharacter} \equiv \cls{Character} \sqcap {\geq}2\,\prop{appearsIn}.\cls{VideoGame}$ \\
-restrizione su datatype & $\cls{HighlyRatedGame} \equiv \cls{VideoGame} \sqcap \exists\,\prop{metacriticScore}.\texttt{integer}[\geq 90]$ \\
+restrizione su datatype & $\cls{ClassicGame} \equiv \cls{VideoGame} \sqcap \exists\,\prop{releaseDate}.\texttt{date}[<2005\text{-}01\text{-}01]$ \\
 dal gioco alla serie & $\cls{LongRunningFranchise} \equiv \cls{Franchise} \sqcap \exists\,\prop{includes}.\cls{LateEntry}$ \\
 su una catena & $\cls{StillPlayable} \equiv \cls{VideoGame} \sqcap \exists\,\prop{playableOn}.\cls{CurrentGenerationConsole}$ \\
 \bottomrule

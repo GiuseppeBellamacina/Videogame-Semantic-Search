@@ -117,13 +117,8 @@ DEFINED = [
     ("ViolentStoryGame", "VideoGame", "Un gioco nella cui trama qualcuno viene ucciso", all_of("VideoGame", some("hasKilling", "Killing"))),
     ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", all_of("ViolentStoryGame", some("pegiRating", int_at_least(16)))),
     ("FantasyViolenceGame", "ViolentStoryGame", "Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici", all_of("ViolentStoryGame", some("pegiRating", int_at_most(12)))),
-    ("HighlyRatedGame", "VideoGame", "Un gioco con almeno 90 su Metacritic", all_of("VideoGame", some("metacriticScore", int_at_least(90)))),
-    ("AcclaimedSequel", "SequelGame", "Un seguito acclamato", all_of("SequelGame", "HighlyRatedGame")),
     ("GOTYWinner", "VideoGame", "Un gioco premiato come gioco dell'anno", all_of("VideoGame", some("wonAward", "Award"))),
-    ("RemasteredClassic", "VideoGame", "Un gioco che ha avuto una nuova edizione", all_of("VideoGame", some("hasRemaster", "VideoGame"))),
-    ("RemasterCollection", "Remaster", "Una raccolta che rimasterizza almeno due giochi", all_of("Remaster", at_least(2, "remasterOf", "VideoGame"))),
     ("StillPlayable", "VideoGame", "Un gioco giocabile su una console attuale", all_of("VideoGame", some("playableOn", "CurrentGenerationConsole"))),
-    ("MultiPlatformGame", "VideoGame", "Un gioco uscito su almeno tre piattaforme", all_of("VideoGame", at_least(3, "availableOn", "Platform"))),
     ("Adaptation", "VideoGame", "Un gioco tratto da un'opera di un altro medium", all_of("VideoGame", some("basedOn", "CreativeWork"))),
     ("LiteraryAdaptation", "Adaptation", "Un gioco tratto da un romanzo", all_of("Adaptation", some("basedOn", "Novel"))),
     ("AuteurGame", "VideoGame", "Un gioco diretto da chi guida uno studio", all_of("VideoGame", some("directedBy", "StudioHead"))),
@@ -217,7 +212,7 @@ DATA_PROPS = [
 ]
 KEYS = [("VideoGame", "hasWikidataId")]
 
-RIVAL = [("availableOn", "?g", "?p"), ("ConsolePlatform", "?p"), ("manufacturedBy", "?p", "?m"), ("manufacturerOf", "?h", "?q"), ("ConsolePlatform", "?q"), ("differentFrom", "?h", "?m")]
+RIVAL = [("availableOn", "?g", "?p"), ("ConsolePlatform", "?p"), ("manufacturedBy", "?p", "?m"), ("PlatformHolder", "?h"), ("differentFrom", "?h", "?m")]
 RULES = [
     ("PublisherGroup", [("publishedBy", "?g", "?c")], [("publishedByGroup", "?g", "?c")]),
     ("ParentGroup", [("publishedByGroup", "?g", "?c"), ("subsidiaryOf", "?c", "?p")], [("publishedByGroup", "?g", "?p")]),

@@ -100,7 +100,7 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `Cyberpunk_2077`, `The_Walking_Dead` | `Adaptation` | Sono tratti da un gioco da tavolo e da un fumetto (`basedOn`). |
 | `Minecraft` | `FirstPartyOnRivalConsole` | Mojang → Xbox Game Studios → Microsoft, ed è uscito su PlayStation e Switch. |
 | `person/Hidetaka_Miyazaki` | `GameDirector`, `StudioHead` | Le definizioni `∃directorOf.VideoGame` e `∃heads.Company`. |
-| `Mass_Effect` | `FirstPartyGame`, `FirstPartyOnRivalConsole`, `RemasteredClassic` | Xbox Game Studios → Microsoft, costruttore della Xbox 360; il gioco è uscito anche su PS3; ha la Legendary Edition. |
+| `Mass_Effect` | `FirstPartyGame`, `FirstPartyOnRivalConsole` | Xbox Game Studios → Microsoft, costruttore della Xbox 360; il gioco è uscito anche su PS3. |
 | `Fallout_New_Vegas` | `VeteransReturn`, `FirstPartyOnRivalConsole`, `ExternalEngineGame`, `SameGroupSequel` | Obsidian, fondata da ex Black Isle (che aveva fatto Fallout 2); Bethesda Softworks → ZeniMax → Microsoft; motore Gamebryo. `SameGroupSequel` solo perché oggi Obsidian e Bethesda sono entrambe di Microsoft (limite del tempo). |
 | `company/Obsidian_Entertainment`, `company/AdHoc_Studio` | `FoundedByVeterans` | I fondatori lavoravano per uno sviluppatore (Black Isle, Telltale). |
 | `Grand_Theft_Auto_III` | `StillPlayable`, `LateEntry`, `ExternalEngineGame` | La Definitive Edition è uscita su PS5; è il terzo capitolo; usa RenderWare di Criterion. |
