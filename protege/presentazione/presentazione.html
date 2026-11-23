@@ -91,10 +91,10 @@ button.go:hover{background:#1d4448}
 .lst label.off{color:var(--muted);text-decoration:line-through}
 .lst .t{flex:1}
 .lst input{margin-top:2px;accent-color:var(--accent)}
-.inf{display:block;padding:4px 0 4px 8px;border-bottom:1px solid var(--rule);border-left:3px solid var(--accent);background:var(--soft);margin-bottom:2px;animation:pop .35s ease}
-.inf.swrl{border-left-color:var(--accent2);background:var(--soft2)}
-.inf b{color:#1d4448;font-weight:500}
-.inf.swrl b{color:#7d2412}
+.inf{display:block;padding:4px 0 4px 8px;border-bottom:1px solid var(--rule);border-left:3px solid #2f5f9e;background:#dde6f3;margin-bottom:2px;animation:pop .35s ease}
+.inf.swrl{border-left-color:var(--ok);background:#dcebdf}
+.inf.swrl b{color:#1f5a38}
+.inf b{color:#1f3f73;font-weight:500}
 .inf em{display:block;font-style:normal;color:var(--muted);font-size:11px;margin-top:1px}
 @keyframes pop{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
 .ctl{display:flex;gap:8px;align-items:center;margin:8px 0 0;flex-wrap:wrap}
@@ -128,8 +128,8 @@ svg text{font-family:var(--sans)}
 <!-- 2 -->
 <section class="slide">
   <div class="kicker">La storia</div>
-  <h2>Dodici passi, dal semplice al complesso</h2>
-  <p class="lead">Ogni passo aggiunge un'idea a quelle di prima. Quattro diapositive sono interattive: puoi togliere un fatto e guardare il reasoner cambiare idea.</p>
+  <h2>Dieci passi, dal semplice al complesso</h2>
+  <p class="lead">Ogni passo aggiunge un'idea a quelle di prima. Tre diapositive sono interattive: puoi togliere un fatto e guardare il reasoner cambiare idea.</p>
   <div class="body" style="flex-direction:column;gap:0">
     <div class="story">
       <div><span>Le domande<small>a cosa serve un'ontologia dei videogiochi</small></span></div>
@@ -142,8 +142,6 @@ svg text{font-family:var(--sans)}
       <div><span>Catene, serie e numeri<small>quattro modi di ragionare · <b>interattiva</b></small></span></div>
       <div><span>Quando una classe non basta<small>le regole SWRL</small></span></div>
       <div><span>Tutto insieme: Fallout 4<small>una catena di deduzioni · <b>interattiva</b></small></span></div>
-      <div><span>Quando i dati sono sbagliati<small>le inconsistenze · <b>interattiva</b></small></span></div>
-      <div><span>Come lo abbiamo verificato<small>e cosa OWL non sa fare</small></span></div>
     </div>
   </div>
   <div class="foot"><span>Un'ontologia che sa dedurre</span><span>2</span></div>
@@ -346,77 +344,11 @@ victim(?k, ?v) ^ killer(?k, ?a)
 </section>
 
 <!-- 13 -->
-<section class="slide" data-demo="errori">
-  <div class="kicker">Quando i dati sono sbagliati</div>
-  <h2>Il reasoner trova gli errori</h2>
-  <p class="lead">Se i fatti contraddicono gli assiomi, HermiT dichiara l'ontologia <b>inconsistente</b> e Protégé spiega perché. <b>Spunta</b> uno dei due fatti «sbagliati» e guarda.</p>
-  <div class="demo"></div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>13</span></div>
-</section>
-
-<!-- 14 -->
-<section class="slide">
-  <div class="kicker">La verifica</div>
-  <h2>Come sappiamo che funziona</h2>
-  <p class="lead">Niente è scritto a mano due volte: schema e regole sono generati da tabelle, e ogni risposta attesa è controllata con il reasoner.</p>
-  <div class="body" style="flex-direction:column;gap:18px">
-    <div class="grid3">
-      <div class="stat"><div class="big">250</div><span>controlli con HermiT, tutti superati: classi dedotte e casi che <i>non</i> devono scattare</span></div>
-      <div class="stat"><div class="big">6</div><span>file di test: 5 errori che rendono l'ontologia inconsistente e 1 <span class="mono">sameAs</span> corretto</span></div>
-      <div class="stat"><div class="big">77</div><span>classi, 44 definite, 48 object property, 16 regole SWRL</span></div>
-    </div>
-    <div class="grid2">
-      <ul class="b sm">
-        <li><b>Schema generato</b>: <code>generate_schema.py</code> scrive schema, regole e appendici della relazione dalle stesse tabelle.</li>
-        <li><b>Dati ripetibili</b>: query SPARQL a Wikidata; i fatti di trama da Wikipedia con un agente LLM che deve citare la fonte.</li>
-      </ul>
-      <ul class="b sm">
-        <li><b>L'agente è prudente</b>: scarta ogni fatto la cui citazione non compare nella pagina, e ha limiti di costo stretti.</li>
-        <li><b>Un errore trovato</b>: Assassin's Creed Origins aveva PEGI 12 su Wikidata ma è PEGI 18; il reasoner non lo classificava come violento realistico, e il dato è stato corretto.</li>
-      </ul>
-    </div>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>14</span></div>
-</section>
-
-<!-- 15 -->
-<section class="slide">
-  <div class="kicker">I limiti</div>
-  <h2>Cosa OWL non sa fare</h2>
-  <p class="lead">Saperlo dire fa parte del lavoro.</p>
-  <div class="body">
-    <div class="col stack">
-      <div class="card"><h3>Il tempo</h3><p>Fallout 4 risulta first-party Microsoft perché <i>oggi</i> ZeniMax è di Microsoft; nel 2015 non lo era. Servirebbero relazioni datate.</p></div>
-      <div class="card"><h3>«Tutti» e il tempo di calcolo</h3><p>Dire che <i>tutti</i> i giochi di una serie sono first-party richiede di «chiudere» l'elenco. Funziona, ma HermiT passa da circa 110 a circa 580 secondi: l'abbiamo scartato per poter ragionare dal vivo.</p></div>
-    </div>
-    <div class="col stack">
-      <div class="card"><h3>Il mondo aperto</h3><p>«Non giocabile» o «ultima console» non si deducono. Per vincoli a mondo chiuso servirebbe SHACL, accanto a OWL.</p></div>
-      <div class="card"><h3>I personaggi senza contesto</h3><p>La natura di un personaggio (umano, IA) e il fatto che sia giocabile valgono per tutta la serie, non per un singolo gioco.</p></div>
-    </div>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>15</span></div>
-</section>
-
-<!-- 16 -->
-<section class="slide">
-  <div class="kicker">Dal vivo</div>
-  <h2>Come lo si prova in Protégé</h2>
-  <div class="body">
-    <div class="col">
-      <ul class="b">
-        <li>File › Open <code>protege/videogiochi.ttl</code>, poi Reasoner › HermiT › <b>Start reasoner</b>.</li>
-        <li>Entities › Individuals › <b>Gwyn</b>: in giallo <code>DeceasedCharacter</code>; il <b>?</b> accanto mostra la spiegazione.</li>
-        <li>Individuals › <b>Fallout 4</b>: in giallo <code>FirstPartyGame</code> e <code>FirstPartyOnRivalConsole</code>.</li>
-        <li>Window › Tabs › <b>SWRLTab</b>: le 16 regole.</li>
-        <li>Apri <code>test/errore_cardinalita.ttl</code>: l'ontologia diventa inconsistente, <b>Explain</b> mostra il conflitto.</li>
-      </ul>
-    </div>
-    <div class="col stack" style="max-width:380px">
-      <div class="card"><h3>Il filo della storia</h3><p>Una frase → classi → proprietà → classi definite → mondo aperto → catene → regole → errori. Ogni passo si regge su quelli prima.</p></div>
-      <div class="note">Grazie. Domande?</div>
-    </div>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>16</span></div>
+<section class="slide title">
+  <div class="kicker">Fine</div>
+  <h1>Grazie</h1>
+  <p class="sub">Domande?</p>
+  <div class="foot"><span>Giuseppe Bellamacina</span><span>13</span></div>
 </section>
 </div>
 
@@ -501,7 +433,7 @@ const SCEN = {
       { n: "Pegi16Game", kind: "OWL", t: "≡ VideoGame ⊓ ∃pegiRating.{16}", body: [["?g", "pegiRating", 16]], head: [["?g", "a", "Pegi16Game"]] },
       { n: "RealisticViolenceGame", kind: "OWL", t: "≡ ViolentStoryGame ⊓ ∃pegiRating.integer[≥16]", body: [["?g", "a", "ViolentStoryGame"], ["?g", "pegiRating", "?n"], ["?n", ">=", 16]], head: [["?g", "a", "RealisticViolenceGame"]] }
     ],
-    hint: "Togli «Gwyn_by_Chosen_Undead_in_Dark_Souls inGame Dark_Souls»: Gwyn è comunque morto, ma Dark Souls non è più un gioco violento. Legare l'uccisione al gioco è essenziale."
+    hint: "Prova: togli la spunta alla riga «inGame Dark_Souls» (l'uccisione avviene in quel gioco), premi Azzera e poi Tutto. Gwyn risulta ancora morto, ma Dark Souls non è più un gioco violento: senza il legame con il gioco, l'uccisione non dice nulla sul gioco."
   },
   serie: {
     facts: [
@@ -542,18 +474,6 @@ const SCEN = {
       { n: "FirstPartyOnRivalConsole", kind: "SWRL", t: "publishedByGroup(?g,?h) ^ PlatformHolder(?h) ^ onConsoleOf(?g,?m) ^ differentFrom(?h,?m) → FirstPartyOnRivalConsole(?g)", body: [["?g", "publishedByGroup", "?h"], ["?h", "a", "PlatformHolder"], ["?g", "onConsoleOf", "?m"], ["?h", "!=", "?m"]], head: [["?g", "a", "FirstPartyOnRivalConsole"]] }
     ],
     hint: "Togli «ZeniMax subsidiaryOf Xbox_Game_Studios»: la catena si rompe e Fallout 4 non è più first-party. Mondo aperto: il reasoner non assume che ZeniMax sia di Microsoft solo perché lo sappiamo noi."
-  },
-  errori: {
-    facts: [
-      { t: ["Nintendo_Switch", "a", "ConsolePlatform"] },
-      { t: ["Portal_2", "metacriticScore", 95] },
-      { t: ["Nintendo_Switch", "a", "PCPlatform"], off: true },
-      { t: ["Portal_2", "metacriticScore", 90], off: true }
-    ],
-    rules: [],
-    disjoint: [["ConsolePlatform", "PCPlatform"]],
-    functional: ["metacriticScore", "releaseDate", "pegiRating", "generation"],
-    hint: "Primo errore: una classe disgiunta. Secondo: una proprietà funzionale con due valori. Altri tre errori hanno un file di prova in test/: cardinalità, chiave e proprietà disgiunte (remasterOf e prequelOf)."
   }
 };
 
@@ -563,7 +483,7 @@ function mount(sec) {
   let derived = [];
   root.innerHTML =
     "<div class='pane'><h5>Dati scritti</h5><div class='lst' data-f></div><div class='rules'></div></div>" +
-    "<div class='pane'><h5>Dedotto dal reasoner</h5><div class='lst' data-d></div>" +
+    "<div class='pane'><h5>Dedotto dal reasoner <span style='text-transform:none;letter-spacing:0;font-family:var(--sans)'>· <span style='color:#1f3f73'>blu = assioma</span>, <span style='color:#1f5a38'>verde = regola SWRL</span></span></h5><div class='lst' data-d></div>" +
     "<div data-flag></div><div class='ctl'><button class='go' data-step>Passo</button><button data-all>Tutto</button><button data-reset>Azzera</button><span class='msg' data-msg></span></div></div>";
   const fl = root.querySelector("[data-f]"), dl = root.querySelector("[data-d]"), msg = root.querySelector("[data-msg]"), flag = root.querySelector("[data-flag]");
   root.querySelector(".rules").textContent = sc.rules.length ? "Regole in gioco: " + [...new Set(sc.rules.map(r => r.n))].join(" · ") : "";
