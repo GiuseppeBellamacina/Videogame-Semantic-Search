@@ -1,7 +1,7 @@
 \section{Le componenti dell'ontologia}\label{app:componenti}
 
 \begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
-\caption{Le 91 classi}\\ \toprule
+\caption{Le 96 classi}\\ \toprule
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
@@ -95,6 +95,11 @@
 \texttt{HistoricalCharacter} & \texttt{Character} & definita & Un personaggio che interpreta una persona reale \\
 \texttt{ClassicGame} & \texttt{VideoGame} & definita & Un gioco uscito prima del 2005 \\
 \texttt{ClassicStillPlayable} & \texttt{ClassicGame} & definita & Un classico precedente al 2005 giocabile oggi su una console attuale \\
+\texttt{Pegi3Game} & \texttt{VideoGame} & definita & Un gioco classificato PEGI 3, adatto a tutti \\
+\texttt{Pegi7Game} & \texttt{VideoGame} & definita & Un gioco classificato PEGI 7 \\
+\texttt{Pegi12Game} & \texttt{VideoGame} & definita & Un gioco classificato PEGI 12 \\
+\texttt{Pegi16Game} & \texttt{VideoGame} & definita & Un gioco classificato PEGI 16 \\
+\texttt{Pegi18Game} & \texttt{VideoGame} & definita & Un gioco classificato PEGI 18, solo per adulti \\
 \end{longtable}\endgroup
 
 \begingroup\footnotesize\begin{longtable}{lllp{6cm}}
@@ -206,6 +211,11 @@
 \textsf{HistoricalCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{portrays}.\textsf{Person} \\
 \textsf{ClassicGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{releaseDate}.\texttt{date}[< 2005-01-01] \\
 \textsf{ClassicStillPlayable} &\equiv \textsf{ClassicGame} \sqcap \textsf{StillPlayable} \\
+\textsf{Pegi3Game} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{pegiRating}.\{3\} \\
+\textsf{Pegi7Game} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{pegiRating}.\{7\} \\
+\textsf{Pegi12Game} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{pegiRating}.\{12\} \\
+\textsf{Pegi16Game} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{pegiRating}.\{16\} \\
+\textsf{Pegi18Game} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{pegiRating}.\{18\} \\
 \end{align*}\endgroup
 \noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, Killing, FictionalOrganization, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries, Comic, TabletopGame; Human, Alien, Synthetic. Proprietà disgiunte: remasterOf e prequelOf.
 

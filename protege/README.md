@@ -123,6 +123,7 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `Assassins_Creed_Origins`, `Super_Mario_World` | `SameGroupSequel` (oltre a `SequelByDifferentStudio`) | Seguito passato a un altro studio dello stesso gruppo; Halo 4 no. |
 | `Portal_2`, `Minecraft`, `Dispatch` | `SelfPublishedGame` | Sviluppatore ed editore sono la stessa azienda (regola `SelfPublished`). |
 | `franchise/Super_Mario`, `franchise/The_Legend_of_Zelda` | `FranchiseWithStudioChange` | Per Mario il cambio è sempre tra divisioni Nintendo (seguiti anche `SameGroupSequel`); per Zelda ci sono anche passaggi esterni, gli episodi di Flagship (Capcom). |
+| `Grand_Theft_Auto_V`, `Dark_Souls`, `The_Legend_of_Zelda_Ocarina_of_Time` | `Pegi18Game`, `Pegi16Game`, `Pegi12Game` (e `Pegi3Game`, `Pegi7Game`) | La fascia di età dal solo valore di `pegiRating`, senza bisogno di uccisioni nella trama. |
 | `Grand_Theft_Auto_III`, `Halo_Combat_Evolved`, `The_Legend_of_Zelda_Ocarina_of_Time` | `ClassicGame`, `ClassicStillPlayable` | Usciti prima del 2005 (intervallo di date) e giocabili oggi su una console attuale (catena sul remaster). |
 | `Grand_Theft_Auto_IV`, `Fallout_4` | `EngineChangeSequel` | GTA IV passa da RenderWare a RAGE; Fallout 4 da Gamebryo a Creation Engine. |
 

@@ -168,6 +168,46 @@ vg:MustPlayGame a owl:Class ;
     rdfs:comment "Un gioco con almeno 95 su Metacritic" ;
     rdfs:subClassOf vg:VideoGame .
 
+vg:Pegi12Game a owl:Class ;
+    rdfs:label "Pegi12Game" ;
+    rdfs:comment "Un gioco classificato PEGI 12" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue 12 ;
+                        owl:onProperty vg:pegiRating ] ) ] .
+
+vg:Pegi16Game a owl:Class ;
+    rdfs:label "Pegi16Game" ;
+    rdfs:comment "Un gioco classificato PEGI 16" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue 16 ;
+                        owl:onProperty vg:pegiRating ] ) ] .
+
+vg:Pegi18Game a owl:Class ;
+    rdfs:label "Pegi18Game" ;
+    rdfs:comment "Un gioco classificato PEGI 18, solo per adulti" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue 18 ;
+                        owl:onProperty vg:pegiRating ] ) ] .
+
+vg:Pegi3Game a owl:Class ;
+    rdfs:label "Pegi3Game" ;
+    rdfs:comment "Un gioco classificato PEGI 3, adatto a tutti" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue 3 ;
+                        owl:onProperty vg:pegiRating ] ) ] .
+
+vg:Pegi7Game a owl:Class ;
+    rdfs:label "Pegi7Game" ;
+    rdfs:comment "Un gioco classificato PEGI 7" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:hasValue 7 ;
+                        owl:onProperty vg:pegiRating ] ) ] .
+
 vg:PlayerCharacter a owl:Class ;
     rdfs:label "PlayerCharacter" ;
     rdfs:comment "Un personaggio controllato dal giocatore in almeno un gioco" ;
@@ -754,11 +794,6 @@ vg:hasRemaster a owl:ObjectProperty ;
 vg:kills a owl:ObjectProperty ;
     owl:inverseOf vg:killedBy .
 
-vg:pegiRating a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:integer .
-
 vg:prequelOf a owl:ObjectProperty ;
     rdfs:comment "La storia del gioco si svolge prima di quella dell'altro, anche se è uscito dopo" ;
     rdfs:domain vg:VideoGame ;
@@ -869,6 +904,11 @@ vg:Franchise a owl:Class ;
 vg:Platform a owl:Class ;
     rdfs:label "Platform" ;
     rdfs:comment "Una piattaforma su cui si gioca" .
+
+vg:pegiRating a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:integer .
 
 vg:Killing a owl:Class ;
     rdfs:label "Killing" ;

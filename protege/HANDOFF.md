@@ -3,11 +3,11 @@
 Branch `feat/protege-ontology`, cartella `protege/`. Tutto (schema, regole, dati, test, appendici della relazione) si rigenera con gli script; i comandi sono nel README.
 
 ## Stato
-- 91 classi (55 definite), 49 object property, 5 datatype property, 20 regole SWRL, 95 giochi.
+- 96 classi (60 definite), 49 object property, 5 datatype property, 20 regole SWRL, 95 giochi.
 - `check_reasoning.py` (HermiT via owlready2): tutti i controlli superati, compresi i 6 test in `test/` (5 errori e 1 `sameAs` corretto). 287 controlli, circa 4 minuti in tutto (il ragionamento su `videogiochi.ttl` da solo circa 110 secondi). Serve il JRE di Protégé (`Protege-5.6.9/jre`) o `JAVA_EXE`.
 - Relazione: 14 pagine, corpo fino a pagina 7, compila senza errori né warning, senza bibliografia. I numeri (classi, regole, controlli) sono scritti dagli script in `relazione/numeri.tex` e `controlli.tex`.
-- `DEDUZIONI.md`: 18 sezioni con le deduzioni non banali, con fatti, assiomi e regole; l'ultima racconta una prova scartata (chiusura con nominali).
-- Novità di questa revisione: `ClassicGame` e `ClassicStillPlayable` (intervallo di date + catena sul remaster + classe dedotta), `remasterOf` e `prequelOf` disgiunte con il test `errore_proprieta_disgiunte`, bibliografia tolta, bug di `research_agent.py` sulle sezioni con sottosezioni corretto.
+- `DEDUZIONI.md`: 19 sezioni con le deduzioni non banali, con fatti, assiomi e regole; l'ultima racconta una prova scartata (chiusura con nominali).
+- Novità di questa revisione: le fasce di età `Pegi3Game`...`Pegi18Game` (restrizione `hasValue` sul PEGI), `ClassicGame` e `ClassicStillPlayable` (intervallo di date + catena sul remaster + classe dedotta), `remasterOf` e `prequelOf` disgiunte con il test `errore_proprieta_disgiunte`, bibliografia tolta, bug di `research_agent.py` sulle sezioni con sottosezioni corretto.
 
 ## Da fare a mano
 1. **Controllo in Protégé.** Aprire `protege/videogiochi.ttl`, Reasoner > HermiT > Start reasoner: l'ontologia deve risultare consistente, e SWRLTab deve mostrare le 20 regole. Il tempo in Protégé non è stato misurato (con owlready2/HermiT circa 110 secondi).

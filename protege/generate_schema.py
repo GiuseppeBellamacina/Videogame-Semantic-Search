@@ -60,6 +60,10 @@ def at_least(n, p, c):
     return ("min", n, p, c)
 
 
+def has_value(p, value):
+    return ("value", p, value)
+
+
 def int_at_least(n):
     return ("range", "xsd:integer", "xsd:minInclusive", n)
 
@@ -136,6 +140,11 @@ DEFINED = [
     ("HistoricalCharacter", "Character", "Un personaggio che interpreta una persona reale", all_of("Character", some("portrays", "Person"))),
     ("ClassicGame", "VideoGame", "Un gioco uscito prima del 2005", all_of("VideoGame", some("releaseDate", date_before("2005-01-01T00:00:00")))),
     ("ClassicStillPlayable", "ClassicGame", "Un classico precedente al 2005 giocabile oggi su una console attuale", all_of("ClassicGame", "StillPlayable")),
+    ("Pegi3Game", "VideoGame", "Un gioco classificato PEGI 3, adatto a tutti", all_of("VideoGame", has_value("pegiRating", 3))),
+    ("Pegi7Game", "VideoGame", "Un gioco classificato PEGI 7", all_of("VideoGame", has_value("pegiRating", 7))),
+    ("Pegi12Game", "VideoGame", "Un gioco classificato PEGI 12", all_of("VideoGame", has_value("pegiRating", 12))),
+    ("Pegi16Game", "VideoGame", "Un gioco classificato PEGI 16", all_of("VideoGame", has_value("pegiRating", 16))),
+    ("Pegi18Game", "VideoGame", "Un gioco classificato PEGI 18, solo per adulti", all_of("VideoGame", has_value("pegiRating", 18))),
 ]
 
 RULE_TARGETS = [
@@ -268,6 +277,11 @@ def class_expression(g, expr):
         g.add((node, RDF.type, OWL.Restriction))
         g.add((node, OWL.onProperty, VG[prop]))
         g.add((node, OWL.someValuesFrom, class_expression(g, cls)))
+    elif op == "value":
+        prop, value = args
+        g.add((node, RDF.type, OWL.Restriction))
+        g.add((node, OWL.onProperty, VG[prop]))
+        g.add((node, OWL.hasValue, Literal(value)))
     elif op == "min":
         n, prop, cls = args
         g.add((node, RDF.type, OWL.Restriction))
@@ -469,6 +483,9 @@ def latex(expr):
             f"({latex(x)})" if isinstance(x, tuple) and x[0] == "or" else latex(x)
             for x in args
         )
+    if op == "value":
+        prop, value = args
+        return rf"\exists\,\textit{{{prop}}}.\{{{value}\}}"
     if op == "min":
         n, prop, cls = args
         return rf"{{\geq}}{n}\,\textit{{{prop}}}.{latex(cls)}"

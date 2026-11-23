@@ -156,6 +156,11 @@ EXPECTED = [
     ("SelfPublishedGame", ["Portal_2", "Minecraft", "Dispatch"], ["Halo_4", "Grand_Theft_Auto_V"]),
     ("ClassicGame", ["Grand_Theft_Auto_III", "The_Legend_of_Zelda_Ocarina_of_Time", "Halo_Combat_Evolved", "Super_Mario_Bros_2"], ["Grand_Theft_Auto_V", "Elden_Ring", "The_Legend_of_Zelda_Ocarina_of_Time_3D"]),
     ("ClassicStillPlayable", ["Grand_Theft_Auto_III", "Grand_Theft_Auto_San_Andreas", "Grand_Theft_Auto_Vice_City", "Halo_Combat_Evolved", "The_Legend_of_Zelda_Ocarina_of_Time"], ["Grand_Theft_Auto_IV", "The_Legend_of_Zelda_Majoras_Mask", "Halo_Infinite"]),
+    ("Pegi3Game", ["The_Legend_of_Zelda", "Super_Mario_Bros"], ["Grand_Theft_Auto_V", "Dark_Souls"]),
+    ("Pegi7Game", ["The_Legend_of_Zelda_A_Link_to_the_Past", "The_Legend_of_Zelda_The_Wind_Waker"], ["Grand_Theft_Auto_V", "The_Legend_of_Zelda"]),
+    ("Pegi12Game", ["The_Legend_of_Zelda_Ocarina_of_Time", "The_Legend_of_Zelda_Breath_of_the_Wild"], ["Grand_Theft_Auto_V", "Dark_Souls"]),
+    ("Pegi16Game", ["Dark_Souls", "Fallout_2"], ["Grand_Theft_Auto_V", "The_Legend_of_Zelda"]),
+    ("Pegi18Game", ["Grand_Theft_Auto_V", "Grand_Theft_Auto_VI", "Grand_Theft_Auto_IV"], ["Dark_Souls", "The_Legend_of_Zelda"]),
 ]
 
 RELATIONS = [

@@ -289,7 +289,19 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 17. Gli errori che il reasoner trova, e un'uguaglianza che deduce
+## 17. La fascia di età: PEGI 3, 7, 12, 16 e 18
+
+**Esempio.** `Grand_Theft_Auto_V` e `Grand_Theft_Auto_VI` sono `Pegi18Game`; `Dark_Souls` è `Pegi16Game`; `The_Legend_of_Zelda_Ocarina_of_Time` è `Pegi12Game`; `The_Legend_of_Zelda_The_Wind_Waker` è `Pegi7Game`; `Super_Mario_Bros` è `Pegi3Game`.
+
+**Nei dati.** Solo il valore, per esempio `vg:Grand_Theft_Auto_V vg:pegiRating 18`.
+
+**Assiomi.** `Pegi18Game ≡ VideoGame ⊓ ∃pegiRating.{18}` (una restrizione `hasValue` su un dato), e le altre quattro uguali con 3, 7, 12 e 16.
+
+**Perché serve.** `ViolentStoryGame` si ricava dalle uccisioni raccontate nella trama: GTA V e GTA VI non ne hanno nei dati, quindi non risultano violenti. La fascia di età è un'altra informazione, già nei dati, e non va forzata aggiungendo uccisioni.
+
+---
+
+## 18. Gli errori che il reasoner trova, e un'uguaglianza che deduce
 
 I file in `test/` aggiungono pochi fatti e fanno scattare un assioma preciso.
 
@@ -306,7 +318,7 @@ L'ultimo è il più interessante: lo stesso assioma che nel caso di Breath of th
 
 ---
 
-## 18. Provato e scartato: "tutti i giochi della serie" con una chiusura
+## 19. Provato e scartato: "tutti i giochi della serie" con una chiusura
 
 L'idea: `FirstPartyFranchise ≡ Franchise ⊓ ∃includes.VideoGame ⊓ ∀includes.FirstPartyGame`, con per ogni serie un'asserzione di chiusura `includes only {giochi della serie}` (un `owl:oneOf` con i giochi). Nel mondo aperto è l'unico modo per concludere "tutti": senza chiusura, un gioco non nominato potrebbe sempre esistere.
 
