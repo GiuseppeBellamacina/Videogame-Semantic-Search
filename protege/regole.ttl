@@ -10,6 +10,31 @@
     rdfs:label "Videogiochi: regole SWRL" ;
     owl:imports <http://www.videogame-ontology.org/ontology> .
 
+var:ConsoleMaker a swrl:Imp ;
+    rdfs:label "ConsoleMaker" ;
+    rdfs:comment "availableOn(?g, ?p) ^ ConsolePlatform(?p) ^ manufacturedBy(?p, ?m) -> onConsoleOf(?g, ?m)" ;
+    swrl:body [ a swrl:AtomList ;
+            rdf:first [ a swrl:IndividualPropertyAtom ;
+                    swrl:argument1 var:g ;
+                    swrl:argument2 var:p ;
+                    swrl:propertyPredicate vg:availableOn ] ;
+            rdf:rest [ a swrl:AtomList ;
+                    rdf:first [ a swrl:ClassAtom ;
+                            swrl:argument1 var:p ;
+                            swrl:classPredicate vg:ConsolePlatform ] ;
+                    rdf:rest [ a swrl:AtomList ;
+                            rdf:first [ a swrl:IndividualPropertyAtom ;
+                                    swrl:argument1 var:p ;
+                                    swrl:argument2 var:m ;
+                                    swrl:propertyPredicate vg:manufacturedBy ] ;
+                            rdf:rest () ] ] ] ;
+    swrl:head [ a swrl:AtomList ;
+            rdf:first [ a swrl:IndividualPropertyAtom ;
+                    swrl:argument1 var:g ;
+                    swrl:argument2 var:m ;
+                    swrl:propertyPredicate vg:onConsoleOf ] ;
+            rdf:rest () ] .
+
 var:DefeatedVillain a swrl:Imp ;
     rdfs:label "DefeatedVillain" ;
     rdfs:comment "antagonistOf(?v, ?g) ^ protagonistOf(?h, ?g) ^ killedBy(?v, ?h) -> DefeatedVillain(?v)" ;
@@ -95,114 +120,30 @@ var:ExternalEngine a swrl:Imp ;
 
 var:FirstPartyOnRivalConsole a swrl:Imp ;
     rdfs:label "FirstPartyOnRivalConsole" ;
-    rdfs:comment "publishedByGroup(?g, ?h) ^ availableOn(?g, ?p) ^ ConsolePlatform(?p) ^ manufacturedBy(?p, ?m) ^ PlatformHolder(?h) ^ differentFrom(?h, ?m) -> FirstPartyOnRivalConsole(?g)" ;
+    rdfs:comment "publishedByGroup(?g, ?h) ^ PlatformHolder(?h) ^ onConsoleOf(?g, ?m) ^ differentFrom(?h, ?m) -> FirstPartyOnRivalConsole(?g)" ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:g ;
                     swrl:argument2 var:h ;
                     swrl:propertyPredicate vg:publishedByGroup ] ;
             rdf:rest [ a swrl:AtomList ;
-                    rdf:first [ a swrl:IndividualPropertyAtom ;
-                            swrl:argument1 var:g ;
-                            swrl:argument2 var:p ;
-                            swrl:propertyPredicate vg:availableOn ] ;
+                    rdf:first [ a swrl:ClassAtom ;
+                            swrl:argument1 var:h ;
+                            swrl:classPredicate vg:PlatformHolder ] ;
                     rdf:rest [ a swrl:AtomList ;
-                            rdf:first [ a swrl:ClassAtom ;
-                                    swrl:argument1 var:p ;
-                                    swrl:classPredicate vg:ConsolePlatform ] ;
+                            rdf:first [ a swrl:IndividualPropertyAtom ;
+                                    swrl:argument1 var:g ;
+                                    swrl:argument2 var:m ;
+                                    swrl:propertyPredicate vg:onConsoleOf ] ;
                             rdf:rest [ a swrl:AtomList ;
-                                    rdf:first [ a swrl:IndividualPropertyAtom ;
-                                            swrl:argument1 var:p ;
-                                            swrl:argument2 var:m ;
-                                            swrl:propertyPredicate vg:manufacturedBy ] ;
-                                    rdf:rest [ a swrl:AtomList ;
-                                            rdf:first [ a swrl:ClassAtom ;
-                                                    swrl:argument1 var:h ;
-                                                    swrl:classPredicate vg:PlatformHolder ] ;
-                                            rdf:rest [ a swrl:AtomList ;
-                                                    rdf:first [ a swrl:DifferentIndividualsAtom ;
-                                                            swrl:argument1 var:h ;
-                                                            swrl:argument2 var:m ] ;
-                                                    rdf:rest () ] ] ] ] ] ] ;
+                                    rdf:first [ a swrl:DifferentIndividualsAtom ;
+                                            swrl:argument1 var:h ;
+                                            swrl:argument2 var:m ] ;
+                                    rdf:rest () ] ] ] ] ;
     swrl:head [ a swrl:AtomList ;
             rdf:first [ a swrl:ClassAtom ;
                     swrl:argument1 var:g ;
                     swrl:classPredicate vg:FirstPartyOnRivalConsole ] ;
-            rdf:rest () ] .
-
-var:GroupEngine a swrl:Imp ;
-    rdfs:label "GroupEngine" ;
-    rdfs:comment "madeWith(?g, ?e) ^ engineDevelopedBy(?e, ?m) ^ developedBy(?g, ?d) ^ differentFrom(?m, ?d) ^ inGroupOf(?m, ?r) ^ inGroupOf(?d, ?r) -> GroupEngineGame(?g)" ;
-    swrl:body [ a swrl:AtomList ;
-            rdf:first [ a swrl:IndividualPropertyAtom ;
-                    swrl:argument1 var:g ;
-                    swrl:argument2 var:e ;
-                    swrl:propertyPredicate vg:madeWith ] ;
-            rdf:rest [ a swrl:AtomList ;
-                    rdf:first [ a swrl:IndividualPropertyAtom ;
-                            swrl:argument1 var:e ;
-                            swrl:argument2 var:m ;
-                            swrl:propertyPredicate vg:engineDevelopedBy ] ;
-                    rdf:rest [ a swrl:AtomList ;
-                            rdf:first [ a swrl:IndividualPropertyAtom ;
-                                    swrl:argument1 var:g ;
-                                    swrl:argument2 var:d ;
-                                    swrl:propertyPredicate vg:developedBy ] ;
-                            rdf:rest [ a swrl:AtomList ;
-                                    rdf:first [ a swrl:DifferentIndividualsAtom ;
-                                            swrl:argument1 var:m ;
-                                            swrl:argument2 var:d ] ;
-                                    rdf:rest [ a swrl:AtomList ;
-                                            rdf:first [ a swrl:IndividualPropertyAtom ;
-                                                    swrl:argument1 var:m ;
-                                                    swrl:argument2 var:r ;
-                                                    swrl:propertyPredicate vg:inGroupOf ] ;
-                                            rdf:rest [ a swrl:AtomList ;
-                                                    rdf:first [ a swrl:IndividualPropertyAtom ;
-                                                            swrl:argument1 var:d ;
-                                                            swrl:argument2 var:r ;
-                                                            swrl:propertyPredicate vg:inGroupOf ] ;
-                                                    rdf:rest () ] ] ] ] ] ] ;
-    swrl:head [ a swrl:AtomList ;
-            rdf:first [ a swrl:ClassAtom ;
-                    swrl:argument1 var:g ;
-                    swrl:classPredicate vg:GroupEngineGame ] ;
-            rdf:rest () ] .
-
-var:GroupParent a swrl:Imp ;
-    rdfs:label "GroupParent" ;
-    rdfs:comment "inGroupOf(?c, ?p) ^ subsidiaryOf(?p, ?q) -> inGroupOf(?c, ?q)" ;
-    swrl:body [ a swrl:AtomList ;
-            rdf:first [ a swrl:IndividualPropertyAtom ;
-                    swrl:argument1 var:c ;
-                    swrl:argument2 var:p ;
-                    swrl:propertyPredicate vg:inGroupOf ] ;
-            rdf:rest [ a swrl:AtomList ;
-                    rdf:first [ a swrl:IndividualPropertyAtom ;
-                            swrl:argument1 var:p ;
-                            swrl:argument2 var:q ;
-                            swrl:propertyPredicate vg:subsidiaryOf ] ;
-                    rdf:rest () ] ] ;
-    swrl:head [ a swrl:AtomList ;
-            rdf:first [ a swrl:IndividualPropertyAtom ;
-                    swrl:argument1 var:c ;
-                    swrl:argument2 var:q ;
-                    swrl:propertyPredicate vg:inGroupOf ] ;
-            rdf:rest () ] .
-
-var:GroupSelf a swrl:Imp ;
-    rdfs:label "GroupSelf" ;
-    rdfs:comment "Company(?c) -> inGroupOf(?c, ?c)" ;
-    swrl:body [ a swrl:AtomList ;
-            rdf:first [ a swrl:ClassAtom ;
-                    swrl:argument1 var:c ;
-                    swrl:classPredicate vg:Company ] ;
-            rdf:rest () ] ;
-    swrl:head [ a swrl:AtomList ;
-            rdf:first [ a swrl:IndividualPropertyAtom ;
-                    swrl:argument1 var:c ;
-                    swrl:argument2 var:c ;
-                    swrl:propertyPredicate vg:inGroupOf ] ;
             rdf:rest () ] .
 
 var:InHouseEngine a swrl:Imp ;
@@ -405,45 +346,6 @@ var:ReturningDirector a swrl:Imp ;
                     swrl:classPredicate vg:ReturningDirectorSequel ] ;
             rdf:rest () ] .
 
-var:SameGroupSequel a swrl:Imp ;
-    rdfs:label "SameGroupSequel" ;
-    rdfs:comment "sequelOf(?a, ?b) ^ developedBy(?a, ?x) ^ developedBy(?b, ?y) ^ differentFrom(?x, ?y) ^ inGroupOf(?x, ?r) ^ inGroupOf(?y, ?r) -> SameGroupSequel(?a)" ;
-    swrl:body [ a swrl:AtomList ;
-            rdf:first [ a swrl:IndividualPropertyAtom ;
-                    swrl:argument1 var:a ;
-                    swrl:argument2 var:b ;
-                    swrl:propertyPredicate vg:sequelOf ] ;
-            rdf:rest [ a swrl:AtomList ;
-                    rdf:first [ a swrl:IndividualPropertyAtom ;
-                            swrl:argument1 var:a ;
-                            swrl:argument2 var:x ;
-                            swrl:propertyPredicate vg:developedBy ] ;
-                    rdf:rest [ a swrl:AtomList ;
-                            rdf:first [ a swrl:IndividualPropertyAtom ;
-                                    swrl:argument1 var:b ;
-                                    swrl:argument2 var:y ;
-                                    swrl:propertyPredicate vg:developedBy ] ;
-                            rdf:rest [ a swrl:AtomList ;
-                                    rdf:first [ a swrl:DifferentIndividualsAtom ;
-                                            swrl:argument1 var:x ;
-                                            swrl:argument2 var:y ] ;
-                                    rdf:rest [ a swrl:AtomList ;
-                                            rdf:first [ a swrl:IndividualPropertyAtom ;
-                                                    swrl:argument1 var:x ;
-                                                    swrl:argument2 var:r ;
-                                                    swrl:propertyPredicate vg:inGroupOf ] ;
-                                            rdf:rest [ a swrl:AtomList ;
-                                                    rdf:first [ a swrl:IndividualPropertyAtom ;
-                                                            swrl:argument1 var:y ;
-                                                            swrl:argument2 var:r ;
-                                                            swrl:propertyPredicate vg:inGroupOf ] ;
-                                                    rdf:rest () ] ] ] ] ] ] ;
-    swrl:head [ a swrl:AtomList ;
-            rdf:first [ a swrl:ClassAtom ;
-                    swrl:argument1 var:a ;
-                    swrl:classPredicate vg:SameGroupSequel ] ;
-            rdf:rest () ] .
-
 var:SelfPublished a swrl:Imp ;
     rdfs:label "SelfPublished" ;
     rdfs:comment "developedBy(?g, ?c) ^ publishedBy(?g, ?c) -> SelfPublishedGame(?g)" ;
@@ -493,79 +395,31 @@ var:SequelByDifferentStudio a swrl:Imp ;
                     swrl:classPredicate vg:SequelByDifferentStudio ] ;
             rdf:rest () ] .
 
-var:VeteransReturn a swrl:Imp ;
-    rdfs:label "VeteransReturn" ;
-    rdfs:comment "developedBy(?g, ?c) ^ foundedBy(?c, ?p) ^ formerEmployeeOf(?p, ?o) ^ developerOf(?o, ?h) ^ belongsTo(?g, ?f) ^ belongsTo(?h, ?f) -> VeteransReturn(?g)" ;
-    swrl:body [ a swrl:AtomList ;
-            rdf:first [ a swrl:IndividualPropertyAtom ;
-                    swrl:argument1 var:g ;
-                    swrl:argument2 var:c ;
-                    swrl:propertyPredicate vg:developedBy ] ;
-            rdf:rest [ a swrl:AtomList ;
-                    rdf:first [ a swrl:IndividualPropertyAtom ;
-                            swrl:argument1 var:c ;
-                            swrl:argument2 var:p ;
-                            swrl:propertyPredicate vg:foundedBy ] ;
-                    rdf:rest [ a swrl:AtomList ;
-                            rdf:first [ a swrl:IndividualPropertyAtom ;
-                                    swrl:argument1 var:p ;
-                                    swrl:argument2 var:o ;
-                                    swrl:propertyPredicate vg:formerEmployeeOf ] ;
-                            rdf:rest [ a swrl:AtomList ;
-                                    rdf:first [ a swrl:IndividualPropertyAtom ;
-                                            swrl:argument1 var:o ;
-                                            swrl:argument2 var:h ;
-                                            swrl:propertyPredicate vg:developerOf ] ;
-                                    rdf:rest [ a swrl:AtomList ;
-                                            rdf:first [ a swrl:IndividualPropertyAtom ;
-                                                    swrl:argument1 var:g ;
-                                                    swrl:argument2 var:f ;
-                                                    swrl:propertyPredicate vg:belongsTo ] ;
-                                            rdf:rest [ a swrl:AtomList ;
-                                                    rdf:first [ a swrl:IndividualPropertyAtom ;
-                                                            swrl:argument1 var:h ;
-                                                            swrl:argument2 var:f ;
-                                                            swrl:propertyPredicate vg:belongsTo ] ;
-                                                    rdf:rest () ] ] ] ] ] ] ;
-    swrl:head [ a swrl:AtomList ;
-            rdf:first [ a swrl:ClassAtom ;
-                    swrl:argument1 var:g ;
-                    swrl:classPredicate vg:VeteransReturn ] ;
-            rdf:rest () ] .
-
-var:f a swrl:Variable .
-
-var:o a swrl:Variable .
-
-var:q a swrl:Variable .
-
 var:s a swrl:Variable .
-
-var:k a swrl:Variable .
-
-var:r a swrl:Variable .
-
-var:v a swrl:Variable .
-
-var:e a swrl:Variable .
 
 var:d a swrl:Variable .
 
-var:m a swrl:Variable .
+var:e a swrl:Variable .
+
+var:k a swrl:Variable .
 
 var:x a swrl:Variable .
 
 var:y a swrl:Variable .
 
-var:h a swrl:Variable .
+var:v a swrl:Variable .
+
+var:m a swrl:Variable .
 
 var:p a swrl:Variable .
 
+var:h a swrl:Variable .
+
 var:b a swrl:Variable .
 
-var:a a swrl:Variable .
-
 var:c a swrl:Variable .
+
+var:a a swrl:Variable .
 
 var:g a swrl:Variable .
 

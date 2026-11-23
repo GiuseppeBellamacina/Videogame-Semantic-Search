@@ -1,7 +1,7 @@
 \section{Le componenti dell'ontologia}\label{app:componenti}
 
 \begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
-\caption{Le 91 classi}\\ \toprule
+\caption{Le 77 classi}\\ \toprule
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
@@ -26,13 +26,10 @@
 \texttt{TabletopGame} & \texttt{CreativeWork} & primitiva & Un gioco da tavolo o di ruolo cartaceo \\
 \texttt{Human} & \texttt{Character} & primitiva & Un personaggio umano \\
 \texttt{Alien} & \texttt{Character} & primitiva & Un personaggio di una specie non umana del mondo di gioco \\
-\texttt{FirstPartyOnRivalConsole} & \texttt{VideoGame} & regola SWRL & Un gioco first-party uscito su una console di un concorrente \\
+\texttt{FirstPartyOnRivalConsole} & \texttt{VideoGame} & regola SWRL & Un gioco first-party uscito su una console di un altro costruttore \\
 \texttt{SequelByDifferentStudio} & \texttt{VideoGame} & regola SWRL & Un seguito sviluppato da uno studio diverso \\
-\texttt{VeteransReturn} & \texttt{VideoGame} & regola SWRL & Un gioco fatto da uno studio fondato da chi aveva lavorato alla serie \\
 \texttt{EngineChangeSequel} & \texttt{VideoGame} & regola SWRL & Un seguito che cambia motore \\
-\texttt{ExternalEngineGame} & \texttt{VideoGame} & regola SWRL & Un gioco fatto con un motore sviluppato da un'altra azienda, anche dello stesso gruppo (vedi GroupEngineGame) \\
-\texttt{GroupEngineGame} & \texttt{VideoGame} & regola SWRL & Un gioco fatto con il motore di un'altra azienda dello stesso gruppo \\
-\texttt{SameGroupSequel} & \texttt{VideoGame} & regola SWRL & Un seguito sviluppato da un altro studio dello stesso gruppo \\
+\texttt{ExternalEngineGame} & \texttt{VideoGame} & regola SWRL & Un gioco fatto con un motore sviluppato da un'altra azienda \\
 \texttt{SelfPublishedGame} & \texttt{VideoGame} & regola SWRL & Un gioco sviluppato e pubblicato dalla stessa azienda \\
 \texttt{InHouseEngineGame} & \texttt{VideoGame} & regola SWRL & Un gioco fatto con il motore dello stesso studio \\
 \texttt{ReturningDirectorSequel} & \texttt{VideoGame} & regola SWRL & Un seguito con lo stesso regista del predecessore \\
@@ -42,21 +39,14 @@
 \texttt{MustPlayGame} & \texttt{VideoGame} & regola SWRL & Un gioco con almeno 95 su Metacritic \\
 \texttt{CurrentGenerationConsole} & \texttt{ConsolePlatform} & definita & Una console della nona generazione, l'attuale \\
 \texttt{PreviousGenerationConsole} & \texttt{ConsolePlatform} & definita & Una console di ottava generazione o precedente \\
-\texttt{CrossGenerationGame} & \texttt{StillPlayable} & definita & Un gioco giocabile oggi che è uscito anche su una console di una generazione precedente \\
 \texttt{ProlificDirector} & \texttt{GameDirector} & definita & Chi ha diretto almeno tre giochi \\
 \texttt{ProlificDeveloper} & \texttt{Developer} & definita & Un'azienda che ha sviluppato almeno cinque giochi \\
-\texttt{FirstPartyStudio} & \texttt{Developer} & definita & Uno studio che fa parte del gruppo di un costruttore di console \\
-\texttt{VillainSlayer} & \texttt{Protagonist} & definita & Un protagonista che ha ucciso un cattivo sconfitto \\
-\texttt{TragicProtagonist} & \texttt{Protagonist} & definita & Un protagonista che muore nella trama di un gioco \\
-\texttt{Turncoat} & \texttt{Protagonist} & definita & Un personaggio che è protagonista in un gioco e antagonista in un altro \\
+\texttt{FirstPartyStudio} & \texttt{Developer} & definita & Uno studio che è un costruttore di console o una sua controllata \\
 \texttt{HistoricalGame} & \texttt{VideoGame} & definita & Un gioco con personaggi realmente esistiti: probabilmente ambientato nel passato \\
 \texttt{SciFiGame} & \texttt{VideoGame} & definita & Un gioco con personaggi alieni o sintetici: probabilmente fantascienza \\
-\texttt{RogueAIGame} & \texttt{VideoGame} & definita & Un gioco il cui antagonista è un'intelligenza artificiale \\
 \texttt{PrequelGame} & \texttt{VideoGame} & definita & Un gioco la cui storia precede quella di un altro \\
-\texttt{PrequelReturn} & \texttt{ReturnAfterDeathGame} & definita & Un gioco in cui ricompare un personaggio già morto, spiegato dal fatto che è un prequel \\
 \texttt{Synthetic} & \texttt{Character} & definita & Un personaggio costruito da qualcuno nel mondo di gioco: un'intelligenza artificiale o un robot \\
 \texttt{PlayerCharacter} & \texttt{Character} & definita & Un personaggio controllato dal giocatore in almeno un gioco \\
-\texttt{KilledMoreThanOnce} & \texttt{DeceasedCharacter} & definita & Un personaggio ucciso in almeno due giochi: torna sempre \\
 \texttt{Remaster} & \texttt{VideoGame} & definita & La nuova edizione di un altro gioco \\
 \texttt{GameDirector} & \texttt{Person} & definita & Chi ha diretto almeno un gioco \\
 \texttt{StudioHead} & \texttt{Person} & definita & Chi guida un'azienda \\
@@ -66,25 +56,21 @@
 \texttt{Publisher} & \texttt{Company} & definita & Un'azienda che ha pubblicato almeno un gioco \\
 \texttt{PlatformHolder} & \texttt{Company} & definita & Un'azienda che costruisce console \\
 \texttt{FoundedByVeterans} & \texttt{Company} & definita & Un'azienda fondata da chi lavorava per uno sviluppatore \\
-\texttt{FirstPartyGame} & \texttt{VideoGame} & definita & Un gioco pubblicato dal gruppo di un costruttore di console \\
+\texttt{FirstPartyGame} & \texttt{VideoGame} & definita & Un gioco pubblicato da un costruttore di console o da una sua controllata \\
 \texttt{SequelGame} & \texttt{VideoGame} & definita & Il seguito di un altro gioco \\
 \texttt{LateEntry} & \texttt{SequelGame} & definita & Almeno il terzo capitolo di una serie \\
 \texttt{ViolentStoryGame} & \texttt{VideoGame} & definita & Un gioco nella cui trama qualcuno viene ucciso \\
 \texttt{RealisticViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori \\
-\texttt{FantasyViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici \\
 \texttt{GOTYWinner} & \texttt{VideoGame} & definita & Un gioco premiato come gioco dell'anno \\
 \texttt{StillPlayable} & \texttt{VideoGame} & definita & Un gioco giocabile su una console attuale \\
 \texttt{Adaptation} & \texttt{VideoGame} & definita & Un gioco tratto da un'opera di un altro medium \\
-\texttt{LiteraryAdaptation} & \texttt{Adaptation} & definita & Un gioco tratto da un romanzo \\
 \texttt{AuteurGame} & \texttt{VideoGame} & definita & Un gioco diretto da chi guida uno studio \\
 \texttt{LongRunningFranchise} & \texttt{Franchise} & definita & Una serie con almeno tre capitoli \\
-\texttt{AwardWinningFranchise} & \texttt{Franchise} & definita & Una serie con un gioco dell'anno \\
 \texttt{TransmediaFranchise} & \texttt{Franchise} & definita & Una serie diventata film o serie TV \\
 \texttt{FranchiseWithStudioChange} & \texttt{Franchise} & definita & Una serie passata a un altro studio \\
 \texttt{Protagonist} & \texttt{Character} & definita & Il protagonista di un gioco \\
 \texttt{Antagonist} & \texttt{Character} & definita & L'antagonista di un gioco \\
 \texttt{RecurringCharacter} & \texttt{Character} & definita & Un personaggio presente in almeno due giochi \\
-\texttt{RecurringVillain} & \texttt{RecurringCharacter} & definita & Un antagonista ricorrente \\
 \texttt{RogueAI} & \texttt{Synthetic} & definita & Un'intelligenza artificiale o un robot antagonista \\
 \texttt{MultipleKiller} & \texttt{Killer} & definita & Un personaggio che ha ucciso almeno due personaggi \\
 \texttt{HistoricalCharacter} & \texttt{Character} & definita & Un personaggio che interpreta una persona reale \\
@@ -98,7 +84,7 @@
 \end{longtable}\endgroup
 
 \begingroup\footnotesize\begin{longtable}{lllp{6cm}}
-\caption{Le 49 object property}\\ \toprule
+\caption{Le 48 object property}\\ \toprule
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endfirsthead
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{developedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{developerOf} \\
@@ -115,7 +101,7 @@
 \texttt{manufacturedBy} & \texttt{Platform} & \texttt{Company} & inversa \texttt{manufacturerOf} \\
 \texttt{subsidiaryOf} & \texttt{Company} & \texttt{Company} & transitiva \\
 \texttt{publishedByGroup} & \texttt{VideoGame} & \texttt{Company} &  \\
-\texttt{inGroupOf} & \texttt{Company} & \texttt{Company} &  \\
+\texttt{onConsoleOf} & \texttt{VideoGame} & \texttt{Company} &  \\
 \texttt{directedBy} & \texttt{VideoGame} & \texttt{Person} & inversa \texttt{directorOf} \\
 \texttt{heads} & \texttt{Person} & \texttt{Company} &  \\
 \texttt{foundedBy} & \texttt{Company} & \texttt{Person} &  \\
@@ -135,7 +121,6 @@
 \texttt{prequelOf} & \texttt{VideoGame} & \texttt{VideoGame} &  \\
 \texttt{releasedAfter} & \texttt{VideoGame} & \texttt{VideoGame} &  \\
 \texttt{playableOn} & \texttt{VideoGame} & \texttt{Platform} & catena hasRemaster $\circ$ availableOn \\
-\texttt{techLinkedTo} & \texttt{VideoGame} & \texttt{VideoGame} & catena madeWith $\circ$ engineDevelopedBy $\circ$ developerOf \\
 \end{longtable}\endgroup
 
 \begingroup\footnotesize\begin{longtable}{lllp{6cm}}
@@ -153,21 +138,14 @@
 \begingroup\small\begin{align*}
 \textsf{CurrentGenerationConsole} &\equiv \textsf{ConsolePlatform} \sqcap \exists\,\textit{generation}.\texttt{integer}[\geq 9] \\
 \textsf{PreviousGenerationConsole} &\equiv \textsf{ConsolePlatform} \sqcap \exists\,\textit{generation}.\texttt{integer}[\leq 8] \\
-\textsf{CrossGenerationGame} &\equiv \textsf{StillPlayable} \sqcap \exists\,\textit{playableOn}.\textsf{PreviousGenerationConsole} \\
 \textsf{ProlificDirector} &\equiv \textsf{GameDirector} \sqcap {\geq}3\,\textit{directorOf}.\textsf{VideoGame} \\
 \textsf{ProlificDeveloper} &\equiv \textsf{Developer} \sqcap {\geq}5\,\textit{developerOf}.\textsf{VideoGame} \\
-\textsf{FirstPartyStudio} &\equiv \textsf{Developer} \sqcap \exists\,\textit{inGroupOf}.\textsf{PlatformHolder} \\
-\textsf{VillainSlayer} &\equiv \textsf{Protagonist} \sqcap \exists\,\textit{kills}.\textsf{DefeatedVillain} \\
-\textsf{TragicProtagonist} &\equiv \textsf{Protagonist} \sqcap \textsf{DeceasedCharacter} \\
-\textsf{Turncoat} &\equiv \textsf{Protagonist} \sqcap \textsf{Antagonist} \\
+\textsf{FirstPartyStudio} &\equiv \textsf{Developer} \sqcap (\textsf{PlatformHolder} \sqcup \exists\,\textit{subsidiaryOf}.\textsf{PlatformHolder}) \\
 \textsf{HistoricalGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasCharacter}.\textsf{HistoricalCharacter} \\
 \textsf{SciFiGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasCharacter}.(\textsf{Alien} \sqcup \textsf{Synthetic}) \\
-\textsf{RogueAIGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasAntagonist}.\textsf{RogueAI} \\
 \textsf{PrequelGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{prequelOf}.\textsf{VideoGame} \\
-\textsf{PrequelReturn} &\equiv \textsf{ReturnAfterDeathGame} \sqcap \textsf{PrequelGame} \\
 \textsf{Synthetic} &\equiv \textsf{Character} \sqcap \exists\,\textit{builtBy}.\textsf{owl:Thing} \\
 \textsf{PlayerCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{playableIn}.\textsf{VideoGame} \\
-\textsf{KilledMoreThanOnce} &\equiv \textsf{DeceasedCharacter} \sqcap {\geq}2\,\textit{victimIn}.\textsf{Killing} \\
 \textsf{Remaster} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{remasterOf}.\textsf{VideoGame} \\
 \textsf{GameDirector} &\equiv \textsf{Person} \sqcap \exists\,\textit{directorOf}.\textsf{VideoGame} \\
 \textsf{StudioHead} &\equiv \textsf{Person} \sqcap \exists\,\textit{heads}.\textsf{Company} \\
@@ -177,25 +155,21 @@
 \textsf{Publisher} &\equiv \textsf{Company} \sqcap \exists\,\textit{publisherOf}.\textsf{VideoGame} \\
 \textsf{PlatformHolder} &\equiv \textsf{Company} \sqcap \exists\,\textit{manufacturerOf}.\textsf{ConsolePlatform} \\
 \textsf{FoundedByVeterans} &\equiv \textsf{Company} \sqcap \exists\,\textit{foundedBy}.\exists\,\textit{formerEmployeeOf}.\textsf{Developer} \\
-\textsf{FirstPartyGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{publishedByGroup}.\textsf{PlatformHolder} \\
+\textsf{FirstPartyGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{publishedBy}.(\textsf{PlatformHolder} \sqcup \exists\,\textit{subsidiaryOf}.\textsf{PlatformHolder}) \\
 \textsf{SequelGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{sequelOf}.\textsf{VideoGame} \\
 \textsf{LateEntry} &\equiv \textsf{SequelGame} \sqcap \exists\,\textit{sequelOf}.\exists\,\textit{sequelOf}.\textsf{VideoGame} \\
 \textsf{ViolentStoryGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasKilling}.\textsf{Killing} \\
 \textsf{RealisticViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\geq 16] \\
-\textsf{FantasyViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\leq 12] \\
 \textsf{GOTYWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{Award} \\
 \textsf{StillPlayable} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{playableOn}.\textsf{CurrentGenerationConsole} \\
 \textsf{Adaptation} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{basedOn}.\textsf{CreativeWork} \\
-\textsf{LiteraryAdaptation} &\equiv \textsf{Adaptation} \sqcap \exists\,\textit{basedOn}.\textsf{Novel} \\
 \textsf{AuteurGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{directedBy}.\textsf{StudioHead} \\
 \textsf{LongRunningFranchise} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{includes}.\textsf{LateEntry} \\
-\textsf{AwardWinningFranchise} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{includes}.\textsf{GOTYWinner} \\
 \textsf{TransmediaFranchise} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{adaptedInto}.(\textsf{Film} \sqcup \textsf{TVSeries}) \\
 \textsf{FranchiseWithStudioChange} &\equiv \textsf{Franchise} \sqcap \exists\,\textit{includes}.\textsf{SequelByDifferentStudio} \\
 \textsf{Protagonist} &\equiv \textsf{Character} \sqcap \exists\,\textit{protagonistOf}.\textsf{VideoGame} \\
 \textsf{Antagonist} &\equiv \textsf{Character} \sqcap \exists\,\textit{antagonistOf}.\textsf{VideoGame} \\
 \textsf{RecurringCharacter} &\equiv \textsf{Character} \sqcap {\geq}2\,\textit{appearsIn}.\textsf{VideoGame} \\
-\textsf{RecurringVillain} &\equiv \textsf{RecurringCharacter} \sqcap \textsf{Antagonist} \\
 \textsf{RogueAI} &\equiv \textsf{Synthetic} \sqcap \textsf{Antagonist} \\
 \textsf{MultipleKiller} &\equiv \textsf{Killer} \sqcap {\geq}2\,\textit{kills}.\textsf{Character} \\
 \textsf{HistoricalCharacter} &\equiv \textsf{Character} \sqcap \exists\,\textit{portrays}.\textsf{Person} \\
@@ -213,9 +187,9 @@
 \begin{itemize}\footnotesize
 \item \textbf{PublisherGroup}: \texttt{publishedBy(?g, ?c) $\rightarrow$ publishedByGroup(?g, ?c)}
 \item \textbf{ParentGroup}: \texttt{publishedByGroup(?g, ?c) $\wedge$ subsidiaryOf(?c, ?p) $\rightarrow$ publishedByGroup(?g, ?p)}
-\item \textbf{FirstPartyOnRivalConsole}: \texttt{publishedByGroup(?g, ?h) $\wedge$ availableOn(?g, ?p) $\wedge$ ConsolePlatform(?p) $\wedge$ manufacturedBy(?p, ?m) $\wedge$ PlatformHolder(?h) $\wedge$ differentFrom(?h, ?m) $\rightarrow$ FirstPartyOnRivalConsole(?g)}
+\item \textbf{ConsoleMaker}: \texttt{availableOn(?g, ?p) $\wedge$ ConsolePlatform(?p) $\wedge$ manufacturedBy(?p, ?m) $\rightarrow$ onConsoleOf(?g, ?m)}
+\item \textbf{FirstPartyOnRivalConsole}: \texttt{publishedByGroup(?g, ?h) $\wedge$ PlatformHolder(?h) $\wedge$ onConsoleOf(?g, ?m) $\wedge$ differentFrom(?h, ?m) $\rightarrow$ FirstPartyOnRivalConsole(?g)}
 \item \textbf{SequelByDifferentStudio}: \texttt{sequelOf(?a, ?b) $\wedge$ developedBy(?a, ?x) $\wedge$ developedBy(?b, ?y) $\wedge$ differentFrom(?x, ?y) $\rightarrow$ SequelByDifferentStudio(?a)}
-\item \textbf{VeteransReturn}: \texttt{developedBy(?g, ?c) $\wedge$ foundedBy(?c, ?p) $\wedge$ formerEmployeeOf(?p, ?o) $\wedge$ developerOf(?o, ?h) $\wedge$ belongsTo(?g, ?f) $\wedge$ belongsTo(?h, ?f) $\rightarrow$ VeteransReturn(?g)}
 \item \textbf{EngineChangeSequel}: \texttt{sequelOf(?a, ?b) $\wedge$ madeWith(?a, ?x) $\wedge$ madeWith(?b, ?y) $\wedge$ differentFrom(?x, ?y) $\rightarrow$ EngineChangeSequel(?a)}
 \item \textbf{ExternalEngine}: \texttt{madeWith(?g, ?e) $\wedge$ engineDevelopedBy(?e, ?m) $\wedge$ developedBy(?g, ?d) $\wedge$ differentFrom(?m, ?d) $\rightarrow$ ExternalEngineGame(?g)}
 \item \textbf{InHouseEngine}: \texttt{madeWith(?g, ?e) $\wedge$ engineDevelopedBy(?e, ?d) $\wedge$ developedBy(?g, ?d) $\rightarrow$ InHouseEngineGame(?g)}
@@ -225,10 +199,6 @@
 \item \textbf{ReleaseOrder}: \texttt{sequelOf(?a, ?b) $\rightarrow$ releasedAfter(?a, ?b)}
 \item \textbf{ReleaseOrderChain}: \texttt{releasedAfter(?a, ?b) $\wedge$ sequelOf(?b, ?c) $\rightarrow$ releasedAfter(?a, ?c)}
 \item \textbf{ReturnAfterDeath}: \texttt{victim(?k, ?c) $\wedge$ inGame(?k, ?g) $\wedge$ appearsIn(?c, ?h) $\wedge$ releasedAfter(?h, ?g) $\rightarrow$ ReturningCharacter(?c) $\wedge$ ReturnAfterDeathGame(?h)}
-\item \textbf{GroupSelf}: \texttt{Company(?c) $\rightarrow$ inGroupOf(?c, ?c)}
-\item \textbf{GroupParent}: \texttt{inGroupOf(?c, ?p) $\wedge$ subsidiaryOf(?p, ?q) $\rightarrow$ inGroupOf(?c, ?q)}
-\item \textbf{GroupEngine}: \texttt{madeWith(?g, ?e) $\wedge$ engineDevelopedBy(?e, ?m) $\wedge$ developedBy(?g, ?d) $\wedge$ differentFrom(?m, ?d) $\wedge$ inGroupOf(?m, ?r) $\wedge$ inGroupOf(?d, ?r) $\rightarrow$ GroupEngineGame(?g)}
-\item \textbf{SameGroupSequel}: \texttt{sequelOf(?a, ?b) $\wedge$ developedBy(?a, ?x) $\wedge$ developedBy(?b, ?y) $\wedge$ differentFrom(?x, ?y) $\wedge$ inGroupOf(?x, ?r) $\wedge$ inGroupOf(?y, ?r) $\rightarrow$ SameGroupSequel(?a)}
 \item \textbf{SelfPublished}: \texttt{developedBy(?g, ?c) $\wedge$ publishedBy(?g, ?c) $\rightarrow$ SelfPublishedGame(?g)}
 \item \textbf{MustPlay}: \texttt{metacriticScore(?g, ?s) $\wedge$ xsd:integer[>= 95](?s) $\rightarrow$ MustPlayGame(?g)}
 \end{itemize}

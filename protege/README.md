@@ -77,7 +77,7 @@ L'elenco completo, con anno e sviluppatore, è nell'appendice della relazione.
    - le negazioni: con il mondo aperto, "non scritto" non significa "falso";
    - l'uguaglianza tra individui dichiarati diversi;
    - le relazioni nel tempo: OWL non sa che Bethesda è di Microsoft solo dal 2021;
-   - dentro le regole SWRL, i valori ottenuti da catene o transitività. Per questo il gruppo di un editore è calcolato da due regole, un passo alla volta.
+   - dentro le regole SWRL, i valori ottenuti da catene o transitività. Per questo "pubblicato da un costruttore di console o da una sua controllata" è una classe OWL (`FirstPartyGame`), mentre `FirstPartyOnRivalConsole`, che deve confrontare due aziende, usa le regole `PublisherGroup` e `ParentGroup` per salire la catena delle controllanti un passo alla volta.
 
 ## Deduzioni da mostrare (dove cliccare)
 
@@ -89,40 +89,33 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `character/Chosen_Undead` | `Killer` | Lo stesso fatto, letto dall'altra parte: `Killer ≡ Character ⊓ ∃killerIn.Killing`. |
 | `character/Jason_Brody`, `character/Link` | `MultipleKiller` | Hanno ucciso almeno due personaggi (inversa `kills`, cardinalità ≥ 2). |
 | `Far_Cry_3`, `The_Legend_of_Zelda_Twilight_Princess` | `ViolentStoryGame` | Ha almeno un `Killing` con `inGame` uguale al gioco: l'uccisione conta solo nel gioco in cui avviene. |
-| `Grand_Theft_Auto_IV` / `The_Legend_of_Zelda_Skyward_Sword` | `RealisticViolenceGame` / `FantasyViolenceGame` | Stessa violenza nella storia, la distingue il PEGI: ≥ 16 realistica, ≤ 12 di fantasia. |
+| `Grand_Theft_Auto_IV` | `RealisticViolenceGame` | Ha uccisioni nella trama ed è PEGI 16 o 18. |
 | `character/Cortana` | `Synthetic`, `RogueAI` | Nei dati c'è solo `builtBy` Catherine Halsey: chi è costruito da qualcuno è `Synthetic`. In Halo 5 è l'antagonista, quindi IA ribelle. Lo stesso per GLaDOS e Wheatley (Aperture Science). |
 | `character/Link`, `character/Chell` | `PlayerCharacter` | Il giocatore li controlla in almeno un gioco (`playableIn`). |
 | `platform/PlayStation_5` | `CurrentGenerationConsole` | Nei dati c'è solo la generazione (9): la classe è definita come console di generazione ≥ 9. |
-| `character/Ganondorf` | `KilledMoreThanOnce`, `ReturningCharacter` | Ucciso in Twilight Princess e in Tears of the Kingdom; ricompare in giochi usciti dopo la sua morte. |
-| `Grand_Theft_Auto_San_Andreas`, `The_Legend_of_Zelda_Breath_of_the_Wild` | `ReturnAfterDeathGame`, `PrequelReturn` (solo San Andreas) | Catalina, uccisa in GTA III, ricompare in San Andreas, che è un prequel; Ganondorf ricompare in Breath of the Wild, che non lo è. |
+| `character/Ganondorf` | `ReturningCharacter` | Ucciso in Twilight Princess e in Tears of the Kingdom; ricompare in giochi usciti dopo la sua morte. |
+| `Grand_Theft_Auto_San_Andreas`, `The_Legend_of_Zelda_Breath_of_the_Wild` | `ReturnAfterDeathGame` | Catalina, uccisa in GTA III, ricompare in San Andreas; Ganondorf ricompare in Breath of the Wild. |
 | `Halo_Combat_Evolved` | `StillPlayable`, `MustPlayGame`, `GOTYWinner` | Il remake Campaign Evolved è su PS5; Metacritic 97; D.I.C.E. 2002. |
 | `Far_Cry_2`, `Far_Cry_6` | `SequelByDifferentStudio`, `EngineChangeSequel` (FC2), `ExternalEngineGame` (FC6) | FC2 passa da Crytek/CryEngine a Ubisoft Montreal/Dunia; FC6 è di Ubisoft Toronto con il motore di Montreal. |
 | `Cyberpunk_2077`, `The_Walking_Dead` | `Adaptation` | Sono tratti da un gioco da tavolo e da un fumetto (`basedOn`). |
-| `Minecraft` | `FirstPartyOnRivalConsole` | Mojang → Xbox Game Studios → Microsoft, ed è uscito su PlayStation e Switch. |
 | `person/Hidetaka_Miyazaki` | `GameDirector`, `StudioHead` | Le definizioni `∃directorOf.VideoGame` e `∃heads.Company`. |
-| `Mass_Effect` | `FirstPartyGame`, `FirstPartyOnRivalConsole` | Xbox Game Studios → Microsoft, costruttore della Xbox 360; il gioco è uscito anche su PS3. |
-| `Fallout_New_Vegas` | `VeteransReturn`, `FirstPartyOnRivalConsole`, `ExternalEngineGame`, `SameGroupSequel` | Obsidian, fondata da ex Black Isle (che aveva fatto Fallout 2); Bethesda Softworks → ZeniMax → Microsoft; motore Gamebryo. `SameGroupSequel` solo perché oggi Obsidian e Bethesda sono entrambe di Microsoft (limite del tempo). |
+| `Mass_Effect`, `Fallout_4` | `FirstPartyGame` | Editore controllato da un costruttore di console (Xbox Game Studios e Bethesda Softworks → Microsoft): `∃publishedBy.(PlatformHolder ⊔ ∃subsidiaryOf.PlatformHolder)`. |
+| `Mass_Effect`, `Fallout_4`, `Fallout_New_Vegas`, `Minecraft` | `FirstPartyOnRivalConsole` (regole `PublisherGroup`, `ParentGroup`, `ConsoleMaker`) | Il gioco è del gruppo di un costruttore di console ed è uscito sulla console di un altro (Microsoft → PlayStation, Nintendo Switch). Halo 4, Breath of the Wild e Mass Effect 2 no. |
+| `Fallout_New_Vegas` | `FirstPartyGame`, `ExternalEngineGame` | Bethesda Softworks → ZeniMax → Microsoft (solo perché oggi è così: limite del tempo); motore Gamebryo di un'altra azienda. |
 | `company/Obsidian_Entertainment`, `company/AdHoc_Studio` | `FoundedByVeterans` | I fondatori lavoravano per uno sviluppatore (Black Isle, Telltale). |
 | `Grand_Theft_Auto_III` | `StillPlayable`, `LateEntry`, `ExternalEngineGame` | La Definitive Edition è uscita su PS5; è il terzo capitolo; usa RenderWare di Criterion. |
-| `The_Witcher` | `LiteraryAdaptation`, relazione `techLinkedTo Mass_Effect` | È tratto dalla saga di Sapkowski e usa il motore Aurora di BioWare. |
+| `The_Witcher` | `Adaptation` | È tratto dalla saga di Sapkowski. |
 | `character/Leonardo_da_Vinci` | `HistoricalCharacter` | Interpreta una persona reale. |
-| `character/GLaDOS` | `RogueAI`, `RecurringVillain` | È un'IA antagonista, presente in Portal e Portal 2. |
+| `character/GLaDOS` | `RogueAI`, `RecurringCharacter` | È un'IA antagonista, presente in Portal e Portal 2. |
 | `franchise/Halo`, `franchise/Fallout` | `FranchiseWithStudioChange`, `TransmediaFranchise` | Halo 4 è di 343 Industries dopo Bungie, Fallout 3 di Bethesda dopo Black Isle; da entrambe è nata una serie TV. |
 | `Grand_Theft_Auto` | `VideoGame` | Il tipo non è asserito; deriva da dominio e range delle sue proprietà. |
-| `character/Link`, `character/Ezio_Auditore_da_Firenze` | `VillainSlayer` | Protagonisti che hanno ucciso un `DefeatedVillain` (classe a sua volta dedotta da una regola). |
-| `character/Gustave`, `character/Haytham_Kenway` | `TragicProtagonist` | Protagonisti (`Protagonist`) che sono anche vittime (`DeceasedCharacter`). |
-| `character/Cortana` | `Turncoat` | Protagonista in Halo CE e Halo 4, antagonista in Halo 5. |
 | `Assassins_Creed_II` | `HistoricalGame` | Ha personaggi che interpretano persone reali: una specie di "genere" dedotto. |
 | `Portal_2`, `Halo_Infinite`, `Mass_Effect_2` | `SciFiGame` | Personaggi sintetici (GLaDOS, Wheatley) o alieni (Arbiter, Atriox, Garrus, Liara). |
-| `Halo_5_Guardians`, `Portal` | `RogueAIGame` | L'antagonista è un'IA: serve l'inversa `hasAntagonist`. |
 | `person/Hidetaka_Miyazaki`, `person/Shigeru_Miyamoto` | `ProlificDirector` | Almeno tre giochi diretti (`≥3 directorOf.VideoGame`). |
 | `company/Bungie`, `company/Rockstar_North` | `ProlificDeveloper` | Almeno cinque giochi sviluppati. |
-| `company/Halo_Studios`, `company/Nintendo_EPD` | `FirstPartyStudio` | Fanno parte del gruppo di un costruttore di console (`∃inGroupOf.PlatformHolder`); BioWare e Capcom no. |
-| `The_Legend_of_Zelda_Ocarina_of_Time`, `Grand_Theft_Auto_III` | `CrossGenerationGame` | Giocabili oggi su una console attuale (anche via remake) e usciti su una di generazione precedente. |
-| `Grand_Theft_Auto_V`, `Far_Cry_6`, `Assassins_Creed_Mirage` | `GroupEngineGame` (oltre a `ExternalEngineGame`) | Il motore è di un'altra azienda dello stesso gruppo (`inGroupOf` ricavata dalle regole `GroupSelf` e `GroupParent`). |
-| `Assassins_Creed_Origins`, `Super_Mario_World` | `SameGroupSequel` (oltre a `SequelByDifferentStudio`) | Seguito passato a un altro studio dello stesso gruppo; Halo 4 no. |
+| `company/Halo_Studios`, `company/Nintendo_EPD` | `FirstPartyStudio` | Sono un costruttore di console o una sua controllata (`PlatformHolder ⊔ ∃subsidiaryOf.PlatformHolder`); BioWare e Capcom no. |
 | `Portal_2`, `Minecraft`, `Dispatch` | `SelfPublishedGame` | Sviluppatore ed editore sono la stessa azienda (regola `SelfPublished`). |
-| `franchise/Super_Mario`, `franchise/The_Legend_of_Zelda` | `FranchiseWithStudioChange` | Per Mario il cambio è sempre tra divisioni Nintendo (seguiti anche `SameGroupSequel`); per Zelda ci sono anche passaggi esterni, gli episodi di Flagship (Capcom). |
+| `franchise/Super_Mario`, `franchise/The_Legend_of_Zelda` | `FranchiseWithStudioChange` | Per Mario il cambio è sempre tra divisioni Nintendo; per Zelda ci sono anche passaggi esterni, gli episodi di Flagship (Capcom). |
 | `Grand_Theft_Auto_V`, `Dark_Souls`, `The_Legend_of_Zelda_Ocarina_of_Time` | `Pegi18Game`, `Pegi16Game`, `Pegi12Game` (e `Pegi3Game`, `Pegi7Game`) | La fascia di età dal solo valore di `pegiRating`, senza bisogno di uccisioni nella trama. |
 | `Grand_Theft_Auto_III`, `Halo_Combat_Evolved`, `The_Legend_of_Zelda_Ocarina_of_Time` | `ClassicGame`, `ClassicStillPlayable` | Usciti prima del 2005 (intervallo di date) e giocabili oggi su una console attuale (catena sul remaster). |
 | `Grand_Theft_Auto_IV`, `Fallout_4` | `EngineChangeSequel` | GTA IV passa da RenderWare a RAGE; Fallout 4 da Gamebryo a Creation Engine. |
@@ -148,10 +141,10 @@ Prima di tutto: File > Open > `protege/videogiochi.ttl`, poi Reasoner > HermiT >
 
 1. **`gerarchia_inferita.png`.** Tab Entities > Classes. Cambia il menu sopra l'albero da *Asserted* a *Inferred*, espandi `Character`, `Company` e `Franchise`, ritaglia il solo pannello dell'albero.
 2. **`spiegazione_gwyn.png`.** Tab Entities > Individuals, cerca *Gwyn* e seleziona *Gwyn, Lord of Sunlight*. Nel pannello Description, sotto Types, la riga gialla `DeceasedCharacter` è dedotta: clicca il punto interrogativo accanto e fotografa la finestra della spiegazione.
-3. **`individuo_fallout_new_vegas.png`.** Tab Individuals, cerca *New Vegas*, selezionalo e fotografa il pannello Description: in giallo devono esserci `VeteransReturn`, `FirstPartyOnRivalConsole`, `ExternalEngineGame` e `SameGroupSequel`.
+3. **`individuo_fallout_new_vegas.png`.** Tab Individuals, cerca *New Vegas*, selezionalo e fotografa il pannello Description: in giallo devono esserci `FirstPartyGame`, `FirstPartyOnRivalConsole`, `ExternalEngineGame` e `SequelByDifferentStudio`.
 4. **`swrl_rules.png`.** Window > Tabs > SWRLTab. Allarga la colonna *Rule* e fotografa la tabella delle regole. Se è vuota, controlla in Active ontology > Ontology imports che `regole` sia importata.
 5. **`inconsistenza.png`.** File > Open > `protege/test/errore_cardinalita.ttl` (in una nuova finestra se lo chiede), Reasoner > HermiT > Start reasoner. Dall'avviso di ontologia inconsistente scegli *Explain inconsistent ontology* e fotografa gli assiomi in conflitto.
 
-Altre schermate che fanno bella figura dal vivo, ma non servono alla relazione: DL Query (Window > Tabs > DL Query) con `SequelByDifferentStudio and SameGroupSequel` e *Instances* spuntato; la spiegazione di `character/Cortana` come `RogueAI`.
+Altre schermate che fanno bella figura dal vivo, ma non servono alla relazione: DL Query (Window > Tabs > DL Query) con `SequelByDifferentStudio and EngineChangeSequel` e *Instances* spuntato; la spiegazione di `character/Cortana` come `RogueAI`.
 
 Nessun plugin aggiuntivo è necessario.

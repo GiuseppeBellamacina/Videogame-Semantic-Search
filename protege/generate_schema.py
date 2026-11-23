@@ -87,21 +87,14 @@ def any_of(*xs):
 DEFINED = [
     ("CurrentGenerationConsole", "ConsolePlatform", "Una console della nona generazione, l'attuale", all_of("ConsolePlatform", some("generation", int_at_least(9)))),
     ("PreviousGenerationConsole", "ConsolePlatform", "Una console di ottava generazione o precedente", all_of("ConsolePlatform", some("generation", int_at_most(8)))),
-    ("CrossGenerationGame", "StillPlayable", "Un gioco giocabile oggi che è uscito anche su una console di una generazione precedente", all_of("StillPlayable", some("playableOn", "PreviousGenerationConsole"))),
     ("ProlificDirector", "GameDirector", "Chi ha diretto almeno tre giochi", all_of("GameDirector", at_least(3, "directorOf", "VideoGame"))),
     ("ProlificDeveloper", "Developer", "Un'azienda che ha sviluppato almeno cinque giochi", all_of("Developer", at_least(5, "developerOf", "VideoGame"))),
-    ("FirstPartyStudio", "Developer", "Uno studio che fa parte del gruppo di un costruttore di console", all_of("Developer", some("inGroupOf", "PlatformHolder"))),
-    ("VillainSlayer", "Protagonist", "Un protagonista che ha ucciso un cattivo sconfitto", all_of("Protagonist", some("kills", "DefeatedVillain"))),
-    ("TragicProtagonist", "Protagonist", "Un protagonista che muore nella trama di un gioco", all_of("Protagonist", "DeceasedCharacter")),
-    ("Turncoat", "Protagonist", "Un personaggio che è protagonista in un gioco e antagonista in un altro", all_of("Protagonist", "Antagonist")),
+    ("FirstPartyStudio", "Developer", "Uno studio che è un costruttore di console o una sua controllata", all_of("Developer", any_of("PlatformHolder", some("subsidiaryOf", "PlatformHolder")))),
     ("HistoricalGame", "VideoGame", "Un gioco con personaggi realmente esistiti: probabilmente ambientato nel passato", all_of("VideoGame", some("hasCharacter", "HistoricalCharacter"))),
     ("SciFiGame", "VideoGame", "Un gioco con personaggi alieni o sintetici: probabilmente fantascienza", all_of("VideoGame", some("hasCharacter", any_of("Alien", "Synthetic")))),
-    ("RogueAIGame", "VideoGame", "Un gioco il cui antagonista è un'intelligenza artificiale", all_of("VideoGame", some("hasAntagonist", "RogueAI"))),
     ("PrequelGame", "VideoGame", "Un gioco la cui storia precede quella di un altro", all_of("VideoGame", some("prequelOf", "VideoGame"))),
-    ("PrequelReturn", "ReturnAfterDeathGame", "Un gioco in cui ricompare un personaggio già morto, spiegato dal fatto che è un prequel", all_of("ReturnAfterDeathGame", "PrequelGame")),
     ("Synthetic", "Character", "Un personaggio costruito da qualcuno nel mondo di gioco: un'intelligenza artificiale o un robot", all_of("Character", some("builtBy", "owl:Thing"))),
     ("PlayerCharacter", "Character", "Un personaggio controllato dal giocatore in almeno un gioco", all_of("Character", some("playableIn", "VideoGame"))),
-    ("KilledMoreThanOnce", "DeceasedCharacter", "Un personaggio ucciso in almeno due giochi: torna sempre", all_of("DeceasedCharacter", at_least(2, "victimIn", "Killing"))),
     ("Remaster", "VideoGame", "La nuova edizione di un altro gioco", all_of("VideoGame", some("remasterOf", "VideoGame"))),
     ("GameDirector", "Person", "Chi ha diretto almeno un gioco", all_of("Person", some("directorOf", "VideoGame"))),
     ("StudioHead", "Person", "Chi guida un'azienda", all_of("Person", some("heads", "Company"))),
@@ -111,25 +104,21 @@ DEFINED = [
     ("Publisher", "Company", "Un'azienda che ha pubblicato almeno un gioco", all_of("Company", some("publisherOf", "VideoGame"))),
     ("PlatformHolder", "Company", "Un'azienda che costruisce console", all_of("Company", some("manufacturerOf", "ConsolePlatform"))),
     ("FoundedByVeterans", "Company", "Un'azienda fondata da chi lavorava per uno sviluppatore", all_of("Company", some("foundedBy", some("formerEmployeeOf", "Developer")))),
-    ("FirstPartyGame", "VideoGame", "Un gioco pubblicato dal gruppo di un costruttore di console", all_of("VideoGame", some("publishedByGroup", "PlatformHolder"))),
+    ("FirstPartyGame", "VideoGame", "Un gioco pubblicato da un costruttore di console o da una sua controllata", all_of("VideoGame", some("publishedBy", any_of("PlatformHolder", some("subsidiaryOf", "PlatformHolder"))))),
     ("SequelGame", "VideoGame", "Il seguito di un altro gioco", all_of("VideoGame", some("sequelOf", "VideoGame"))),
     ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", all_of("SequelGame", some("sequelOf", some("sequelOf", "VideoGame")))),
     ("ViolentStoryGame", "VideoGame", "Un gioco nella cui trama qualcuno viene ucciso", all_of("VideoGame", some("hasKilling", "Killing"))),
     ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", all_of("ViolentStoryGame", some("pegiRating", int_at_least(16)))),
-    ("FantasyViolenceGame", "ViolentStoryGame", "Un gioco violento classificato al più PEGI 12: violenza su personaggi non realistici", all_of("ViolentStoryGame", some("pegiRating", int_at_most(12)))),
     ("GOTYWinner", "VideoGame", "Un gioco premiato come gioco dell'anno", all_of("VideoGame", some("wonAward", "Award"))),
     ("StillPlayable", "VideoGame", "Un gioco giocabile su una console attuale", all_of("VideoGame", some("playableOn", "CurrentGenerationConsole"))),
     ("Adaptation", "VideoGame", "Un gioco tratto da un'opera di un altro medium", all_of("VideoGame", some("basedOn", "CreativeWork"))),
-    ("LiteraryAdaptation", "Adaptation", "Un gioco tratto da un romanzo", all_of("Adaptation", some("basedOn", "Novel"))),
     ("AuteurGame", "VideoGame", "Un gioco diretto da chi guida uno studio", all_of("VideoGame", some("directedBy", "StudioHead"))),
     ("LongRunningFranchise", "Franchise", "Una serie con almeno tre capitoli", all_of("Franchise", some("includes", "LateEntry"))),
-    ("AwardWinningFranchise", "Franchise", "Una serie con un gioco dell'anno", all_of("Franchise", some("includes", "GOTYWinner"))),
     ("TransmediaFranchise", "Franchise", "Una serie diventata film o serie TV", all_of("Franchise", some("adaptedInto", any_of("Film", "TVSeries")))),
     ("FranchiseWithStudioChange", "Franchise", "Una serie passata a un altro studio", all_of("Franchise", some("includes", "SequelByDifferentStudio"))),
     ("Protagonist", "Character", "Il protagonista di un gioco", all_of("Character", some("protagonistOf", "VideoGame"))),
     ("Antagonist", "Character", "L'antagonista di un gioco", all_of("Character", some("antagonistOf", "VideoGame"))),
     ("RecurringCharacter", "Character", "Un personaggio presente in almeno due giochi", all_of("Character", at_least(2, "appearsIn", "VideoGame"))),
-    ("RecurringVillain", "RecurringCharacter", "Un antagonista ricorrente", all_of("RecurringCharacter", "Antagonist")),
     ("RogueAI", "Synthetic", "Un'intelligenza artificiale o un robot antagonista", all_of("Synthetic", "Antagonist")),
     ("MultipleKiller", "Killer", "Un personaggio che ha ucciso almeno due personaggi", all_of("Killer", at_least(2, "kills", "Character"))),
     ("HistoricalCharacter", "Character", "Un personaggio che interpreta una persona reale", all_of("Character", some("portrays", "Person"))),
@@ -143,13 +132,10 @@ DEFINED = [
 ]
 
 RULE_TARGETS = [
-    ("FirstPartyOnRivalConsole", "VideoGame", "Un gioco first-party uscito su una console di un concorrente"),
+    ("FirstPartyOnRivalConsole", "VideoGame", "Un gioco first-party uscito su una console di un altro costruttore"),
     ("SequelByDifferentStudio", "VideoGame", "Un seguito sviluppato da uno studio diverso"),
-    ("VeteransReturn", "VideoGame", "Un gioco fatto da uno studio fondato da chi aveva lavorato alla serie"),
     ("EngineChangeSequel", "VideoGame", "Un seguito che cambia motore"),
-    ("ExternalEngineGame", "VideoGame", "Un gioco fatto con un motore sviluppato da un'altra azienda, anche dello stesso gruppo (vedi GroupEngineGame)"),
-    ("GroupEngineGame", "VideoGame", "Un gioco fatto con il motore di un'altra azienda dello stesso gruppo"),
-    ("SameGroupSequel", "VideoGame", "Un seguito sviluppato da un altro studio dello stesso gruppo"),
+    ("ExternalEngineGame", "VideoGame", "Un gioco fatto con un motore sviluppato da un'altra azienda"),
     ("SelfPublishedGame", "VideoGame", "Un gioco sviluppato e pubblicato dalla stessa azienda"),
     ("InHouseEngineGame", "VideoGame", "Un gioco fatto con il motore dello stesso studio"),
     ("ReturningDirectorSequel", "VideoGame", "Un seguito con lo stesso regista del predecessore"),
@@ -174,8 +160,8 @@ OBJECT_PROPS = [
     ("engineDevelopedBy", "GameEngine", "Company", None, [], None),
     ("manufacturedBy", "Platform", "Company", "manufacturerOf", [], None),
     ("subsidiaryOf", "Company", "Company", None, ["Transitive"], None),
-    ("publishedByGroup", "VideoGame", "Company", None, [], "Derivata dalle regole: l'editore e i gruppi che lo controllano"),
-    ("inGroupOf", "Company", "Company", None, [], "Derivata dalle regole: l'azienda stessa e tutte quelle che la controllano"),
+    ("publishedByGroup", "VideoGame", "Company", None, [], "Derivata dalle regole: l'editore e le aziende che lo controllano"),
+    ("onConsoleOf", "VideoGame", "Company", None, [], "Derivata dalle regole: il costruttore di una console su cui esce il gioco"),
     ("directedBy", "VideoGame", "Person", "directorOf", [], None),
     ("heads", "Person", "Company", None, [], None),
     ("foundedBy", "Company", "Person", None, [], None),
@@ -195,10 +181,9 @@ OBJECT_PROPS = [
     ("prequelOf", "VideoGame", "VideoGame", None, [], "La storia del gioco si svolge prima di quella dell'altro, anche se è uscito dopo"),
     ("releasedAfter", "VideoGame", "VideoGame", None, [], "Derivata dalle regole: uscito dopo, nella stessa serie"),
     ("playableOn", "VideoGame", "Platform", None, [], "Disponibile, anche tramite una nuova edizione"),
-    ("techLinkedTo", "VideoGame", "VideoGame", None, [], "Giochi dello studio che ha fatto il motore usato"),
 ]
 SUBPROPERTIES = [("availableOn", "playableOn"), ("protagonistOf", "appearsIn"), ("antagonistOf", "appearsIn"), ("playableIn", "appearsIn")]
-CHAINS = [("playableOn", ["hasRemaster", "availableOn"]), ("techLinkedTo", ["madeWith", "engineDevelopedBy", "developerOf"])]
+CHAINS = [("playableOn", ["hasRemaster", "availableOn"])]
 # solo proprietà semplici (né transitive né super-proprietà di catene): per questo non sequelOf
 DISJOINT_PROPS = [("remasterOf", "prequelOf")]
 
@@ -212,13 +197,12 @@ DATA_PROPS = [
 ]
 KEYS = [("VideoGame", "hasWikidataId")]
 
-RIVAL = [("availableOn", "?g", "?p"), ("ConsolePlatform", "?p"), ("manufacturedBy", "?p", "?m"), ("PlatformHolder", "?h"), ("differentFrom", "?h", "?m")]
 RULES = [
     ("PublisherGroup", [("publishedBy", "?g", "?c")], [("publishedByGroup", "?g", "?c")]),
     ("ParentGroup", [("publishedByGroup", "?g", "?c"), ("subsidiaryOf", "?c", "?p")], [("publishedByGroup", "?g", "?p")]),
-    ("FirstPartyOnRivalConsole", [("publishedByGroup", "?g", "?h"), *RIVAL], [("FirstPartyOnRivalConsole", "?g")]),
+    ("ConsoleMaker", [("availableOn", "?g", "?p"), ("ConsolePlatform", "?p"), ("manufacturedBy", "?p", "?m")], [("onConsoleOf", "?g", "?m")]),
+    ("FirstPartyOnRivalConsole", [("publishedByGroup", "?g", "?h"), ("PlatformHolder", "?h"), ("onConsoleOf", "?g", "?m"), ("differentFrom", "?h", "?m")], [("FirstPartyOnRivalConsole", "?g")]),
     ("SequelByDifferentStudio", [("sequelOf", "?a", "?b"), ("developedBy", "?a", "?x"), ("developedBy", "?b", "?y"), ("differentFrom", "?x", "?y")], [("SequelByDifferentStudio", "?a")]),
-    ("VeteransReturn", [("developedBy", "?g", "?c"), ("foundedBy", "?c", "?p"), ("formerEmployeeOf", "?p", "?o"), ("developerOf", "?o", "?h"), ("belongsTo", "?g", "?f"), ("belongsTo", "?h", "?f")], [("VeteransReturn", "?g")]),
     ("EngineChangeSequel", [("sequelOf", "?a", "?b"), ("madeWith", "?a", "?x"), ("madeWith", "?b", "?y"), ("differentFrom", "?x", "?y")], [("EngineChangeSequel", "?a")]),
     ("ExternalEngine", [("madeWith", "?g", "?e"), ("engineDevelopedBy", "?e", "?m"), ("developedBy", "?g", "?d"), ("differentFrom", "?m", "?d")], [("ExternalEngineGame", "?g")]),
     ("InHouseEngine", [("madeWith", "?g", "?e"), ("engineDevelopedBy", "?e", "?d"), ("developedBy", "?g", "?d")], [("InHouseEngineGame", "?g")]),
@@ -229,12 +213,6 @@ RULES = [
     ("ReleaseOrderChain", [("releasedAfter", "?a", "?b"), ("sequelOf", "?b", "?c")], [("releasedAfter", "?a", "?c")]),
     ("ReturnAfterDeath", [("victim", "?k", "?c"), ("inGame", "?k", "?g"), ("appearsIn", "?c", "?h"), ("releasedAfter", "?h", "?g")],
      [("ReturningCharacter", "?c"), ("ReturnAfterDeathGame", "?h")]),
-    ("GroupSelf", [("Company", "?c")], [("inGroupOf", "?c", "?c")]),
-    ("GroupParent", [("inGroupOf", "?c", "?p"), ("subsidiaryOf", "?p", "?q")], [("inGroupOf", "?c", "?q")]),
-    ("GroupEngine", [("madeWith", "?g", "?e"), ("engineDevelopedBy", "?e", "?m"), ("developedBy", "?g", "?d"), ("differentFrom", "?m", "?d"), ("inGroupOf", "?m", "?r"), ("inGroupOf", "?d", "?r")],
-     [("GroupEngineGame", "?g")]),
-    ("SameGroupSequel", [("sequelOf", "?a", "?b"), ("developedBy", "?a", "?x"), ("developedBy", "?b", "?y"), ("differentFrom", "?x", "?y"), ("inGroupOf", "?x", "?r"), ("inGroupOf", "?y", "?r")],
-     [("SameGroupSequel", "?a")]),
     ("SelfPublished", [("developedBy", "?g", "?c"), ("publishedBy", "?g", "?c")], [("SelfPublishedGame", "?g")]),
     ("MustPlay", [("metacriticScore", "?g", "?s"), ("xsd:integer", "xsd:minInclusive", 95, "?s")], [("MustPlayGame", "?g")]),
 ]

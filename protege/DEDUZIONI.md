@@ -40,68 +40,64 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 3. GTA e Zelda: stessa violenza nella storia, la distingue il PEGI
+## 3. La violenza realistica: uccisioni nella trama e PEGI
 
-**Esempio.** *Far Cry 3* è `RealisticViolenceGame`; *Skyward Sword* è `FantasyViolenceGame`.
+**Esempio.** *Far Cry 3* è `RealisticViolenceGame`; *Twilight Princess* è solo `ViolentStoryGame`.
 
 **Nei dati.**
 - *Far Cry 3*: un'uccisione (Jason Brody uccide Vaas Montenegro) e `pegiRating 18`;
-- *Skyward Sword*: un'uccisione (Link uccide Demise) e `pegiRating 12`.
+- *Twilight Princess*: un'uccisione (Link uccide Ganondorf) e `pegiRating 12`.
 
 **Assiomi.**
 - `ViolentStoryGame ≡ VideoGame ⊓ ∃hasKilling.Killing`
 - `RealisticViolenceGame ≡ ViolentStoryGame ⊓ ∃pegiRating.integer[≥ 16]`
-- `FantasyViolenceGame ≡ ViolentStoryGame ⊓ ∃pegiRating.integer[≤ 12]`
 
 **Perché non è banale.**
-- La trama da sola non separa i due giochi: in entrambi qualcuno muore. Lo fa il PEGI, letto con i criteri ufficiali (dal 16 la violenza è realistica, fino al 12 è contro personaggi di fantasia).
-- Il risultato divide i 43 giochi violenti in 38 realistici (GTA, Assassin's Creed, Far Cry, Halo, The Witcher…) e 5 di fantasia (tutti Zelda).
+- La trama da sola non separa i due giochi: in entrambi qualcuno muore. Lo fa il PEGI, letto con i criteri ufficiali (dal 16 la violenza è realistica).
 - Questa deduzione ha anche trovato un errore di Wikidata: *Assassin's Creed Origins* risultava "di fantasia" perché Wikidata gli dava PEGI 12, mentre è PEGI 18. È corretto in `fonti/correzioni.json`.
 
 ---
+## 4. Mass Effect e Fallout 4: giochi di un costruttore di console
 
-## 4. Mass Effect e Fallout 4: giochi Microsoft usciti su console Sony
-
-**Esempio.** *Fallout 4* è `FirstPartyGame` e `FirstPartyOnRivalConsole`.
+**Esempio.** *Fallout 4* e *Mass Effect* sono `FirstPartyGame` e anche `FirstPartyOnRivalConsole`: sono usciti su PlayStation, console di un altro costruttore.
 
 **Nei dati.**
-- *Fallout 4* è pubblicato da Bethesda Softworks ed è uscito su PS4 e Xbox One.
-- Bethesda Softworks è controllata da ZeniMax, ZeniMax da Xbox Game Studios, Xbox Game Studios da Microsoft (`subsidiaryOf`).
-- Microsoft costruisce la Xbox One, Sony la PS4 (`manufacturedBy`).
+- *Fallout 4* è pubblicato da Bethesda Softworks.
+- Bethesda Softworks è controllata da ZeniMax, ZeniMax da Xbox Game Studios, Xbox Game Studios da Microsoft (`subsidiaryOf`, transitiva).
+- Microsoft costruisce la Xbox One (`manufacturedBy`), Sony la PlayStation 4; il gioco è disponibile su entrambe (`availableOn`).
 
-**Assiomi e regole.**
+**Assiomi.**
 - `PlatformHolder ≡ Company ⊓ ∃manufacturerOf.ConsolePlatform`: Microsoft lo diventa perché costruisce console
-- regole `PublisherGroup` e `ParentGroup`: risalgono il gruppo dell'editore un passo alla volta (`publishedByGroup`)
-- `FirstPartyGame ≡ VideoGame ⊓ ∃publishedByGroup.PlatformHolder`
-- regola `FirstPartyOnRivalConsole`: un gioco del gruppo di un costruttore, uscito su una console di un altro costruttore
+- `FirstPartyGame ≡ VideoGame ⊓ ∃publishedBy.(PlatformHolder ⊔ ∃subsidiaryOf.PlatformHolder)`: l'editore è un costruttore di console o ne è controllato, a qualunque livello
+- regole `PublisherGroup` e `ParentGroup`: `publishedByGroup` parte dall'editore e sale una controllante alla volta (Bethesda Softworks, ZeniMax, Xbox Game Studios, Microsoft)
+- regola `ConsoleMaker`: `availableOn(?g, ?p) ∧ ConsolePlatform(?p) ∧ manufacturedBy(?p, ?m) → onConsoleOf(?g, ?m)`
+- regola `FirstPartyOnRivalConsole`: `publishedByGroup(?g, ?h) ∧ PlatformHolder(?h) ∧ onConsoleOf(?g, ?m) ∧ differentFrom(?h, ?m)`: il costruttore del gruppo è diverso da quello della console
 
-**Perché non è banale.** Sono quattro passaggi di proprietà, una classe definita da un ruolo dedotto e un confronto tra due aziende (`differentFrom`). È anche un limite istruttivo: nel 2015 ZeniMax non era di Microsoft (lo è dal 2021), ma OWL non rappresenta il tempo.
+**Perché non è banale.** Una classe definita su un'altra (`PlatformHolder`), un'unione dentro un'esistenziale e una proprietà transitiva: `FirstPartyGame` è solo OWL. La versione con console rivale confronta due aziende, quindi serve una regola, e le regole di gruppo salgono la catena un passo alla volta: dentro SWRL HermiT non vede la transitività di `subsidiaryOf`, e con una sola regola Fallout 4 (tre livelli) falliva, Mass Effect (uno) no. Non risultano rivali *Halo 4*, *Breath of the Wild* e *Mass Effect 2*. È anche un limite istruttivo: nel 2015 ZeniMax non era di Microsoft (lo è dal 2021), ma OWL non rappresenta il tempo.
 
 ---
 
-## 5. Fallout: New Vegas, fatto da veterani della serie
+## 5. Obsidian è fondata da veterani
 
-**Esempio.** *Fallout: New Vegas* è `VeteransReturn`; Obsidian Entertainment è `FoundedByVeterans`.
+**Esempio.** Obsidian Entertainment è `FoundedByVeterans`.
 
 **Nei dati.**
 - *New Vegas* è sviluppato da Obsidian, fondata da Feargus Urquhart e altri, ex dipendenti di Black Isle Studios (`formerEmployeeOf`).
-- Black Isle ha sviluppato *Fallout 2*.
-- Entrambi i giochi appartengono alla serie Fallout.
+- Black Isle ha sviluppato *Fallout 2* (`Developer`).
 
-**Assiomi e regole.**
+**Assioma.**
 - `FoundedByVeterans ≡ Company ⊓ ∃foundedBy.(∃formerEmployeeOf.Developer)`, con `Developer` a sua volta definita
-- regola `VeteransReturn`: lo studio del gioco è fondato da chi lavorava per lo sviluppatore di un altro gioco della stessa serie
 
-**Perché non è banale.** Collega cinque individui (gioco, studio, persona, vecchio studio, vecchio gioco) e una serie. Lo stesso schema riconosce AdHoc Studio (Dispatch), fondata da ex Telltale.
+**Perché non è banale.** Collega tre individui (studio, persona, vecchio studio) e una classe a sua volta definita. Lo stesso schema riconosce AdHoc Studio (Dispatch), fondata da ex Telltale.
 
 ---
 
-## 6. Ganondorf muore e ritorna; Catalina ritorna perché è un prequel
+## 6. Chi muore e ritorna: Ganondorf e Catalina
 
 **Esempio.**
-- Ganondorf è `KilledMoreThanOnce` e `ReturningCharacter`.
+- Ganondorf è `ReturningCharacter`.
 - *Breath of the Wild* è `ReturnAfterDeathGame`.
-- *Grand Theft Auto: San Andreas* è `ReturnAfterDeathGame` e `PrequelReturn`.
+- *Grand Theft Auto: San Andreas* è `ReturnAfterDeathGame`.
 
 **Nei dati.**
 - Ganondorf è ucciso da Link in *Twilight Princess* (2006) e in *Tears of the Kingdom* (2023), ed è antagonista di *A Link Between Worlds* e *Breath of the Wild*.
@@ -110,12 +106,10 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 - I seguiti sono scritti solo verso il capitolo precedente.
 
 **Assiomi e regole.**
-- `KilledMoreThanOnce ≡ DeceasedCharacter ⊓ ≥2 victimIn.Killing` (le uccisioni sono dichiarate tutte diverse)
 - regole `ReleaseOrder` e `ReleaseOrderChain`: ricavano "uscito dopo" (`releasedAfter`) risalendo i seguiti un passo alla volta
 - regola `ReturnAfterDeath`: `victim(?k, ?c) ∧ inGame(?k, ?g) ∧ appearsIn(?c, ?h) ∧ releasedAfter(?h, ?g) → ReturningCharacter(?c) ∧ ReturnAfterDeathGame(?h)`
-- `PrequelReturn ≡ ReturnAfterDeathGame ⊓ PrequelGame`
 
-**Perché non è banale.** Un personaggio morto non dovrebbe tornare in un gioco uscito dopo. Il reasoner trova i casi e ne spiega uno: Catalina torna in un prequel. Per Ganondorf non c'è spiegazione tra i dati, e in un mondo aperto il reasoner non può concludere che sia una resurrezione o un'altra linea temporale: può solo segnalarlo. È un buon esempio di cosa OWL sa e non sa dire.
+**Perché non è banale.** Un personaggio morto non dovrebbe tornare in un gioco uscito dopo. Il reasoner trova i casi, ma non li spiega: per Catalina (*San Andreas* è un prequel) e per Ganondorf non c'è spiegazione tra i dati, e in un mondo aperto il reasoner non può concludere che sia una resurrezione o un'altra linea temporale: può solo segnalarlo. È un buon esempio di cosa OWL sa e non sa dire.
 
 ---
 
@@ -138,28 +132,9 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 - Halo CE, gioco Microsoft, risulta giocabile su una console Sony.
 - "Console attuale" non si può dedurre come "l'ultima uscita" (servirebbe una negazione): la soglia sulla generazione rende esplicita questa scelta.
 
-**Un passo in più: i giochi che attraversano le generazioni.**
-- `PreviousGenerationConsole ≡ ConsolePlatform ⊓ ∃generation.integer[≤ 8]` e `CrossGenerationGame ≡ StillPlayable ⊓ ∃playableOn.PreviousGenerationConsole`.
-- *Ocarina of Time* esce su Nintendo 64 (quinta generazione) e, con il remake del 2026, su Switch 2 (nona): è `CrossGenerationGame`. Lo sono anche *GTA III* e *Halo: Combat Evolved*, ma non *Majora's Mask*, il cui remake è su 3DS (ottava).
-- Nei dati non c'è scritto da nessuna parte che un gioco "attraversi" le generazioni: lo si ricava confrontando il numero di generazione di due console diverse.
-
 ---
 
-## 8. The Witcher è tecnologicamente legato a Mass Effect
-
-**Esempio.** *The Witcher* `techLinkedTo` *Mass Effect*.
-
-**Nei dati.**
-- *The Witcher* è fatto con l'Aurora Engine, sviluppato da BioWare.
-- BioWare ha sviluppato *Mass Effect*.
-
-**Assioma.** Catena `madeWith ∘ engineDevelopedBy ∘ developerOf ⊑ techLinkedTo`.
-
-**Perché non è banale.** Due giochi di studi e serie diverse risultano collegati attraverso un motore e un'inversa: tre archi diventano uno.
-
----
-
-## 9. Dark Souls è un gioco d'autore
+## 8. Dark Souls è un gioco d'autore
 
 **Esempio.** *Dark Souls*, *Dark Souls III* ed *Elden Ring* sono `AuteurGame`.
 
@@ -174,28 +149,23 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 10. Seguiti che cambiano studio o motore, e quando il cambio è interno al gruppo
+## 9. Seguiti che cambiano studio o motore
 
 **Esempi.**
 - *Halo 4* (343 Industries dopo Bungie) e *Oracle of Seasons* (Flagship, studio di Capcom, dopo Nintendo) sono `SequelByDifferentStudio`.
 - *Grand Theft Auto IV* (da RenderWare a RAGE) e *Far Cry 2* (da CryEngine a Dunia) sono `EngineChangeSequel`.
-- *GTA V* usa RAGE, sviluppato da una divisione di Rockstar Games, e *Far Cry 6* usa il motore di Ubisoft Montreal: sono `ExternalEngineGame` **e** `GroupEngineGame`, perché lo sviluppatore è un altro studio dello stesso gruppo.
-- *Super Mario World* e *Assassin's Creed Origins* sono `SequelByDifferentStudio` **e** `SameGroupSequel`; *Halo 4* è solo il primo.
+- *Mass Effect*, *The Witcher*, *Fallout 3* e *Far Cry 6* sono `ExternalEngineGame`: il motore è sviluppato da un'altra azienda.
 
 **Regole.**
 - `SequelByDifferentStudio`, `EngineChangeSequel`, `ExternalEngineGame` confrontano due individui con `differentFrom`, cosa che una classe OWL non può esprimere.
-- `GroupSelf` e `GroupParent` ricavano `inGroupOf`: ogni azienda fa parte del proprio gruppo e di quello di chi la controlla. Si risale un passo alla volta, come per gli editori, perché dentro le regole HermiT non vede la transitività.
-- `GroupEngine` e `SameGroupSequel`: i due studi hanno un'azienda in comune nei loro gruppi (`inGroupOf(?x, ?r) ∧ inGroupOf(?y, ?r)`) pur essendo aziende diverse.
 
-**Perché non è banale.**
-- `ExternalEngineGame` ha un difetto: GTA V e Far Cry 6 risultano "motore di un'altra azienda" anche se l'azienda è la stessa. Le classi nuove lo rendono visibile: dei 20 `ExternalEngineGame`, 9 sono anche `GroupEngineGame`; gli 11 davvero esterni sono Mass Effect 1-3, The Witcher, Fallout 3 e New Vegas, GTA III, Vice City e San Andreas, Clair Obscur e Dispatch.
-- Lo stesso per i seguiti: dei 23 `SequelByDifferentStudio` 16 restano nel gruppo (le divisioni Nintendo, le sedi Ubisoft, Fallout: New Vegas). I veri passaggi di mano sono 7: Halo 4, Fallout 3, Far Cry 2 e, negli Zelda, i passaggi da e verso Flagship (Capcom): Four Swords, Oracle of Seasons, Minish Cap e Twilight Princess, che segue il Minish Cap.
-- In Protégé: DL Query `SequelByDifferentStudio and SameGroupSequel` trova i passaggi interni. Non si può chiedere "senza gruppo in comune": servirebbe una negazione, che in un mondo aperto non si deduce.
-- Il limite del tempo torna: *Fallout: New Vegas* risulta seguito interno al gruppo solo perché oggi Obsidian e Bethesda sono entrambe di Microsoft.
+**Limite.**
+- `ExternalEngineGame` non distingue le aziende dello stesso gruppo: *GTA V* usa RAGE, sviluppato da una divisione di Rockstar Games, e risulta "motore di un'altra azienda". Lo stesso vale per i seguiti passati a un'altra divisione dello stesso gruppo (le divisioni Nintendo, le sedi Ubisoft): servirebbe una negazione, che in un mondo aperto non si deduce.
+- Il limite del tempo torna per le aziende passate di mano: oggi Obsidian e Bethesda sono entrambe di Microsoft, ma non lo erano quando uscì *Fallout: New Vegas*.
 
 ---
 
-## 11. Serie che cambiano mano e serie diventate film o serie TV
+## 10. Serie che cambiano mano e serie diventate film o serie TV
 
 **Esempi.**
 - `FranchiseWithStudioChange`: Halo, Fallout, Far Cry, Assassin's Creed, Super Mario e Zelda.
@@ -205,11 +175,11 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 - `FranchiseWithStudioChange ≡ Franchise ⊓ ∃includes.SequelByDifferentStudio`: la classe della serie nasce dalla classe di un suo gioco, che a sua volta nasce da una regola
 - `TransmediaFranchise ≡ Franchise ⊓ ∃adaptedInto.(Film ⊔ TVSeries)`: un'unione dentro un'esistenziale
 
-**Perché è istruttivo.** Per Super Mario il "cambio di studio" è sempre tra divisioni Nintendo (tutti i suoi seguiti sono anche `SameGroupSequel`); per Zelda ci sono anche passaggi esterni, gli episodi di Flagship.
+**Perché è istruttivo.** Per Super Mario il "cambio di studio" è sempre tra divisioni Nintendo; per Zelda ci sono anche passaggi esterni, gli episodi di Flagship.
 
 ---
 
-## 12. Personaggi storici e cattivi sconfitti
+## 11. Personaggi storici e cattivi sconfitti
 
 **Esempi.**
 - Leonardo da Vinci e Cesare Borgia sono `HistoricalCharacter`.
@@ -223,41 +193,23 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 13. Eroi, vittime e traditori
-
-**Esempi.**
-- `VillainSlayer`: Link, Ezio, Geralt, il Master Chief (31 personaggi): protagonisti che hanno ucciso un cattivo sconfitto.
-- `TragicProtagonist`: Gustave (*Clair Obscur*) e Haytham Kenway (*Assassin's Creed III*): protagonisti che muoiono.
-- `Turncoat`: Cortana, protagonista in *Halo: Combat Evolved* e *Halo 4*, antagonista in *Halo 5*.
-
-**Assiomi.**
-- `VillainSlayer ≡ Protagonist ⊓ ∃kills.DefeatedVillain`
-- `TragicProtagonist ≡ Protagonist ⊓ DeceasedCharacter`
-- `Turncoat ≡ Protagonist ⊓ Antagonist`
-
-**Perché non è banale.** Sono classi definite sopra classi a loro volta dedotte. Per esempio Link è `VillainSlayer` perché: l'uccisione di Ganondorf diventa `killedBy` (regola `KillingEvent`), Ganondorf è antagonista e Link protagonista dello stesso gioco, quindi Ganondorf è `DefeatedVillain` (regola), e infine Link ha ucciso (`kills`, inversa) un `DefeatedVillain`. Il "?" in Protégé mostra la catena.
-
----
-
-## 14. Il genere dai personaggi
+## 12. Il genere dai personaggi
 
 **Esempi.**
 - `HistoricalGame`: tutti i 14 *Assassin's Creed*.
 - `SciFiGame`: quasi tutti gli *Halo*, i due *Portal* e i tre *Mass Effect*.
-- `RogueAIGame`: *Portal*, *Portal 2*, *Halo 5*, ma anche *Halo: Combat Evolved* e *Halo 3*, dove l'antagonista è 343 Guilty Spark.
 
 **Nei dati.** Il genere "storico" o "fantascientifico" non c'è: ci sono i personaggi che interpretano persone reali, i personaggi alieni, i personaggi costruiti da qualcuno.
 
 **Assiomi.**
 - `HistoricalGame ≡ VideoGame ⊓ ∃hasCharacter.HistoricalCharacter`
 - `SciFiGame ≡ VideoGame ⊓ ∃hasCharacter.(Alien ⊔ Synthetic)`
-- `RogueAIGame ≡ VideoGame ⊓ ∃hasAntagonist.RogueAI`, dove `hasAntagonist` è l'inversa di `antagonistOf`
 
-**Perché non è banale.** Il genere si deduce da chi abita il gioco, in tre o quattro passi (per `RogueAIGame`: `builtBy` → `Synthetic`, `antagonistOf` → `Antagonist`, i due insieme → `RogueAI`, e poi l'inversa fino al gioco). Sono condizioni sufficienti, non necessarie: tra i personaggi dei tre *Mass Effect* ci sono Garrus (turian), Liara (asari) e Tali'Zorah (quarian), ciascuno con la fonte, e per questo sono di fantascienza; un gioco i cui alieni non sono nei dati non lo sarebbe, perché in un mondo aperto un dato mancante non è una smentita.
+**Perché non è banale.** Il genere si deduce da chi abita il gioco, in due passi (per `SciFiGame`: `builtBy` → `Synthetic`, poi `hasCharacter`, inversa di `appearsIn`, fino al gioco). Sono condizioni sufficienti, non necessarie: tra i personaggi dei tre *Mass Effect* ci sono Garrus (turian), Liara (asari) e Tali'Zorah (quarian), ciascuno con la fonte, e per questo sono di fantascienza; un gioco i cui alieni non sono nei dati non lo sarebbe, perché in un mondo aperto un dato mancante non è una smentita.
 
 ---
 
-## 15. Registi e studi prolifici, studi first-party, giochi autopubblicati
+## 13. Registi e studi prolifici, studi first-party, giochi autopubblicati
 
 **Esempi.**
 - `ProlificDirector` (almeno tre giochi diretti): Miyazaki, Miyamoto, Aonuma, Casey Hudson.
@@ -267,14 +219,14 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 **Assiomi e regole.**
 - `ProlificDirector ≡ GameDirector ⊓ ≥3 directorOf.VideoGame` e `ProlificDeveloper ≡ Developer ⊓ ≥5 developerOf.VideoGame`: cardinalità qualificate su proprietà semplici, con i giochi dichiarati tutti diversi
-- `FirstPartyStudio ≡ Developer ⊓ ∃inGroupOf.PlatformHolder`, con `inGroupOf` derivata dalle regole `GroupSelf` e `GroupParent`
+- `FirstPartyStudio ≡ Developer ⊓ (PlatformHolder ⊔ ∃subsidiaryOf.PlatformHolder)`
 - regola `SelfPublished`: `developedBy(?g, ?c) ∧ publishedBy(?g, ?c) → SelfPublishedGame(?g)`
 
-**Perché non è banale.** `FirstPartyStudio` usa una relazione ricavata da due regole e una classe (`PlatformHolder`) ricavata da un'altra relazione. Bungie ne fa parte solo perché oggi è di Sony (nel 2007 Microsoft la lasciò): il limite del tempo.
+**Perché non è banale.** `FirstPartyStudio` usa una proprietà transitiva e una classe (`PlatformHolder`) ricavata da un'altra relazione. Bungie ne fa parte solo perché oggi è di Sony (nel 2007 Microsoft la lasciò): il limite del tempo.
 
 ---
 
-## 16. I classici che si giocano ancora: data, catena e classe dedotta insieme
+## 14. I classici che si giocano ancora: data, catena e classe dedotta insieme
 
 **Esempio.** `Grand_Theft_Auto_III`, `Grand_Theft_Auto_San_Andreas`, `Grand_Theft_Auto_Vice_City`, `Halo_Combat_Evolved` e `The_Legend_of_Zelda_Ocarina_of_Time` sono `ClassicStillPlayable`.
 
@@ -289,7 +241,7 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 17. La fascia di età: PEGI 3, 7, 12, 16 e 18
+## 15. La fascia di età: PEGI 3, 7, 12, 16 e 18
 
 **Esempio.** `Grand_Theft_Auto_V` e `Grand_Theft_Auto_VI` sono `Pegi18Game`; `Dark_Souls` è `Pegi16Game`; `The_Legend_of_Zelda_Ocarina_of_Time` è `Pegi12Game`; `The_Legend_of_Zelda_The_Wind_Waker` è `Pegi7Game`; `Super_Mario_Bros` è `Pegi3Game`.
 
@@ -301,7 +253,7 @@ killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
 
 ---
 
-## 18. Gli errori che il reasoner trova, e un'uguaglianza che deduce
+## 16. Gli errori che il reasoner trova, e un'uguaglianza che deduce
 
 I file in `test/` aggiungono pochi fatti e fanno scattare un assioma preciso.
 
@@ -318,7 +270,7 @@ L'ultimo è il più interessante: lo stesso assioma che nel caso di Breath of th
 
 ---
 
-## 19. Provato e scartato: "tutti i giochi della serie" con una chiusura
+## 17. Provato e scartato: "tutti i giochi della serie" con una chiusura
 
 L'idea: `FirstPartyFranchise ≡ Franchise ⊓ ∃includes.VideoGame ⊓ ∀includes.FirstPartyGame`, con per ogni serie un'asserzione di chiusura `includes only {giochi della serie}` (un `owl:oneOf` con i giochi). Nel mondo aperto è l'unico modo per concludere "tutti": senza chiusura, un gioco non nominato potrebbe sempre esistere.
 
