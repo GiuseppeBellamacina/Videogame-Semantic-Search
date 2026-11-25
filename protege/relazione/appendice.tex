@@ -1,7 +1,7 @@
 \section{Le componenti dell'ontologia}\label{app:componenti}
 
 \begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
-\caption{Le 77 classi}\\ \toprule
+\caption{Le 78 classi}\\ \toprule
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
@@ -61,6 +61,7 @@
 \texttt{LateEntry} & \texttt{SequelGame} & definita & Almeno il terzo capitolo di una serie \\
 \texttt{ViolentStoryGame} & \texttt{VideoGame} & definita & Un gioco nella cui trama qualcuno viene ucciso \\
 \texttt{RealisticViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori \\
+\texttt{FantasyViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato PEGI 12 o meno: violenza fantasy, adatta ai ragazzi \\
 \texttt{AwardWinner} & \texttt{VideoGame} & definita & Un gioco che ha vinto un premio \\
 \texttt{StillPlayable} & \texttt{VideoGame} & definita & Un gioco giocabile su una console attuale \\
 \texttt{Adaptation} & \texttt{VideoGame} & definita & Un gioco tratto da un'opera di un altro medium \\
@@ -160,6 +161,7 @@
 \textsf{LateEntry} &\equiv \textsf{SequelGame} \sqcap \exists\,\textit{sequelOf}.\exists\,\textit{sequelOf}.\textsf{VideoGame} \\
 \textsf{ViolentStoryGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasKilling}.\textsf{Killing} \\
 \textsf{RealisticViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\geq 16] \\
+\textsf{FantasyViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\leq 12] \\
 \textsf{AwardWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{Award} \\
 \textsf{StillPlayable} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{playableOn}.\textsf{CurrentGenerationConsole} \\
 \textsf{Adaptation} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{basedOn}.\textsf{CreativeWork} \\

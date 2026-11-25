@@ -23,6 +23,14 @@ vg:AuteurGame a owl:Class ;
                         owl:onProperty vg:directedBy ;
                         owl:someValuesFrom vg:StudioHead ] ) ] .
 
+vg:AwardWinner a owl:Class ;
+    rdfs:label "AwardWinner" ;
+    rdfs:comment "Un gioco che ha vinto un premio" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:wonAward ;
+                        owl:someValuesFrom vg:Award ] ) ] .
+
 vg:ClassicStillPlayable a owl:Class ;
     rdfs:label "ClassicStillPlayable" ;
     rdfs:comment "Un classico precedente al 2005 giocabile oggi su una console attuale" ;
@@ -43,6 +51,16 @@ vg:ExternalEngineGame a owl:Class ;
     rdfs:label "ExternalEngineGame" ;
     rdfs:comment "Un gioco fatto con un motore sviluppato da un'altra azienda" ;
     rdfs:subClassOf vg:VideoGame .
+
+vg:FantasyViolenceGame a owl:Class ;
+    rdfs:label "FantasyViolenceGame" ;
+    rdfs:comment "Un gioco violento classificato PEGI 12 o meno: violenza fantasy, adatta ai ragazzi" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:ViolentStoryGame [ a owl:Restriction ;
+                        owl:onProperty vg:pegiRating ;
+                        owl:someValuesFrom [ a rdfs:Datatype ;
+                                owl:onDatatype xsd:integer ;
+                                owl:withRestrictions ( [ xsd:maxInclusive 12 ] ) ] ] ) ] .
 
 vg:FirstPartyGame a owl:Class ;
     rdfs:label "FirstPartyGame" ;
@@ -86,14 +104,6 @@ vg:FranchiseWithStudioChange a owl:Class ;
             owl:intersectionOf ( vg:Franchise [ a owl:Restriction ;
                         owl:onProperty vg:includes ;
                         owl:someValuesFrom vg:SequelByDifferentStudio ] ) ] .
-
-vg:AwardWinner a owl:Class ;
-    rdfs:label "AwardWinner" ;
-    rdfs:comment "Un gioco che ha vinto un premio" ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:wonAward ;
-                        owl:someValuesFrom vg:Award ] ) ] .
 
 vg:HistoricalGame a owl:Class ;
     rdfs:label "HistoricalGame" ;
@@ -470,14 +480,6 @@ vg:TabletopGame a owl:Class ;
     rdfs:comment "Un gioco da tavolo o di ruolo cartaceo" ;
     rdfs:subClassOf vg:CreativeWork .
 
-vg:ViolentStoryGame a owl:Class ;
-    rdfs:label "ViolentStoryGame" ;
-    rdfs:comment "Un gioco nella cui trama qualcuno viene ucciso" ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:hasKilling ;
-                        owl:someValuesFrom vg:Killing ] ) ] .
-
 vg:adaptedInto a owl:ObjectProperty ;
     rdfs:domain vg:Franchise ;
     rdfs:range vg:CreativeWork .
@@ -634,6 +636,14 @@ vg:TVSeries a owl:Class ;
     rdfs:comment "Una serie televisiva" ;
     rdfs:subClassOf vg:CreativeWork .
 
+vg:ViolentStoryGame a owl:Class ;
+    rdfs:label "ViolentStoryGame" ;
+    rdfs:comment "Un gioco nella cui trama qualcuno viene ucciso" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:hasKilling ;
+                        owl:someValuesFrom vg:Killing ] ) ] .
+
 vg:antagonistOf a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
         owl:ObjectProperty ;
@@ -763,14 +773,14 @@ vg:Platform a owl:Class ;
     rdfs:label "Platform" ;
     rdfs:comment "Una piattaforma su cui si gioca" .
 
+vg:Killing a owl:Class ;
+    rdfs:label "Killing" ;
+    rdfs:comment "Un'uccisione nella trama di un gioco: vittima, assassino e gioco (relazione n-aria)" .
+
 vg:pegiRating a owl:DatatypeProperty,
         owl:FunctionalProperty ;
     rdfs:domain vg:VideoGame ;
     rdfs:range xsd:integer .
-
-vg:Killing a owl:Class ;
-    rdfs:label "Killing" ;
-    rdfs:comment "Un'uccisione nella trama di un gioco: vittima, assassino e gioco (relazione n-aria)" .
 
 vg:CreativeWork a owl:Class ;
     rdfs:label "CreativeWork" ;

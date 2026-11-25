@@ -90,6 +90,7 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `character/Jason_Brody`, `character/Link` | `MultipleKiller` | Hanno ucciso almeno due personaggi (inversa `kills`, cardinalità ≥ 2). |
 | `Far_Cry_3`, `The_Legend_of_Zelda_Twilight_Princess` | `ViolentStoryGame` | Ha almeno un `Killing` con `inGame` uguale al gioco: l'uccisione conta solo nel gioco in cui avviene. |
 | `Grand_Theft_Auto_IV` | `RealisticViolenceGame` | Ha uccisioni nella trama ed è PEGI 16 o 18. |
+| `The_Legend_of_Zelda_Twilight_Princess`, `Skyward_Sword`, `Echoes_of_Wisdom` | `FantasyViolenceGame` | Ha uccisioni nella trama ed è PEGI 12 o meno: violenza fantasy. |
 | `character/Cortana` | `Synthetic`, `RogueAI` | Nei dati c'è solo `builtBy` Catherine Halsey: chi è costruito da qualcuno è `Synthetic`. In Halo 5 è l'antagonista, quindi IA ribelle. Lo stesso per GLaDOS e Wheatley (Aperture Science). |
 | `character/Link`, `character/Chell` | `PlayerCharacter` | Il giocatore li controlla in almeno un gioco (`playableIn`). |
 | `platform/PlayStation_5` | `CurrentGenerationConsole` | Nei dati c'è solo la generazione (9): la classe è definita come console di generazione ≥ 9. |

@@ -1161,7 +1161,7 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
               </p>
             </div>
             <div class="note">
-              44 delle 77 classi sono definite: nessuna ha istanze scritte a
+              45 delle 78 classi sono definite: nessuna ha istanze scritte a
               mano, si popolano per deduzione.
             </div>
           </div>
@@ -1323,6 +1323,7 @@ victim(?k, ?v) ^ killer(?k, ?a)
             "FirstPartyGame",
             "ViolentStoryGame",
             "RealisticViolenceGame",
+            "FantasyViolenceGame",
             "ClassicGame",
             "ClassicStillPlayable",
             "StillPlayable",
@@ -1338,7 +1339,7 @@ victim(?k, ?v) ^ killer(?k, ?a)
             "AuteurGame",
             "PrequelGame",
           ],
-          "Un gioco con almeno un'uccisione nella trama è un ViolentStoryGame; con PEGI 16 o 18 diventa RealisticViolenceGame.",
+          "Un gioco con almeno un'uccisione nella trama è un ViolentStoryGame; con PEGI 16 o 18 diventa RealisticViolenceGame, con PEGI 12 o meno FantasyViolenceGame.",
         ],
         Company: [
           "Uno studio, un editore o un gruppo industriale.",
@@ -1512,7 +1513,7 @@ victim(?k, ?v) ^ killer(?k, ?a)
         if (!body.length) return bs;
         const [a, ...rest] = body;
         let out = [];
-        if (["!=", ">=", "<"].includes(a[1])) {
+        if (["!=", ">=", "<", "<="].includes(a[1])) {
           for (const b of bs) {
             const x = V(a[0]) ? b[a[0]] : a[0],
               y = V(a[2]) ? b[a[2]] : a[2];
@@ -1521,7 +1522,9 @@ victim(?k, ?v) ^ killer(?k, ?a)
                 ? x !== y
                 : a[1] === ">="
                   ? Number(x) >= Number(y)
-                  : String(x) < String(y);
+                  : a[1] === "<="
+                    ? Number(x) <= Number(y)
+                    : String(x) < String(y);
             if (ok) out.push(b);
           }
         } else {
@@ -1603,18 +1606,18 @@ victim(?k, ?v) ^ killer(?k, ?a)
               head: [["?g", "a", "Pegi12Game"]],
             },
             {
-              n: "RealisticViolenceGame",
+              n: "FantasyViolenceGame",
               kind: "OWL",
-              t: "≡ ViolentStoryGame ⊓ ∃pegiRating.integer[≥16]",
+              t: "≡ ViolentStoryGame ⊓ ∃pegiRating.integer[≤12]",
               body: [
                 ["?g", "a", "ViolentStoryGame"],
                 ["?g", "pegiRating", "?n"],
-                ["?n", ">=", 16],
+                ["?n", "<=", 12],
               ],
-              head: [["?g", "a", "RealisticViolenceGame"]],
+              head: [["?g", "a", "FantasyViolenceGame"]],
             },
           ],
-          hint: "Prova: togli la spunta alla riga «inGame Twilight_Princess» (l'uccisione avviene in quel gioco), premi Azzera e poi Tutto. Ganondorf risulta ancora morto, ma Twilight Princess non è più un gioco violento: senza il legame con il gioco, l'uccisione non dice nulla sul gioco. Il gioco ha PEGI 12: è violento nella storia ma non di violenza realistica, che chiede almeno PEGI 16.",
+          hint: "Prova: togli la spunta alla riga «inGame Twilight_Princess» (l'uccisione avviene in quel gioco), premi Azzera e poi Tutto. Ganondorf risulta ancora morto, ma Twilight Princess non è più un gioco violento: senza il legame con il gioco, l'uccisione non dice nulla sul gioco. Il gioco ha PEGI 12: la sua è violenza fantasy (FantasyViolenceGame); da PEGI 16 sarebbe realistica.",
         },
         serie: {
           facts: [
@@ -1824,7 +1827,7 @@ victim(?k, ?v) ^ killer(?k, ?a)
         const add = (t, rule) => {
           const [s, p, o] = t,
             k = t.join("|");
-          if (seen.has(k) || [">=", "<", "!="].includes(p)) return;
+          if (seen.has(k) || [">=", "<", "<=", "!="].includes(p)) return;
           seen.add(k);
           if (p === "a") N(s).types.push({ c: o, rule, k });
           else if (isLit(o)) N(s).attrs.push({ p, v: o, rule, k });
@@ -2253,7 +2256,7 @@ victim(?k, ?v) ^ killer(?k, ?a)
                 const t = inst(h, b);
                 if (!has(t)) {
                   const prem = r.body
-                    .filter((a) => !["!=", ">=", "<"].includes(a[1]))
+                    .filter((a) => !["!=", ">=", "<", "<="].includes(a[1]))
                     .map((a) => inst(a, b));
                   derived.push({ t, rule: r, prem });
                   render();

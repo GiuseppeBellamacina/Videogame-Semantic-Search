@@ -101,6 +101,7 @@ EXPECTED = [
     ("MultipleKiller", ["character/Jason_Brody", "character/Link", "character/Niko_Bellic"], ["character/Midna", "character/Mario"]),
     ("ViolentStoryGame", ["Far_Cry_3", "Grand_Theft_Auto_IV", "The_Legend_of_Zelda_Twilight_Princess"], ["Super_Mario_Odyssey", "Portal_2", "The_Legend_of_Zelda_Four_Swords"]),
     ("RealisticViolenceGame", ["Far_Cry_3", "Grand_Theft_Auto_IV", "Halo_3", "Assassins_Creed_Origins", "Cyberpunk_2077"], ["The_Legend_of_Zelda_Twilight_Princess"]),
+    ("FantasyViolenceGame", ["The_Legend_of_Zelda_Twilight_Princess", "The_Legend_of_Zelda_Skyward_Sword", "The_Legend_of_Zelda_Echoes_of_Wisdom"], ["Far_Cry_3", "Grand_Theft_Auto_IV", "Super_Mario_Odyssey", "The_Legend_of_Zelda_Four_Swords"]),
     ("Synthetic", ["character/Cortana", "character/GLaDOS", "character/343_Guilty_Spark"], ["character/Catherine_Halsey", "character/The_Weapon"]),
     ("PlayerCharacter", ["character/Link", "character/Chell", "character/Arbiter", "character/Zelda"], ["character/Cortana", "character/Ganondorf"]),
     ("ReturningCharacter", ["character/Ganondorf", "character/Catalina"], ["character/Gwyn_Lord_of_Sunlight"]),

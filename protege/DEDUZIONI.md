@@ -40,9 +40,9 @@ killing:Ganondorf_by_Link_in_The_Legend_of_Zelda_Twilight_Princess a vg:Killing 
 
 ---
 
-## 3. La violenza realistica: uccisioni nella trama e PEGI
+## 3. Violenza realistica o fantasy: uccisioni nella trama e PEGI
 
-**Esempio.** *Far Cry 3* è `RealisticViolenceGame`; *Twilight Princess* è solo `ViolentStoryGame`.
+**Esempio.** *Far Cry 3* è `RealisticViolenceGame`; *Twilight Princess* è `FantasyViolenceGame`. Sono entrambi `ViolentStoryGame`.
 
 **Nei dati.**
 - *Far Cry 3*: un'uccisione (Jason Brody uccide Vaas Montenegro) e `pegiRating 18`;
@@ -51,9 +51,10 @@ killing:Ganondorf_by_Link_in_The_Legend_of_Zelda_Twilight_Princess a vg:Killing 
 **Assiomi.**
 - `ViolentStoryGame ≡ VideoGame ⊓ ∃hasKilling.Killing`
 - `RealisticViolenceGame ≡ ViolentStoryGame ⊓ ∃pegiRating.integer[≥ 16]`
+- `FantasyViolenceGame ≡ ViolentStoryGame ⊓ ∃pegiRating.integer[≤ 12]`
 
 **Perché non è banale.**
-- La trama da sola non separa i due giochi: in entrambi qualcuno muore. Lo fa il PEGI, letto con i criteri ufficiali (dal 16 la violenza è realistica).
+- La trama da sola non separa i due giochi: in entrambi qualcuno muore. Lo fa il PEGI, letto con i criteri ufficiali (dal 16 la violenza è realistica, fino al 12 è violenza fantasy). Nei dati i giochi violenti sono 43: 38 realistici e 5 fantasy, tutti *Zelda*.
 - Questa deduzione ha anche trovato un errore di Wikidata: *Assassin's Creed Origins* risultava "di fantasia" perché Wikidata gli dava PEGI 12, mentre è PEGI 18. È corretto in `fonti/correzioni.json`.
 
 ---
