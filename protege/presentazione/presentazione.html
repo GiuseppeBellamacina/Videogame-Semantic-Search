@@ -762,9 +762,9 @@
       <!-- 2 -->
       <section class="slide">
         <div class="kicker">La storia</div>
-        <h2>Nove passi, dal semplice al complesso</h2>
+        <h2>Undici passi, dal semplice al complesso</h2>
         <p class="lead">
-          Ogni passo aggiunge un'idea a quelle di prima. Tre diapositive sono
+          Ogni passo aggiunge un'idea a quelle di prima. Molte diapositive sono
           interattive: puoi togliere un fatto e guardare il reasoner cambiare
           idea.
         </p>
@@ -794,7 +794,14 @@
             <div>
               <span
                 >Collegare le cose<small
-                  >proprietà, inverse, transitività, chiavi</small
+                  >le caratteristiche, in sintesi</small
+                ></span
+              >
+            </div>
+            <div>
+              <span
+                >Le proprietà, una per una<small
+                  >dominio, inversa, catena, funzionale, disgiunzione, chiave · <b>interattive</b></small
                 ></span
               >
             </div>
@@ -807,6 +814,13 @@
             </div>
             <div>
               <span>Dare un significato<small>le classi definite</small></span>
+            </div>
+            <div>
+              <span
+                >Le restrizioni<small
+                  >cardinalità, valore, unione · <b>interattiva</b></small
+                ></span
+              >
             </div>
             <div>
               <span
@@ -1051,7 +1065,7 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <h2>Collegare le cose</h2>
         <p class="lead">
           Le proprietà dicono più di un semplice collegamento: ognuna porta con
-          sé una regola di buon senso.
+          sé una regola di buon senso. Le prossime diapositive le provano una per una.
         </p>
         <div class="body" style="flex-direction: column; gap: 0">
           <table>
@@ -1125,6 +1139,83 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
       </section>
 
       <!-- 7 -->
+      <section class="slide" data-demo="tipi">
+        <div class="kicker">Le proprietà · dominio e range</div>
+        <h2>Dominio e range: un tipo gratis</h2>
+        <p class="lead">
+          <code>rdfs:domain</code> e <code>rdfs:range</code> dicono di che tipo sono i due estremi di una proprietà. Chi la usa <b>riceve il tipo</b> senza che nessuno lo scriva: il primo GTA è senza tipo, ma ha uno sviluppatore.
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>7</span></div>
+      </section>
+
+      <!-- 8 -->
+      <section class="slide" data-demo="inv">
+        <div class="kicker">Le proprietà · inversa, transitiva, sottoproprietà</div>
+        <h2>Inversa, transitiva, sottoproprietà</h2>
+        <p class="lead">
+          Tre assiomi sulle <b>relazioni</b>: la direzione opposta viene da sola (<code>inverseOf</code>), la serie si ricostruisce dai capitoli (<code>TransitiveProperty</code>), un legame specifico ne implica uno generico (<code>subPropertyOf</code>).
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>8</span></div>
+      </section>
+
+      <!-- 9 -->
+      <section class="slide" data-demo="catena">
+        <div class="kicker">Le proprietà · catena di proprietà</div>
+        <h2>La catena: due archi valgono uno</h2>
+        <p class="lead">
+          <code>propertyChainAxiom</code>: <i>hasRemaster ∘ availableOn ⊑ playableOn</i>. Se il remaster è uscito su una console, anche il gioco originale ci si può giocare.
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>9</span></div>
+      </section>
+
+      <!-- 10 -->
+      <section class="slide" data-demo="funz">
+        <div class="kicker">Le proprietà · funzionale</div>
+        <h2>Funzionale: al più un valore</h2>
+        <p class="lead">
+          <code>FunctionalProperty</code> non deduce un fatto nuovo: <b>vieta</b>. Due valori diversi per <i>pegiRating</i> sono un errore, e il reasoner dichiara l'ontologia <b>inconsistente</b> (nodo INCONSISTENTE).
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>10</span></div>
+      </section>
+
+      <!-- 11 -->
+      <section class="slide" data-demo="asim">
+        <div class="kicker">Le proprietà · asimmetrica e irriflessiva</div>
+        <h2>Asimmetrica e irriflessiva</h2>
+        <p class="lead">
+          Se A è sviluppato da B, B non può essere sviluppato da A (<code>AsymmetricProperty</code>), e nessuno sviluppa sé stesso (<code>IrreflexiveProperty</code>). Le usano 22 proprietà.
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>11</span></div>
+      </section>
+
+      <!-- 12 -->
+      <section class="slide" data-demo="disg">
+        <div class="kicker">Le proprietà · disgiunzione</div>
+        <h2>Disgiunte: classi e proprietà</h2>
+        <p class="lead">
+          <code>AllDisjointClasses</code> dice che nessun individuo sta in due classi (un gioco non è una persona); <code>propertyDisjointWith</code> che due proprietà non legano la stessa coppia (un remaster non è un prequel).
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>12</span></div>
+      </section>
+
+      <!-- 13 -->
+      <section class="slide" data-demo="chiave">
+        <div class="kicker">Le proprietà · chiave e AllDifferent</div>
+        <h2>Chiave e AllDifferent</h2>
+        <p class="lead">
+          <code>hasKey</code>: due giochi con lo stesso identificativo Wikidata sono <b>lo stesso gioco</b>. <code>AllDifferent</code> dice invece che certi individui sono tutti diversi: se una chiave li fonde, l'ontologia è inconsistente. Nei dati ne abbiamo sei.
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>13</span></div>
+      </section>
+
+      <!-- 14 -->
       <section class="slide" data-demo="zelda">
         <div class="kicker">Il reasoner al lavoro</div>
         <h2>Da un solo fatto, più conclusioni</h2>
@@ -1135,10 +1226,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           <b>togli una spunta</b> e riparti.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>7</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>14</span></div>
       </section>
 
-      <!-- 8 -->
+      <!-- 15 -->
       <section class="slide">
         <div class="kicker">Il significato</div>
         <h2>Le classi definite</h2>
@@ -1211,10 +1302,21 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
             </table>
           </div>
         </div>
-        <div class="foot"><span>Videogame Ontology</span><span>8</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>15</span></div>
       </section>
 
-      <!-- 9 -->
+      <!-- 16 -->
+      <section class="slide" data-demo="restr">
+        <div class="kicker">Il significato · restrizioni</div>
+        <h2>Le restrizioni, una per una</h2>
+        <p class="lead">
+          Cardinalità (<code>≥2 appearsIn</code>), valore (<code>∃pegiRating.{12}</code>), unione (<code>Film ⊔ TVSeries</code>): ogni costrutto delle classi definite, con un esempio dai dati.
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>16</span></div>
+      </section>
+
+      <!-- 17 -->
       <section class="slide" data-demo="serie">
         <div class="kicker">Catene, serie e numeri</div>
         <h2>Quattro ragionamenti in un colpo</h2>
@@ -1225,10 +1327,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           >). Prova a togliere il remaster.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>9</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>17</span></div>
       </section>
 
-      <!-- 10 -->
+      <!-- 18 -->
       <section class="slide">
         <div class="kicker">Quando una classe non basta</div>
         <h2>Le regole SWRL</h2>
@@ -1283,10 +1385,10 @@ victim(?k, ?v) ^ killer(?k, ?a)
             </p>
           </div>
         </div>
-        <div class="foot"><span>Videogame Ontology</span><span>10</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>18</span></div>
       </section>
 
-      <!-- 11 -->
+      <!-- 19 -->
       <section class="slide" data-demo="fallout">
         <div class="kicker">Tutto insieme</div>
         <h2>Fallout 4 su PlayStation 4</h2>
@@ -1299,15 +1401,15 @@ victim(?k, ?v) ^ killer(?k, ?a)
           >. Togli un anello della catena.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>11</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>19</span></div>
       </section>
 
-      <!-- 12 -->
+      <!-- 20 -->
       <section class="slide title">
         <div class="kicker">Fine</div>
         <h1>Grazie</h1>
         <p class="sub">Domande?</p>
-        <div class="foot"><span>Giuseppe Bellamacina</span><span>12</span></div>
+        <div class="foot"><span>Giuseppe Bellamacina</span><span>20</span></div>
       </section>
     </div>
 
@@ -1801,6 +1903,116 @@ victim(?k, ?v) ^ killer(?k, ?a)
             },
           ],
           hint: "Togli «ZeniMax subsidiaryOf Xbox_Game_Studios»: la catena si rompe e Fallout 4 non è più first-party. Mondo aperto: il reasoner non assume che ZeniMax sia di Microsoft solo perché lo sappiamo noi.",
+        },
+        tipi: {
+          facts: [
+            ["GTA_III", "developedBy", "Rockstar_North"],
+            ["Todd_Howard", "heads", "Bethesda_Game_Studios"],
+            ["Link", "protagonistOf", "Twilight_Princess"],
+          ].map((t) => ({ t })),
+          rules: [
+            { n: "domain developedBy", kind: "OWL", t: "domain(developedBy) = VideoGame", body: [["?x", "developedBy", "?y"]], head: [["?x", "a", "VideoGame"]] },
+            { n: "range developedBy", kind: "OWL", t: "range(developedBy) = Company", body: [["?x", "developedBy", "?y"]], head: [["?y", "a", "Company"]] },
+            { n: "domain heads", kind: "OWL", t: "domain(heads) = Person", body: [["?x", "heads", "?y"]], head: [["?x", "a", "Person"]] },
+            { n: "range heads", kind: "OWL", t: "range(heads) = Company", body: [["?x", "heads", "?y"]], head: [["?y", "a", "Company"]] },
+            { n: "domain protagonistOf", kind: "OWL", t: "domain(protagonistOf) = Character", body: [["?x", "protagonistOf", "?y"]], head: [["?x", "a", "Character"]] },
+            { n: "range protagonistOf", kind: "OWL", t: "range(protagonistOf) = VideoGame", body: [["?x", "protagonistOf", "?y"]], head: [["?y", "a", "VideoGame"]] },
+          ],
+          hint: "Togli «GTA_III developedBy Rockstar_North»: GTA III torna senza tipo e Rockstar North non è più una Company. Nessun fatto dice che sono un gioco e uno studio: lo dice solo la proprietà.",
+        },
+        inv: {
+          facts: [
+            ["Dark_Souls", "developedBy", "FromSoftware"],
+            ["Super_Mario_Bros_3", "sequelOf", "Super_Mario_Bros_2"],
+            ["Super_Mario_Bros_2", "sequelOf", "Super_Mario_Bros"],
+            ["Link", "protagonistOf", "Twilight_Princess"],
+          ].map((t) => ({ t })),
+          rules: [
+            { n: "inversa developedBy", kind: "inversa", t: "developedBy ↔ developerOf", body: [["?x", "developedBy", "?y"]], head: [["?y", "developerOf", "?x"]] },
+            { n: "sequelOf transitiva", kind: "OWL", t: "sequelOf è transitiva", body: [["?a", "sequelOf", "?b"], ["?b", "sequelOf", "?c"]], head: [["?a", "sequelOf", "?c"]] },
+            { n: "protagonistOf ⊑ appearsIn", kind: "OWL", t: "sottoproprietà", body: [["?c", "protagonistOf", "?g"]], head: [["?c", "appearsIn", "?g"]] },
+          ],
+          hint: "Togli «Super_Mario_Bros_2 sequelOf Super_Mario_Bros»: senza l'anello intermedio la transitività non scatta e il terzo capitolo non risale più al primo.",
+        },
+        catena: {
+          facts: [
+            ["GTA_III_Definitive_Edition", "remasterOf", "GTA_III"],
+            ["GTA_III_Definitive_Edition", "availableOn", "PlayStation_5"],
+          ].map((t) => ({ t })),
+          rules: [
+            { n: "inversa remasterOf", kind: "inversa", t: "remasterOf ↔ hasRemaster", body: [["?x", "remasterOf", "?y"]], head: [["?y", "hasRemaster", "?x"]] },
+            { n: "availableOn ⊑ playableOn", kind: "OWL", t: "sottoproprietà", body: [["?g", "availableOn", "?p"]], head: [["?g", "playableOn", "?p"]] },
+            { n: "catena", kind: "OWL", t: "hasRemaster ∘ availableOn ⊑ playableOn", body: [["?g", "hasRemaster", "?r"], ["?r", "availableOn", "?p"]], head: [["?g", "playableOn", "?p"]] },
+          ],
+          hint: "Il remaster è su PS5, l'originale no: ma la catena rende giocabile lì anche l'originale. Togli «remasterOf» e il legame si spezza.",
+        },
+        funz: {
+          facts: [
+            ["Twilight_Princess", "pegiRating", 12],
+            ["Twilight_Princess", "pegiRating", 16],
+            ["Skyward_Sword", "pegiRating", 12],
+          ].map((t) => ({ t })),
+          rules: [
+            { n: "pegiRating funzionale", kind: "OWL", t: "pegiRating è funzionale", body: [["?g", "pegiRating", "?a"], ["?g", "pegiRating", "?b"], ["?a", "!=", "?b"]], head: [["?g", "a", "INCONSISTENTE"]] },
+          ],
+          hint: "Togli uno dei due PEGI di Twilight Princess: l'errore sparisce. Per una proprietà tra individui, due valori non sarebbero un errore ma fonderebbero i due valori in uno solo (sameAs).",
+        },
+        asim: {
+          facts: [
+            ["Fallout_4", "developedBy", "Bethesda_Game_Studios"],
+            ["Bethesda_Game_Studios", "developedBy", "Fallout_4"],
+            ["Halo_3", "developedBy", "Halo_3"],
+          ].map((t) => ({ t })),
+          rules: [
+            { n: "developedBy asimmetrica", kind: "OWL", t: "A→B esclude B→A", body: [["?a", "developedBy", "?b"], ["?b", "developedBy", "?a"], ["?a", "!=", "?b"]], head: [["?a", "a", "INCONSISTENTE"]] },
+            { n: "developedBy irriflessiva", kind: "OWL", t: "nessuno è sviluppatore di sé", body: [["?a", "developedBy", "?a"]], head: [["?a", "a", "INCONSISTENTE"]] },
+          ],
+          hint: "Due errori distinti: Fallout 4 e Bethesda si sviluppano a vicenda (asimmetria), Halo 3 sviluppa sé stesso (irriflessività). Togli le righe sbagliate.",
+        },
+        disg: {
+          facts: [
+            ["Todd_Howard", "a", "Person"],
+            ["Todd_Howard", "a", "VideoGame"],
+            ["Halo_CE_Anniversary", "remasterOf", "Halo_CE"],
+            ["Halo_CE_Anniversary", "prequelOf", "Halo_CE"],
+          ].map((t) => ({ t })),
+          rules: [
+            { n: "AllDisjointClasses", kind: "OWL", t: "VideoGame, Person, Company… a due a due disgiunte", body: [["?x", "a", "Person"], ["?x", "a", "VideoGame"]], head: [["?x", "a", "INCONSISTENTE"]] },
+            { n: "propertyDisjointWith", kind: "OWL", t: "remasterOf e prequelOf disgiunte", body: [["?a", "remasterOf", "?b"], ["?a", "prequelOf", "?b"]], head: [["?a", "a", "INCONSISTENTE"]] },
+          ],
+          hint: "Todd Howard non può essere insieme una persona e un gioco; un remaster non può essere anche prequel dello stesso gioco. Togli una riga per coppia e il reasoner torna sereno.",
+        },
+        chiave: {
+          facts: [
+            ["Fallout_4", "hasWikidataId", "Q_esempio"],
+            ["Fallout_4_duplicato", "hasWikidataId", "Q_esempio"],
+            ["Fallout_4", "differentFrom", "Fallout_4_duplicato"],
+          ].map((t) => ({ t })),
+          rules: [
+            { n: "hasKey", kind: "OWL", t: "stesso hasWikidataId → stesso individuo", body: [["?a", "hasWikidataId", "?i"], ["?b", "hasWikidataId", "?i"], ["?a", "!=", "?b"]], head: [["?a", "sameAs", "?b"]] },
+            { n: "AllDifferent", kind: "OWL", t: "gli individui dichiarati diversi non si fondono", body: [["?a", "sameAs", "?b"], ["?a", "differentFrom", "?b"]], head: [["?a", "a", "INCONSISTENTE"]] },
+          ],
+          hint: "Il duplicato viene fuso con Fallout 4 solo se non lo si è dichiarato diverso. Togli la riga «differentFrom»: resta la fusione, senza errore. Nei dati le serie sono dichiarate AllDifferent, quindi un doppione con lo stesso id sarebbe un errore, non una fusione.",
+        },
+        restr: {
+          facts: [
+            ["Link", "a", "Character"],
+            ["Link", "appearsIn", "Twilight_Princess"],
+            ["Link", "appearsIn", "Skyward_Sword"],
+            ["Twilight_Princess", "a", "VideoGame"],
+            ["Skyward_Sword", "a", "VideoGame"],
+            ["Twilight_Princess", "pegiRating", 12],
+            ["Fallout", "a", "Franchise"],
+            ["Fallout", "adaptedInto", "Fallout_TV_series"],
+            ["Fallout_TV_series", "a", "TVSeries"],
+          ].map((t) => ({ t })),
+          rules: [
+            { n: "RecurringCharacter", kind: "OWL", t: "≡ Character ⊓ ≥2 appearsIn.VideoGame (cardinalità)", body: [["?c", "a", "Character"], ["?c", "appearsIn", "?g1"], ["?g1", "a", "VideoGame"], ["?c", "appearsIn", "?g2"], ["?g2", "a", "VideoGame"], ["?g1", "!=", "?g2"]], head: [["?c", "a", "RecurringCharacter"]] },
+            { n: "Pegi12Game", kind: "OWL", t: "≡ VideoGame ⊓ ∃pegiRating.{12} (valore)", body: [["?g", "a", "VideoGame"], ["?g", "pegiRating", 12]], head: [["?g", "a", "Pegi12Game"]] },
+            { n: "TransmediaFranchise", kind: "OWL", t: "≡ Franchise ⊓ ∃adaptedInto.(Film ⊔ TVSeries): ramo TVSeries", body: [["?f", "a", "Franchise"], ["?f", "adaptedInto", "?w"], ["?w", "a", "TVSeries"]], head: [["?f", "a", "TransmediaFranchise"]] },
+            { n: "TransmediaFranchise ", kind: "OWL", t: "… ramo Film", body: [["?f", "a", "Franchise"], ["?f", "adaptedInto", "?w"], ["?w", "a", "Film"]], head: [["?f", "a", "TransmediaFranchise"]] },
+          ],
+          hint: "Togli un'apparizione di Link: con un solo gioco la cardinalità ≥2 non è più soddisfatta. Per l'unione basta uno dei due rami.",
         },
       };
 
