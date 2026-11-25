@@ -8,12 +8,12 @@ Per vederle in Protégé: apri `videogiochi.ttl`, Reasoner > HermiT > Start reas
 
 ## 1. Da un fatto, due conclusioni: chi muore e chi uccide
 
-**Esempio.** Gwyn, Lord of Sunlight è un `DeceasedCharacter`; il Prescelto (`Chosen_Undead`) è un `Killer`.
+**Esempio.** Ganondorf è un `DeceasedCharacter`; Link è un `Killer`.
 
-**Nei dati.** Un solo individuo, l'uccisione di *Dark Souls*:
+**Nei dati.** Un solo individuo, l'uccisione di *Twilight Princess*:
 ```turtle
-killing:Gwyn_Lord_of_Sunlight_by_Chosen_Undead_in_Dark_Souls a vg:Killing ;
-    vg:victim character:Gwyn_Lord_of_Sunlight ; vg:killer character:Chosen_Undead ; vg:inGame vg:Dark_Souls .
+killing:Ganondorf_by_Link_in_The_Legend_of_Zelda_Twilight_Princess a vg:Killing ;
+    vg:victim character:Ganondorf ; vg:killer character:Link ; vg:inGame vg:The_Legend_of_Zelda_Twilight_Princess .
 ```
 
 **Assiomi.**

@@ -1003,12 +1003,12 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
       </section>
 
       <!-- 7 -->
-      <section class="slide" data-demo="gwyn">
+      <section class="slide" data-demo="zelda">
         <div class="kicker">Il reasoner al lavoro</div>
         <h2>Da un solo fatto, più conclusioni</h2>
         <p class="lead">
-          Nei dati c'è <b>un'uccisione</b> in Dark Souls (Gwyn) e una in
-          <i>The Legend of Zelda: Twilight Princess</i> (Link uccide Ganondorf). Premi <b>Passo</b>:
+          Nei dati c'è <b>un'uccisione</b> in <i>The Legend of Zelda: Twilight Princess</i>:
+          Link uccide Ganondorf. Premi <b>Passo</b>:
           ogni riga a destra nasce dalle righe di sinistra e da una regola. Poi
           <b>togli una spunta</b> e riparti.
         </p>
@@ -1149,7 +1149,7 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <div class="kicker">Catene, serie e numeri</div>
         <h2>Quattro ragionamenti in un colpo</h2>
         <p class="lead">
-          Transitività (<i>Mass Effect 3 è un terzo capitolo</i>), catena (<i
+          Transitività (<i>Echoes of Wisdom è un terzo capitolo</i>), catena (<i
             >GTA III si gioca su PS5</i
           >), numeri e date (<i>è un classico, la PS5 è di nona generazione</i
           >). Prova a togliere il remaster.
@@ -1467,13 +1467,8 @@ victim(?k, ?v) ^ killer(?k, ?a)
         t: p + " ↔ " + q,
       });
       const SCEN = {
-        gwyn: {
+        zelda: {
           facts: [
-            ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "a", "Killing"],
-            ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "victim", "Gwyn"],
-            ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "killer", "Chosen_Undead"],
-            ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "inGame", "Dark_Souls"],
-            ["Dark_Souls", "pegiRating", 16],
             ["Ganondorf_by_Link_in_Twilight_Princess", "a", "Killing"],
             ["Ganondorf_by_Link_in_Twilight_Princess", "victim", "Ganondorf"],
             ["Ganondorf_by_Link_in_Twilight_Princess", "killer", "Link"],
@@ -1525,13 +1520,6 @@ victim(?k, ?v) ^ killer(?k, ?a)
               head: [["?g", "a", "ViolentStoryGame"]],
             },
             {
-              n: "Pegi16Game",
-              kind: "OWL",
-              t: "≡ VideoGame ⊓ ∃pegiRating.{16}",
-              body: [["?g", "pegiRating", 16]],
-              head: [["?g", "a", "Pegi16Game"]],
-            },
-            {
               n: "Pegi12Game",
               kind: "OWL",
               t: "≡ VideoGame ⊓ ∃pegiRating.{12}",
@@ -1550,13 +1538,13 @@ victim(?k, ?v) ^ killer(?k, ?a)
               head: [["?g", "a", "RealisticViolenceGame"]],
             },
           ],
-          hint: "Prova: togli la spunta alla riga «inGame Dark_Souls» (l'uccisione avviene in quel gioco), premi Azzera e poi Tutto. Gwyn risulta ancora morto, ma Dark Souls non è più un gioco violento: senza il legame con il gioco, l'uccisione non dice nulla sul gioco. Confronta i due giochi: Twilight Princess ha una storia violenta ma, con PEGI 12, non è un gioco di violenza realistica; Dark Souls (PEGI 16) sì.",
+          hint: "Prova: togli la spunta alla riga «inGame Twilight_Princess» (l'uccisione avviene in quel gioco), premi Azzera e poi Tutto. Ganondorf risulta ancora morto, ma Twilight Princess non è più un gioco violento: senza il legame con il gioco, l'uccisione non dice nulla sul gioco. Il gioco ha PEGI 12: è violento nella storia ma non di violenza realistica, che chiede almeno PEGI 16.",
         },
         serie: {
           facts: [
-            ["Mass_Effect_3", "sequelOf", "Mass_Effect_2"],
-            ["Mass_Effect_2", "sequelOf", "Mass_Effect"],
-            ["Mass_Effect_3", "belongsTo", "Mass_Effect_serie"],
+            ["Echoes_of_Wisdom", "sequelOf", "Tears_of_the_Kingdom"],
+            ["Tears_of_the_Kingdom", "sequelOf", "Breath_of_the_Wild"],
+            ["Echoes_of_Wisdom", "belongsTo", "The_Legend_of_Zelda"],
             ["GTA_III_Definitive_Edition", "remasterOf", "GTA_III"],
             ["GTA_III_Definitive_Edition", "availableOn", "PlayStation_5"],
             ["PlayStation_5", "a", "ConsolePlatform"],

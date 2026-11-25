@@ -85,7 +85,7 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 
 | Individuo o classe | Cosa compare in giallo | Perché |
 |---|---|---|
-| `character/Gwyn_Lord_of_Sunlight` | `DeceasedCharacter`, `DefeatedVillain` | Nei dati c'è un `Killing` con vittima Gwyn e assassino il Prescelto. `DeceasedCharacter ≡ Character ⊓ ∃victimIn.Killing` (si vede in "Equivalent To"); la regola `DefeatedVillain` lo rende cattivo sconfitto dall'eroe. |
+| `character/Ganondorf` | `DeceasedCharacter` | Nei dati c'è un `Killing` con vittima Ganondorf e assassino Link (Twilight Princess). `DeceasedCharacter ≡ Character ⊓ ∃victimIn.Killing` (si vede in "Equivalent To"); la regola `DefeatedVillain` lo rende cattivo sconfitto dall'eroe. |
 | `character/Chosen_Undead` | `Killer` | Lo stesso fatto, letto dall'altra parte: `Killer ≡ Character ⊓ ∃killerIn.Killing`. |
 | `character/Jason_Brody`, `character/Link` | `MultipleKiller` | Hanno ucciso almeno due personaggi (inversa `kills`, cardinalità ≥ 2). |
 | `Far_Cry_3`, `The_Legend_of_Zelda_Twilight_Princess` | `ViolentStoryGame` | Ha almeno un `Killing` con `inGame` uguale al gioco: l'uccisione conta solo nel gioco in cui avviene. |
@@ -140,7 +140,7 @@ Salvali in `relazione/figure/` con questi nomi; appena il file esiste, il riquad
 Prima di tutto: File > Open > `protege/videogiochi.ttl`, poi Reasoner > HermiT > Start reasoner e attendi la fine. Se dopo una modifica i colori gialli non compaiono, Reasoner > Synchronize reasoner.
 
 1. **`gerarchia_inferita.png`.** Tab Entities > Classes. Cambia il menu sopra l'albero da *Asserted* a *Inferred*, espandi `Character`, `Company` e `Franchise`, ritaglia il solo pannello dell'albero.
-2. **`spiegazione_gwyn.png`.** Tab Entities > Individuals, cerca *Gwyn* e seleziona *Gwyn, Lord of Sunlight*. Nel pannello Description, sotto Types, la riga gialla `DeceasedCharacter` è dedotta: clicca il punto interrogativo accanto e fotografa la finestra della spiegazione.
+2. **`spiegazione_ganondorf.png`.** Tab Entities > Individuals, cerca *Ganondorf* e seleziona *Ganondorf*. Nel pannello Description, sotto Types, la riga gialla `DeceasedCharacter` è dedotta: clicca il punto interrogativo accanto e fotografa la finestra della spiegazione.
 3. **`individuo_fallout_new_vegas.png`.** Tab Individuals, cerca *New Vegas*, selezionalo e fotografa il pannello Description: in giallo devono esserci `FirstPartyGame`, `FirstPartyOnRivalConsole`, `ExternalEngineGame` e `SequelByDifferentStudio`.
 4. **`swrl_rules.png`.** Window > Tabs > SWRLTab. Allarga la colonna *Rule* e fotografa la tabella delle regole. Se è vuota, controlla in Active ontology > Ontology imports che `regole` sia importata.
 5. **`inconsistenza.png`.** File > Open > `protege/test/errore_cardinalita.ttl` (in una nuova finestra se lo chiede), Reasoner > HermiT > Start reasoner. Dall'avviso di ontologia inconsistente scegli *Explain inconsistent ontology* e fotografa gli assiomi in conflitto.
