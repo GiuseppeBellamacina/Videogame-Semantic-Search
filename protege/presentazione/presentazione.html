@@ -633,7 +633,7 @@
       <!-- 2 -->
       <section class="slide">
         <div class="kicker">La storia</div>
-        <h2>Dieci passi, dal semplice al complesso</h2>
+        <h2>Nove passi, dal semplice al complesso</h2>
         <p class="lead">
           Ogni passo aggiunge un'idea a quelle di prima. Tre diapositive sono
           interattive: puoi togliere un fatto e guardare il reasoner cambiare
@@ -678,13 +678,6 @@
             </div>
             <div>
               <span>Dare un significato<small>le classi definite</small></span>
-            </div>
-            <div>
-              <span
-                >Quel che non è scritto è sconosciuto<small
-                  >mondo aperto, nomi diversi</small
-                ></span
-              >
             </div>
             <div>
               <span
@@ -1093,58 +1086,6 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
       </section>
 
       <!-- 9 -->
-      <section class="slide">
-        <div class="kicker">Il mondo aperto</div>
-        <h2>Quel che non è scritto è sconosciuto</h2>
-        <p class="lead">
-          OWL non è un database. Se un fatto manca non è falso:
-          <b>non si sa</b>. Due conseguenze che abbiamo dovuto imparare.
-        </p>
-        <div class="body">
-          <div class="col stack">
-            <div class="card">
-              <h3>1 · Niente negazioni</h3>
-              <p>
-                «Gioco senza seguiti» o «personaggio non giocabile» non si
-                deducono mai: non aver scritto un seguito non prova che non
-                esista. Per questo le nostre classi dicono sempre
-                <i>«ha almeno…»</i>, mai <i>«non ha…»</i>.
-              </p>
-            </div>
-            <div class="card">
-              <h3>2 · Nomi diversi, forse lo stesso oggetto</h3>
-              <p>
-                OWL non assume che due nomi indichino cose diverse. Per contare
-                «almeno due giochi» i dati dichiarano esplicitamente che giochi,
-                aziende e personaggi sono a due a due diversi (<span
-                  class="mono"
-                  >owl:AllDifferent</span
-                >).
-              </p>
-            </div>
-          </div>
-          <div class="col stack">
-            <div class="card">
-              <h3>Un caso curioso</h3>
-              <p>
-                Splatoon 2 è un'esclusiva Switch, ma nei dati è collegato anche
-                a una piattaforma chiamata <b>NX</b>. Il reasoner non protesta:
-                conclude che <b>NX è la Nintendo Switch</b> (nome in codice) e
-                le unisce. Una deduzione corretta, possibile proprio perché OWL
-                non presume che nomi diversi siano oggetti diversi.
-              </p>
-            </div>
-            <div class="note">
-              È anche perché il reasoner non conclude «ultima console» ma
-              «console della nona generazione»: una soglia esplicita, al posto
-              di una negazione.
-            </div>
-          </div>
-        </div>
-        <div class="foot"><span>Videogame Ontology</span><span>9</span></div>
-      </section>
-
-      <!-- 10 -->
       <section class="slide" data-demo="serie">
         <div class="kicker">Catene, serie e numeri</div>
         <h2>Quattro ragionamenti in un colpo</h2>
@@ -1155,10 +1096,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           >). Prova a togliere il remaster.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>10</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>9</span></div>
       </section>
 
-      <!-- 11 -->
+      <!-- 10 -->
       <section class="slide">
         <div class="kicker">Quando una classe non basta</div>
         <h2>Le regole SWRL</h2>
@@ -1213,10 +1154,10 @@ victim(?k, ?v) ^ killer(?k, ?a)
             </p>
           </div>
         </div>
-        <div class="foot"><span>Videogame Ontology</span><span>11</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>10</span></div>
       </section>
 
-      <!-- 12 -->
+      <!-- 11 -->
       <section class="slide" data-demo="fallout">
         <div class="kicker">Tutto insieme</div>
         <h2>Fallout 4 su PlayStation 4</h2>
@@ -1229,15 +1170,15 @@ victim(?k, ?v) ^ killer(?k, ?a)
           >. Togli un anello della catena.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>12</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>11</span></div>
       </section>
 
-      <!-- 13 -->
+      <!-- 12 -->
       <section class="slide title">
         <div class="kicker">Fine</div>
         <h1>Grazie</h1>
         <p class="sub">Domande?</p>
-        <div class="foot"><span>Giuseppe Bellamacina</span><span>13</span></div>
+        <div class="foot"><span>Giuseppe Bellamacina</span><span>12</span></div>
       </section>
     </div>
 
@@ -1261,7 +1202,7 @@ victim(?k, ?v) ^ killer(?k, ?a)
             "Pegi12Game",
             "Pegi16Game",
             "Pegi18Game",
-            "GOTYWinner",
+            "AwardWinner",
             "Adaptation",
             "HistoricalGame",
             "SciFiGame",
@@ -1337,7 +1278,7 @@ victim(?k, ?v) ^ killer(?k, ?a)
         Award: [
           "Il premio «gioco dell'anno» di una cerimonia.",
           [],
-          "Un gioco con un premio è GOTYWinner.",
+          "Un gioco con un premio è AwardWinner.",
         ],
         Genre: [
           "Un genere.",

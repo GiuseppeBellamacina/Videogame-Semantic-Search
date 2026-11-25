@@ -95,7 +95,7 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `platform/PlayStation_5` | `CurrentGenerationConsole` | Nei dati c'è solo la generazione (9): la classe è definita come console di generazione ≥ 9. |
 | `character/Ganondorf` | `ReturningCharacter` | Ucciso in Twilight Princess e in Tears of the Kingdom; ricompare in giochi usciti dopo la sua morte. |
 | `Grand_Theft_Auto_San_Andreas`, `The_Legend_of_Zelda_Breath_of_the_Wild` | `ReturnAfterDeathGame` | Catalina, uccisa in GTA III, ricompare in San Andreas; Ganondorf ricompare in Breath of the Wild. |
-| `Halo_Combat_Evolved` | `StillPlayable`, `MustPlayGame`, `GOTYWinner` | Il remake Campaign Evolved è su PS5; Metacritic 97; D.I.C.E. 2002. |
+| `Halo_Combat_Evolved` | `StillPlayable`, `MustPlayGame`, `AwardWinner` | Il remake Campaign Evolved è su PS5; Metacritic 97; D.I.C.E. 2002. |
 | `Far_Cry_2`, `Far_Cry_6` | `SequelByDifferentStudio`, `EngineChangeSequel` (FC2), `ExternalEngineGame` (FC6) | FC2 passa da Crytek/CryEngine a Ubisoft Montreal/Dunia; FC6 è di Ubisoft Toronto con il motore di Montreal. |
 | `Cyberpunk_2077`, `The_Walking_Dead` | `Adaptation` | Sono tratti da un gioco da tavolo e da un fumetto (`basedOn`). |
 | `person/Hidetaka_Miyazaki` | `GameDirector`, `StudioHead` | Le definizioni `∃directorOf.VideoGame` e `∃heads.Company`. |

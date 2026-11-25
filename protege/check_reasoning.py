@@ -113,7 +113,7 @@ EXPECTED = [
     ("FirstPartyGame", ["Mass_Effect", "Fallout_4", "The_Legend_of_Zelda_Breath_of_the_Wild"], ["Mass_Effect_2", "Assassins_Creed_II"]),
     ("FoundedByVeterans", ["company/Obsidian_Entertainment", "company/AdHoc_Studio"], ["company/Valve"]),
     ("LateEntry", ["Assassins_Creed_Revelations", "The_Legend_of_Zelda_Spirit_Tracks", "Grand_Theft_Auto_III"], ["Super_Mario_Bros_2"]),
-    ("GOTYWinner", ["The_Witcher_3_Wild_Hunt", "Fallout_4"], ["The_Witcher"]),
+    ("AwardWinner", ["The_Witcher_3_Wild_Hunt", "Fallout_4"], ["The_Witcher"]),
     ("StillPlayable", ["Grand_Theft_Auto_III", "The_Legend_of_Zelda_Breath_of_the_Wild", "Fallout_4", "Assassins_Creed_IV_Black_Flag", "Halo_Combat_Evolved"], ["Mass_Effect", "Halo_Reach"]),
     ("AuteurGame", ["Dark_Souls", "Dark_Souls_III"], ["Dark_Souls_II"]),
     ("LongRunningFranchise", ["franchise/Grand_Theft_Auto", "franchise/Assassins_Creed", "franchise/Fallout", "franchise/The_Legend_of_Zelda", "franchise/Super_Mario"], ["franchise/Portal"]),

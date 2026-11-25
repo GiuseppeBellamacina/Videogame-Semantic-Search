@@ -87,9 +87,9 @@ vg:FranchiseWithStudioChange a owl:Class ;
                         owl:onProperty vg:includes ;
                         owl:someValuesFrom vg:SequelByDifferentStudio ] ) ] .
 
-vg:GOTYWinner a owl:Class ;
-    rdfs:label "GOTYWinner" ;
-    rdfs:comment "Un gioco premiato come gioco dell'anno" ;
+vg:AwardWinner a owl:Class ;
+    rdfs:label "AwardWinner" ;
+    rdfs:comment "Un gioco che ha vinto un premio" ;
     owl:equivalentClass [ a owl:Class ;
             owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
                         owl:onProperty vg:wonAward ;

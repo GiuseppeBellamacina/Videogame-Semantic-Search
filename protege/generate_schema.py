@@ -109,7 +109,7 @@ DEFINED = [
     ("LateEntry", "SequelGame", "Almeno il terzo capitolo di una serie", all_of("SequelGame", some("sequelOf", some("sequelOf", "VideoGame")))),
     ("ViolentStoryGame", "VideoGame", "Un gioco nella cui trama qualcuno viene ucciso", all_of("VideoGame", some("hasKilling", "Killing"))),
     ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", all_of("ViolentStoryGame", some("pegiRating", int_at_least(16)))),
-    ("GOTYWinner", "VideoGame", "Un gioco premiato come gioco dell'anno", all_of("VideoGame", some("wonAward", "Award"))),
+    ("AwardWinner", "VideoGame", "Un gioco che ha vinto un premio", all_of("VideoGame", some("wonAward", "Award"))),
     ("StillPlayable", "VideoGame", "Un gioco giocabile su una console attuale", all_of("VideoGame", some("playableOn", "CurrentGenerationConsole"))),
     ("Adaptation", "VideoGame", "Un gioco tratto da un'opera di un altro medium", all_of("VideoGame", some("basedOn", "CreativeWork"))),
     ("AuteurGame", "VideoGame", "Un gioco diretto da chi guida uno studio", all_of("VideoGame", some("directedBy", "StudioHead"))),

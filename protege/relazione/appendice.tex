@@ -61,7 +61,7 @@
 \texttt{LateEntry} & \texttt{SequelGame} & definita & Almeno il terzo capitolo di una serie \\
 \texttt{ViolentStoryGame} & \texttt{VideoGame} & definita & Un gioco nella cui trama qualcuno viene ucciso \\
 \texttt{RealisticViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori \\
-\texttt{GOTYWinner} & \texttt{VideoGame} & definita & Un gioco premiato come gioco dell'anno \\
+\texttt{AwardWinner} & \texttt{VideoGame} & definita & Un gioco che ha vinto un premio \\
 \texttt{StillPlayable} & \texttt{VideoGame} & definita & Un gioco giocabile su una console attuale \\
 \texttt{Adaptation} & \texttt{VideoGame} & definita & Un gioco tratto da un'opera di un altro medium \\
 \texttt{AuteurGame} & \texttt{VideoGame} & definita & Un gioco diretto da chi guida uno studio \\
@@ -160,7 +160,7 @@
 \textsf{LateEntry} &\equiv \textsf{SequelGame} \sqcap \exists\,\textit{sequelOf}.\exists\,\textit{sequelOf}.\textsf{VideoGame} \\
 \textsf{ViolentStoryGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasKilling}.\textsf{Killing} \\
 \textsf{RealisticViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\geq 16] \\
-\textsf{GOTYWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{Award} \\
+\textsf{AwardWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{Award} \\
 \textsf{StillPlayable} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{playableOn}.\textsf{CurrentGenerationConsole} \\
 \textsf{Adaptation} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{basedOn}.\textsf{CreativeWork} \\
 \textsf{AuteurGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{directedBy}.\textsf{StudioHead} \\
