@@ -447,8 +447,8 @@
       }
       .demo {
         display: grid;
-        grid-template-columns: 1fr 1.15fr;
-        gap: 26px;
+        grid-template-columns: 0.72fr 1.65fr 0.95fr;
+        gap: 14px;
         flex: 1;
         min-height: 0;
       }
@@ -468,8 +468,30 @@
         border-bottom: 1.5px solid var(--ink);
         padding-bottom: 5px;
       }
+      .gsvg {
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        background: #faf7ef;
+        border: 1px solid var(--rule);
+      }
+      .gsvg text {
+        font-family: var(--sans);
+      }
+      .gsvg .gnew {
+        animation: gpop 0.7s ease;
+      }
+      @keyframes gpop {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
       .lst {
         overflow: auto;
+        overflow-wrap: anywhere;
         font-family: var(--mono);
         font-size: 12.5px;
         line-height: 1.35;
@@ -1666,6 +1688,245 @@ victim(?k, ?v) ^ killer(?k, ?a)
         },
       };
 
+
+      /* ---------- grafo delle deduzioni ---------- */
+      const GW = 570,
+        GH = 450;
+      let GU = 0;
+      const isLit = (x) =>
+        typeof x === "number" || /^\d{4}-\d\d-\d\d/.test(String(x));
+      const short = (t, n = 26) => (t.length > n ? t.slice(0, n - 1) + "…" : t);
+      const ruleColor = (r) =>
+        !r ? "#5b574d" : r.kind === "SWRL" ? "#1f5a38" : "#1f3f73";
+      const pkey = (a, b) => (a < b ? a + "\u0001" + b : b + "\u0001" + a);
+
+      function graphOf(given, derived) {
+        const nodes = new Map(),
+          edges = [],
+          seen = new Set();
+        const N = (id) => {
+          if (!nodes.has(id)) nodes.set(id, { id, types: [], attrs: [] });
+          return nodes.get(id);
+        };
+        const add = (t, rule) => {
+          const [s, p, o] = t,
+            k = t.join("|");
+          if (seen.has(k) || [">=", "<", "!="].includes(p)) return;
+          seen.add(k);
+          if (p === "a") N(s).types.push({ c: o, rule, k });
+          else if (isLit(o)) N(s).attrs.push({ p, v: o, rule, k });
+          else {
+            N(s);
+            N(o);
+            edges.push({ s, p, o, rule, k });
+          }
+        };
+        given.forEach((f) => add(f.t, null));
+        derived.forEach((d) => add(d.t, d.rule));
+        return { nodes: [...nodes.values()], edges };
+      }
+
+      function dims(n, last) {
+        const L = [{ t: short(nice(n.id)), b: 1, c: "#1a1a1c" }];
+        n.types.forEach((x) =>
+          L.push({ t: "è un " + x.c, c: ruleColor(x.rule), n: x.k === last }),
+        );
+        n.attrs.forEach((x) =>
+          L.push({
+            t: x.p + " " + nice(x.v),
+            c: ruleColor(x.rule),
+            n: x.k === last,
+          }),
+        );
+        const sh =
+          L.length > 6
+            ? [...L.slice(0, 5), { t: "… +" + (L.length - 5), c: "#6b675e" }]
+            : L;
+        const w = Math.max(...sh.map((l) => l.t.length * (l.b ? 7.7 : 6.6))) + 18;
+        return { L: sh, w: Math.min(Math.max(w, 80), 200), h: 10 + sh.length * 15 };
+      }
+
+      function layout(g, pos) {
+        const ids = g.nodes.map((n) => n.id),
+          next = {},
+          spawn = {};
+        const hash = (t) => {
+          let h = 0;
+          for (const c of t) h = (h * 31 + c.charCodeAt(0)) | 0;
+          return Math.abs(h);
+        };
+        const fresh = !Object.keys(pos).length;
+        ids.forEach((id, i) => {
+          if (pos[id]) next[id] = { ...pos[id] };
+          else if (fresh) {
+            const a = (i / ids.length) * 2 * Math.PI;
+            next[id] = {
+              x: GW / 2 + Math.cos(a) * 130,
+              y: GH / 2 + Math.sin(a) * 95,
+            };
+            spawn[id] = { ...next[id] };
+          } else {
+            const e = g.edges.find(
+              (e) => (e.s === id && pos[e.o]) || (e.o === id && pos[e.s]),
+            );
+            const b = e ? pos[e.s === id ? e.o : e.s] : { x: GW / 2, y: GH / 2 };
+            const a = ((hash(id) % 360) * Math.PI) / 180;
+            next[id] = { x: b.x + Math.cos(a) * 45, y: b.y + Math.sin(a) * 45 };
+            spawn[id] = { ...b };
+          }
+        });
+        const pairs = [...new Set(g.edges.map((e) => pkey(e.s, e.o)))].map((k) =>
+          k.split("\u0001"),
+        );
+        for (let it = 0; it < 320; it++) {
+          const c = 1 - it / 320,
+            F = {};
+          ids.forEach((id) => (F[id] = { x: 0, y: 0 }));
+          for (let i = 0; i < ids.length; i++)
+            for (let j = i + 1; j < ids.length; j++) {
+              const a = next[ids[i]],
+                b = next[ids[j]];
+              const dx = a.x - b.x,
+                dy = a.y - b.y,
+                d2 = dx * dx + dy * dy + 1,
+                d = Math.sqrt(d2),
+                f = 16000 / d2;
+              F[ids[i]].x += (dx / d) * f;
+              F[ids[i]].y += (dy / d) * f;
+              F[ids[j]].x -= (dx / d) * f;
+              F[ids[j]].y -= (dy / d) * f;
+            }
+          for (let i = 0; i < ids.length; i++)
+            for (let j = i + 1; j < ids.length; j++) {
+              const a = next[ids[i]],
+                b = next[ids[j]],
+                di = g.dims[ids[i]],
+                dj = g.dims[ids[j]];
+              const ox = (di.w + dj.w) / 2 + 18 - Math.abs(a.x - b.x),
+                oy = (di.h + dj.h) / 2 + 14 - Math.abs(a.y - b.y);
+              if (ox > 0 && oy > 0) {
+                // boxes overlap: push apart along the shorter way out
+                if (ox < oy) {
+                  const f = ox * 0.6 * (a.x < b.x ? 1 : -1);
+                  F[ids[i]].x -= f;
+                  F[ids[j]].x += f;
+                } else {
+                  const f = oy * 0.6 * (a.y < b.y ? 1 : -1);
+                  F[ids[i]].y -= f;
+                  F[ids[j]].y += f;
+                }
+              }
+            }
+          pairs.forEach(([s, o]) => {
+            const a = next[s],
+              b = next[o];
+            const dx = b.x - a.x,
+              dy = b.y - a.y,
+              d = Math.sqrt(dx * dx + dy * dy) + 0.01,
+              f = (d - 175) * 0.05;
+            F[s].x += (dx / d) * f;
+            F[s].y += (dy / d) * f;
+            F[o].x -= (dx / d) * f;
+            F[o].y -= (dy / d) * f;
+          });
+          ids.forEach((id) => {
+            const p = next[id];
+            F[id].x += (GW / 2 - p.x) * 0.012;
+            F[id].y += (GH / 2 - p.y) * 0.012;
+            const m = Math.hypot(F[id].x, F[id].y) || 1,
+              step = Math.min(m, 6 * c + 0.4);
+            const hw = g.dims[id].w / 2 + 6,
+              hh = g.dims[id].h / 2 + 6;
+            p.x = Math.min(GW - hw, Math.max(hw, p.x + (F[id].x / m) * step));
+            p.y = Math.min(GH - hh, Math.max(hh, p.y + (F[id].y / m) * step));
+          });
+        }
+        return { next, spawn };
+      }
+
+      function svgOf(g, P, D, last, uid) {
+        const col = ["#8a8578", "#1f3f73", "#1f5a38"];
+        const ci = (r) => (!r ? 0 : r.kind === "SWRL" ? 2 : 1);
+        let o = "<defs>";
+        col.forEach(
+          (c, i) =>
+            (o +=
+              "<marker id='ar" +
+              i +
+              "-" +
+              uid +
+              "' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0,0 L10,5 L0,10 z' fill='" +
+              c +
+              "'/></marker>"),
+        );
+        o += "</defs>";
+        // fit the drawing to the pane: scale up (at most 1.7x) and centre it
+        let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+        g.nodes.forEach((n) => {
+          const p = P[n.id],
+            d = D[n.id];
+          if (!p) return;
+          x0 = Math.min(x0, p.x - d.w / 2);
+          x1 = Math.max(x1, p.x + d.w / 2);
+          y0 = Math.min(y0, p.y - d.h / 2);
+          y1 = Math.max(y1, p.y + d.h / 2);
+        });
+        const sc = Math.min(1.7, (GW - 24) / (x1 - x0 + 30), (GH - 24) / (y1 - y0 + 30));
+        o +=
+          "<g transform='translate(" + (GW / 2 - (sc * (x0 + x1)) / 2) + "," + (GH / 2 - (sc * (y0 + y1)) / 2) + ") scale(" + sc + ")'>";
+        const groups = {};
+        g.edges.forEach((e) => (groups[pkey(e.s, e.o)] ||= []).push(e));
+        Object.values(groups).forEach((arr) =>
+          arr.forEach((e, i) => {
+            const a = P[e.s],
+              b = P[e.o];
+            if (!a || !b) return;
+            const [lo, hi] = e.s < e.o ? [a, b] : [b, a];
+            const len = Math.hypot(hi.x - lo.x, hi.y - lo.y) || 1;
+            const off = (i - (arr.length - 1) / 2) * 50;
+            const cp = {
+              x: (a.x + b.x) / 2 - ((hi.y - lo.y) / len) * off,
+              y: (a.y + b.y) / 2 + ((hi.x - lo.x) / len) * off,
+            };
+            const clip = (c, t, d) => {
+              const dx = t.x - c.x,
+                dy = t.y - c.y;
+              const k = Math.max(Math.abs(dx) / (d.w / 2 + 3), Math.abs(dy) / (d.h / 2 + 3)) || 1;
+              return { x: c.x + dx / k, y: c.y + dy / k };
+            };
+            const A = clip(a, cp, D[e.s]),
+              B = clip(b, cp, D[e.o]);
+            const m = { x: 0.25 * A.x + 0.5 * cp.x + 0.25 * B.x, y: 0.25 * A.y + 0.5 * cp.y + 0.25 * B.y };
+            const c = col[ci(e.rule)],
+              isNew = e.k === last;
+            o +=
+              "<g" +
+              (isNew ? " class='gnew'" : "") +
+              "><path d='M" + A.x + "," + A.y + " Q" + cp.x + "," + cp.y + " " + B.x + "," + B.y +
+              "' fill='none' stroke='" + c + "' stroke-width='" + (isNew ? 2.6 : 1.3) +
+              "' marker-end='url(#ar" + ci(e.rule) + "-" + uid + ")'/>" +
+              "<text x='" + m.x + "' y='" + (m.y + 3) + "' text-anchor='middle' font-size='11' fill='" + c +
+              "' stroke='#faf7ef' stroke-width='3' paint-order='stroke'>" + e.p + "</text></g>";
+          }),
+        );
+        g.nodes.forEach((n) => {
+          const p = P[n.id],
+            d = D[n.id];
+          if (!p) return;
+          o +=
+            "<g><rect x='" + (p.x - d.w / 2) + "' y='" + (p.y - d.h / 2) + "' width='" + d.w + "' height='" + d.h +
+            "' rx='4' fill='#fff' stroke='#b9b2a2'/>";
+          d.L.forEach((l, i) => {
+            o +=
+              "<text x='" + p.x + "' y='" + (p.y - d.h / 2 + 14 + i * 15) + "' text-anchor='middle' font-size='" +
+              (l.b ? 12.5 : 10.5) + "' fill='" + l.c + "'" + (l.b || l.n ? " font-weight='600'" : "") +
+              (l.n ? " class='gnew'" : "") + ">" + l.t.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</text>";
+          });
+          o += "</g>";
+        });
+        return o + "</g>";
+      }
+
       function mount(sec) {
         const sc = SCEN[sec.dataset.demo],
           root = sec.querySelector(".demo");
@@ -1673,6 +1934,7 @@ victim(?k, ?v) ^ killer(?k, ?a)
         let derived = [];
         root.innerHTML =
           "<div class='pane'><h5>Dati scritti</h5><div class='lst' data-f></div><div class='rules'></div></div>" +
+          "<div class='pane'><h5>Il grafo <span style='text-transform:none;letter-spacing:0;font-family:var(--sans)'>· <span style='color:#5b574d'>grigio = scritto</span>, blu e verde = dedotto</span></h5><svg class='gsvg' data-g viewBox='0 0 " + GW + " " + GH + "'></svg></div>" +
           "<div class='pane'><h5>Dedotto dal reasoner <span style='text-transform:none;letter-spacing:0;font-family:var(--sans)'>· <span style='color:#1f3f73'>blu = assioma</span>, <span style='color:#1f5a38'>verde = regola SWRL</span></span></h5><div class='lst' data-d></div>" +
           "<div data-flag></div><div class='ctl'><button class='go' data-step>Passo</button><button data-all>Tutto</button><button data-reset>Azzera</button><span class='msg' data-msg></span></div></div>";
         const fl = root.querySelector("[data-f]"),
@@ -1683,6 +1945,41 @@ victim(?k, ?v) ^ killer(?k, ?a)
           ? "Regole in gioco: " +
             [...new Set(sc.rules.map((r) => r.n))].join(" · ")
           : "";
+        const gs = root.querySelector("[data-g]"),
+          uid = ++GU;
+        let P = {},
+          raf = 0;
+        function draw() {
+          const g = graphOf(
+            facts.filter((f) => f.on),
+            derived,
+          );
+          const last = derived.length ? derived[derived.length - 1].t.join("|") : "";
+          const D = {};
+          g.nodes.forEach((n) => (D[n.id] = dims(n, last)));
+          g.dims = D;
+          const { next, spawn } = layout(g, P);
+          const from = {};
+          g.nodes.forEach((n) => (from[n.id] = P[n.id] || spawn[n.id] || next[n.id]));
+          cancelAnimationFrame(raf);
+          const t0 = performance.now();
+          const frame = (t) => {
+            const k = Math.min(1, (t - t0) / 550),
+              e = 1 - Math.pow(1 - k, 3);
+            const cur = {};
+            g.nodes.forEach((n) => {
+              const a = from[n.id],
+                b = next[n.id];
+              cur[n.id] = { x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e };
+            });
+            P = cur;
+            gs.innerHTML = g.nodes.length
+              ? svgOf(g, cur, D, last, uid)
+              : "<text x='" + GW / 2 + "' y='" + GH / 2 + "' text-anchor='middle' font-size='13' fill='#6b675e'>Nessun fatto selezionato</text>";
+            if (k < 1) raf = requestAnimationFrame(frame);
+          };
+          raf = requestAnimationFrame(frame);
+        }
         const all = () => [...facts.filter((f) => f.on), ...derived];
         const has = (t) =>
           all().some(
@@ -1769,6 +2066,7 @@ victim(?k, ?v) ^ killer(?k, ?a)
             dl.appendChild(e);
           });
           dl.scrollTop = dl.scrollHeight;
+          draw();
           check();
         }
         function step() {
