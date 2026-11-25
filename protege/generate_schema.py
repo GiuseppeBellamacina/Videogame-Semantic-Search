@@ -530,6 +530,8 @@ def object_property_table():
     rows = []
     for name, domain, range_, inverse, characteristics, _ in OBJECT_PROPS:
         features = [f"inversa {tt(inverse)}"] if inverse else []
+        if inverse and domain != range_:
+            features.append("asimmetrica, irriflessiva")
         features += [
             {"Transitive": "transitiva", "Symmetric": "simmetrica"}[c]
             for c in characteristics

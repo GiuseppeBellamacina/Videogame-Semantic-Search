@@ -11,6 +11,8 @@
 \usepackage{tabularx}
 \usepackage{longtable}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{enumitem}
@@ -43,7 +45,7 @@
 
 \begin{abstract}
 \noindent
-Questa relazione racconta la costruzione di un'ontologia OWL~2 dei videogiochi nell'ordine in cui è avvenuta: le domande da cui siamo partiti, i nomi delle cose (le classi), i loro collegamenti (le proprietà), il loro significato (le classi definite e le regole). Schema, regole e dati sono generati da script Python con rdflib; i dati, \nGiochi{} giochi, di undici serie e sei titoli singoli, vengono da Wikidata e da Wikipedia, letta da un agente LLM che deve citare la fonte di ogni fatto. Il cuore della relazione sono le deduzioni che il reasoner HermiT ottiene in Protégé: fatti mai scritti nei dati, come ``se un gioco contiene più di un omicidio e ha una classificazione PEGI elevata, esso è un gioco violento'', ``Un gioco è un first-party se è prodotto da un'azienda produttrice di console'', o ``un gioco è stato fatto da veterani della serie''.
+Questa relazione racconta la costruzione di un'ontologia OWL~2 dei videogiochi nell'ordine in cui è avvenuta: le domande da cui siamo partiti, i nomi delle cose (le classi), i loro collegamenti (le proprietà), il loro significato (le classi definite e le regole). Schema, regole e dati sono generati da script Python con rdflib; i dati, \nGiochi{} giochi, di undici serie e sei titoli singoli, vengono da Wikidata e da Wikipedia, letta da un agente costruito con LangChain che deve citare la fonte di ogni fatto. Il cuore della relazione sono le deduzioni che il reasoner HermiT ottiene in Protégé: fatti mai scritti nei dati, come ``se un gioco contiene più di un omicidio e ha una classificazione PEGI elevata, esso è un gioco violento'', ``Un gioco è un first-party se è prodotto da un'azienda produttrice di console'', o ``un gioco è stato fatto da veterani della serie''.
 \end{abstract}
 
 % ---------------------------------------------------------------------------
@@ -92,6 +94,69 @@ Dice che un gioco è giocabile anche dove è uscita una sua nuova edizione.
 
 \paragraph{I valori.} Cinque datatype property: data di uscita (\texttt{xsd:dateTime}), punteggio Metacritic, classificazione PEGI, generazione di una console (tutte funzionali) e identificativo Wikidata, che è la \emph{chiave} di \cls{VideoGame} (\texttt{owl:hasKey}): due record con lo stesso identificativo sono lo stesso gioco. In tutto ci sono \nObjProp{} object property e \nDataProp{} datatype property (appendice~\ref{app:componenti}).
 
+\paragraph{Il catalogo degli assiomi.} Ogni costrutto di OWL~2 che lo schema usa ha un effetto preciso, e il reasoner ne fa uno di tre usi: \emph{aggiunge} un fatto (inversa, transitività, sottoproprietà, catena, dominio e range, chiave), \emph{classifica} (classi definite, regole) oppure \emph{vieta} e dichiara l'ontologia inconsistente (funzionale, asimmetria, irriflessività, disgiunzione, \texttt{AllDifferent}). La tabella~\ref{tab:assiomi} li elenca con un esempio dallo schema; la figura~\ref{fig:schemi_assiomi} mostra i quattro più strutturali.
+
+\begin{table}[htbp]\centering\footnotesize
+\begin{tabularx}{\linewidth}{@{}p{2.7cm}p{3.7cm}Y@{}}
+\toprule
+Assioma & Esempio nello schema & Effetto \\
+\midrule
+\texttt{rdfs:domain}, \texttt{rdfs:range} & \prop{developedBy}: dominio \cls{VideoGame}, range \cls{Company} & Dà un tipo a chi compare nel fatto: il primo GTA, senza tipo, diventa \cls{VideoGame}. Non è un controllo. \\
+\texttt{owl:inverseOf} & \prop{developedBy} $\leftrightarrow$ \prop{developerOf} (14 coppie) & Si scrive una direzione sola, l'altra si deduce. \\
+\texttt{TransitiveProperty} & \prop{sequelOf}, \prop{subsidiaryOf} & Dal capitolo precedente si ricostruisce la serie; dalle controllate, il gruppo. \\
+\texttt{rdfs:subPropertyOf} & $\prop{availableOn} \sqsubseteq \prop{playableOn}$; \prop{protagonistOf} e \prop{antagonistOf} $\sqsubseteq \prop{appearsIn}$ & Un legame specifico implica quello generico. \\
+\texttt{propertyChainAxiom} & $\prop{hasRemaster} \circ \prop{availableOn} \sqsubseteq \prop{playableOn}$ & Due archi di fila valgono uno: il gioco è giocabile dove è uscito il suo remaster. \\
+\texttt{FunctionalProperty} & \prop{releaseDate}, \prop{metacriticScore}, \prop{pegiRating}, \prop{generation} & Al più un valore: due valori diversi rendono l'ontologia inconsistente. \\
+\texttt{AsymmetricProperty}, \texttt{IrreflexiveProperty} & le 22 proprietà con un'inversa tra classi diverse (\prop{developedBy}, \prop{availableOn}, \dots) & Se A è sviluppato da B, B non lo è da A, e nessuno lo è da sé stesso: altrimenti inconsistenza. \\
+\texttt{propertyDisjointWith} & \prop{remasterOf} e \prop{prequelOf} & Due proprietà non legano la stessa coppia. \\
+\texttt{AllDisjointClasses} & le \nTop{} classi di primo livello; console e PC; romanzo, film, serie TV, fumetto, gioco da tavolo; umano, alieno, sintetico & Nessun individuo sta in due classi del gruppo. \\
+\texttt{owl:hasKey} & \cls{VideoGame}: \prop{hasWikidataId} & Stesso identificativo, stesso gioco (\texttt{sameAs}). \\
+\texttt{owl:AllDifferent} & nei dati: giochi, aziende, personaggi, piattaforme, motori, uccisioni & Rende vera la \emph{Unique Name Assumption} per quegli individui: una chiave o una cardinalità non li fonde, ma li contraddice. \\
+\texttt{equivalentClass} con \texttt{intersectionOf} & le \nDefinite{} classi definite & Condizioni necessarie e sufficienti: il reasoner classifica. \\
+\texttt{someValuesFrom} & $\cls{DeceasedCharacter} \equiv \cls{Character} \sqcap \exists\,\prop{victimIn}.\cls{Killing}$ & Esiste almeno un valore di quel tipo. \\
+\texttt{hasValue} & $\cls{Pegi18Game} \equiv \cls{VideoGame} \sqcap \exists\,\prop{pegiRating}.\{18\}$ & Un valore dato (5 classi, da PEGI~3 a 18). \\
+\texttt{unionOf} & $\cls{TransmediaFranchise}$: $\cls{Film} \sqcup \cls{TVSeries}$ & Uno tra più tipi. \\
+\texttt{minQualified}\allowbreak\texttt{Cardinality} & $\cls{RecurringCharacter}$: ${\geq}2\,\prop{appearsIn}.\cls{VideoGame}$ & Almeno $n$ valori di un tipo, grazie a \texttt{AllDifferent}. \\
+\texttt{withRestrictions} (datatype) & $\cls{ClassicGame}$: \prop{releaseDate} $<$ 2005; $\cls{FantasyViolenceGame}$: \prop{pegiRating} $\leq 12$ & Un intervallo di valori. \\
+\texttt{rdfs:subClassOf} & \cls{ConsolePlatform} $\sqsubseteq$ \cls{Platform} & Gerarchia delle classi primitive. \\
+Regole SWRL (\textit{DL-safe}) & \nRegole{} regole, per esempio $\textsf{KillingEvent}$ & Confronta variabili: ``uno studio diverso'', ``lo stesso regista''. \\
+\bottomrule
+\end{tabularx}
+\caption{Gli assiomi usati dallo schema e il loro effetto.}\label{tab:assiomi}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[
+  every node/.style={font=\scriptsize},
+  n/.style={draw,rounded corners=2pt,inner sep=3pt,fill=black!4},
+  e/.style={-{Stealth[length=5pt]}},
+  d/.style={-{Stealth[length=5pt]},dashed,blue!60!black},
+  bad/.style={-{Stealth[length=5pt]},red!70!black}]
+% inversa
+\node[font=\footnotesize\bfseries] at (2,2.1) {Inversa};
+\node[n] (a1) at (0,1) {Dark Souls}; \node[n] (b1) at (4,1) {FromSoftware};
+\draw[e] (a1) to[bend left=18] node[above]{developedBy} (b1);
+\draw[d] (b1) to[bend left=18] node[below]{developerOf} (a1);
+% transitiva
+\node[font=\footnotesize\bfseries] at (9,2.1) {Transitiva};
+\node[n] (a2) at (6.6,1) {Mario 3}; \node[n] (b2) at (9,1) {Mario 2}; \node[n] (c2) at (11.4,1) {Mario};
+\draw[e] (a2) -- node[above]{sequelOf} (b2); \draw[e] (b2) -- node[above]{sequelOf} (c2);
+\draw[d] (a2) to[bend right=40] node[below]{sequelOf} (c2);
+% catena
+\node[font=\footnotesize\bfseries] at (2,-1.2) {Catena};
+\node[n] (a3) at (0,-3) {GTA III}; \node[n] (b3) at (2.9,-3) {Definitive Ed.}; \node[n] (c3) at (5.5,-3) {PS5};
+\draw[e] (a3) -- node[above]{hasRemaster} (b3); \draw[e] (b3) -- node[above]{availableOn} (c3);
+\draw[d] (a3) to[bend right=40] node[below]{playableOn} (c3);
+% asimmetria
+\node[font=\footnotesize\bfseries] at (9.6,-1.2) {Asimmetria e irriflessività};
+\node[n] (a4) at (7.6,-3) {Fallout 4}; \node[n] (b4) at (11.6,-3) {Bethesda};
+\draw[e] (a4) to[bend left=18] node[above]{developedBy} (b4);
+\draw[bad] (b4) to[bend left=18] node[below]{developedBy $\times$} (a4);
+\draw[bad] (a4) to[out=140,in=100,looseness=6] node[above left]{$\times$} (a4);
+\end{tikzpicture}
+\caption{Quattro assiomi sulle proprietà. Linea continua: fatto scritto; tratteggiata: dedotto; rossa: violazione, che rende l'ontologia inconsistente.}\label{fig:schemi_assiomi}
+\end{figure}
+
 % ---------------------------------------------------------------------------
 \section{Terzo passo: dare un significato}\label{sec:definite}
 
@@ -132,7 +197,7 @@ su una catena & $\cls{StillPlayable} \equiv \cls{VideoGame} \sqcap \exists\,\pro
 \paragraph{Da dove vengono i dati.} Anche i dati sono prodotti da script, in tre passi.
 \begin{enumerate}
   \item \texttt{fetch\_wikidata.py} interroga Wikidata con una sola query SPARQL per tutti i giochi (date, sviluppatori, editori, piattaforme, registi, motori, PEGI, Metacritic, premi, seguiti) e salva le risposte, così la generazione non richiede la rete; lo stesso script elenca dove il dataset si discosta da Wikidata, per la revisione.
-  \item I fatti di trama (protagonisti, antagonisti, uccisioni certe in ogni finale, natura dei personaggi) su Wikidata quasi non esistono: sono stati raccolti da Wikipedia con agenti LLM (Claude Sonnet e Opus) dotati di ricerca web e poi rivisti a mano; per i personaggi più noti il dataset conserva anche la fonte (URL e frase citata). \texttt{research\_agent.py} è la versione ripetibile e controllabile di questa estrazione. La lista dei giochi la ricava da sola con una query SPARQL sull'ontologia; per un gioco nuovo basta il titolo, e i dati strutturati arrivano da Wikidata. L'agente (\emph{LangChain}, \texttt{create\_agent}) ha due soli strumenti, la ricerca su Wikidata e la lettura della sezione della trama di Wikipedia, e deve restituire un JSON validato in cui ogni fatto ha l'URL e una frase citata alla lettera. Lo script scarta ogni fatto la cui citazione non compare nel testo scaricato, quelli il cui personaggio non compare nella pagina e le uccisioni che dipendono dal finale, e riporta i nomi a quelli già presenti nel dataset. Il costo è tenuto sotto controllo da tre limiti: al più cinque chiamate al modello, dodici passi del grafo (il valore predefinito di \texttt{create\_agent} è 9\,999) e seimila token in uscita. Una prova con \emph{deepagents}, che ha più strumenti e nessun limite stretto, non si fermava (574\,000 token in ingresso per un solo gioco); con i limiti un gioco costa circa 6\,000 token, meno di un millesimo di dollaro con un modello economico. Il controllo verifica che la citazione \emph{esista} nella pagina, non che dimostri il fatto: per questo i risultati vanno comunque riletti. Provato su tre giochi veri: per \emph{Far Cry~3} le quattro uccisioni coincidono con il dataset; per \emph{Dark Souls} il modello aveva inventato un nome (\emph{Ashen One}, di un altro gioco) citando una frase vera, ed è per questo che ora si richiede che il nome compaia nella pagina; l'estrazione completa dei \nGiochi{} giochi con lo script non è ancora stata rieseguita.
+  \item I fatti di trama (protagonisti, antagonisti, uccisioni certe in ogni finale, natura dei personaggi) su Wikidata quasi non esistono, e non si ottengono ``chiedendo a un chatbot'': la risposta di un modello linguistico non cita nulla e può essere inventata. Per questo li estrae da Wikipedia un \emph{agente costruito con LangChain} (\texttt{create\_agent}, nello script \texttt{research\_agent.py}): un programma che affida al modello due strumenti e un formato di risposta rigido, e che controlla da sé ciò che il modello restituisce. Il dataset iniziale era stato raccolto con agenti LLM (Claude Sonnet e Opus) dotati di ricerca web e rivisto a mano, e per i personaggi più noti conserva la fonte (URL e frase citata); lo script è la versione ripetibile e controllabile di quell'estrazione. La lista dei giochi la ricava da sola con una query SPARQL sull'ontologia; per un gioco nuovo basta il titolo, e i dati strutturati arrivano da Wikidata. L'agente ha due soli strumenti, la ricerca su Wikidata e la lettura della sezione della trama di Wikipedia, e deve restituire un JSON validato in cui ogni fatto ha l'URL e una frase citata alla lettera. Lo script scarta ogni fatto la cui citazione non compare nel testo scaricato, quelli il cui personaggio non compare nella pagina e le uccisioni che dipendono dal finale, e riporta i nomi a quelli già presenti nel dataset. Il costo è tenuto sotto controllo da tre limiti: al più cinque chiamate al modello, dodici passi del grafo (il valore predefinito di \texttt{create\_agent} è 9\,999) e seimila token in uscita. Una prova con \emph{deepagents}, che ha più strumenti e nessun limite stretto, non si fermava (574\,000 token in ingresso per un solo gioco); con i limiti un gioco costa circa 6\,000 token, meno di un millesimo di dollaro con un modello economico. Il controllo verifica che la citazione \emph{esista} nella pagina, non che dimostri il fatto: per questo i risultati vanno comunque riletti. Provato su tre giochi veri: per \emph{Far Cry~3} le quattro uccisioni coincidono con il dataset; per \emph{Dark Souls} il modello aveva inventato un nome (\emph{Ashen One}, di un altro gioco) citando una frase vera, ed è per questo che ora si richiede che il nome compaia nella pagina; l'estrazione completa dei \nGiochi{} giochi con lo script non è ancora stata rieseguita.
   \item Il dataset revisionato (\texttt{fonti/dataset.json}) e le correzioni manuali, ciascuna con la propria fonte (\texttt{fonti/correzioni.json}: per esempio i PEGI mancanti presi da pegi.info), sono convertiti in Turtle da \texttt{build\_data.py} con rdflib. Ogni gioco rimanda alla sua voce Wikidata con \texttt{rdfs:seeAlso}.
 \end{enumerate}
 Per esempio, così appaiono nei dati \emph{The Legend of Zelda: Twilight Princess} e l'uccisione di Ganondorf (i prefissi \texttt{company:}, \texttt{character:} e simili abbreviano gli IRI \texttt{vg:company/}\dots):
@@ -207,7 +272,7 @@ Alcune conclusioni richiedono di confrontare due variabili (``lo stesso studio''
 \screenshot[0.7\linewidth]{swrl_rules}{Le regole nel tab SWRLTab di Protégé.}{Apri \texttt{Window > Tabs > SWRLTab}. Il tab elenca le \nRegole{} regole di \texttt{regole.ttl}: allarga la colonna \emph{Rule} per leggerle per intero e fotografa la tabella. Se l'elenco è vuoto, controlla nel tab \emph{Active ontology}, sezione \emph{Ontology imports}, che \texttt{regole} sia tra le ontologie importate.}
 
 \subsection{Errori che il reasoner trova}\label{sec:inconsistenze}
-Con cinque piccole aggiunte ai dati HermiT dichiara l'ontologia inconsistente e Protégé spiega perché (figura~\ref{fig:inconsistenza}): una piattaforma sia console sia PC (\emph{disgiunzione}); Ocarina of Time~3D, remaster di Ocarina of Time, dichiarato anche suo prequel (\emph{proprietà disgiunte}, \prop{remasterOf} e \prop{prequelOf}; non \prop{sequelOf}, che essendo transitiva non è una proprietà semplice); Portal~2 con due punteggi (\emph{proprietà funzionale}); Breath of the Wild ``su al più una piattaforma'' ma uscito su Wii~U e Switch, dichiarate diverse (\emph{cardinalità}); due giochi con lo stesso identificativo Wikidata dichiarati diversi (\emph{chiave}). Il caso di cardinalità ha un gemello che non è un errore: Splatoon~2, esclusiva Switch, collegato anche a ``NX'', il nome in codice della Switch. Il reasoner conclude che NX \emph{è} la Switch: una deduzione corretta, che mostra mondo aperto e assenza di Unique Name Assumption.
+Con cinque piccole aggiunte ai dati HermiT dichiara l'ontologia inconsistente e Protégé spiega perché (figura~\ref{fig:inconsistenza}): una piattaforma sia console sia PC (\emph{disgiunzione}); Ocarina of Time~3D, remaster di Ocarina of Time, dichiarato anche suo prequel (\emph{proprietà disgiunte}, \prop{remasterOf} e \prop{prequelOf}; non \prop{sequelOf}, che essendo transitiva non è una proprietà semplice); Portal~2 con due punteggi (\emph{proprietà funzionale}); Breath of the Wild ``su al più una piattaforma'' ma uscito su Wii~U e Switch, dichiarate diverse (\emph{cardinalità}); due giochi con lo stesso identificativo Wikidata dichiarati diversi (\emph{chiave}). Asimmetria e irriflessività (un gioco sviluppato da uno studio che a sua volta lo ``sviluppa'', o da sé stesso) producono lo stesso esito, ma non hanno un file di prova a parte. Il caso di cardinalità ha un gemello che non è un errore: Splatoon~2, esclusiva Switch, collegato anche a ``NX'', il nome in codice della Switch. Il reasoner conclude che NX \emph{è} la Switch: una deduzione corretta, che mostra mondo aperto e assenza di Unique Name Assumption.
 
 \screenshot[0.7\linewidth]{inconsistenza}{La spiegazione di un'inconsistenza in Protégé (test di cardinalità).}{Apri \texttt{protege/test/errore\_cardinalita.ttl} (File > Open, in una nuova finestra se lo chiede) e avvia \texttt{Reasoner > HermiT > Start reasoner}: compare l'avviso di ontologia inconsistente. Scegli \emph{Explain inconsistent ontology} e fotografa la finestra con gli assiomi in conflitto: la restrizione ``al più una piattaforma'' su \emph{Breath of the Wild}, le sue due piattaforme (Wii U e Switch) e la loro diversità.}
 

@@ -88,34 +88,34 @@
 \caption{Le 48 object property}\\ \toprule
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endfirsthead
 \textbf{Proprietà} & \textbf{Dominio} & \textbf{Range} & \textbf{Caratteristiche} \\ \midrule \endhead \bottomrule \endfoot
-\texttt{developedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{developerOf} \\
-\texttt{publishedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{publisherOf} \\
-\texttt{availableOn} & \texttt{VideoGame} & \texttt{Platform} & inversa \texttt{platformFor}, sotto-proprietà di \texttt{playableOn} \\
+\texttt{developedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{developerOf}, asimmetrica, irriflessiva \\
+\texttt{publishedBy} & \texttt{VideoGame} & \texttt{Company} & inversa \texttt{publisherOf}, asimmetrica, irriflessiva \\
+\texttt{availableOn} & \texttt{VideoGame} & \texttt{Platform} & inversa \texttt{platformFor}, asimmetrica, irriflessiva, sotto-proprietà di \texttt{playableOn} \\
 \texttt{hasGenre} & \texttt{VideoGame} & \texttt{Genre} &  \\
 \texttt{hasGameMode} & \texttt{VideoGame} & \texttt{GameMode} &  \\
-\texttt{belongsTo} & \texttt{VideoGame} & \texttt{Franchise} & inversa \texttt{includes} \\
+\texttt{belongsTo} & \texttt{VideoGame} & \texttt{Franchise} & inversa \texttt{includes}, asimmetrica, irriflessiva \\
 \texttt{sequelOf} & \texttt{VideoGame} & \texttt{VideoGame} & inversa \texttt{hasSequel}, transitiva \\
 \texttt{remasterOf} & \texttt{VideoGame} & \texttt{VideoGame} & inversa \texttt{hasRemaster} \\
 \texttt{wonAward} & \texttt{VideoGame} & \texttt{Award} &  \\
 \texttt{madeWith} & \texttt{VideoGame} & \texttt{GameEngine} &  \\
 \texttt{engineDevelopedBy} & \texttt{GameEngine} & \texttt{Company} &  \\
-\texttt{manufacturedBy} & \texttt{Platform} & \texttt{Company} & inversa \texttt{manufacturerOf} \\
+\texttt{manufacturedBy} & \texttt{Platform} & \texttt{Company} & inversa \texttt{manufacturerOf}, asimmetrica, irriflessiva \\
 \texttt{subsidiaryOf} & \texttt{Company} & \texttt{Company} & transitiva \\
 \texttt{publishedByGroup} & \texttt{VideoGame} & \texttt{Company} &  \\
 \texttt{onConsoleOf} & \texttt{VideoGame} & \texttt{Company} &  \\
-\texttt{directedBy} & \texttt{VideoGame} & \texttt{Person} & inversa \texttt{directorOf} \\
+\texttt{directedBy} & \texttt{VideoGame} & \texttt{Person} & inversa \texttt{directorOf}, asimmetrica, irriflessiva \\
 \texttt{heads} & \texttt{Person} & \texttt{Company} &  \\
 \texttt{foundedBy} & \texttt{Company} & \texttt{Person} &  \\
 \texttt{formerEmployeeOf} & \texttt{Person} & \texttt{Company} &  \\
 \texttt{basedOn} & \texttt{VideoGame} & \texttt{CreativeWork} &  \\
 \texttt{adaptedInto} & \texttt{Franchise} & \texttt{CreativeWork} &  \\
-\texttt{appearsIn} & \texttt{Character} & \texttt{VideoGame} & inversa \texttt{hasCharacter} \\
+\texttt{appearsIn} & \texttt{Character} & \texttt{VideoGame} & inversa \texttt{hasCharacter}, asimmetrica, irriflessiva \\
 \texttt{protagonistOf} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
-\texttt{antagonistOf} & \texttt{Character} & \texttt{VideoGame} & inversa \texttt{hasAntagonist}, sotto-proprietà di \texttt{appearsIn} \\
+\texttt{antagonistOf} & \texttt{Character} & \texttt{VideoGame} & inversa \texttt{hasAntagonist}, asimmetrica, irriflessiva, sotto-proprietà di \texttt{appearsIn} \\
 \texttt{killedBy} & \texttt{Character} & \texttt{Character} & inversa \texttt{kills} \\
-\texttt{victim} & \texttt{Killing} & \texttt{Character} & inversa \texttt{victimIn} \\
-\texttt{killer} & \texttt{Killing} & \texttt{Character} & inversa \texttt{killerIn} \\
-\texttt{inGame} & \texttt{Killing} & \texttt{VideoGame} & inversa \texttt{hasKilling} \\
+\texttt{victim} & \texttt{Killing} & \texttt{Character} & inversa \texttt{victimIn}, asimmetrica, irriflessiva \\
+\texttt{killer} & \texttt{Killing} & \texttt{Character} & inversa \texttt{killerIn}, asimmetrica, irriflessiva \\
+\texttt{inGame} & \texttt{Killing} & \texttt{VideoGame} & inversa \texttt{hasKilling}, asimmetrica, irriflessiva \\
 \texttt{portrays} & \texttt{Character} & \texttt{Person} &  \\
 \texttt{builtBy} & \texttt{Character} & \texttt{owl:Thing} &  \\
 \texttt{playableIn} & \texttt{Character} & \texttt{VideoGame} & sotto-proprietà di \texttt{appearsIn} \\
