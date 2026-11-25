@@ -801,7 +801,8 @@
             <div>
               <span
                 >Le proprietà, una per una<small
-                  >dominio, inversa, catena, funzionale, disgiunzione, chiave · <b>interattive</b></small
+                  >dominio, inversa, catena, funzionale, disgiunzione, chiave ·
+                  <b>interattive</b></small
                 ></span
               >
             </div>
@@ -1065,7 +1066,8 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <h2>Collegare le cose</h2>
         <p class="lead">
           Le proprietà dicono più di un semplice collegamento: ognuna porta con
-          sé una regola di buon senso. Le prossime diapositive le provano una per una.
+          sé una regola di buon senso. Le prossime diapositive le provano una
+          per una.
         </p>
         <div class="body" style="flex-direction: column; gap: 0">
           <table>
@@ -1143,7 +1145,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <div class="kicker">Le proprietà · dominio e range</div>
         <h2>Dominio e range: un tipo gratis</h2>
         <p class="lead">
-          <code>rdfs:domain</code> e <code>rdfs:range</code> dicono di che tipo sono i due estremi di una proprietà. Chi la usa <b>riceve il tipo</b> senza che nessuno lo scriva: il primo GTA è senza tipo, ma ha uno sviluppatore.
+          <code>rdfs:domain</code> e <code>rdfs:range</code> dicono di che tipo
+          sono i due estremi di una proprietà. Chi la usa
+          <b>riceve il tipo</b> senza che nessuno lo scriva: il primo GTA è
+          senza tipo, ma ha uno sviluppatore.
         </p>
         <div class="demo"></div>
         <div class="foot"><span>Videogame Ontology</span><span>7</span></div>
@@ -1151,10 +1156,15 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
 
       <!-- 8 -->
       <section class="slide" data-demo="inv">
-        <div class="kicker">Le proprietà · inversa, transitiva, sottoproprietà</div>
+        <div class="kicker">
+          Le proprietà · inversa, transitiva, sottoproprietà
+        </div>
         <h2>Inversa, transitiva, sottoproprietà</h2>
         <p class="lead">
-          Tre assiomi sulle <b>relazioni</b>: la direzione opposta viene da sola (<code>inverseOf</code>), la serie si ricostruisce dai capitoli (<code>TransitiveProperty</code>), un legame specifico ne implica uno generico (<code>subPropertyOf</code>).
+          Tre assiomi sulle <b>relazioni</b>: la direzione opposta viene da sola
+          (<code>inverseOf</code>), la serie si ricostruisce dai capitoli
+          (<code>TransitiveProperty</code>), un legame specifico ne implica uno
+          generico (<code>subPropertyOf</code>).
         </p>
         <div class="demo"></div>
         <div class="foot"><span>Videogame Ontology</span><span>8</span></div>
@@ -1165,7 +1175,9 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <div class="kicker">Le proprietà · catena di proprietà</div>
         <h2>La catena: due archi valgono uno</h2>
         <p class="lead">
-          <code>propertyChainAxiom</code>: <i>hasRemaster ∘ availableOn ⊑ playableOn</i>. Se il remaster è uscito su una console, anche il gioco originale ci si può giocare.
+          <code>propertyChainAxiom</code>:
+          <i>hasRemaster ∘ availableOn ⊑ playableOn</i>. Se il remaster è uscito
+          su una console, anche il gioco originale ci si può giocare.
         </p>
         <div class="demo"></div>
         <div class="foot"><span>Videogame Ontology</span><span>9</span></div>
@@ -1176,7 +1188,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <div class="kicker">Le proprietà · funzionale</div>
         <h2>Funzionale: al più un valore</h2>
         <p class="lead">
-          <code>FunctionalProperty</code> non deduce un fatto nuovo: <b>vieta</b>. Due valori diversi per <i>pegiRating</i> sono un errore, e il reasoner dichiara l'ontologia <b>inconsistente</b> (nodo INCONSISTENTE).
+          <code>FunctionalProperty</code> non deduce un fatto nuovo:
+          <b>vieta</b>. Due valori diversi per <i>pegiRating</i> sono un errore,
+          e il reasoner dichiara l'ontologia <b>inconsistente</b> (nodo
+          INCONSISTENTE).
         </p>
         <div class="demo"></div>
         <div class="foot"><span>Videogame Ontology</span><span>10</span></div>
@@ -1187,7 +1202,9 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <div class="kicker">Le proprietà · asimmetrica e irriflessiva</div>
         <h2>Asimmetrica e irriflessiva</h2>
         <p class="lead">
-          Se A è sviluppato da B, B non può essere sviluppato da A (<code>AsymmetricProperty</code>), e nessuno sviluppa sé stesso (<code>IrreflexiveProperty</code>). Le usano 22 proprietà.
+          Se A è sviluppato da B, B non può essere sviluppato da A
+          (<code>AsymmetricProperty</code>), e nessuno sviluppa sé stesso
+          (<code>IrreflexiveProperty</code>). Le usano 22 proprietà.
         </p>
         <div class="demo"></div>
         <div class="foot"><span>Videogame Ontology</span><span>11</span></div>
@@ -1198,7 +1215,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <div class="kicker">Le proprietà · disgiunzione</div>
         <h2>Disgiunte: classi e proprietà</h2>
         <p class="lead">
-          <code>AllDisjointClasses</code> dice che nessun individuo sta in due classi (un gioco non è una persona); <code>propertyDisjointWith</code> che due proprietà non legano la stessa coppia (un remaster non è un prequel).
+          <code>AllDisjointClasses</code> dice che nessun individuo sta in due
+          classi (un gioco non è una persona);
+          <code>propertyDisjointWith</code> che due proprietà non legano la
+          stessa coppia (un remaster non è un prequel).
         </p>
         <div class="demo"></div>
         <div class="foot"><span>Videogame Ontology</span><span>12</span></div>
@@ -1209,7 +1229,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <div class="kicker">Le proprietà · chiave e AllDifferent</div>
         <h2>Chiave e AllDifferent</h2>
         <p class="lead">
-          <code>hasKey</code>: due giochi con lo stesso identificativo Wikidata sono <b>lo stesso gioco</b>. <code>AllDifferent</code> dice invece che certi individui sono tutti diversi: se una chiave li fonde, l'ontologia è inconsistente. Nei dati ne abbiamo sei.
+          <code>hasKey</code>: due giochi con lo stesso identificativo Wikidata
+          sono <b>lo stesso gioco</b>. <code>AllDifferent</code> dice invece che
+          certi individui sono tutti diversi: se una chiave li fonde,
+          l'ontologia è inconsistente. Nei dati ne abbiamo sei.
         </p>
         <div class="demo"></div>
         <div class="foot"><span>Videogame Ontology</span><span>13</span></div>
@@ -1220,10 +1243,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <div class="kicker">Il reasoner al lavoro</div>
         <h2>Da un solo fatto, più conclusioni</h2>
         <p class="lead">
-          Nei dati c'è <b>un'uccisione</b> in <i>The Legend of Zelda: Twilight Princess</i>:
-          Link uccide Ganondorf. Premi <b>Passo</b>:
-          ogni riga a destra nasce dalle righe di sinistra e da una regola. Poi
-          <b>togli una spunta</b> e riparti.
+          Nei dati c'è <b>un'uccisione</b> in
+          <i>The Legend of Zelda: Twilight Princess</i>: Link uccide Ganondorf.
+          Premi <b>Passo</b>: ogni riga a destra nasce dalle righe di sinistra e
+          da una regola. Poi <b>togli una spunta</b> e riparti.
         </p>
         <div class="demo"></div>
         <div class="foot"><span>Videogame Ontology</span><span>14</span></div>
@@ -1310,7 +1333,9 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <div class="kicker">Il significato · restrizioni</div>
         <h2>Le restrizioni, una per una</h2>
         <p class="lead">
-          Cardinalità (<code>≥2 appearsIn</code>), valore (<code>∃pegiRating.{12}</code>), unione (<code>Film ⊔ TVSeries</code>): ogni costrutto delle classi definite, con un esempio dai dati.
+          Cardinalità (<code>≥2 appearsIn</code>), valore
+          (<code>∃pegiRating.{12}</code>), unione (<code>Film ⊔ TVSeries</code
+          >): ogni costrutto delle classi definite, con un esempio dai dati.
         </p>
         <div class="demo"></div>
         <div class="foot"><span>Videogame Ontology</span><span>16</span></div>
@@ -1321,9 +1346,9 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <div class="kicker">Catene, serie e numeri</div>
         <h2>Quattro ragionamenti in un colpo</h2>
         <p class="lead">
-          Transitività (<i>Super Mario Bros. 3 è un terzo capitolo</i>), catena (<i
-            >GTA III si gioca su PS5</i
-          >), numeri e date (<i>è un classico, la PS5 è di nona generazione</i
+          Transitività (<i>Super Mario Bros. 3 è un terzo capitolo</i>), catena
+          (<i>GTA III si gioca su PS5</i>), numeri e date (<i
+            >è un classico, la PS5 è di nona generazione</i
           >). Prova a togliere il remaster.
         </p>
         <div class="demo"></div>
@@ -1591,12 +1616,16 @@ victim(?k, ?v) ^ killer(?k, ?a)
       const nice = (t) => String(t).replace(/_/g, " ");
       const show = ([s, p, o]) =>
         nice(s) + "  " + (p === "a" ? "è un" : p) + "  " + nice(o);
-      const esc = (x) =>
-        String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+      const esc = (x) => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;");
       // subject, predicate (as a small label) and object: names with spaces stay readable
       const tri = ([s, p, o]) =>
-        "<span class='ts'>" + esc(nice(s)) + "</span><span class='tp'>" +
-        (p === "a" ? "è un" : esc(p)) + "</span><span class='to'>" + esc(nice(o)) + "</span>";
+        "<span class='ts'>" +
+        esc(nice(s)) +
+        "</span><span class='tp'>" +
+        (p === "a" ? "è un" : esc(p)) +
+        "</span><span class='to'>" +
+        esc(nice(o)) +
+        "</span>";
 
       function matchAtom(atom, fact, b) {
         const nb = { ...b };
@@ -1653,7 +1682,11 @@ victim(?k, ?v) ^ killer(?k, ?a)
             ["Ganondorf_by_Link_in_Twilight_Princess", "a", "Killing"],
             ["Ganondorf_by_Link_in_Twilight_Princess", "victim", "Ganondorf"],
             ["Ganondorf_by_Link_in_Twilight_Princess", "killer", "Link"],
-            ["Ganondorf_by_Link_in_Twilight_Princess", "inGame", "Twilight_Princess"],
+            [
+              "Ganondorf_by_Link_in_Twilight_Princess",
+              "inGame",
+              "Twilight_Princess",
+            ],
             ["Twilight_Princess", "pegiRating", 12],
           ].map((t) => ({ t })),
           rules: [
@@ -1911,12 +1944,48 @@ victim(?k, ?v) ^ killer(?k, ?a)
             ["Link", "protagonistOf", "Twilight_Princess"],
           ].map((t) => ({ t })),
           rules: [
-            { n: "domain developedBy", kind: "OWL", t: "domain(developedBy) = VideoGame", body: [["?x", "developedBy", "?y"]], head: [["?x", "a", "VideoGame"]] },
-            { n: "range developedBy", kind: "OWL", t: "range(developedBy) = Company", body: [["?x", "developedBy", "?y"]], head: [["?y", "a", "Company"]] },
-            { n: "domain heads", kind: "OWL", t: "domain(heads) = Person", body: [["?x", "heads", "?y"]], head: [["?x", "a", "Person"]] },
-            { n: "range heads", kind: "OWL", t: "range(heads) = Company", body: [["?x", "heads", "?y"]], head: [["?y", "a", "Company"]] },
-            { n: "domain protagonistOf", kind: "OWL", t: "domain(protagonistOf) = Character", body: [["?x", "protagonistOf", "?y"]], head: [["?x", "a", "Character"]] },
-            { n: "range protagonistOf", kind: "OWL", t: "range(protagonistOf) = VideoGame", body: [["?x", "protagonistOf", "?y"]], head: [["?y", "a", "VideoGame"]] },
+            {
+              n: "domain developedBy",
+              kind: "OWL",
+              t: "domain(developedBy) = VideoGame",
+              body: [["?x", "developedBy", "?y"]],
+              head: [["?x", "a", "VideoGame"]],
+            },
+            {
+              n: "range developedBy",
+              kind: "OWL",
+              t: "range(developedBy) = Company",
+              body: [["?x", "developedBy", "?y"]],
+              head: [["?y", "a", "Company"]],
+            },
+            {
+              n: "domain heads",
+              kind: "OWL",
+              t: "domain(heads) = Person",
+              body: [["?x", "heads", "?y"]],
+              head: [["?x", "a", "Person"]],
+            },
+            {
+              n: "range heads",
+              kind: "OWL",
+              t: "range(heads) = Company",
+              body: [["?x", "heads", "?y"]],
+              head: [["?y", "a", "Company"]],
+            },
+            {
+              n: "domain protagonistOf",
+              kind: "OWL",
+              t: "domain(protagonistOf) = Character",
+              body: [["?x", "protagonistOf", "?y"]],
+              head: [["?x", "a", "Character"]],
+            },
+            {
+              n: "range protagonistOf",
+              kind: "OWL",
+              t: "range(protagonistOf) = VideoGame",
+              body: [["?x", "protagonistOf", "?y"]],
+              head: [["?y", "a", "VideoGame"]],
+            },
           ],
           hint: "Togli «GTA_III developedBy Rockstar_North»: GTA III torna senza tipo e Rockstar North non è più una Company. Nessun fatto dice che sono un gioco e uno studio: lo dice solo la proprietà.",
         },
@@ -1928,9 +1997,30 @@ victim(?k, ?v) ^ killer(?k, ?a)
             ["Link", "protagonistOf", "Twilight_Princess"],
           ].map((t) => ({ t })),
           rules: [
-            { n: "inversa developedBy", kind: "inversa", t: "developedBy ↔ developerOf", body: [["?x", "developedBy", "?y"]], head: [["?y", "developerOf", "?x"]] },
-            { n: "sequelOf transitiva", kind: "OWL", t: "sequelOf è transitiva", body: [["?a", "sequelOf", "?b"], ["?b", "sequelOf", "?c"]], head: [["?a", "sequelOf", "?c"]] },
-            { n: "protagonistOf ⊑ appearsIn", kind: "OWL", t: "sottoproprietà", body: [["?c", "protagonistOf", "?g"]], head: [["?c", "appearsIn", "?g"]] },
+            {
+              n: "inversa developedBy",
+              kind: "inversa",
+              t: "developedBy ↔ developerOf",
+              body: [["?x", "developedBy", "?y"]],
+              head: [["?y", "developerOf", "?x"]],
+            },
+            {
+              n: "sequelOf transitiva",
+              kind: "OWL",
+              t: "sequelOf è transitiva",
+              body: [
+                ["?a", "sequelOf", "?b"],
+                ["?b", "sequelOf", "?c"],
+              ],
+              head: [["?a", "sequelOf", "?c"]],
+            },
+            {
+              n: "protagonistOf ⊑ appearsIn",
+              kind: "OWL",
+              t: "sottoproprietà",
+              body: [["?c", "protagonistOf", "?g"]],
+              head: [["?c", "appearsIn", "?g"]],
+            },
           ],
           hint: "Togli «Super_Mario_Bros_2 sequelOf Super_Mario_Bros»: senza l'anello intermedio la transitività non scatta e il terzo capitolo non risale più al primo.",
         },
@@ -1940,9 +2030,30 @@ victim(?k, ?v) ^ killer(?k, ?a)
             ["GTA_III_Definitive_Edition", "availableOn", "PlayStation_5"],
           ].map((t) => ({ t })),
           rules: [
-            { n: "inversa remasterOf", kind: "inversa", t: "remasterOf ↔ hasRemaster", body: [["?x", "remasterOf", "?y"]], head: [["?y", "hasRemaster", "?x"]] },
-            { n: "availableOn ⊑ playableOn", kind: "OWL", t: "sottoproprietà", body: [["?g", "availableOn", "?p"]], head: [["?g", "playableOn", "?p"]] },
-            { n: "catena", kind: "OWL", t: "hasRemaster ∘ availableOn ⊑ playableOn", body: [["?g", "hasRemaster", "?r"], ["?r", "availableOn", "?p"]], head: [["?g", "playableOn", "?p"]] },
+            {
+              n: "inversa remasterOf",
+              kind: "inversa",
+              t: "remasterOf ↔ hasRemaster",
+              body: [["?x", "remasterOf", "?y"]],
+              head: [["?y", "hasRemaster", "?x"]],
+            },
+            {
+              n: "availableOn ⊑ playableOn",
+              kind: "OWL",
+              t: "sottoproprietà",
+              body: [["?g", "availableOn", "?p"]],
+              head: [["?g", "playableOn", "?p"]],
+            },
+            {
+              n: "catena",
+              kind: "OWL",
+              t: "hasRemaster ∘ availableOn ⊑ playableOn",
+              body: [
+                ["?g", "hasRemaster", "?r"],
+                ["?r", "availableOn", "?p"],
+              ],
+              head: [["?g", "playableOn", "?p"]],
+            },
           ],
           hint: "Il remaster è su PS5, l'originale no: ma la catena rende giocabile lì anche l'originale. Togli «remasterOf» e il legame si spezza.",
         },
@@ -1953,7 +2064,17 @@ victim(?k, ?v) ^ killer(?k, ?a)
             ["Skyward_Sword", "pegiRating", 12],
           ].map((t) => ({ t })),
           rules: [
-            { n: "pegiRating funzionale", kind: "OWL", t: "pegiRating è funzionale", body: [["?g", "pegiRating", "?a"], ["?g", "pegiRating", "?b"], ["?a", "!=", "?b"]], head: [["?g", "a", "INCONSISTENTE"]] },
+            {
+              n: "pegiRating funzionale",
+              kind: "OWL",
+              t: "pegiRating è funzionale",
+              body: [
+                ["?g", "pegiRating", "?a"],
+                ["?g", "pegiRating", "?b"],
+                ["?a", "!=", "?b"],
+              ],
+              head: [["?g", "a", "INCONSISTENTE"]],
+            },
           ],
           hint: "Togli uno dei due PEGI di Twilight Princess: l'errore sparisce. Per una proprietà tra individui, due valori non sarebbero un errore ma fonderebbero i due valori in uno solo (sameAs).",
         },
@@ -1964,8 +2085,24 @@ victim(?k, ?v) ^ killer(?k, ?a)
             ["Halo_3", "developedBy", "Halo_3"],
           ].map((t) => ({ t })),
           rules: [
-            { n: "developedBy asimmetrica", kind: "OWL", t: "A→B esclude B→A", body: [["?a", "developedBy", "?b"], ["?b", "developedBy", "?a"], ["?a", "!=", "?b"]], head: [["?a", "a", "INCONSISTENTE"]] },
-            { n: "developedBy irriflessiva", kind: "OWL", t: "nessuno è sviluppatore di sé", body: [["?a", "developedBy", "?a"]], head: [["?a", "a", "INCONSISTENTE"]] },
+            {
+              n: "developedBy asimmetrica",
+              kind: "OWL",
+              t: "A→B esclude B→A",
+              body: [
+                ["?a", "developedBy", "?b"],
+                ["?b", "developedBy", "?a"],
+                ["?a", "!=", "?b"],
+              ],
+              head: [["?a", "a", "INCONSISTENTE"]],
+            },
+            {
+              n: "developedBy irriflessiva",
+              kind: "OWL",
+              t: "nessuno è sviluppatore di sé",
+              body: [["?a", "developedBy", "?a"]],
+              head: [["?a", "a", "INCONSISTENTE"]],
+            },
           ],
           hint: "Due errori distinti: Fallout 4 e Bethesda si sviluppano a vicenda (asimmetria), Halo 3 sviluppa sé stesso (irriflessività). Togli le righe sbagliate.",
         },
@@ -1977,8 +2114,26 @@ victim(?k, ?v) ^ killer(?k, ?a)
             ["Halo_CE_Anniversary", "prequelOf", "Halo_CE"],
           ].map((t) => ({ t })),
           rules: [
-            { n: "AllDisjointClasses", kind: "OWL", t: "VideoGame, Person, Company… a due a due disgiunte", body: [["?x", "a", "Person"], ["?x", "a", "VideoGame"]], head: [["?x", "a", "INCONSISTENTE"]] },
-            { n: "propertyDisjointWith", kind: "OWL", t: "remasterOf e prequelOf disgiunte", body: [["?a", "remasterOf", "?b"], ["?a", "prequelOf", "?b"]], head: [["?a", "a", "INCONSISTENTE"]] },
+            {
+              n: "AllDisjointClasses",
+              kind: "OWL",
+              t: "VideoGame, Person, Company… a due a due disgiunte",
+              body: [
+                ["?x", "a", "Person"],
+                ["?x", "a", "VideoGame"],
+              ],
+              head: [["?x", "a", "INCONSISTENTE"]],
+            },
+            {
+              n: "propertyDisjointWith",
+              kind: "OWL",
+              t: "remasterOf e prequelOf disgiunte",
+              body: [
+                ["?a", "remasterOf", "?b"],
+                ["?a", "prequelOf", "?b"],
+              ],
+              head: [["?a", "a", "INCONSISTENTE"]],
+            },
           ],
           hint: "Todd Howard non può essere insieme una persona e un gioco; un remaster non può essere anche prequel dello stesso gioco. Togli una riga per coppia e il reasoner torna sereno.",
         },
@@ -1989,8 +2144,27 @@ victim(?k, ?v) ^ killer(?k, ?a)
             ["Fallout_4", "differentFrom", "Fallout_4_duplicato"],
           ].map((t) => ({ t })),
           rules: [
-            { n: "hasKey", kind: "OWL", t: "stesso hasWikidataId → stesso individuo", body: [["?a", "hasWikidataId", "?i"], ["?b", "hasWikidataId", "?i"], ["?a", "!=", "?b"]], head: [["?a", "sameAs", "?b"]] },
-            { n: "AllDifferent", kind: "OWL", t: "gli individui dichiarati diversi non si fondono", body: [["?a", "sameAs", "?b"], ["?a", "differentFrom", "?b"]], head: [["?a", "a", "INCONSISTENTE"]] },
+            {
+              n: "hasKey",
+              kind: "OWL",
+              t: "stesso hasWikidataId → stesso individuo",
+              body: [
+                ["?a", "hasWikidataId", "?i"],
+                ["?b", "hasWikidataId", "?i"],
+                ["?a", "!=", "?b"],
+              ],
+              head: [["?a", "sameAs", "?b"]],
+            },
+            {
+              n: "AllDifferent",
+              kind: "OWL",
+              t: "gli individui dichiarati diversi non si fondono",
+              body: [
+                ["?a", "sameAs", "?b"],
+                ["?a", "differentFrom", "?b"],
+              ],
+              head: [["?a", "a", "INCONSISTENTE"]],
+            },
           ],
           hint: "Il duplicato viene fuso con Fallout 4 solo se non lo si è dichiarato diverso. Togli la riga «differentFrom»: resta la fusione, senza errore. Nei dati le serie sono dichiarate AllDifferent, quindi un doppione con lo stesso id sarebbe un errore, non una fusione.",
         },
@@ -2007,15 +2181,56 @@ victim(?k, ?v) ^ killer(?k, ?a)
             ["Fallout_TV_series", "a", "TVSeries"],
           ].map((t) => ({ t })),
           rules: [
-            { n: "RecurringCharacter", kind: "OWL", t: "≡ Character ⊓ ≥2 appearsIn.VideoGame (cardinalità)", body: [["?c", "a", "Character"], ["?c", "appearsIn", "?g1"], ["?g1", "a", "VideoGame"], ["?c", "appearsIn", "?g2"], ["?g2", "a", "VideoGame"], ["?g1", "!=", "?g2"]], head: [["?c", "a", "RecurringCharacter"]] },
-            { n: "Pegi12Game", kind: "OWL", t: "≡ VideoGame ⊓ ∃pegiRating.{12} (valore)", body: [["?g", "a", "VideoGame"], ["?g", "pegiRating", 12]], head: [["?g", "a", "Pegi12Game"]] },
-            { n: "TransmediaFranchise", kind: "OWL", t: "≡ Franchise ⊓ ∃adaptedInto.(Film ⊔ TVSeries): ramo TVSeries", body: [["?f", "a", "Franchise"], ["?f", "adaptedInto", "?w"], ["?w", "a", "TVSeries"]], head: [["?f", "a", "TransmediaFranchise"]] },
-            { n: "TransmediaFranchise ", kind: "OWL", t: "… ramo Film", body: [["?f", "a", "Franchise"], ["?f", "adaptedInto", "?w"], ["?w", "a", "Film"]], head: [["?f", "a", "TransmediaFranchise"]] },
+            {
+              n: "RecurringCharacter",
+              kind: "OWL",
+              t: "≡ Character ⊓ ≥2 appearsIn.VideoGame (cardinalità)",
+              body: [
+                ["?c", "a", "Character"],
+                ["?c", "appearsIn", "?g1"],
+                ["?g1", "a", "VideoGame"],
+                ["?c", "appearsIn", "?g2"],
+                ["?g2", "a", "VideoGame"],
+                ["?g1", "!=", "?g2"],
+              ],
+              head: [["?c", "a", "RecurringCharacter"]],
+            },
+            {
+              n: "Pegi12Game",
+              kind: "OWL",
+              t: "≡ VideoGame ⊓ ∃pegiRating.{12} (valore)",
+              body: [
+                ["?g", "a", "VideoGame"],
+                ["?g", "pegiRating", 12],
+              ],
+              head: [["?g", "a", "Pegi12Game"]],
+            },
+            {
+              n: "TransmediaFranchise",
+              kind: "OWL",
+              t: "≡ Franchise ⊓ ∃adaptedInto.(Film ⊔ TVSeries): ramo TVSeries",
+              body: [
+                ["?f", "a", "Franchise"],
+                ["?f", "adaptedInto", "?w"],
+                ["?w", "a", "TVSeries"],
+              ],
+              head: [["?f", "a", "TransmediaFranchise"]],
+            },
+            {
+              n: "TransmediaFranchise ",
+              kind: "OWL",
+              t: "… ramo Film",
+              body: [
+                ["?f", "a", "Franchise"],
+                ["?f", "adaptedInto", "?w"],
+                ["?w", "a", "Film"],
+              ],
+              head: [["?f", "a", "TransmediaFranchise"]],
+            },
           ],
           hint: "Togli un'apparizione di Link: con un solo gioco la cardinalità ≥2 non è più soddisfatta. Per l'unione basta uno dei due rami.",
         },
       };
-
 
       /* ---------- grafo delle deduzioni ---------- */
       const GW = 570,
@@ -2070,8 +2285,13 @@ victim(?k, ?v) ^ killer(?k, ?a)
           L.length > 6
             ? [...L.slice(0, 5), { t: "… +" + (L.length - 5), c: "#6b675e" }]
             : L;
-        const w = Math.max(...sh.map((l) => l.t.length * (l.b ? 7.7 : 6.6))) + 18;
-        return { L: sh, w: Math.min(Math.max(w, 80), 200), h: 10 + sh.length * 15 };
+        const w =
+          Math.max(...sh.map((l) => l.t.length * (l.b ? 7.7 : 6.6))) + 18;
+        return {
+          L: sh,
+          w: Math.min(Math.max(w, 80), 200),
+          h: 10 + sh.length * 15,
+        };
       }
 
       function layout(g, pos, pinned) {
@@ -2097,14 +2317,16 @@ victim(?k, ?v) ^ killer(?k, ?a)
             const e = g.edges.find(
               (e) => (e.s === id && pos[e.o]) || (e.o === id && pos[e.s]),
             );
-            const b = e ? pos[e.s === id ? e.o : e.s] : { x: GW / 2, y: GH / 2 };
+            const b = e
+              ? pos[e.s === id ? e.o : e.s]
+              : { x: GW / 2, y: GH / 2 };
             const a = ((hash(id) % 360) * Math.PI) / 180;
             next[id] = { x: b.x + Math.cos(a) * 45, y: b.y + Math.sin(a) * 45 };
             spawn[id] = { ...b };
           }
         });
-        const pairs = [...new Set(g.edges.map((e) => pkey(e.s, e.o)))].map((k) =>
-          k.split("\u0001"),
+        const pairs = [...new Set(g.edges.map((e) => pkey(e.s, e.o)))].map(
+          (k) => k.split("\u0001"),
         );
         for (let it = 0; it < 320; it++) {
           const c = 1 - it / 320,
@@ -2190,7 +2412,10 @@ victim(?k, ?v) ^ killer(?k, ?a)
         );
         o += "</defs>";
         // fit the drawing to the pane: scale up (at most 1.7x) and centre it
-        let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+        let x0 = 1e9,
+          x1 = -1e9,
+          y0 = 1e9,
+          y1 = -1e9;
         g.nodes.forEach((n) => {
           const p = P[n.id],
             d = D[n.id];
@@ -2200,18 +2425,28 @@ victim(?k, ?v) ^ killer(?k, ?a)
           y0 = Math.min(y0, p.y - d.h / 2);
           y1 = Math.max(y1, p.y + d.h / 2);
         });
-        const T =
-          lock || {
-            sc: Math.min(1.7, (GW - 24) / (x1 - x0 + 30), (GH - 24) / (y1 - y0 + 30)),
-            tx: 0,
-            ty: 0,
-          };
+        const T = lock || {
+          sc: Math.min(
+            1.7,
+            (GW - 24) / (x1 - x0 + 30),
+            (GH - 24) / (y1 - y0 + 30),
+          ),
+          tx: 0,
+          ty: 0,
+        };
         if (!lock) {
           T.tx = GW / 2 - (T.sc * (x0 + x1)) / 2;
           T.ty = GH / 2 - (T.sc * (y0 + y1)) / 2;
         }
         g.T = T;
-        o += "<g transform='translate(" + T.tx + "," + T.ty + ") scale(" + T.sc + ")'>";
+        o +=
+          "<g transform='translate(" +
+          T.tx +
+          "," +
+          T.ty +
+          ") scale(" +
+          T.sc +
+          ")'>";
         const groups = {};
         g.edges.forEach((e) => (groups[pkey(e.s, e.o)] ||= []).push(e));
         Object.values(groups).forEach((arr) =>
@@ -2229,22 +2464,54 @@ victim(?k, ?v) ^ killer(?k, ?a)
             const clip = (c, t, d) => {
               const dx = t.x - c.x,
                 dy = t.y - c.y;
-              const k = Math.max(Math.abs(dx) / (d.w / 2 + 3), Math.abs(dy) / (d.h / 2 + 3)) || 1;
+              const k =
+                Math.max(
+                  Math.abs(dx) / (d.w / 2 + 3),
+                  Math.abs(dy) / (d.h / 2 + 3),
+                ) || 1;
               return { x: c.x + dx / k, y: c.y + dy / k };
             };
             const A = clip(a, cp, D[e.s]),
               B = clip(b, cp, D[e.o]);
-            const m = { x: 0.25 * A.x + 0.5 * cp.x + 0.25 * B.x, y: 0.25 * A.y + 0.5 * cp.y + 0.25 * B.y };
+            const m = {
+              x: 0.25 * A.x + 0.5 * cp.x + 0.25 * B.x,
+              y: 0.25 * A.y + 0.5 * cp.y + 0.25 * B.y,
+            };
             const c = col[ci(e.rule)],
               isNew = e.k === last;
             o +=
               "<g" +
               (isNew ? " class='gnew'" : "") +
-              "><path d='M" + A.x + "," + A.y + " Q" + cp.x + "," + cp.y + " " + B.x + "," + B.y +
-              "' fill='none' stroke='" + c + "' stroke-width='" + (isNew ? 2.6 : 1.3) +
-              "' marker-end='url(#ar" + ci(e.rule) + "-" + uid + ")'/>" +
-              "<text x='" + m.x + "' y='" + (m.y + 3) + "' text-anchor='middle' font-size='11' fill='" + c +
-              "' stroke='#faf7ef' stroke-width='3' paint-order='stroke'>" + e.p + "</text></g>";
+              "><path d='M" +
+              A.x +
+              "," +
+              A.y +
+              " Q" +
+              cp.x +
+              "," +
+              cp.y +
+              " " +
+              B.x +
+              "," +
+              B.y +
+              "' fill='none' stroke='" +
+              c +
+              "' stroke-width='" +
+              (isNew ? 2.6 : 1.3) +
+              "' marker-end='url(#ar" +
+              ci(e.rule) +
+              "-" +
+              uid +
+              ")'/>" +
+              "<text x='" +
+              m.x +
+              "' y='" +
+              (m.y + 3) +
+              "' text-anchor='middle' font-size='11' fill='" +
+              c +
+              "' stroke='#faf7ef' stroke-width='3' paint-order='stroke'>" +
+              e.p +
+              "</text></g>";
           }),
         );
         g.nodes.forEach((n, ni) => {
@@ -2252,13 +2519,33 @@ victim(?k, ?v) ^ killer(?k, ?a)
             d = D[n.id];
           if (!p) return;
           o +=
-            "<g data-i='" + ni + "'><rect x='" + (p.x - d.w / 2) + "' y='" + (p.y - d.h / 2) + "' width='" + d.w + "' height='" + d.h +
+            "<g data-i='" +
+            ni +
+            "'><rect x='" +
+            (p.x - d.w / 2) +
+            "' y='" +
+            (p.y - d.h / 2) +
+            "' width='" +
+            d.w +
+            "' height='" +
+            d.h +
             "' rx='4' fill='#fff' stroke='#b9b2a2'/>";
           d.L.forEach((l, i) => {
             o +=
-              "<text x='" + p.x + "' y='" + (p.y - d.h / 2 + 14 + i * 15) + "' text-anchor='middle' font-size='" +
-              (l.b ? 12.5 : 10.5) + "' fill='" + l.c + "'" + (l.b || l.n ? " font-weight='600'" : "") +
-              (l.n ? " class='gnew'" : "") + ">" + l.t.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</text>";
+              "<text x='" +
+              p.x +
+              "' y='" +
+              (p.y - d.h / 2 + 14 + i * 15) +
+              "' text-anchor='middle' font-size='" +
+              (l.b ? 12.5 : 10.5) +
+              "' fill='" +
+              l.c +
+              "'" +
+              (l.b || l.n ? " font-weight='600'" : "") +
+              (l.n ? " class='gnew'" : "") +
+              ">" +
+              l.t.replace(/&/g, "&amp;").replace(/</g, "&lt;") +
+              "</text>";
           });
           o += "</g>";
         });
@@ -2272,7 +2559,11 @@ victim(?k, ?v) ^ killer(?k, ?a)
         let derived = [];
         root.innerHTML =
           "<div class='pane'><h5>Dati scritti</h5><div class='lst' data-f></div><div class='rules'></div></div>" +
-          "<div class='pane'><h5>Il grafo <span style='text-transform:none;letter-spacing:0;font-family:var(--sans)'>· <span style='color:#5b574d'>grigio = scritto</span>, blu e verde = dedotto · trascina i nodi</span></h5><svg class='gsvg' data-g viewBox='0 0 " + GW + " " + GH + "'></svg></div>" +
+          "<div class='pane'><h5>Il grafo <span style='text-transform:none;letter-spacing:0;font-family:var(--sans)'>· <span style='color:#5b574d'>grigio = scritto</span>, blu e verde = dedotto · trascina i nodi</span></h5><svg class='gsvg' data-g viewBox='0 0 " +
+          GW +
+          " " +
+          GH +
+          "'></svg></div>" +
           "<div class='pane'><h5>Dedotto dal reasoner <span style='text-transform:none;letter-spacing:0;font-family:var(--sans)'>· <span style='color:#1f3f73'>blu = assioma</span>, <span style='color:#1f5a38'>verde = regola SWRL</span></span></h5><div class='lst' data-d></div>" +
           "<div data-flag></div><div class='ctl'><button class='go' data-step>Passo</button><button data-all>Tutto</button><button data-reset>Azzera</button><span class='msg' data-msg></span></div></div>";
         const fl = root.querySelector("[data-f]"),
@@ -2329,7 +2620,10 @@ victim(?k, ?v) ^ killer(?k, ?a)
           pt.x = e.clientX;
           pt.y = e.clientY;
           const q = pt.matrixTransform(gs.getScreenCTM().inverse());
-          P[drag] = { x: (q.x - lock.tx) / lock.sc, y: (q.y - lock.ty) / lock.sc };
+          P[drag] = {
+            x: (q.x - lock.tx) / lock.sc,
+            y: (q.y - lock.ty) / lock.sc,
+          };
           gs.innerHTML = svgOf(ctx.g, P, ctx.D, ctx.last, uid, lock);
         });
         const drop = () => {
@@ -2346,14 +2640,18 @@ victim(?k, ?v) ^ killer(?k, ?a)
             facts.filter((f) => f.on),
             derived,
           );
-          const last = derived.length ? derived[derived.length - 1].t.join("|") : "";
+          const last = derived.length
+            ? derived[derived.length - 1].t.join("|")
+            : "";
           const D = {};
           g.nodes.forEach((n) => (D[n.id] = dims(n, last)));
           g.dims = D;
           ctx = { g, D, last };
           const { next, spawn } = layout(g, P, pinned);
           const from = {};
-          g.nodes.forEach((n) => (from[n.id] = P[n.id] || spawn[n.id] || next[n.id]));
+          g.nodes.forEach(
+            (n) => (from[n.id] = P[n.id] || spawn[n.id] || next[n.id]),
+          );
           cancelAnimationFrame(raf);
           const t0 = performance.now();
           const frame = (t) => {
@@ -2363,12 +2661,19 @@ victim(?k, ?v) ^ killer(?k, ?a)
             g.nodes.forEach((n) => {
               const a = from[n.id],
                 b = next[n.id];
-              cur[n.id] = { x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e };
+              cur[n.id] = {
+                x: a.x + (b.x - a.x) * e,
+                y: a.y + (b.y - a.y) * e,
+              };
             });
             P = cur;
             gs.innerHTML = g.nodes.length
               ? svgOf(g, cur, D, last, uid)
-              : "<text x='" + GW / 2 + "' y='" + GH / 2 + "' text-anchor='middle' font-size='13' fill='#6b675e'>Nessun fatto selezionato</text>";
+              : "<text x='" +
+                GW / 2 +
+                "' y='" +
+                GH / 2 +
+                "' text-anchor='middle' font-size='13' fill='#6b675e'>Nessun fatto selezionato</text>";
             if (k < 1) raf = requestAnimationFrame(frame);
           };
           raf = requestAnimationFrame(frame);
@@ -2448,12 +2753,25 @@ victim(?k, ?v) ^ killer(?k, ?a)
             const e = document.createElement("span");
             e.className = "inf" + (d.rule.kind === "SWRL" ? " swrl" : "");
             const nm =
-              d.rule.kind === "inversa" ? d.rule.n.replace(/^inversa /, "") : d.rule.n;
+              d.rule.kind === "inversa"
+                ? d.rule.n.replace(/^inversa /, "")
+                : d.rule.n;
             e.innerHTML =
-              "<b class='it'>" + tri(d.t) + "</b>" +
-              "<em class='ir'><span class='rk'>" + esc(d.rule.kind) + "</span><span class='rnm'>" + esc(nm) +
-              "</span>" + (d.rule.t ? "<span class='rf'>" + esc(d.rule.t) + "</span>" : "") + "</em>" +
-              "<em class='iw'><span class='wl'>da</span>" + d.prem.map((x) => "<div>" + tri(x) + "</div>").join("") + "</em>";
+              "<b class='it'>" +
+              tri(d.t) +
+              "</b>" +
+              "<em class='ir'><span class='rk'>" +
+              esc(d.rule.kind) +
+              "</span><span class='rnm'>" +
+              esc(nm) +
+              "</span>" +
+              (d.rule.t
+                ? "<span class='rf'>" + esc(d.rule.t) + "</span>"
+                : "") +
+              "</em>" +
+              "<em class='iw'><span class='wl'>da</span>" +
+              d.prem.map((x) => "<div>" + tri(x) + "</div>").join("") +
+              "</em>";
             dl.appendChild(e);
           });
           dl.scrollTop = dl.scrollHeight;
@@ -2489,7 +2807,9 @@ victim(?k, ?v) ^ killer(?k, ?a)
         root.querySelector("[data-all]").onclick = () => {
           let n = 0;
           while (n++ < 200 && step());
-          msg.textContent = derived.length + " fatti dedotti. " + sc.hint;
+          if (derived.length == 1)
+            msg.textContent = "1 fatto dedotto. " + sc.hint;
+          else msg.textContent = derived.length + " fatti dedotti. " + sc.hint;
         };
         root.querySelector("[data-reset]").onclick = () => {
           derived = [];
