@@ -447,7 +447,7 @@
       }
       .demo {
         display: grid;
-        grid-template-columns: 0.72fr 1.65fr 0.95fr;
+        grid-template-columns: 0.92fr 1.5fr 0.92fr;
         gap: 14px;
         flex: 1;
         min-height: 0;
@@ -590,6 +590,36 @@
         font-size: 12px;
         color: var(--muted);
         font-family: var(--mono);
+      }
+      .rrow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px;
+        margin-top: 6px;
+      }
+      .rlab {
+        width: 100%;
+        font-size: 10px;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .rchip {
+        font-size: 10.5px;
+        padding: 1px 6px;
+        border-left: 3px solid;
+        border-radius: 2px;
+        white-space: nowrap;
+      }
+      .rchip.owl {
+        background: #dde6f3;
+        border-color: #2f5f9e;
+        color: #1f3f73;
+      }
+      .rchip.swrl {
+        background: #dcebdf;
+        border-color: var(--ok);
+        color: #1f5a38;
       }
       #bar {
         position: fixed;
@@ -1941,10 +1971,30 @@ victim(?k, ?v) ^ killer(?k, ?a)
           dl = root.querySelector("[data-d]"),
           msg = root.querySelector("[data-msg]"),
           flag = root.querySelector("[data-flag]");
-        root.querySelector(".rules").textContent = sc.rules.length
-          ? "Regole in gioco: " +
-            [...new Set(sc.rules.map((r) => r.n))].join(" · ")
-          : "";
+        // the rules at play, as separate blocks: axioms (blue) and SWRL rules (green)
+        const rl = root.querySelector(".rules"),
+          seen = new Set(),
+          rs = sc.rules.filter((r) => !seen.has(r.n) && seen.add(r.n));
+        [
+          ["Assiomi OWL", rs.filter((r) => r.kind !== "SWRL"), "owl"],
+          ["Regole SWRL", rs.filter((r) => r.kind === "SWRL"), "swrl"],
+        ].forEach(([label, list, cls]) => {
+          if (!list.length) return;
+          const row = document.createElement("div");
+          row.className = "rrow";
+          const h = document.createElement("span");
+          h.className = "rlab";
+          h.textContent = label;
+          row.appendChild(h);
+          list.forEach((r) => {
+            const c = document.createElement("span");
+            c.className = "rchip " + cls;
+            c.textContent = r.n;
+            if (r.t) c.title = r.t;
+            row.appendChild(c);
+          });
+          rl.appendChild(row);
+        });
         const gs = root.querySelector("[data-g]"),
           uid = ++GU;
         let P = {},
