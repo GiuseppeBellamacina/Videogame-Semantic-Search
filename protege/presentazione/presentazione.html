@@ -1,320 +1,1175 @@
 <!doctype html>
 <html lang="it">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Un'ontologia dei videogiochi</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{
-  --paper:#f3f0e8; --ink:#1a1a1c; --muted:#6b675e; --rule:#cfc9bb;
-  --accent:#26565c; --accent2:#b8391f; --soft:#dce6e4; --soft2:#f1ddd5; --ok:#2f7d4f;
-  --code:#1c1d21; --codeink:#e9e6dd;
-  --serif:"Newsreader",Georgia,"Times New Roman",serif;
-  --sans:"IBM Plex Sans",system-ui,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#0f0f10;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
-#deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.slide{position:absolute;width:1280px;height:720px;padding:46px 72px 58px;display:none;flex-direction:column;
-  transform-origin:center center;overflow:hidden;background:var(--paper)}
-.slide.active{display:flex}
-.kicker{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent2);margin-bottom:10px}
-.kicker::before{content:attr(data-n) "\00a0\00a0/\00a0\00a0"}
-h2{font-family:var(--serif);font-size:42px;font-weight:500;letter-spacing:-1px;line-height:1.05;margin-bottom:8px}
-.lead{font-size:17px;color:var(--muted);margin-bottom:14px;max-width:900px;line-height:1.45}
-.foot{position:absolute;left:72px;right:72px;bottom:18px;display:flex;justify-content:space-between;align-items:center;
-  font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding-top:8px;border-top:1px solid var(--rule)}
-.foot span:last-child{color:var(--ink)}
-.body{flex:1;display:flex;gap:44px;min-height:0;border-top:2px solid var(--ink);padding-top:18px}
-.col{flex:1;min-width:0}
-.stack>*+*{margin-top:16px}
-ul.b{list-style:none;font-size:18px;line-height:1.42}
-ul.b li{position:relative;padding-left:26px;margin-bottom:11px}
-ul.b li::before{content:"";position:absolute;left:0;top:.62em;width:12px;height:2px;background:var(--accent2)}
-ul.b.sm{font-size:16px}ul.b.sm li{margin-bottom:8px}
-b,strong{font-weight:600}
-code,.m{font-family:var(--mono);font-size:.84em;background:var(--soft);color:#1d4448;padding:1px 5px;border-radius:2px;font-variant-ligatures:none}
-.card{border-top:1px solid var(--ink);padding:9px 0 2px}
-.card h3{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:7px;color:var(--accent)}
-.card p{font-size:15.5px;line-height:1.5}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
-table{border-collapse:collapse;width:100%;font-size:14.5px}
-th{text-align:left;font-family:var(--mono);font-weight:500;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1.3px;border-bottom:1.5px solid var(--ink);padding:5px 10px 6px 0}
-td{padding:6px 12px 6px 0;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.38}
-td.mono,.mono{font-family:var(--mono);font-size:13px;font-variant-ligatures:none}
-pre{background:var(--code);color:var(--codeink);padding:14px 18px;font-family:var(--mono);font-size:13.5px;line-height:1.55;overflow:hidden;white-space:pre;font-variant-ligatures:none}
-pre .k{color:#9cc7cb}pre .p{color:#e8a87c}pre .s{color:#b9d79b}pre .c{color:#8b8a84;font-style:italic}
-.note{font-family:var(--serif);font-style:italic;font-size:17px;color:#3a3935;border-left:2px solid var(--accent2);padding:2px 0 2px 14px;line-height:1.42}
-.note code{font-style:normal}
-.stat{display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--ink);padding-top:8px}
-.stat span{font-size:13.5px;color:var(--muted);line-height:1.3}
-.big{font-family:var(--serif);font-size:54px;font-weight:400;line-height:.95;letter-spacing:-1.5px}
-.tag{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.6px;padding:0 6px;border:1px solid var(--accent);border-radius:2px;color:var(--accent);margin-right:6px;vertical-align:1px}
-.tag.r{border-color:var(--accent2);color:var(--accent2)}
-.tag.i{border-color:var(--muted);color:var(--muted)}
-/* title */
-.title{background:var(--ink);color:#f3f0e8;justify-content:center}
-.title .kicker{color:#e07a5f;margin-bottom:22px}.title .kicker::before{content:none}
-.title h1{font-family:var(--serif);font-size:80px;font-weight:400;letter-spacing:-2.5px;line-height:1;max-width:1050px}
-.title .sub{font-size:23px;color:#b9b5a9;margin-top:26px;max-width:800px;line-height:1.4}
-.title .tags{margin-top:42px;font-family:var(--mono);font-size:13px;letter-spacing:.8px;color:#b9b5a9;padding-top:14px;border-top:1px solid #4a4a46;max-width:760px}
-.title .foot{color:#8c8a82;border-top-color:#3a3a37}.title .foot span:last-child{color:#8c8a82}
-/* indice della storia */
-.story{display:grid;grid-template-columns:repeat(2,1fr);gap:0 44px;counter-reset:c}
-.story div{counter-increment:c;display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--rule);font-size:17px;line-height:1.35}
-.story div::before{content:counter(c,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:var(--accent2);padding-top:4px;min-width:22px}
-.story small{display:block;color:var(--muted);font-size:13.5px}
-/* interattivi */
-button{font-family:var(--mono);font-size:12.5px;letter-spacing:.6px;text-transform:uppercase;padding:7px 14px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
-button:hover{background:var(--ink);color:var(--paper)}
-button.go{background:var(--accent);border-color:var(--accent);color:#fff}
-button.go:hover{background:#1d4448}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{font-family:var(--mono);font-size:13px;padding:6px 11px;border:1.5px solid var(--ink);cursor:pointer;background:transparent;text-transform:none;letter-spacing:0}
-.chip.on{background:var(--ink);color:var(--paper)}
-.xp{border-left:2px solid var(--accent);padding:4px 0 4px 16px;min-height:200px}
-.xp h4{font-family:var(--serif);font-size:26px;font-weight:500;margin-bottom:4px}
-.xp p{font-size:15.5px;line-height:1.45;margin-bottom:10px}
-.xp .row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.pillc{font-family:var(--mono);font-size:12px;padding:2px 8px;border:1px solid var(--accent);color:var(--accent)}
-.pillc.d{background:var(--soft)}
-.pillc.p{border-color:var(--muted);color:var(--muted)}
-.demo{display:grid;grid-template-columns:1fr 1.15fr;gap:26px;flex:1;min-height:0}
-.demo .pane{display:flex;flex-direction:column;min-height:0}
-.demo h5{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;border-bottom:1.5px solid var(--ink);padding-bottom:5px}
-.lst{overflow:auto;font-family:var(--mono);font-size:12.5px;line-height:1.35;font-variant-ligatures:none;flex:1;min-height:0}
-.lst label{display:flex;gap:7px;align-items:flex-start;padding:3px 0;border-bottom:1px solid var(--rule);cursor:pointer}
-.lst label.off{color:var(--muted);text-decoration:line-through}
-.lst .t{flex:1}
-.lst input{margin-top:2px;accent-color:var(--accent)}
-.inf{display:block;padding:4px 0 4px 8px;border-bottom:1px solid var(--rule);border-left:3px solid #2f5f9e;background:#dde6f3;margin-bottom:2px;animation:pop .35s ease}
-.inf.swrl{border-left-color:var(--ok);background:#dcebdf}
-.inf.swrl b{color:#1f5a38}
-.inf b{color:#1f3f73;font-weight:500}
-.inf em{display:block;font-style:normal;color:var(--muted);font-size:11px;margin-top:1px}
-@keyframes pop{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
-.ctl{display:flex;gap:8px;align-items:center;margin:8px 0 0;flex-wrap:wrap}
-.ctl .msg{font-size:13px;color:var(--muted);font-family:var(--sans);flex:1;min-width:140px}
-.bad{background:var(--accent2);color:#fff;padding:8px 12px;font-size:13.5px;line-height:1.35;margin-top:8px}
-.good{background:var(--soft);color:#1d4448;padding:8px 12px;font-size:13.5px;line-height:1.35;margin-top:8px}
-.rules{margin-top:6px;font-size:12px;color:var(--muted);font-family:var(--mono)}
-#bar{position:fixed;left:0;bottom:0;height:3px;width:0;background:var(--accent2);transition:width .3s ease;z-index:5}
-svg text{font-family:var(--sans)}
-@media print{
-  @page{size:1280px 720px;margin:0}
-  html,body{background:none}#deck{position:static;display:block}#bar{display:none}
-  .slide{display:flex!important;position:relative;transform:none!important;page-break-after:always;break-after:page;
-    -webkit-print-color-adjust:exact;print-color-adjust:exact}
-}
-</style>
-</head>
-<body>
-<div id="deck">
-<div id="bar"></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Un'ontologia dei videogiochi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #f3f0e8;
+        --ink: #1a1a1c;
+        --muted: #6b675e;
+        --rule: #cfc9bb;
+        --accent: #26565c;
+        --accent2: #b8391f;
+        --soft: #dce6e4;
+        --soft2: #f1ddd5;
+        --ok: #2f7d4f;
+        --code: #1c1d21;
+        --codeink: #e9e6dd;
+        --serif: "Newsreader", Georgia, "Times New Roman", serif;
+        --sans: "IBM Plex Sans", system-ui, sans-serif;
+        --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        background: #0f0f10;
+        font-family: var(--sans);
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      #deck {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .slide {
+        position: absolute;
+        width: 1280px;
+        height: 720px;
+        padding: 46px 72px 58px;
+        display: none;
+        flex-direction: column;
+        transform-origin: center center;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      .slide.active {
+        display: flex;
+      }
+      .kicker {
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 1.6px;
+        text-transform: uppercase;
+        color: var(--accent2);
+        margin-bottom: 10px;
+      }
+      .kicker::before {
+        content: attr(data-n) "\00a0\00a0/\00a0\00a0";
+      }
+      h2 {
+        font-family: var(--serif);
+        font-size: 42px;
+        font-weight: 500;
+        letter-spacing: -1px;
+        line-height: 1.05;
+        margin-bottom: 8px;
+      }
+      .lead {
+        font-size: 17px;
+        color: var(--muted);
+        margin-bottom: 14px;
+        max-width: 900px;
+        line-height: 1.45;
+      }
+      .foot {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        bottom: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding-top: 8px;
+        border-top: 1px solid var(--rule);
+      }
+      .foot span:last-child {
+        color: var(--ink);
+      }
+      .body {
+        flex: 1;
+        display: flex;
+        gap: 44px;
+        min-height: 0;
+        border-top: 2px solid var(--ink);
+        padding-top: 18px;
+      }
+      .col {
+        flex: 1;
+        min-width: 0;
+      }
+      .stack > * + * {
+        margin-top: 16px;
+      }
+      ul.b {
+        list-style: none;
+        font-size: 18px;
+        line-height: 1.42;
+      }
+      ul.b li {
+        position: relative;
+        padding-left: 26px;
+        margin-bottom: 11px;
+      }
+      ul.b li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.62em;
+        width: 12px;
+        height: 2px;
+        background: var(--accent2);
+      }
+      ul.b.sm {
+        font-size: 16px;
+      }
+      ul.b.sm li {
+        margin-bottom: 8px;
+      }
+      b,
+      strong {
+        font-weight: 600;
+      }
+      code,
+      .m {
+        font-family: var(--mono);
+        font-size: 0.84em;
+        background: var(--soft);
+        color: #1d4448;
+        padding: 1px 5px;
+        border-radius: 2px;
+        font-variant-ligatures: none;
+      }
+      .card {
+        border-top: 1px solid var(--ink);
+        padding: 9px 0 2px;
+      }
+      .card h3 {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        font-weight: 500;
+        letter-spacing: 1.4px;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+        color: var(--accent);
+      }
+      .card p {
+        font-size: 15.5px;
+        line-height: 1.5;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 34px;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 26px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 14.5px;
+      }
+      th {
+        text-align: left;
+        font-family: var(--mono);
+        font-weight: 500;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.3px;
+        border-bottom: 1.5px solid var(--ink);
+        padding: 5px 10px 6px 0;
+      }
+      td {
+        padding: 6px 12px 6px 0;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: top;
+        line-height: 1.38;
+      }
+      td.mono,
+      .mono {
+        font-family: var(--mono);
+        font-size: 13px;
+        font-variant-ligatures: none;
+      }
+      pre {
+        background: var(--code);
+        color: var(--codeink);
+        padding: 14px 18px;
+        font-family: var(--mono);
+        font-size: 13.5px;
+        line-height: 1.55;
+        overflow: hidden;
+        white-space: pre;
+        font-variant-ligatures: none;
+      }
+      pre .k {
+        color: #9cc7cb;
+      }
+      pre .p {
+        color: #e8a87c;
+      }
+      pre .s {
+        color: #b9d79b;
+      }
+      pre .c {
+        color: #8b8a84;
+        font-style: italic;
+      }
+      .note {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 17px;
+        color: #3a3935;
+        border-left: 2px solid var(--accent2);
+        padding: 2px 0 2px 14px;
+        line-height: 1.42;
+      }
+      .note code {
+        font-style: normal;
+      }
+      .stat {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        border-top: 1px solid var(--ink);
+        padding-top: 8px;
+      }
+      .stat span {
+        font-size: 13.5px;
+        color: var(--muted);
+        line-height: 1.3;
+      }
+      .big {
+        font-family: var(--serif);
+        font-size: 54px;
+        font-weight: 400;
+        line-height: 0.95;
+        letter-spacing: -1.5px;
+      }
+      .tag {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        font-weight: 500;
+        letter-spacing: 0.6px;
+        padding: 0 6px;
+        border: 1px solid var(--accent);
+        border-radius: 2px;
+        color: var(--accent);
+        margin-right: 6px;
+        vertical-align: 1px;
+      }
+      .tag.r {
+        border-color: var(--accent2);
+        color: var(--accent2);
+      }
+      .tag.i {
+        border-color: var(--muted);
+        color: var(--muted);
+      }
+      /* title */
+      .title {
+        background: var(--ink);
+        color: #f3f0e8;
+        justify-content: center;
+      }
+      .title .kicker {
+        color: #e07a5f;
+        margin-bottom: 22px;
+      }
+      .title .kicker::before {
+        content: none;
+      }
+      .title h1 {
+        font-family: var(--serif);
+        font-size: 80px;
+        font-weight: 400;
+        letter-spacing: -2.5px;
+        line-height: 1;
+        max-width: 1050px;
+      }
+      .title .sub {
+        font-size: 23px;
+        color: #b9b5a9;
+        margin-top: 26px;
+        max-width: 800px;
+        line-height: 1.4;
+      }
+      .title .tags {
+        margin-top: 42px;
+        font-family: var(--mono);
+        font-size: 13px;
+        letter-spacing: 0.8px;
+        color: #b9b5a9;
+        padding-top: 14px;
+        border-top: 1px solid #4a4a46;
+        max-width: 760px;
+      }
+      .title .foot {
+        color: #8c8a82;
+        border-top-color: #3a3a37;
+      }
+      .title .foot span:last-child {
+        color: #8c8a82;
+      }
+      /* indice della storia */
+      .story {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0 44px;
+        counter-reset: c;
+      }
+      .story div {
+        counter-increment: c;
+        display: flex;
+        gap: 14px;
+        padding: 11px 0;
+        border-bottom: 1px solid var(--rule);
+        font-size: 17px;
+        line-height: 1.35;
+      }
+      .story div::before {
+        content: counter(c, decimal-leading-zero);
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--accent2);
+        padding-top: 4px;
+        min-width: 22px;
+      }
+      .story small {
+        display: block;
+        color: var(--muted);
+        font-size: 13.5px;
+      }
+      /* interattivi */
+      button {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        padding: 7px 14px;
+        border: 1.5px solid var(--ink);
+        background: transparent;
+        color: var(--ink);
+        cursor: pointer;
+      }
+      button:hover {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      button.go {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      button.go:hover {
+        background: #1d4448;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chip {
+        font-family: var(--mono);
+        font-size: 13px;
+        padding: 6px 11px;
+        border: 1.5px solid var(--ink);
+        cursor: pointer;
+        background: transparent;
+        text-transform: none;
+        letter-spacing: 0;
+      }
+      .chip.on {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .xp {
+        border-left: 2px solid var(--accent);
+        padding: 4px 0 4px 16px;
+        min-height: 200px;
+      }
+      .xp h4 {
+        font-family: var(--serif);
+        font-size: 26px;
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+      .xp p {
+        font-size: 15.5px;
+        line-height: 1.45;
+        margin-bottom: 10px;
+      }
+      .xp .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .pillc {
+        font-family: var(--mono);
+        font-size: 12px;
+        padding: 2px 8px;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+      }
+      .pillc.d {
+        background: var(--soft);
+      }
+      .pillc.p {
+        border-color: var(--muted);
+        color: var(--muted);
+      }
+      .demo {
+        display: grid;
+        grid-template-columns: 1fr 1.15fr;
+        gap: 26px;
+        flex: 1;
+        min-height: 0;
+      }
+      .demo .pane {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      .demo h5 {
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 6px;
+        border-bottom: 1.5px solid var(--ink);
+        padding-bottom: 5px;
+      }
+      .lst {
+        overflow: auto;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.35;
+        font-variant-ligatures: none;
+        flex: 1;
+        min-height: 0;
+      }
+      .lst label {
+        display: flex;
+        gap: 7px;
+        align-items: flex-start;
+        padding: 3px 0;
+        border-bottom: 1px solid var(--rule);
+        cursor: pointer;
+      }
+      .lst label.off {
+        color: var(--muted);
+        text-decoration: line-through;
+      }
+      .lst .t {
+        flex: 1;
+      }
+      .lst input {
+        margin-top: 2px;
+        accent-color: var(--accent);
+      }
+      .inf {
+        display: block;
+        padding: 4px 0 4px 8px;
+        border-bottom: 1px solid var(--rule);
+        border-left: 3px solid #2f5f9e;
+        background: #dde6f3;
+        margin-bottom: 2px;
+        animation: pop 0.35s ease;
+      }
+      .inf.swrl {
+        border-left-color: var(--ok);
+        background: #dcebdf;
+      }
+      .inf.swrl b {
+        color: #1f5a38;
+      }
+      .inf b {
+        color: #1f3f73;
+        font-weight: 500;
+      }
+      .inf em {
+        display: block;
+        font-style: normal;
+        color: var(--muted);
+        font-size: 11px;
+        margin-top: 1px;
+      }
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: translateX(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .ctl {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin: 8px 0 0;
+        flex-wrap: wrap;
+      }
+      .ctl .msg {
+        font-size: 13px;
+        color: var(--muted);
+        font-family: var(--sans);
+        flex: 1;
+        min-width: 140px;
+      }
+      .bad {
+        background: var(--accent2);
+        color: #fff;
+        padding: 8px 12px;
+        font-size: 13.5px;
+        line-height: 1.35;
+        margin-top: 8px;
+      }
+      .good {
+        background: var(--soft);
+        color: #1d4448;
+        padding: 8px 12px;
+        font-size: 13.5px;
+        line-height: 1.35;
+        margin-top: 8px;
+      }
+      .rules {
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+      #bar {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        height: 3px;
+        width: 0;
+        background: var(--accent2);
+        transition: width 0.3s ease;
+        z-index: 5;
+      }
+      svg text {
+        font-family: var(--sans);
+      }
+      @media print {
+        @page {
+          size: 1280px 720px;
+          margin: 0;
+        }
+        html,
+        body {
+          background: none;
+        }
+        #deck {
+          position: static;
+          display: block;
+        }
+        #bar {
+          display: none;
+        }
+        .slide {
+          display: flex !important;
+          position: relative;
+          transform: none !important;
+          page-break-after: always;
+          break-after: page;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="deck">
+      <div id="bar"></div>
 
-<!-- 1 -->
-<section class="slide title">
-  <div class="kicker">Semantic Web · Progetto</div>
-  <h1>Un'ontologia<br>che sa dedurre</h1>
-  <p class="sub">La storia di un'ontologia OWL 2 dei videogiochi: dalla cosa più semplice, una frase di tre parole, fino alle regole che ragionano su intere serie.</p>
-  <div class="tags">RDF · OWL 2 · Protégé · HermiT · SWRL</div>
-  <div class="foot"><span>Giuseppe Bellamacina</span><span>←  →  per navigare · F schermo intero</span></div>
-</section>
+      <!-- 1 -->
+      <section class="slide title">
+        <div class="kicker">Semantic Web · Progetto</div>
+        <h1>Videogame<br />Ontology</h1>
+        <p class="sub">
+          La storia di un'ontologia OWL 2 dei videogiochi: dalla cosa più
+          semplice, una frase di tre parole, fino alle regole che ragionano su
+          intere serie.
+        </p>
+        <div class="tags">RDF · OWL 2 · Protégé · HermiT · SWRL</div>
+        <div class="foot">
+          <span>Giuseppe Bellamacina</span
+          ><span>← → per navigare · F schermo intero</span>
+        </div>
+      </section>
 
-<!-- 2 -->
-<section class="slide">
-  <div class="kicker">La storia</div>
-  <h2>Dieci passi, dal semplice al complesso</h2>
-  <p class="lead">Ogni passo aggiunge un'idea a quelle di prima. Tre diapositive sono interattive: puoi togliere un fatto e guardare il reasoner cambiare idea.</p>
-  <div class="body" style="flex-direction:column;gap:0">
-    <div class="story">
-      <div><span>Le domande<small>a cosa serve un'ontologia dei videogiochi</small></span></div>
-      <div><span>Una frase di tre parole<small>la tripla, l'unità dei dati</small></span></div>
-      <div><span>Dare un nome alle cose<small>le classi e la disgiunzione</small></span></div>
-      <div><span>Collegare le cose<small>proprietà, inverse, transitività, chiavi</small></span></div>
-      <div><span>Il reasoner al lavoro<small>da un solo fatto, tre conclusioni · <b>interattiva</b></small></span></div>
-      <div><span>Dare un significato<small>le classi definite</small></span></div>
-      <div><span>Quel che non è scritto è sconosciuto<small>mondo aperto, nomi diversi</small></span></div>
-      <div><span>Catene, serie e numeri<small>quattro modi di ragionare · <b>interattiva</b></small></span></div>
-      <div><span>Quando una classe non basta<small>le regole SWRL</small></span></div>
-      <div><span>Tutto insieme: Fallout 4<small>una catena di deduzioni · <b>interattiva</b></small></span></div>
-    </div>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>2</span></div>
-</section>
+      <!-- 2 -->
+      <section class="slide">
+        <div class="kicker">La storia</div>
+        <h2>Dieci passi, dal semplice al complesso</h2>
+        <p class="lead">
+          Ogni passo aggiunge un'idea a quelle di prima. Tre diapositive sono
+          interattive: puoi togliere un fatto e guardare il reasoner cambiare
+          idea.
+        </p>
+        <div class="body" style="flex-direction: column; gap: 0">
+          <div class="story">
+            <div>
+              <span
+                >Le domande<small
+                  >a cosa serve un'ontologia dei videogiochi</small
+                ></span
+              >
+            </div>
+            <div>
+              <span
+                >Una frase di tre parole<small
+                  >la tripla, l'unità dei dati</small
+                ></span
+              >
+            </div>
+            <div>
+              <span
+                >Dare un nome alle cose<small
+                  >le classi e la disgiunzione</small
+                ></span
+              >
+            </div>
+            <div>
+              <span
+                >Collegare le cose<small
+                  >proprietà, inverse, transitività, chiavi</small
+                ></span
+              >
+            </div>
+            <div>
+              <span
+                >Il reasoner al lavoro<small
+                  >da un solo fatto, tre conclusioni · <b>interattiva</b></small
+                ></span
+              >
+            </div>
+            <div>
+              <span>Dare un significato<small>le classi definite</small></span>
+            </div>
+            <div>
+              <span
+                >Quel che non è scritto è sconosciuto<small
+                  >mondo aperto, nomi diversi</small
+                ></span
+              >
+            </div>
+            <div>
+              <span
+                >Catene, serie e numeri<small
+                  >quattro modi di ragionare · <b>interattiva</b></small
+                ></span
+              >
+            </div>
+            <div>
+              <span
+                >Quando una classe non basta<small>le regole SWRL</small></span
+              >
+            </div>
+            <div>
+              <span
+                >Tutto insieme: Fallout 4<small
+                  >una catena di deduzioni · <b>interattiva</b></small
+                ></span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="foot"><span>Videogame Ontology</span><span>2</span></div>
+      </section>
 
-<!-- 3 -->
-<section class="slide">
-  <div class="kicker">Le domande</div>
-  <h2>I fatti ci sono, le risposte no</h2>
-  <p class="lead">Wikipedia e Wikidata dicono chi ha sviluppato un gioco e su che console è uscito. Le cose interessanti non sono scritte in nessun posto: si possono solo <b>dedurre</b>.</p>
-  <div class="body">
-    <div class="col">
-      <p style="font-size:14px;font-family:var(--mono);color:var(--muted);margin-bottom:10px;letter-spacing:1px">DOMANDE DI COMPETENZA</p>
-      <ul class="b sm">
-        <li>Quali giochi sono <b>first-party</b>, cioè pubblicati da chi costruisce console?</li>
-        <li>Quali giochi sono fatti da uno studio fondato da <b>veterani</b> della serie?</li>
-        <li>Quali serie sono lunghe, passate di mano, diventate film?</li>
-        <li>Quali personaggi muoiono, e chi li uccide?</li>
-        <li>Quali giochi raccontano una storia <b>violenta</b>, e la violenza è realistica?</li>
-        <li>Quali classici si possono ancora giocare su una console di oggi?</li>
-      </ul>
-    </div>
-    <div class="col stack">
-      <div class="card"><h3>Un esempio</h3><p><i>Mass Effect</i> (2007) è un gioco Microsoft uscito anche su una console Sony. Nei dati ci sono solo l'editore, le sue società madri e le piattaforme: che sia first-party su una console rivale lo deve <b>capire il reasoner</b>, mettendo insieme fatti sparsi.</p></div>
-      <div class="card"><h3>Il nostro dataset</h3><p><b>95 giochi</b>: undici serie (Zelda, Super Mario, GTA, Assassin's Creed, Fallout, Halo, Far Cry, The Witcher, Mass Effect, Dark Souls, Portal) e sei titoli singoli, con dati da Wikidata e dalla trama di Wikipedia.</p></div>
-    </div>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>3</span></div>
-</section>
+      <!-- 3 -->
+      <section class="slide">
+        <div class="kicker">Le domande</div>
+        <h2>I fatti ci sono, le risposte no</h2>
+        <p class="lead">
+          Wikipedia e Wikidata dicono chi ha sviluppato un gioco e su che
+          console è uscito. Le cose interessanti non sono scritte in nessun
+          posto: si possono solo <b>dedurre</b>.
+        </p>
+        <div class="body">
+          <div class="col">
+            <p
+              style="
+                font-size: 14px;
+                font-family: var(--mono);
+                color: var(--muted);
+                margin-bottom: 10px;
+                letter-spacing: 1px;
+              "
+            >
+              DOMANDE DI COMPETENZA
+            </p>
+            <ul class="b sm">
+              <li>
+                Quali giochi sono <b>first-party</b>, cioè pubblicati da chi
+                costruisce console?
+              </li>
+              <li>
+                Quali giochi sono fatti da uno studio fondato da
+                <b>veterani</b> della serie?
+              </li>
+              <li>Quali serie sono lunghe, passate di mano, diventate film?</li>
+              <li>Quali personaggi muoiono, e chi li uccide?</li>
+              <li>
+                Quali giochi raccontano una storia <b>violenta</b>, e la
+                violenza è realistica?
+              </li>
+              <li>
+                Quali classici si possono ancora giocare su una console di oggi?
+              </li>
+            </ul>
+          </div>
+          <div class="col stack">
+            <div class="card">
+              <h3>Un esempio</h3>
+              <p>
+                <i>Mass Effect</i> (2007) è un gioco Microsoft uscito anche su
+                una console Sony. Nei dati ci sono solo l'editore, le sue
+                società madri e le piattaforme: che sia first-party su una
+                console rivale lo deve <b>capire il reasoner</b>, mettendo
+                insieme fatti sparsi.
+              </p>
+            </div>
+            <div class="card">
+              <h3>Il nostro dataset</h3>
+              <p>
+                <b>95 giochi</b>: undici serie (Zelda, Super Mario, GTA,
+                Assassin's Creed, Fallout, Halo, Far Cry, The Witcher, Mass
+                Effect, Dark Souls, Portal) e sei titoli singoli, con dati da
+                Wikidata e dalla trama di Wikipedia.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="foot"><span>Videogame Ontology</span><span>3</span></div>
+      </section>
 
-<!-- 4 -->
-<section class="slide">
-  <div class="kicker">Il mattone</div>
-  <h2>Una frase di tre parole</h2>
-  <p class="lead">Tutto comincia da qui: <b>soggetto · predicato · oggetto</b>. Ogni fatto dell'ontologia è una tripla; un grafo è un insieme di triple.</p>
-  <div class="body">
-    <div class="col" style="flex:1.25">
-      <svg viewBox="0 0 640 400" width="100%" height="400">
-        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#26565c"/></marker></defs>
-        <g stroke="#26565c" stroke-width="1.6" fill="none" marker-end="url(#ar)">
-          <path d="M290 190 L140 60"/><path d="M335 190 L470 60"/><path d="M350 205 L520 205"/><path d="M290 220 L150 330"/><path d="M335 220 L470 330"/>
-        </g>
-        <g font-size="13" fill="#6b675e" font-family="IBM Plex Mono, monospace">
-          <text x="150" y="112" transform="rotate(-40 150 112)">developedBy</text>
-          <text x="395" y="118" transform="rotate(42 395 118)">directedBy</text>
-          <text x="405" y="196">pegiRating</text>
-          <text x="130" y="286" transform="rotate(36 130 286)">sequelOf</text>
-          <text x="380" y="296" transform="rotate(-38 380 296)">availableOn</text>
-        </g>
-        <g font-size="15" font-weight="600" text-anchor="middle">
-          <rect x="240" y="180" width="150" height="50" fill="#1a1a1c"/><text x="315" y="211" fill="#fff">Fallout 4</text>
-          <rect x="30" y="20" width="200" height="42" fill="#fff" stroke="#26565c"/><text x="130" y="47" fill="#1a1a1c">Bethesda Game Studios</text>
-          <rect x="430" y="20" width="170" height="42" fill="#fff" stroke="#26565c"/><text x="515" y="47" fill="#1a1a1c">Todd Howard</text>
-          <rect x="525" y="184" width="80" height="42" fill="#f1ddd5" stroke="#b8391f"/><text x="565" y="211" fill="#1a1a1c">18</text>
-          <rect x="40" y="330" width="150" height="42" fill="#fff" stroke="#26565c"/><text x="115" y="357" fill="#1a1a1c">Fallout 3</text>
-          <rect x="420" y="330" width="170" height="42" fill="#fff" stroke="#26565c"/><text x="505" y="357" fill="#1a1a1c">PlayStation 4</text>
-        </g>
-      </svg>
-    </div>
-    <div class="col stack">
-<pre style="font-size:12.5px"><span class="c"># Turtle: le stesse triple, in testo</span>
+      <!-- 4 -->
+      <section class="slide">
+        <div class="kicker">Il mattone</div>
+        <h2>Una frase di tre parole</h2>
+        <p class="lead">
+          Tutto comincia da qui: <b>soggetto · predicato · oggetto</b>. Ogni
+          fatto dell'ontologia è una tripla; un grafo è un insieme di triple.
+        </p>
+        <div class="body">
+          <div class="col" style="flex: 1.25">
+            <svg viewBox="0 0 640 400" width="100%" height="400">
+              <defs>
+                <marker
+                  id="ar"
+                  viewBox="0 0 10 10"
+                  refX="9"
+                  refY="5"
+                  markerWidth="7"
+                  markerHeight="7"
+                  orient="auto"
+                >
+                  <path d="M0 0L10 5L0 10z" fill="#26565c" />
+                </marker>
+              </defs>
+              <g
+                stroke="#26565c"
+                stroke-width="1.6"
+                fill="none"
+                marker-end="url(#ar)"
+              >
+                <path d="M290 190 L140 60" />
+                <path d="M335 190 L470 60" />
+                <path d="M350 205 L520 205" />
+                <path d="M290 220 L150 330" />
+                <path d="M335 220 L470 330" />
+              </g>
+              <g
+                font-size="13"
+                fill="#6b675e"
+                font-family="IBM Plex Mono, monospace"
+              >
+                <text x="150" y="112" transform="rotate(-40 150 112)">
+                  developedBy
+                </text>
+                <text x="395" y="118" transform="rotate(42 395 118)">
+                  directedBy
+                </text>
+                <text x="405" y="196">pegiRating</text>
+                <text x="130" y="286" transform="rotate(36 130 286)">
+                  sequelOf
+                </text>
+                <text x="380" y="296" transform="rotate(-38 380 296)">
+                  availableOn
+                </text>
+              </g>
+              <g font-size="15" font-weight="600" text-anchor="middle">
+                <rect x="240" y="180" width="150" height="50" fill="#1a1a1c" />
+                <text x="315" y="211" fill="#fff">Fallout 4</text>
+                <rect
+                  x="30"
+                  y="20"
+                  width="200"
+                  height="42"
+                  fill="#fff"
+                  stroke="#26565c"
+                />
+                <text x="130" y="47" fill="#1a1a1c">Bethesda Game Studios</text>
+                <rect
+                  x="430"
+                  y="20"
+                  width="170"
+                  height="42"
+                  fill="#fff"
+                  stroke="#26565c"
+                />
+                <text x="515" y="47" fill="#1a1a1c">Todd Howard</text>
+                <rect
+                  x="525"
+                  y="184"
+                  width="80"
+                  height="42"
+                  fill="#f1ddd5"
+                  stroke="#b8391f"
+                />
+                <text x="565" y="211" fill="#1a1a1c">18</text>
+                <rect
+                  x="40"
+                  y="330"
+                  width="150"
+                  height="42"
+                  fill="#fff"
+                  stroke="#26565c"
+                />
+                <text x="115" y="357" fill="#1a1a1c">Fallout 3</text>
+                <rect
+                  x="420"
+                  y="330"
+                  width="170"
+                  height="42"
+                  fill="#fff"
+                  stroke="#26565c"
+                />
+                <text x="505" y="357" fill="#1a1a1c">PlayStation 4</text>
+              </g>
+            </svg>
+          </div>
+          <div class="col stack">
+            <pre
+              style="font-size: 12.5px"
+            ><span class="c"># Turtle: le stesse triple, in testo</span>
 vg:Fallout_4 <span class="k">vg:developedBy</span> company:Bethesda_Game_Studios .
 vg:Fallout_4 <span class="k">vg:directedBy</span>  person:Todd_Howard .
 vg:Fallout_4 <span class="k">vg:pegiRating</span>  <span class="p">18</span> .
 vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
-      <p style="font-size:15.5px;line-height:1.5">Nessuna di queste triple dice che <i>Todd Howard è un regista</i> o che <i>Bethesda Game Studios è uno sviluppatore</i>. Per saperlo servono classi e assiomi: il passo successivo.</p>
-      <div class="note">Due file separati: lo <b>schema</b> (classi e assiomi, nessun gioco) e i <b>dati</b> (solo fatti, nessuna conclusione). Le conclusioni le aggiunge il reasoner.</div>
-    </div>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>4</span></div>
-</section>
+            <p style="font-size: 15.5px; line-height: 1.5">
+              Nessuna di queste triple dice che
+              <i>Todd Howard è un regista</i> o che
+              <i>Bethesda Game Studios è uno sviluppatore</i>. Per saperlo
+              servono classi e assiomi: il passo successivo.
+            </p>
+            <div class="note">
+              Due file separati: lo <b>schema</b> (classi e assiomi, nessun
+              gioco) e i <b>dati</b> (solo fatti, nessuna conclusione). Le
+              conclusioni le aggiunge il reasoner.
+            </div>
+          </div>
+        </div>
+        <div class="foot"><span>Videogame Ontology</span><span>4</span></div>
+      </section>
 
-<!-- 5 -->
-<section class="slide">
-  <div class="kicker">Le classi</div>
-  <h2>Dare un nome alle cose</h2>
-  <p class="lead">Tredici classi di primo livello, <b>disgiunte</b> a due a due: niente può essere insieme un gioco e una persona. <b>Clicca una classe</b> per vedere cosa ne discende.</p>
-  <div class="body" style="flex-direction:column;gap:14px">
-    <div class="chips" id="chips"></div>
-    <div class="xp" id="xp"></div>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>5</span></div>
-</section>
+      <!-- 5 -->
+      <section class="slide">
+        <div class="kicker">Le classi</div>
+        <h2>Dare un nome alle cose</h2>
+        <p class="lead">
+          Tredici classi di primo livello, <b>disgiunte</b> a due a due: niente
+          può essere insieme un gioco e una persona.
+          <b>Clicca una classe</b> per vedere cosa ne discende.
+        </p>
+        <div class="body" style="flex-direction: column; gap: 14px">
+          <div class="chips" id="chips"></div>
+          <div class="xp" id="xp"></div>
+        </div>
+        <div class="foot"><span>Videogame Ontology</span><span>5</span></div>
+      </section>
 
-<!-- 6 -->
-<section class="slide">
-  <div class="kicker">Le proprietà</div>
-  <h2>Collegare le cose</h2>
-  <p class="lead">Le proprietà dicono più di un semplice collegamento: ognuna porta con sé una regola di buon senso.</p>
-  <div class="body" style="flex-direction:column;gap:0">
-    <table>
-      <tr><th style="width:150px">Caratteristica</th><th style="width:300px">Cosa dice</th><th>Nel nostro progetto</th></tr>
-      <tr><td><b>Inversa</b></td><td>Basta scrivere una direzione</td><td><span class="mono">developedBy</span> ↔ <span class="mono">developerOf</span>. Si scrive «Dark Souls developedBy FromSoftware» e FromSoftware diventa <i>sviluppatore</i>.</td></tr>
-      <tr><td><b>Dominio e range</b></td><td>Dà un tipo a chi compare nel fatto</td><td>Un individuo senza tipo che ha <span class="mono">developedBy</span> è un <span class="mono">VideoGame</span>: il primo GTA, lasciato apposta senza tipo.</td></tr>
-      <tr><td><b>Transitiva</b></td><td>A→B e B→C implicano A→C</td><td><span class="mono">sequelOf</span>: si scrive solo il capitolo precedente, la serie intera si ricostruisce. <span class="mono">subsidiaryOf</span>: Bethesda → ZeniMax → Xbox Game Studios → Microsoft.</td></tr>
-      <tr><td><b>Funzionale</b></td><td>Al più un valore</td><td><span class="mono">releaseDate</span>, <span class="mono">metacriticScore</span>, <span class="mono">pegiRating</span>: due punteggi per Portal 2 sono un errore.</td></tr>
-      <tr><td><b>Catena</b></td><td>Due archi di fila valgono uno</td><td><span class="mono">hasRemaster ∘ availableOn ⊑ playableOn</span>: un gioco è giocabile dove è uscita una sua nuova edizione.</td></tr>
-      <tr><td><b>Chiave</b></td><td>Stesso identificativo, stesso individuo</td><td><span class="mono">hasWikidataId</span> è la chiave di <span class="mono">VideoGame</span>.</td></tr>
-    </table>
-    <p style="margin-top:14px;font-size:14px;color:var(--muted)">In tutto 48 object property e 5 datatype property.</p>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>6</span></div>
-</section>
+      <!-- 6 -->
+      <section class="slide">
+        <div class="kicker">Le proprietà</div>
+        <h2>Collegare le cose</h2>
+        <p class="lead">
+          Le proprietà dicono più di un semplice collegamento: ognuna porta con
+          sé una regola di buon senso.
+        </p>
+        <div class="body" style="flex-direction: column; gap: 0">
+          <table>
+            <tr>
+              <th style="width: 150px">Caratteristica</th>
+              <th style="width: 300px">Cosa dice</th>
+              <th>Nel nostro progetto</th>
+            </tr>
+            <tr>
+              <td><b>Inversa</b></td>
+              <td>Basta scrivere una direzione</td>
+              <td>
+                <span class="mono">developedBy</span> ↔
+                <span class="mono">developerOf</span>. Si scrive «Dark Souls
+                developedBy FromSoftware» e FromSoftware diventa
+                <i>sviluppatore</i>.
+              </td>
+            </tr>
+            <tr>
+              <td><b>Dominio e range</b></td>
+              <td>Dà un tipo a chi compare nel fatto</td>
+              <td>
+                Un individuo senza tipo che ha
+                <span class="mono">developedBy</span> è un
+                <span class="mono">VideoGame</span>: il primo GTA, lasciato
+                apposta senza tipo.
+              </td>
+            </tr>
+            <tr>
+              <td><b>Transitiva</b></td>
+              <td>A→B e B→C implicano A→C</td>
+              <td>
+                <span class="mono">sequelOf</span>: si scrive solo il capitolo
+                precedente, la serie intera si ricostruisce.
+                <span class="mono">subsidiaryOf</span>: Bethesda → ZeniMax →
+                Xbox Game Studios → Microsoft.
+              </td>
+            </tr>
+            <tr>
+              <td><b>Funzionale</b></td>
+              <td>Al più un valore</td>
+              <td>
+                <span class="mono">releaseDate</span>,
+                <span class="mono">metacriticScore</span>,
+                <span class="mono">pegiRating</span>: due punteggi per Portal 2
+                sono un errore.
+              </td>
+            </tr>
+            <tr>
+              <td><b>Catena</b></td>
+              <td>Due archi di fila valgono uno</td>
+              <td>
+                <span class="mono">hasRemaster ∘ availableOn ⊑ playableOn</span
+                >: un gioco è giocabile dove è uscita una sua nuova edizione.
+              </td>
+            </tr>
+            <tr>
+              <td><b>Chiave</b></td>
+              <td>Stesso identificativo, stesso individuo</td>
+              <td>
+                <span class="mono">hasWikidataId</span> è la chiave di
+                <span class="mono">VideoGame</span>.
+              </td>
+            </tr>
+          </table>
+          <p style="margin-top: 14px; font-size: 14px; color: var(--muted)">
+            In tutto 48 object property e 5 datatype property.
+          </p>
+        </div>
+        <div class="foot"><span>Videogame Ontology</span><span>6</span></div>
+      </section>
 
-<!-- 7 -->
-<section class="slide" data-demo="gwyn">
-  <div class="kicker">Il reasoner al lavoro</div>
-  <h2>Da un solo fatto, tre conclusioni</h2>
-  <p class="lead">Nei dati c'è <b>un'uccisione</b> in Dark Souls. Premi <b>Passo</b>: ogni riga a destra nasce dalle righe di sinistra e da una regola. Poi <b>togli una spunta</b> e riparti.</p>
-  <div class="demo"></div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>7</span></div>
-</section>
+      <!-- 7 -->
+      <section class="slide" data-demo="gwyn">
+        <div class="kicker">Il reasoner al lavoro</div>
+        <h2>Da un solo fatto, tre conclusioni</h2>
+        <p class="lead">
+          Nei dati c'è <b>un'uccisione</b> in Dark Souls. Premi <b>Passo</b>:
+          ogni riga a destra nasce dalle righe di sinistra e da una regola. Poi
+          <b>togli una spunta</b> e riparti.
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>7</span></div>
+      </section>
 
-<!-- 8 -->
-<section class="slide">
-  <div class="kicker">Il significato</div>
-  <h2>Le classi definite</h2>
-  <p class="lead">Una classe <b>primitiva</b> ha solo condizioni necessarie. Una classe <b>definita</b> (≡) ha condizioni necessarie e <b>sufficienti</b>: chiunque le soddisfi ci finisce dentro, senza che nessuno ce lo metta.</p>
-  <div class="body">
-    <div class="col stack" style="flex:.9">
-      <div class="card"><h3>La più semplice</h3><p class="mono" style="font-size:15px;line-height:1.7">DeceasedCharacter ≡<br>&nbsp;&nbsp;Character ⊓ ∃victimIn.Killing</p><p style="margin-top:8px">«Un personaggio vittima di almeno un'uccisione è un personaggio morto.» È quella che hai appena visto scattare.</p></div>
-      <div class="note">44 delle 77 classi sono definite: nessuna ha istanze scritte a mano, si popolano per deduzione.</div>
-    </div>
-    <div class="col" style="flex:1.2">
-      <table>
-        <tr><th>Costrutto</th><th>Esempio</th></tr>
-        <tr><td>ruolo da un'inversa</td><td class="mono">PlatformHolder ≡ Company ⊓ ∃manufacturerOf.ConsolePlatform</td></tr>
-        <tr><td>classe su classe</td><td class="mono">FirstPartyGame ≡ VideoGame ⊓ ∃publishedBy.(PlatformHolder ⊔ ∃subsidiaryOf.PlatformHolder)</td></tr>
-        <tr><td>cardinalità</td><td class="mono">RecurringCharacter ≡ Character ⊓ ≥2 appearsIn.VideoGame</td></tr>
-        <tr><td>valore di un dato</td><td class="mono">Pegi18Game ≡ VideoGame ⊓ ∃pegiRating.{18}</td></tr>
-        <tr><td>intervallo di date</td><td class="mono">ClassicGame ≡ VideoGame ⊓ ∃releaseDate.dateTime[&lt; 2005-01-01]</td></tr>
-        <tr><td>unione</td><td class="mono">TransmediaFranchise ≡ Franchise ⊓ ∃adaptedInto.(Film ⊔ TVSeries)</td></tr>
-      </table>
-    </div>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>8</span></div>
-</section>
+      <!-- 8 -->
+      <section class="slide">
+        <div class="kicker">Il significato</div>
+        <h2>Le classi definite</h2>
+        <p class="lead">
+          Una classe <b>primitiva</b> ha solo condizioni necessarie. Una classe
+          <b>definita</b> (≡) ha condizioni necessarie e <b>sufficienti</b>:
+          chiunque le soddisfi ci finisce dentro, senza che nessuno ce lo metta.
+        </p>
+        <div class="body">
+          <div class="col stack" style="flex: 0.9">
+            <div class="card">
+              <h3>La più semplice</h3>
+              <p class="mono" style="font-size: 15px; line-height: 1.7">
+                DeceasedCharacter ≡<br />&nbsp;&nbsp;Character ⊓
+                ∃victimIn.Killing
+              </p>
+              <p style="margin-top: 8px">
+                «Un personaggio vittima di almeno un'uccisione è un personaggio
+                morto.» È quella che hai appena visto scattare.
+              </p>
+            </div>
+            <div class="note">
+              44 delle 77 classi sono definite: nessuna ha istanze scritte a
+              mano, si popolano per deduzione.
+            </div>
+          </div>
+          <div class="col" style="flex: 1.2">
+            <table>
+              <tr>
+                <th>Costrutto</th>
+                <th>Esempio</th>
+              </tr>
+              <tr>
+                <td>ruolo da un'inversa</td>
+                <td class="mono">
+                  PlatformHolder ≡ Company ⊓ ∃manufacturerOf.ConsolePlatform
+                </td>
+              </tr>
+              <tr>
+                <td>classe su classe</td>
+                <td class="mono">
+                  FirstPartyGame ≡ VideoGame ⊓ ∃publishedBy.(PlatformHolder ⊔
+                  ∃subsidiaryOf.PlatformHolder)
+                </td>
+              </tr>
+              <tr>
+                <td>cardinalità</td>
+                <td class="mono">
+                  RecurringCharacter ≡ Character ⊓ ≥2 appearsIn.VideoGame
+                </td>
+              </tr>
+              <tr>
+                <td>valore di un dato</td>
+                <td class="mono">Pegi18Game ≡ VideoGame ⊓ ∃pegiRating.{18}</td>
+              </tr>
+              <tr>
+                <td>intervallo di date</td>
+                <td class="mono">
+                  ClassicGame ≡ VideoGame ⊓ ∃releaseDate.dateTime[&lt;
+                  2005-01-01]
+                </td>
+              </tr>
+              <tr>
+                <td>unione</td>
+                <td class="mono">
+                  TransmediaFranchise ≡ Franchise ⊓ ∃adaptedInto.(Film ⊔
+                  TVSeries)
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="foot"><span>Videogame Ontology</span><span>8</span></div>
+      </section>
 
-<!-- 9 -->
-<section class="slide">
-  <div class="kicker">Il mondo aperto</div>
-  <h2>Quel che non è scritto è sconosciuto</h2>
-  <p class="lead">OWL non è un database. Se un fatto manca non è falso: <b>non si sa</b>. Due conseguenze che abbiamo dovuto imparare.</p>
-  <div class="body">
-    <div class="col stack">
-      <div class="card"><h3>1 · Niente negazioni</h3><p>«Gioco senza seguiti» o «personaggio non giocabile» non si deducono mai: non aver scritto un seguito non prova che non esista. Per questo le nostre classi dicono sempre <i>«ha almeno…»</i>, mai <i>«non ha…»</i>.</p></div>
-      <div class="card"><h3>2 · Nomi diversi, forse lo stesso oggetto</h3><p>OWL non assume che due nomi indichino cose diverse. Per contare «almeno due giochi» i dati dichiarano esplicitamente che giochi, aziende e personaggi sono a due a due diversi (<span class="mono">owl:AllDifferent</span>).</p></div>
-    </div>
-    <div class="col stack">
-      <div class="card"><h3>Un caso curioso</h3><p>Splatoon 2 è un'esclusiva Switch, ma nei dati è collegato anche a una piattaforma chiamata <b>NX</b>. Il reasoner non protesta: conclude che <b>NX è la Nintendo Switch</b> (nome in codice) e le unisce. Una deduzione corretta, possibile proprio perché OWL non presume che nomi diversi siano oggetti diversi.</p></div>
-      <div class="note">È anche perché il reasoner non conclude «ultima console» ma «console della nona generazione»: una soglia esplicita, al posto di una negazione.</div>
-    </div>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>9</span></div>
-</section>
+      <!-- 9 -->
+      <section class="slide">
+        <div class="kicker">Il mondo aperto</div>
+        <h2>Quel che non è scritto è sconosciuto</h2>
+        <p class="lead">
+          OWL non è un database. Se un fatto manca non è falso:
+          <b>non si sa</b>. Due conseguenze che abbiamo dovuto imparare.
+        </p>
+        <div class="body">
+          <div class="col stack">
+            <div class="card">
+              <h3>1 · Niente negazioni</h3>
+              <p>
+                «Gioco senza seguiti» o «personaggio non giocabile» non si
+                deducono mai: non aver scritto un seguito non prova che non
+                esista. Per questo le nostre classi dicono sempre
+                <i>«ha almeno…»</i>, mai <i>«non ha…»</i>.
+              </p>
+            </div>
+            <div class="card">
+              <h3>2 · Nomi diversi, forse lo stesso oggetto</h3>
+              <p>
+                OWL non assume che due nomi indichino cose diverse. Per contare
+                «almeno due giochi» i dati dichiarano esplicitamente che giochi,
+                aziende e personaggi sono a due a due diversi (<span
+                  class="mono"
+                  >owl:AllDifferent</span
+                >).
+              </p>
+            </div>
+          </div>
+          <div class="col stack">
+            <div class="card">
+              <h3>Un caso curioso</h3>
+              <p>
+                Splatoon 2 è un'esclusiva Switch, ma nei dati è collegato anche
+                a una piattaforma chiamata <b>NX</b>. Il reasoner non protesta:
+                conclude che <b>NX è la Nintendo Switch</b> (nome in codice) e
+                le unisce. Una deduzione corretta, possibile proprio perché OWL
+                non presume che nomi diversi siano oggetti diversi.
+              </p>
+            </div>
+            <div class="note">
+              È anche perché il reasoner non conclude «ultima console» ma
+              «console della nona generazione»: una soglia esplicita, al posto
+              di una negazione.
+            </div>
+          </div>
+        </div>
+        <div class="foot"><span>Videogame Ontology</span><span>9</span></div>
+      </section>
 
-<!-- 10 -->
-<section class="slide" data-demo="serie">
-  <div class="kicker">Catene, serie e numeri</div>
-  <h2>Quattro ragionamenti in un colpo</h2>
-  <p class="lead">Transitività (<i>Halo 3 è un terzo capitolo</i>), catena (<i>GTA III si gioca su PS5</i>), numeri e date (<i>è un classico, la PS5 è di nona generazione</i>). Prova a togliere il remaster.</p>
-  <div class="demo"></div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>10</span></div>
-</section>
+      <!-- 10 -->
+      <section class="slide" data-demo="serie">
+        <div class="kicker">Catene, serie e numeri</div>
+        <h2>Quattro ragionamenti in un colpo</h2>
+        <p class="lead">
+          Transitività (<i>Halo 3 è un terzo capitolo</i>), catena (<i
+            >GTA III si gioca su PS5</i
+          >), numeri e date (<i>è un classico, la PS5 è di nona generazione</i
+          >). Prova a togliere il remaster.
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>10</span></div>
+      </section>
 
-<!-- 11 -->
-<section class="slide">
-  <div class="kicker">Quando una classe non basta</div>
-  <h2>Le regole SWRL</h2>
-  <p class="lead">Una classe OWL non sa confrontare due individui: «uno studio <b>diverso</b>», «lo <b>stesso</b> regista». Per questo servono le regole, nella forma sicura (<i>DL-safe</i>) che HermiT applica insieme al resto.</p>
-  <div class="body">
-    <div class="col stack" style="flex:1.1">
-<pre><span class="c"># un seguito fatto da un altro studio</span>
+      <!-- 11 -->
+      <section class="slide">
+        <div class="kicker">Quando una classe non basta</div>
+        <h2>Le regole SWRL</h2>
+        <p class="lead">
+          Una classe OWL non sa confrontare due individui: «uno studio
+          <b>diverso</b>», «lo <b>stesso</b> regista». Per questo servono le
+          regole, nella forma sicura (<i>DL-safe</i>) che HermiT applica insieme
+          al resto.
+        </p>
+        <div class="body">
+          <div class="col stack" style="flex: 1.1">
+            <pre><span class="c"># un seguito fatto da un altro studio</span>
 sequelOf(?a, ?b) ^
 developedBy(?a, ?x) ^ developedBy(?b, ?y) ^
 differentFrom(?x, ?y)
@@ -323,245 +1178,750 @@ differentFrom(?x, ?y)
 <span class="c"># un'uccisione diventa una relazione diretta</span>
 victim(?k, ?v) ^ killer(?k, ?a)
   -&gt; killedBy(?v, ?a)</pre>
-      <p style="font-size:15px;line-height:1.5">Halo 4 (343 Industries dopo Bungie), Fallout 3 e Far Cry 2 (da Crytek a Ubisoft) risultano <b>seguiti di un altro studio</b>.</p>
+            <p style="font-size: 15px; line-height: 1.5">
+              Halo 4 (343 Industries dopo Bungie), Fallout 3 e Far Cry 2 (da
+              Crytek a Ubisoft) risultano <b>seguiti di un altro studio</b>.
+            </p>
+          </div>
+          <div class="col stack">
+            <div class="card">
+              <h3>Una scelta: al massimo 4 atomi</h3>
+              <p>
+                Ogni regola ha al massimo quattro atomi nel corpo. Se una regola
+                cresce, la si spezza in una di appoggio e una finale.
+              </p>
+            </div>
+            <div class="card">
+              <h3>Un limite che ci ha insegnato qualcosa</h3>
+              <p>
+                Dentro una regola, HermiT <b>non vede</b> ciò che è stato
+                dedotto da una transitività. Per salire da Bethesda a Microsoft,
+                tre livelli, la regola <span class="mono">ParentGroup</span> fa
+                un passo alla volta, ripetendosi.
+              </p>
+            </div>
+            <p style="font-size: 13.5px; color: var(--muted); line-height: 1.5">
+              16 regole in tutto, tra cui
+              <span class="mono">EngineChangeSequel</span>,
+              <span class="mono">ExternalEngine</span>,
+              <span class="mono">ReturningDirector</span>,
+              <span class="mono">DefeatedVillain</span>,
+              <span class="mono">ReturnAfterDeath</span>,
+              <span class="mono">SelfPublished</span>,
+              <span class="mono">MustPlay</span>.
+            </p>
+          </div>
+        </div>
+        <div class="foot"><span>Videogame Ontology</span><span>11</span></div>
+      </section>
+
+      <!-- 12 -->
+      <section class="slide" data-demo="fallout">
+        <div class="kicker">Tutto insieme</div>
+        <h2>Fallout 4 su PlayStation 4</h2>
+        <p class="lead">
+          Dai fatti, con inverse, classi definite e regole, il reasoner conclude
+          che
+          <b
+            >Fallout 4 è un gioco first-party Microsoft uscito su una console
+            rivale</b
+          >. Togli un anello della catena.
+        </p>
+        <div class="demo"></div>
+        <div class="foot"><span>Videogame Ontology</span><span>12</span></div>
+      </section>
+
+      <!-- 13 -->
+      <section class="slide title">
+        <div class="kicker">Fine</div>
+        <h1>Grazie</h1>
+        <p class="sub">Domande?</p>
+        <div class="foot"><span>Giuseppe Bellamacina</span><span>13</span></div>
+      </section>
     </div>
-    <div class="col stack">
-      <div class="card"><h3>Una scelta: al massimo 4 atomi</h3><p>Ogni regola ha al massimo quattro atomi nel corpo. Se una regola cresce, la si spezza in una di appoggio e una finale.</p></div>
-      <div class="card"><h3>Un limite che ci ha insegnato qualcosa</h3><p>Dentro una regola, HermiT <b>non vede</b> ciò che è stato dedotto da una transitività. Per salire da Bethesda a Microsoft, tre livelli, la regola <span class="mono">ParentGroup</span> fa un passo alla volta, ripetendosi.</p></div>
-      <p style="font-size:13.5px;color:var(--muted);line-height:1.5">16 regole in tutto, tra cui <span class="mono">EngineChangeSequel</span>, <span class="mono">ExternalEngine</span>, <span class="mono">ReturningDirector</span>, <span class="mono">DefeatedVillain</span>, <span class="mono">ReturnAfterDeath</span>, <span class="mono">SelfPublished</span>, <span class="mono">MustPlay</span>.</p>
-    </div>
-  </div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>11</span></div>
-</section>
 
-<!-- 12 -->
-<section class="slide" data-demo="fallout">
-  <div class="kicker">Tutto insieme</div>
-  <h2>Fallout 4 su PlayStation 4</h2>
-  <p class="lead">Dai fatti, con inverse, classi definite e regole, il reasoner conclude che <b>Fallout 4 è un gioco first-party Microsoft uscito su una console rivale</b>. Togli un anello della catena.</p>
-  <div class="demo"></div>
-  <div class="foot"><span>Un'ontologia che sa dedurre</span><span>12</span></div>
-</section>
-
-<!-- 13 -->
-<section class="slide title">
-  <div class="kicker">Fine</div>
-  <h1>Grazie</h1>
-  <p class="sub">Domande?</p>
-  <div class="foot"><span>Giuseppe Bellamacina</span><span>13</span></div>
-</section>
-</div>
-
-<script>
-/* ---------- classi interattive ---------- */
-const CLASSES = {
-  VideoGame: ["Un videogioco.", ["Remaster", "SequelGame", "LateEntry", "FirstPartyGame", "ViolentStoryGame", "RealisticViolenceGame", "ClassicGame", "ClassicStillPlayable", "StillPlayable", "Pegi3Game", "Pegi7Game", "Pegi12Game", "Pegi16Game", "Pegi18Game", "GOTYWinner", "Adaptation", "HistoricalGame", "SciFiGame", "AuteurGame", "PrequelGame"], "Un gioco con almeno un'uccisione nella trama è un ViolentStoryGame; con PEGI 16 o 18 diventa RealisticViolenceGame."],
-  Company: ["Uno studio, un editore o un gruppo industriale.", ["Developer", "Publisher", "PlatformHolder", "FoundedByVeterans", "ProlificDeveloper", "FirstPartyStudio"], "Sviluppatore ed editore non sono disgiunti: sono ruoli della stessa azienda, calcolati dalle inverse."],
-  Person: ["Una persona reale.", ["GameDirector", "StudioHead", "ProlificDirector"], "Miyazaki è un GameDirector perché Dark Souls è directedBy lui; è anche StudioHead perché guida FromSoftware."],
-  Character: ["Un personaggio di finzione.", ["Human", "Alien", "Synthetic", "PlayerCharacter", "DeceasedCharacter", "Killer", "Protagonist", "Antagonist", "RecurringCharacter", "MultipleKiller", "HistoricalCharacter", "RogueAI"], "Dei personaggi si scrive solo la specie (umana o aliena): tutto il resto si deduce."],
-  Platform: ["Una piattaforma su cui si gioca.", ["ConsolePlatform", "PCPlatform", "CurrentGenerationConsole", "PreviousGenerationConsole"], "Console e PC sono disgiunti. Le marche non sono classi: si ricavano da chi costruisce la console."],
-  Franchise: ["Una serie di giochi.", ["LongRunningFranchise", "TransmediaFranchise", "FranchiseWithStudioChange"], "Una serie con almeno tre capitoli è LongRunningFranchise: Portal, con due, no."],
-  CreativeWork: ["Un'opera di un altro medium.", ["Novel", "Film", "TVSeries", "Comic", "TabletopGame"], "The Witcher è tratto da una saga letteraria; The Walking Dead da un fumetto."],
-  GameEngine: ["Un motore di gioco.", [], "Collega un gioco all'azienda che ha sviluppato il motore (engineDevelopedBy)."],
-  Award: ["Il premio «gioco dell'anno» di una cerimonia.", [], "Un gioco con un premio è GOTYWinner."],
-  Genre: ["Un genere.", [], "Il genere «storico» o «fantascienza» non è nei dati: lo si deduce dai personaggi."],
-  GameMode: ["Una modalità di gioco.", [], "Per esempio giocatore singolo o multigiocatore."],
-  Killing: ["Un'uccisione nella trama di un gioco: vittima, assassino e gioco.", [], "È una classe e non una proprietà perché un'uccisione avviene in un gioco (relazione n-aria)."],
-  FictionalOrganization: ["Un'organizzazione del mondo di gioco.", [], "Per esempio Aperture Science, che ha costruito GLaDOS."]
-};
-const PRIM = new Set(["Human", "Alien", "ConsolePlatform", "PCPlatform", "Novel", "Film", "TVSeries", "Comic", "TabletopGame"]);
-const chips = document.getElementById("chips"), xp = document.getElementById("xp");
-function pick(name) {
-  [...chips.children].forEach(c => c.classList.toggle("on", c.dataset.n === name));
-  const [d, subs, note] = CLASSES[name];
-  xp.innerHTML = "<h4>" + name + "</h4><p>" + d + "</p>" +
-    (subs.length ? "<div class='row'>" + subs.map(s => "<span class='pillc " + (PRIM.has(s) ? "p" : "d") + "'>" + s + "</span>").join("") + "</div>" +
-      "<p style='font-size:13px;color:var(--muted)'>Fondo verde: classe definita (si popola per deduzione). Grigio: primitiva.</p>" : "<p style='color:var(--muted)'>Nessuna sottoclasse.</p>") +
-    "<p>" + note + "</p>";
-}
-Object.keys(CLASSES).forEach(n => {
-  const b = document.createElement("button");
-  b.className = "chip"; b.textContent = n; b.dataset.n = n; b.onclick = () => pick(n);
-  chips.appendChild(b);
-});
-pick("VideoGame");
-
-/* ---------- mini reasoner ---------- */
-const V = t => typeof t === "string" && t[0] === "?";
-const nice = t => String(t).replace(/_/g, " ");
-const show = ([s, p, o]) => nice(s) + "  " + (p === "a" ? "è un" : p) + "  " + nice(o);
-
-function matchAtom(atom, fact, b) {
-  const nb = { ...b };
-  for (let k = 0; k < 3; k++) {
-    const p = atom[k], f = fact[k];
-    if (V(p)) { if (p in nb) { if (nb[p] !== f) return null; } else nb[p] = f; }
-    else if (String(p) !== String(f)) return null;
-  }
-  return nb;
-}
-function solve(body, facts, bs) {
-  if (!body.length) return bs;
-  const [a, ...rest] = body;
-  let out = [];
-  if (["!=", ">=", "<"].includes(a[1])) {
-    for (const b of bs) {
-      const x = V(a[0]) ? b[a[0]] : a[0], y = V(a[2]) ? b[a[2]] : a[2];
-      const ok = a[1] === "!=" ? x !== y : a[1] === ">=" ? Number(x) >= Number(y) : String(x) < String(y);
-      if (ok) out.push(b);
-    }
-  } else {
-    for (const b of bs) for (const f of facts) { const nb = matchAtom(a, f.t, b); if (nb) out.push(nb); }
-  }
-  return solve(rest, facts, out);
-}
-const inst = (atom, b) => atom.map(x => V(x) ? b[x] : x);
-
-const INV = (name, p, q) => ({ n: name, kind: "inversa", body: [["?x", p, "?y"]], head: [["?y", q, "?x"]], t: p + " ↔ " + q });
-const SCEN = {
-  gwyn: {
-    facts: [
-      ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "a", "Killing"], ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "victim", "Gwyn"], ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "killer", "Chosen_Undead"],
-      ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "inGame", "Dark_Souls"], ["Dark_Souls", "pegiRating", 16]
-    ].map(t => ({ t })),
-    rules: [
-      INV("inversa victim", "victim", "victimIn"), INV("inversa killer", "killer", "killerIn"), INV("inversa inGame", "inGame", "hasKilling"),
-      { n: "DeceasedCharacter", kind: "OWL", t: "≡ Character ⊓ ∃victimIn.Killing", body: [["?c", "victimIn", "?k"], ["?k", "a", "Killing"]], head: [["?c", "a", "DeceasedCharacter"]] },
-      { n: "Killer", kind: "OWL", t: "≡ Character ⊓ ∃killerIn.Killing", body: [["?c", "killerIn", "?k"], ["?k", "a", "Killing"]], head: [["?c", "a", "Killer"]] },
-      { n: "KillingEvent", kind: "SWRL", t: "victim(?k,?v) ^ killer(?k,?a) → killedBy(?v,?a)", body: [["?k", "victim", "?v"], ["?k", "killer", "?a"]], head: [["?v", "killedBy", "?a"]] },
-      { n: "ViolentStoryGame", kind: "OWL", t: "≡ VideoGame ⊓ ∃hasKilling.Killing", body: [["?g", "hasKilling", "?k"], ["?k", "a", "Killing"]], head: [["?g", "a", "ViolentStoryGame"]] },
-      { n: "Pegi16Game", kind: "OWL", t: "≡ VideoGame ⊓ ∃pegiRating.{16}", body: [["?g", "pegiRating", 16]], head: [["?g", "a", "Pegi16Game"]] },
-      { n: "RealisticViolenceGame", kind: "OWL", t: "≡ ViolentStoryGame ⊓ ∃pegiRating.integer[≥16]", body: [["?g", "a", "ViolentStoryGame"], ["?g", "pegiRating", "?n"], ["?n", ">=", 16]], head: [["?g", "a", "RealisticViolenceGame"]] }
-    ],
-    hint: "Prova: togli la spunta alla riga «inGame Dark_Souls» (l'uccisione avviene in quel gioco), premi Azzera e poi Tutto. Gwyn risulta ancora morto, ma Dark Souls non è più un gioco violento: senza il legame con il gioco, l'uccisione non dice nulla sul gioco."
-  },
-  serie: {
-    facts: [
-      ["Halo_3", "sequelOf", "Halo_2"], ["Halo_2", "sequelOf", "Halo_Combat_Evolved"], ["Halo_3", "belongsTo", "Halo"],
-      ["GTA_III_Definitive_Edition", "remasterOf", "GTA_III"], ["GTA_III_Definitive_Edition", "availableOn", "PlayStation_5"],
-      ["PlayStation_5", "a", "ConsolePlatform"], ["PlayStation_5", "generation", 9], ["GTA_III", "releaseDate", "2001-10-22"]
-    ].map(t => ({ t })),
-    rules: [
-      { n: "sequelOf transitiva", kind: "OWL", t: "sequelOf è transitiva", body: [["?a", "sequelOf", "?b"], ["?b", "sequelOf", "?c"]], head: [["?a", "sequelOf", "?c"]] },
-      { n: "LateEntry", kind: "OWL", t: "≡ SequelGame ⊓ ∃sequelOf.∃sequelOf.VideoGame", body: [["?g", "sequelOf", "?a"], ["?a", "sequelOf", "?b"]], head: [["?g", "a", "LateEntry"]] },
-      INV("inversa belongsTo", "belongsTo", "includes"),
-      { n: "LongRunningFranchise", kind: "OWL", t: "≡ Franchise ⊓ ∃includes.LateEntry", body: [["?f", "includes", "?g"], ["?g", "a", "LateEntry"]], head: [["?f", "a", "LongRunningFranchise"]] },
-      INV("inversa remasterOf", "remasterOf", "hasRemaster"),
-      { n: "availableOn ⊑ playableOn", kind: "OWL", t: "sottoproprietà", body: [["?g", "availableOn", "?p"]], head: [["?g", "playableOn", "?p"]] },
-      { n: "catena", kind: "OWL", t: "hasRemaster ∘ availableOn ⊑ playableOn", body: [["?g", "hasRemaster", "?r"], ["?r", "availableOn", "?p"]], head: [["?g", "playableOn", "?p"]] },
-      { n: "CurrentGenerationConsole", kind: "OWL", t: "≡ ConsolePlatform ⊓ ∃generation.integer[≥9]", body: [["?p", "a", "ConsolePlatform"], ["?p", "generation", "?n"], ["?n", ">=", 9]], head: [["?p", "a", "CurrentGenerationConsole"]] },
-      { n: "StillPlayable", kind: "OWL", t: "≡ VideoGame ⊓ ∃playableOn.CurrentGenerationConsole", body: [["?g", "playableOn", "?p"], ["?p", "a", "CurrentGenerationConsole"]], head: [["?g", "a", "StillPlayable"]] },
-      { n: "ClassicGame", kind: "OWL", t: "≡ VideoGame ⊓ ∃releaseDate.dateTime[<2005-01-01]", body: [["?g", "releaseDate", "?d"], ["?d", "<", "2005-01-01"]], head: [["?g", "a", "ClassicGame"]] },
-      { n: "ClassicStillPlayable", kind: "OWL", t: "≡ ClassicGame ⊓ StillPlayable", body: [["?g", "a", "ClassicGame"], ["?g", "a", "StillPlayable"]], head: [["?g", "a", "ClassicStillPlayable"]] }
-    ],
-    hint: "Togli «GTA_III_Definitive_Edition remasterOf GTA_III»: la catena si spezza e GTA III non è più giocabile su una console attuale. Il classico resta classico, perché dipende solo dalla data."
-  },
-  fallout: {
-    facts: [
-      ["Fallout_4", "publishedBy", "Bethesda_Softworks"], ["Bethesda_Softworks", "subsidiaryOf", "ZeniMax"],
-      ["ZeniMax", "subsidiaryOf", "Xbox_Game_Studios"], ["Xbox_Game_Studios", "subsidiaryOf", "Microsoft"],
-      ["Xbox_One", "a", "ConsolePlatform"], ["Xbox_One", "manufacturedBy", "Microsoft"],
-      ["PlayStation_4", "a", "ConsolePlatform"], ["PlayStation_4", "manufacturedBy", "Sony"],
-      ["Fallout_4", "availableOn", "Xbox_One"], ["Fallout_4", "availableOn", "PlayStation_4"]
-    ].map(t => ({ t })),
-    rules: [
-      INV("inversa manufacturedBy", "manufacturedBy", "manufacturerOf"),
-      { n: "PlatformHolder", kind: "OWL", t: "≡ Company ⊓ ∃manufacturerOf.ConsolePlatform", body: [["?c", "manufacturerOf", "?p"], ["?p", "a", "ConsolePlatform"]], head: [["?c", "a", "PlatformHolder"]] },
-      { n: "PublisherGroup", kind: "SWRL", t: "publishedBy(?g,?c) → publishedByGroup(?g,?c)", body: [["?g", "publishedBy", "?c"]], head: [["?g", "publishedByGroup", "?c"]] },
-      { n: "ParentGroup", kind: "SWRL", t: "publishedByGroup(?g,?c) ^ subsidiaryOf(?c,?p) → publishedByGroup(?g,?p)", body: [["?g", "publishedByGroup", "?c"], ["?c", "subsidiaryOf", "?p"]], head: [["?g", "publishedByGroup", "?p"]] },
-      { n: "FirstPartyGame", kind: "OWL", t: "≡ VideoGame ⊓ ∃publishedBy.(PlatformHolder ⊔ ∃subsidiaryOf.PlatformHolder), qui letta sul gruppo", body: [["?g", "publishedByGroup", "?h"], ["?h", "a", "PlatformHolder"]], head: [["?g", "a", "FirstPartyGame"]] },
-      { n: "ConsoleMaker", kind: "SWRL", t: "availableOn(?g,?p) ^ ConsolePlatform(?p) ^ manufacturedBy(?p,?m) → onConsoleOf(?g,?m)", body: [["?g", "availableOn", "?p"], ["?p", "a", "ConsolePlatform"], ["?p", "manufacturedBy", "?m"]], head: [["?g", "onConsoleOf", "?m"]] },
-      { n: "FirstPartyOnRivalConsole", kind: "SWRL", t: "publishedByGroup(?g,?h) ^ PlatformHolder(?h) ^ onConsoleOf(?g,?m) ^ differentFrom(?h,?m) → FirstPartyOnRivalConsole(?g)", body: [["?g", "publishedByGroup", "?h"], ["?h", "a", "PlatformHolder"], ["?g", "onConsoleOf", "?m"], ["?h", "!=", "?m"]], head: [["?g", "a", "FirstPartyOnRivalConsole"]] }
-    ],
-    hint: "Togli «ZeniMax subsidiaryOf Xbox_Game_Studios»: la catena si rompe e Fallout 4 non è più first-party. Mondo aperto: il reasoner non assume che ZeniMax sia di Microsoft solo perché lo sappiamo noi."
-  }
-};
-
-function mount(sec) {
-  const sc = SCEN[sec.dataset.demo], root = sec.querySelector(".demo");
-  const facts = sc.facts.map(f => ({ ...f, on: !f.off }));
-  let derived = [];
-  root.innerHTML =
-    "<div class='pane'><h5>Dati scritti</h5><div class='lst' data-f></div><div class='rules'></div></div>" +
-    "<div class='pane'><h5>Dedotto dal reasoner <span style='text-transform:none;letter-spacing:0;font-family:var(--sans)'>· <span style='color:#1f3f73'>blu = assioma</span>, <span style='color:#1f5a38'>verde = regola SWRL</span></span></h5><div class='lst' data-d></div>" +
-    "<div data-flag></div><div class='ctl'><button class='go' data-step>Passo</button><button data-all>Tutto</button><button data-reset>Azzera</button><span class='msg' data-msg></span></div></div>";
-  const fl = root.querySelector("[data-f]"), dl = root.querySelector("[data-d]"), msg = root.querySelector("[data-msg]"), flag = root.querySelector("[data-flag]");
-  root.querySelector(".rules").textContent = sc.rules.length ? "Regole in gioco: " + [...new Set(sc.rules.map(r => r.n))].join(" · ") : "";
-  const all = () => [...facts.filter(f => f.on), ...derived];
-  const has = t => all().some(f => f.t.length === t.length && f.t.every((x, i) => String(x) === String(t[i])));
-
-  function check() {
-    flag.innerHTML = "";
-    const types = {}, vals = {};
-    all().forEach(f => {
-      const [s, p, o] = f.t;
-      if (p === "a") (types[s] = types[s] || new Set()).add(o);
-      (vals[s + "|" + p] = vals[s + "|" + p] || new Set()).add(String(o));
-    });
-    for (const [a, b] of sc.disjoint || [])
-      for (const s in types) if (types[s].has(a) && types[s].has(b)) { flag.innerHTML = "<div class='bad'><b>Ontologia inconsistente.</b> " + nice(s) + " è sia " + a + " sia " + b + ": due classi disgiunte.</div>"; return true; }
-    for (const k in vals) { const p = k.split("|")[1]; if ((sc.functional || []).includes(p) && vals[k].size > 1) { flag.innerHTML = "<div class='bad'><b>Ontologia inconsistente.</b> " + nice(k.split("|")[0]) + " ha due valori di " + p + " (" + [...vals[k]].join(" e ") + "), ma " + p + " è funzionale: al più uno.</div>"; return true; } }
-    if (sc.disjoint && all().length) flag.innerHTML = "<div class='good'>Consistente: nessun fatto contraddice gli assiomi.</div>";
-    return false;
-  }
-  function render() {
-    fl.innerHTML = "";
-    facts.forEach(f => {
-      const l = document.createElement("label"); l.className = f.on ? "" : "off";
-      const c = document.createElement("input"); c.type = "checkbox"; c.checked = f.on;
-      c.onchange = () => { f.on = c.checked; derived = []; render(); };
-      const t = document.createElement("span"); t.className = "t"; t.textContent = show(f.t);
-      l.append(c, t); fl.appendChild(l);
-    });
-    dl.innerHTML = "";
-    derived.forEach(d => {
-      const e = document.createElement("span"); e.className = "inf" + (d.rule.kind === "SWRL" ? " swrl" : "");
-      e.innerHTML = "<b></b><em></em>"; e.firstChild.textContent = show(d.t);
-      e.lastChild.textContent = d.rule.kind + " · " + d.rule.n + (d.rule.t ? " — " + d.rule.t : "") + "   da: " + d.why;
-      dl.appendChild(e);
-    });
-    dl.scrollTop = dl.scrollHeight;
-    check();
-  }
-  function step() {
-    if (check() && sc.rules.length === 0) return false;
-    for (const r of sc.rules) {
-      for (const b of solve(r.body, all(), [{}])) {
-        for (const h of r.head) {
-          const t = inst(h, b);
-          if (!has(t)) {
-            const why = r.body.filter(a => !["!=", ">=", "<"].includes(a[1])).map(a => show(inst(a, b))).join(" ; ");
-            derived.push({ t, rule: r, why }); render(); return true;
-          }
-        }
+    <script>
+      /* ---------- classi interattive ---------- */
+      const CLASSES = {
+        VideoGame: [
+          "Un videogioco.",
+          [
+            "Remaster",
+            "SequelGame",
+            "LateEntry",
+            "FirstPartyGame",
+            "ViolentStoryGame",
+            "RealisticViolenceGame",
+            "ClassicGame",
+            "ClassicStillPlayable",
+            "StillPlayable",
+            "Pegi3Game",
+            "Pegi7Game",
+            "Pegi12Game",
+            "Pegi16Game",
+            "Pegi18Game",
+            "GOTYWinner",
+            "Adaptation",
+            "HistoricalGame",
+            "SciFiGame",
+            "AuteurGame",
+            "PrequelGame",
+          ],
+          "Un gioco con almeno un'uccisione nella trama è un ViolentStoryGame; con PEGI 16 o 18 diventa RealisticViolenceGame.",
+        ],
+        Company: [
+          "Uno studio, un editore o un gruppo industriale.",
+          [
+            "Developer",
+            "Publisher",
+            "PlatformHolder",
+            "FoundedByVeterans",
+            "ProlificDeveloper",
+            "FirstPartyStudio",
+          ],
+          "Sviluppatore ed editore non sono disgiunti: sono ruoli della stessa azienda, calcolati dalle inverse.",
+        ],
+        Person: [
+          "Una persona reale.",
+          ["GameDirector", "StudioHead", "ProlificDirector"],
+          "Miyazaki è un GameDirector perché Dark Souls è directedBy lui; è anche StudioHead perché guida FromSoftware.",
+        ],
+        Character: [
+          "Un personaggio di finzione.",
+          [
+            "Human",
+            "Alien",
+            "Synthetic",
+            "PlayerCharacter",
+            "DeceasedCharacter",
+            "Killer",
+            "Protagonist",
+            "Antagonist",
+            "RecurringCharacter",
+            "MultipleKiller",
+            "HistoricalCharacter",
+            "RogueAI",
+          ],
+          "Dei personaggi si scrive solo la specie (umana o aliena): tutto il resto si deduce.",
+        ],
+        Platform: [
+          "Una piattaforma su cui si gioca.",
+          [
+            "ConsolePlatform",
+            "PCPlatform",
+            "CurrentGenerationConsole",
+            "PreviousGenerationConsole",
+          ],
+          "Console e PC sono disgiunti. Le marche non sono classi: si ricavano da chi costruisce la console.",
+        ],
+        Franchise: [
+          "Una serie di giochi.",
+          [
+            "LongRunningFranchise",
+            "TransmediaFranchise",
+            "FranchiseWithStudioChange",
+          ],
+          "Una serie con almeno tre capitoli è LongRunningFranchise: Portal, con due, no.",
+        ],
+        CreativeWork: [
+          "Un'opera di un altro medium.",
+          ["Novel", "Film", "TVSeries", "Comic", "TabletopGame"],
+          "The Witcher è tratto da una saga letteraria; The Walking Dead da un fumetto.",
+        ],
+        GameEngine: [
+          "Un motore di gioco.",
+          [],
+          "Collega un gioco all'azienda che ha sviluppato il motore (engineDevelopedBy).",
+        ],
+        Award: [
+          "Il premio «gioco dell'anno» di una cerimonia.",
+          [],
+          "Un gioco con un premio è GOTYWinner.",
+        ],
+        Genre: [
+          "Un genere.",
+          [],
+          "Il genere «storico» o «fantascienza» non è nei dati: lo si deduce dai personaggi.",
+        ],
+        GameMode: [
+          "Una modalità di gioco.",
+          [],
+          "Per esempio giocatore singolo o multigiocatore.",
+        ],
+        Killing: [
+          "Un'uccisione nella trama di un gioco: vittima, assassino e gioco.",
+          [],
+          "È una classe e non una proprietà perché un'uccisione avviene in un gioco (relazione n-aria).",
+        ],
+        FictionalOrganization: [
+          "Un'organizzazione del mondo di gioco.",
+          [],
+          "Per esempio Aperture Science, che ha costruito GLaDOS.",
+        ],
+      };
+      const PRIM = new Set([
+        "Human",
+        "Alien",
+        "ConsolePlatform",
+        "PCPlatform",
+        "Novel",
+        "Film",
+        "TVSeries",
+        "Comic",
+        "TabletopGame",
+      ]);
+      const chips = document.getElementById("chips"),
+        xp = document.getElementById("xp");
+      function pick(name) {
+        [...chips.children].forEach((c) =>
+          c.classList.toggle("on", c.dataset.n === name),
+        );
+        const [d, subs, note] = CLASSES[name];
+        xp.innerHTML =
+          "<h4>" +
+          name +
+          "</h4><p>" +
+          d +
+          "</p>" +
+          (subs.length
+            ? "<div class='row'>" +
+              subs
+                .map(
+                  (s) =>
+                    "<span class='pillc " +
+                    (PRIM.has(s) ? "p" : "d") +
+                    "'>" +
+                    s +
+                    "</span>",
+                )
+                .join("") +
+              "</div>" +
+              "<p style='font-size:13px;color:var(--muted)'>Fondo verde: classe definita (si popola per deduzione). Grigio: primitiva.</p>"
+            : "<p style='color:var(--muted)'>Nessuna sottoclasse.</p>") +
+          "<p>" +
+          note +
+          "</p>";
       }
-    }
-    return false;
-  }
-  root.querySelector("[data-step]").onclick = () => { if (!step()) msg.textContent = sc.rules.length ? "Niente di nuovo da dedurre." : ""; else msg.textContent = ""; };
-  root.querySelector("[data-all]").onclick = () => { let n = 0; while (n++ < 200 && step()); msg.textContent = derived.length + " fatti dedotti. " + sc.hint; };
-  root.querySelector("[data-reset]").onclick = () => { derived = []; msg.textContent = ""; render(); };
-  msg.textContent = "";
-  render();
-}
-document.querySelectorAll("[data-demo]").forEach(mount);
+      Object.keys(CLASSES).forEach((n) => {
+        const b = document.createElement("button");
+        b.className = "chip";
+        b.textContent = n;
+        b.dataset.n = n;
+        b.onclick = () => pick(n);
+        chips.appendChild(b);
+      });
+      pick("VideoGame");
 
-/* ---------- navigazione ---------- */
-const slides = [...document.querySelectorAll(".slide")];
-slides.forEach((el, k) => { const q = el.querySelector(".kicker"); if (q) q.dataset.n = String(k + 1).padStart(2, "0"); });
-let i = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1)) || 1) - 1));
-function fit() { const s = Math.min(innerWidth / 1280, innerHeight / 720); slides.forEach(el => { el.style.transform = "scale(" + s + ")"; }); }
-function go(n) { i = Math.max(0, Math.min(slides.length - 1, n)); slides.forEach((el, k) => el.classList.toggle("active", k === i)); history.replaceState(null, "", "#" + (i + 1)); document.getElementById("bar").style.width = ((i + 1) / slides.length * 100) + "%"; }
-addEventListener("keydown", e => {
-  if (e.target.closest("button,input")) { if (e.key === " " || e.key === "Enter") return; }
-  if (["ArrowRight", "PageDown", " "].includes(e.key)) { e.preventDefault(); go(i + 1); }
-  else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); go(i - 1); }
-  else if (e.key === "Home") go(0); else if (e.key === "End") go(slides.length - 1);
-  else if (e.key === "f" || e.key === "F") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
-});
-addEventListener("click", e => { if (e.target.closest("button,input,label,.lst,.xp,a")) return; go(e.clientX > innerWidth / 3 ? i + 1 : i - 1); });
-addEventListener("resize", fit);
-fit(); go(i);
-</script>
-</body>
+      /* ---------- mini reasoner ---------- */
+      const V = (t) => typeof t === "string" && t[0] === "?";
+      const nice = (t) => String(t).replace(/_/g, " ");
+      const show = ([s, p, o]) =>
+        nice(s) + "  " + (p === "a" ? "è un" : p) + "  " + nice(o);
+
+      function matchAtom(atom, fact, b) {
+        const nb = { ...b };
+        for (let k = 0; k < 3; k++) {
+          const p = atom[k],
+            f = fact[k];
+          if (V(p)) {
+            if (p in nb) {
+              if (nb[p] !== f) return null;
+            } else nb[p] = f;
+          } else if (String(p) !== String(f)) return null;
+        }
+        return nb;
+      }
+      function solve(body, facts, bs) {
+        if (!body.length) return bs;
+        const [a, ...rest] = body;
+        let out = [];
+        if (["!=", ">=", "<"].includes(a[1])) {
+          for (const b of bs) {
+            const x = V(a[0]) ? b[a[0]] : a[0],
+              y = V(a[2]) ? b[a[2]] : a[2];
+            const ok =
+              a[1] === "!="
+                ? x !== y
+                : a[1] === ">="
+                  ? Number(x) >= Number(y)
+                  : String(x) < String(y);
+            if (ok) out.push(b);
+          }
+        } else {
+          for (const b of bs)
+            for (const f of facts) {
+              const nb = matchAtom(a, f.t, b);
+              if (nb) out.push(nb);
+            }
+        }
+        return solve(rest, facts, out);
+      }
+      const inst = (atom, b) => atom.map((x) => (V(x) ? b[x] : x));
+
+      const INV = (name, p, q) => ({
+        n: name,
+        kind: "inversa",
+        body: [["?x", p, "?y"]],
+        head: [["?y", q, "?x"]],
+        t: p + " ↔ " + q,
+      });
+      const SCEN = {
+        gwyn: {
+          facts: [
+            ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "a", "Killing"],
+            ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "victim", "Gwyn"],
+            ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "killer", "Chosen_Undead"],
+            ["Gwyn_by_Chosen_Undead_in_Dark_Souls", "inGame", "Dark_Souls"],
+            ["Dark_Souls", "pegiRating", 16],
+          ].map((t) => ({ t })),
+          rules: [
+            INV("inversa victim", "victim", "victimIn"),
+            INV("inversa killer", "killer", "killerIn"),
+            INV("inversa inGame", "inGame", "hasKilling"),
+            {
+              n: "DeceasedCharacter",
+              kind: "OWL",
+              t: "≡ Character ⊓ ∃victimIn.Killing",
+              body: [
+                ["?c", "victimIn", "?k"],
+                ["?k", "a", "Killing"],
+              ],
+              head: [["?c", "a", "DeceasedCharacter"]],
+            },
+            {
+              n: "Killer",
+              kind: "OWL",
+              t: "≡ Character ⊓ ∃killerIn.Killing",
+              body: [
+                ["?c", "killerIn", "?k"],
+                ["?k", "a", "Killing"],
+              ],
+              head: [["?c", "a", "Killer"]],
+            },
+            {
+              n: "KillingEvent",
+              kind: "SWRL",
+              t: "victim(?k,?v) ^ killer(?k,?a) → killedBy(?v,?a)",
+              body: [
+                ["?k", "victim", "?v"],
+                ["?k", "killer", "?a"],
+              ],
+              head: [["?v", "killedBy", "?a"]],
+            },
+            {
+              n: "ViolentStoryGame",
+              kind: "OWL",
+              t: "≡ VideoGame ⊓ ∃hasKilling.Killing",
+              body: [
+                ["?g", "hasKilling", "?k"],
+                ["?k", "a", "Killing"],
+              ],
+              head: [["?g", "a", "ViolentStoryGame"]],
+            },
+            {
+              n: "Pegi16Game",
+              kind: "OWL",
+              t: "≡ VideoGame ⊓ ∃pegiRating.{16}",
+              body: [["?g", "pegiRating", 16]],
+              head: [["?g", "a", "Pegi16Game"]],
+            },
+            {
+              n: "RealisticViolenceGame",
+              kind: "OWL",
+              t: "≡ ViolentStoryGame ⊓ ∃pegiRating.integer[≥16]",
+              body: [
+                ["?g", "a", "ViolentStoryGame"],
+                ["?g", "pegiRating", "?n"],
+                ["?n", ">=", 16],
+              ],
+              head: [["?g", "a", "RealisticViolenceGame"]],
+            },
+          ],
+          hint: "Prova: togli la spunta alla riga «inGame Dark_Souls» (l'uccisione avviene in quel gioco), premi Azzera e poi Tutto. Gwyn risulta ancora morto, ma Dark Souls non è più un gioco violento: senza il legame con il gioco, l'uccisione non dice nulla sul gioco.",
+        },
+        serie: {
+          facts: [
+            ["Halo_3", "sequelOf", "Halo_2"],
+            ["Halo_2", "sequelOf", "Halo_Combat_Evolved"],
+            ["Halo_3", "belongsTo", "Halo"],
+            ["GTA_III_Definitive_Edition", "remasterOf", "GTA_III"],
+            ["GTA_III_Definitive_Edition", "availableOn", "PlayStation_5"],
+            ["PlayStation_5", "a", "ConsolePlatform"],
+            ["PlayStation_5", "generation", 9],
+            ["GTA_III", "releaseDate", "2001-10-22"],
+          ].map((t) => ({ t })),
+          rules: [
+            {
+              n: "sequelOf transitiva",
+              kind: "OWL",
+              t: "sequelOf è transitiva",
+              body: [
+                ["?a", "sequelOf", "?b"],
+                ["?b", "sequelOf", "?c"],
+              ],
+              head: [["?a", "sequelOf", "?c"]],
+            },
+            {
+              n: "LateEntry",
+              kind: "OWL",
+              t: "≡ SequelGame ⊓ ∃sequelOf.∃sequelOf.VideoGame",
+              body: [
+                ["?g", "sequelOf", "?a"],
+                ["?a", "sequelOf", "?b"],
+              ],
+              head: [["?g", "a", "LateEntry"]],
+            },
+            INV("inversa belongsTo", "belongsTo", "includes"),
+            {
+              n: "LongRunningFranchise",
+              kind: "OWL",
+              t: "≡ Franchise ⊓ ∃includes.LateEntry",
+              body: [
+                ["?f", "includes", "?g"],
+                ["?g", "a", "LateEntry"],
+              ],
+              head: [["?f", "a", "LongRunningFranchise"]],
+            },
+            INV("inversa remasterOf", "remasterOf", "hasRemaster"),
+            {
+              n: "availableOn ⊑ playableOn",
+              kind: "OWL",
+              t: "sottoproprietà",
+              body: [["?g", "availableOn", "?p"]],
+              head: [["?g", "playableOn", "?p"]],
+            },
+            {
+              n: "catena",
+              kind: "OWL",
+              t: "hasRemaster ∘ availableOn ⊑ playableOn",
+              body: [
+                ["?g", "hasRemaster", "?r"],
+                ["?r", "availableOn", "?p"],
+              ],
+              head: [["?g", "playableOn", "?p"]],
+            },
+            {
+              n: "CurrentGenerationConsole",
+              kind: "OWL",
+              t: "≡ ConsolePlatform ⊓ ∃generation.integer[≥9]",
+              body: [
+                ["?p", "a", "ConsolePlatform"],
+                ["?p", "generation", "?n"],
+                ["?n", ">=", 9],
+              ],
+              head: [["?p", "a", "CurrentGenerationConsole"]],
+            },
+            {
+              n: "StillPlayable",
+              kind: "OWL",
+              t: "≡ VideoGame ⊓ ∃playableOn.CurrentGenerationConsole",
+              body: [
+                ["?g", "playableOn", "?p"],
+                ["?p", "a", "CurrentGenerationConsole"],
+              ],
+              head: [["?g", "a", "StillPlayable"]],
+            },
+            {
+              n: "ClassicGame",
+              kind: "OWL",
+              t: "≡ VideoGame ⊓ ∃releaseDate.dateTime[<2005-01-01]",
+              body: [
+                ["?g", "releaseDate", "?d"],
+                ["?d", "<", "2005-01-01"],
+              ],
+              head: [["?g", "a", "ClassicGame"]],
+            },
+            {
+              n: "ClassicStillPlayable",
+              kind: "OWL",
+              t: "≡ ClassicGame ⊓ StillPlayable",
+              body: [
+                ["?g", "a", "ClassicGame"],
+                ["?g", "a", "StillPlayable"],
+              ],
+              head: [["?g", "a", "ClassicStillPlayable"]],
+            },
+          ],
+          hint: "Togli «GTA_III_Definitive_Edition remasterOf GTA_III»: la catena si spezza e GTA III non è più giocabile su una console attuale. Il classico resta classico, perché dipende solo dalla data.",
+        },
+        fallout: {
+          facts: [
+            ["Fallout_4", "publishedBy", "Bethesda_Softworks"],
+            ["Bethesda_Softworks", "subsidiaryOf", "ZeniMax"],
+            ["ZeniMax", "subsidiaryOf", "Xbox_Game_Studios"],
+            ["Xbox_Game_Studios", "subsidiaryOf", "Microsoft"],
+            ["Xbox_One", "a", "ConsolePlatform"],
+            ["Xbox_One", "manufacturedBy", "Microsoft"],
+            ["PlayStation_4", "a", "ConsolePlatform"],
+            ["PlayStation_4", "manufacturedBy", "Sony"],
+            ["Fallout_4", "availableOn", "Xbox_One"],
+            ["Fallout_4", "availableOn", "PlayStation_4"],
+          ].map((t) => ({ t })),
+          rules: [
+            INV("inversa manufacturedBy", "manufacturedBy", "manufacturerOf"),
+            {
+              n: "PlatformHolder",
+              kind: "OWL",
+              t: "≡ Company ⊓ ∃manufacturerOf.ConsolePlatform",
+              body: [
+                ["?c", "manufacturerOf", "?p"],
+                ["?p", "a", "ConsolePlatform"],
+              ],
+              head: [["?c", "a", "PlatformHolder"]],
+            },
+            {
+              n: "PublisherGroup",
+              kind: "SWRL",
+              t: "publishedBy(?g,?c) → publishedByGroup(?g,?c)",
+              body: [["?g", "publishedBy", "?c"]],
+              head: [["?g", "publishedByGroup", "?c"]],
+            },
+            {
+              n: "ParentGroup",
+              kind: "SWRL",
+              t: "publishedByGroup(?g,?c) ^ subsidiaryOf(?c,?p) → publishedByGroup(?g,?p)",
+              body: [
+                ["?g", "publishedByGroup", "?c"],
+                ["?c", "subsidiaryOf", "?p"],
+              ],
+              head: [["?g", "publishedByGroup", "?p"]],
+            },
+            {
+              n: "FirstPartyGame",
+              kind: "OWL",
+              t: "≡ VideoGame ⊓ ∃publishedBy.(PlatformHolder ⊔ ∃subsidiaryOf.PlatformHolder), qui letta sul gruppo",
+              body: [
+                ["?g", "publishedByGroup", "?h"],
+                ["?h", "a", "PlatformHolder"],
+              ],
+              head: [["?g", "a", "FirstPartyGame"]],
+            },
+            {
+              n: "ConsoleMaker",
+              kind: "SWRL",
+              t: "availableOn(?g,?p) ^ ConsolePlatform(?p) ^ manufacturedBy(?p,?m) → onConsoleOf(?g,?m)",
+              body: [
+                ["?g", "availableOn", "?p"],
+                ["?p", "a", "ConsolePlatform"],
+                ["?p", "manufacturedBy", "?m"],
+              ],
+              head: [["?g", "onConsoleOf", "?m"]],
+            },
+            {
+              n: "FirstPartyOnRivalConsole",
+              kind: "SWRL",
+              t: "publishedByGroup(?g,?h) ^ PlatformHolder(?h) ^ onConsoleOf(?g,?m) ^ differentFrom(?h,?m) → FirstPartyOnRivalConsole(?g)",
+              body: [
+                ["?g", "publishedByGroup", "?h"],
+                ["?h", "a", "PlatformHolder"],
+                ["?g", "onConsoleOf", "?m"],
+                ["?h", "!=", "?m"],
+              ],
+              head: [["?g", "a", "FirstPartyOnRivalConsole"]],
+            },
+          ],
+          hint: "Togli «ZeniMax subsidiaryOf Xbox_Game_Studios»: la catena si rompe e Fallout 4 non è più first-party. Mondo aperto: il reasoner non assume che ZeniMax sia di Microsoft solo perché lo sappiamo noi.",
+        },
+      };
+
+      function mount(sec) {
+        const sc = SCEN[sec.dataset.demo],
+          root = sec.querySelector(".demo");
+        const facts = sc.facts.map((f) => ({ ...f, on: !f.off }));
+        let derived = [];
+        root.innerHTML =
+          "<div class='pane'><h5>Dati scritti</h5><div class='lst' data-f></div><div class='rules'></div></div>" +
+          "<div class='pane'><h5>Dedotto dal reasoner <span style='text-transform:none;letter-spacing:0;font-family:var(--sans)'>· <span style='color:#1f3f73'>blu = assioma</span>, <span style='color:#1f5a38'>verde = regola SWRL</span></span></h5><div class='lst' data-d></div>" +
+          "<div data-flag></div><div class='ctl'><button class='go' data-step>Passo</button><button data-all>Tutto</button><button data-reset>Azzera</button><span class='msg' data-msg></span></div></div>";
+        const fl = root.querySelector("[data-f]"),
+          dl = root.querySelector("[data-d]"),
+          msg = root.querySelector("[data-msg]"),
+          flag = root.querySelector("[data-flag]");
+        root.querySelector(".rules").textContent = sc.rules.length
+          ? "Regole in gioco: " +
+            [...new Set(sc.rules.map((r) => r.n))].join(" · ")
+          : "";
+        const all = () => [...facts.filter((f) => f.on), ...derived];
+        const has = (t) =>
+          all().some(
+            (f) =>
+              f.t.length === t.length &&
+              f.t.every((x, i) => String(x) === String(t[i])),
+          );
+
+        function check() {
+          flag.innerHTML = "";
+          const types = {},
+            vals = {};
+          all().forEach((f) => {
+            const [s, p, o] = f.t;
+            if (p === "a") (types[s] = types[s] || new Set()).add(o);
+            (vals[s + "|" + p] = vals[s + "|" + p] || new Set()).add(String(o));
+          });
+          for (const [a, b] of sc.disjoint || [])
+            for (const s in types)
+              if (types[s].has(a) && types[s].has(b)) {
+                flag.innerHTML =
+                  "<div class='bad'><b>Ontologia inconsistente.</b> " +
+                  nice(s) +
+                  " è sia " +
+                  a +
+                  " sia " +
+                  b +
+                  ": due classi disgiunte.</div>";
+                return true;
+              }
+          for (const k in vals) {
+            const p = k.split("|")[1];
+            if ((sc.functional || []).includes(p) && vals[k].size > 1) {
+              flag.innerHTML =
+                "<div class='bad'><b>Ontologia inconsistente.</b> " +
+                nice(k.split("|")[0]) +
+                " ha due valori di " +
+                p +
+                " (" +
+                [...vals[k]].join(" e ") +
+                "), ma " +
+                p +
+                " è funzionale: al più uno.</div>";
+              return true;
+            }
+          }
+          if (sc.disjoint && all().length)
+            flag.innerHTML =
+              "<div class='good'>Consistente: nessun fatto contraddice gli assiomi.</div>";
+          return false;
+        }
+        function render() {
+          fl.innerHTML = "";
+          facts.forEach((f) => {
+            const l = document.createElement("label");
+            l.className = f.on ? "" : "off";
+            const c = document.createElement("input");
+            c.type = "checkbox";
+            c.checked = f.on;
+            c.onchange = () => {
+              f.on = c.checked;
+              derived = [];
+              render();
+            };
+            const t = document.createElement("span");
+            t.className = "t";
+            t.textContent = show(f.t);
+            l.append(c, t);
+            fl.appendChild(l);
+          });
+          dl.innerHTML = "";
+          derived.forEach((d) => {
+            const e = document.createElement("span");
+            e.className = "inf" + (d.rule.kind === "SWRL" ? " swrl" : "");
+            e.innerHTML = "<b></b><em></em>";
+            e.firstChild.textContent = show(d.t);
+            e.lastChild.textContent =
+              d.rule.kind +
+              " · " +
+              d.rule.n +
+              (d.rule.t ? " — " + d.rule.t : "") +
+              "   da: " +
+              d.why;
+            dl.appendChild(e);
+          });
+          dl.scrollTop = dl.scrollHeight;
+          check();
+        }
+        function step() {
+          if (check() && sc.rules.length === 0) return false;
+          for (const r of sc.rules) {
+            for (const b of solve(r.body, all(), [{}])) {
+              for (const h of r.head) {
+                const t = inst(h, b);
+                if (!has(t)) {
+                  const why = r.body
+                    .filter((a) => !["!=", ">=", "<"].includes(a[1]))
+                    .map((a) => show(inst(a, b)))
+                    .join(" ; ");
+                  derived.push({ t, rule: r, why });
+                  render();
+                  return true;
+                }
+              }
+            }
+          }
+          return false;
+        }
+        root.querySelector("[data-step]").onclick = () => {
+          if (!step())
+            msg.textContent = sc.rules.length
+              ? "Niente di nuovo da dedurre."
+              : "";
+          else msg.textContent = "";
+        };
+        root.querySelector("[data-all]").onclick = () => {
+          let n = 0;
+          while (n++ < 200 && step());
+          msg.textContent = derived.length + " fatti dedotti. " + sc.hint;
+        };
+        root.querySelector("[data-reset]").onclick = () => {
+          derived = [];
+          msg.textContent = "";
+          render();
+        };
+        msg.textContent = "";
+        render();
+      }
+      document.querySelectorAll("[data-demo]").forEach(mount);
+
+      /* ---------- navigazione ---------- */
+      const slides = [...document.querySelectorAll(".slide")];
+      slides.forEach((el, k) => {
+        const q = el.querySelector(".kicker");
+        if (q) q.dataset.n = String(k + 1).padStart(2, "0");
+      });
+      let i = Math.max(
+        0,
+        Math.min(
+          slides.length - 1,
+          (parseInt(location.hash.slice(1)) || 1) - 1,
+        ),
+      );
+      function fit() {
+        const s = Math.min(innerWidth / 1280, innerHeight / 720);
+        slides.forEach((el) => {
+          el.style.transform = "scale(" + s + ")";
+        });
+      }
+      function go(n) {
+        i = Math.max(0, Math.min(slides.length - 1, n));
+        slides.forEach((el, k) => el.classList.toggle("active", k === i));
+        history.replaceState(null, "", "#" + (i + 1));
+        document.getElementById("bar").style.width =
+          ((i + 1) / slides.length) * 100 + "%";
+      }
+      addEventListener("keydown", (e) => {
+        if (e.target.closest("button,input")) {
+          if (e.key === " " || e.key === "Enter") return;
+        }
+        if (["ArrowRight", "PageDown", " "].includes(e.key)) {
+          e.preventDefault();
+          go(i + 1);
+        } else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) {
+          e.preventDefault();
+          go(i - 1);
+        } else if (e.key === "Home") go(0);
+        else if (e.key === "End") go(slides.length - 1);
+        else if (e.key === "f" || e.key === "F") {
+          document.fullscreenElement
+            ? document.exitFullscreen()
+            : document.documentElement.requestFullscreen();
+        }
+      });
+      addEventListener("click", (e) => {
+        if (e.target.closest("button,input,label,.lst,.xp,a")) return;
+        go(e.clientX > innerWidth / 3 ? i + 1 : i - 1);
+      });
+      addEventListener("resize", fit);
+      fit();
+      go(i);
+    </script>
+  </body>
 </html>
