@@ -515,8 +515,40 @@
         flex: 1;
       }
       .lst input {
-        margin-top: 2px;
-        accent-color: var(--accent);
+        appearance: none;
+        -webkit-appearance: none;
+        flex: none;
+        width: 15px;
+        height: 15px;
+        margin: 1px 0 0;
+        border: 1.5px solid #8a8678;
+        border-radius: 2px;
+        background: #fff;
+        cursor: pointer;
+        position: relative;
+        transition: background 0.12s, border-color 0.12s;
+      }
+      .lst input:hover {
+        border-color: var(--accent);
+      }
+      .lst input:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      .lst input:checked::after {
+        content: "";
+        position: absolute;
+        left: 4px;
+        top: 0.5px;
+        width: 4px;
+        height: 8px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+      .lst input:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
       }
       .inf {
         display: block;
