@@ -390,6 +390,130 @@
       button.go:hover {
         background: #1d4448;
       }
+      .legend {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .ctwo {
+        display: flex;
+        gap: 28px;
+        min-height: 0;
+        flex: 1;
+      }
+      .ctree {
+        flex: 1 1 0;
+        min-width: 0;
+        overflow: auto;
+        max-height: 330px;
+      }
+      .ctree > ul > li > ul {
+        columns: var(--cols, 1);
+        column-gap: 18px;
+      }
+      .cn {
+        white-space: nowrap;
+      }
+      .ctree ul {
+        list-style: none;
+        padding-left: 16px;
+        border-left: 1px solid var(--rule);
+      }
+      .ctree > ul {
+        padding-left: 0;
+        border: 0;
+      }
+      .ctree > ul > li > ul > li {
+        break-inside: avoid;
+      }
+      .ctree li {
+        margin: 3px 0;
+      }
+      .cn {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 12px;
+        padding: 1px 7px;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        cursor: pointer;
+      }
+      .legend .cn {
+        cursor: default;
+      }
+      .cn.top {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: var(--paper);
+      }
+      .cn.prim {
+        border-color: var(--muted);
+        color: var(--muted);
+      }
+      .cn.def {
+        background: var(--soft);
+      }
+      .cn.rule {
+        background: var(--soft2);
+        border-color: var(--accent2);
+        color: #7d2412;
+      }
+      .cn.sel {
+        outline: 2px solid var(--accent2);
+      }
+      .xp code.df {
+        display: block;
+        margin: 6px 0 10px;
+        padding: 6px 8px;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .plist {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 36px;
+      }
+      .pitem {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--rule);
+      }
+      .pnum {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--accent2);
+        padding-top: 5px;
+        min-width: 22px;
+      }
+      .pbody {
+        flex: 1;
+        min-width: 0;
+      }
+      .pbody h3 {
+        font-family: var(--serif);
+        font-size: 21px;
+        font-weight: 500;
+        margin-bottom: 2px;
+      }
+      .pbody .says {
+        font-size: 14.5px;
+        line-height: 1.4;
+        margin-bottom: 4px;
+      }
+      .pbody .ex {
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+      .pgo {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        white-space: nowrap;
+        padding-top: 6px;
+      }
       .chips {
         display: flex;
         flex-wrap: wrap;
@@ -413,6 +537,8 @@
         border-left: 2px solid var(--accent);
         padding: 4px 0 4px 16px;
         min-height: 200px;
+        flex: 0 0 330px;
+        width: 330px;
       }
       .xp h4 {
         font-family: var(--serif);
@@ -881,13 +1007,13 @@
             </p>
             <svg viewBox="0 0 560 250" width="100%" height="250">
               <g font-size="14" fill="#1a1a1c">
-                <text x="0" y="22">Dati scritti</text>
-                <rect x="0" y="30" width="360" height="30" fill="#5b574d" />
-                <text x="368" y="52" font-weight="600">5 541</text>
+                <text x="0" y="22">Schema e regole</text>
+                <rect x="0" y="30" width="101" height="30" fill="#26565c" />
+                <text x="108" y="52" font-weight="600">1 554</text>
 
-                <text x="0" y="104">Schema e regole</text>
-                <rect x="0" y="112" width="101" height="30" fill="#26565c" />
-                <text x="108" y="134" font-weight="600">1 554</text>
+                <text x="0" y="104">Dati scritti</text>
+                <rect x="0" y="112" width="360" height="30" fill="#5b574d" />
+                <text x="368" y="134" font-weight="600">5 541</text>
 
                 <text x="0" y="186">Dedotto dal reasoner</text>
                 <rect x="0" y="194" width="348" height="30" fill="#2f5f9e" />
@@ -895,7 +1021,9 @@
               </g>
             </svg>
             <div class="note" style="margin-top: 10px">
-              In tutto circa 12 400 triple: 7 100 scritte (dati, schema e regole) e circa 5 300 dedotte. Dei fatti dedotti, circa 1 400 sono tipi nuovi (<i>Antagonist</i>,
+              In tutto circa 12 400 triple: 7 100 scritte (dati, schema e
+              regole) e circa 5 300 dedotte. Dei fatti dedotti, circa 1 400 sono
+              tipi nuovi (<i>Antagonist</i>,
               <i>DeceasedCharacter</i>, <i>LateEntry</i>…) e gli altri sono
               relazioni nuove: inverse, serie, gruppi, uccisioni.
             </div>
@@ -909,8 +1037,8 @@
         <div class="kicker">Il mattone</div>
         <h2>Una frase di tre parole</h2>
         <p class="lead">
-          Tutto comincia da qui: <b>soggetto · predicato · oggetto</b>. Ogni
-          fatto dell'ontologia è una tripla; un grafo è un insieme di triple.
+          <b>(soggetto, predicato, oggetto)</b>. Ogni fatto dell'ontologia è una
+          tripla,un grafo è un insieme di triple.
         </p>
         <div class="body">
           <div class="col" style="flex: 1.25">
@@ -944,20 +1072,18 @@
                 font-size="13"
                 fill="#6b675e"
                 font-family="IBM Plex Mono, monospace"
+                text-anchor="middle"
               >
-                <text x="150" y="112" transform="rotate(-40 150 112)">
-                  developedBy
-                </text>
-                <text x="395" y="118" transform="rotate(42 395 118)">
-                  directedBy
-                </text>
-                <text x="405" y="196">pegiRating</text>
-                <text x="130" y="286" transform="rotate(36 130 286)">
-                  sequelOf
-                </text>
-                <text x="380" y="296" transform="rotate(-38 380 296)">
-                  availableOn
-                </text>
+                <rect x="164" y="114" width="102" height="22" fill="#f3f0e8" />
+                <text x="215" y="129">developedBy</text>
+                <rect x="355" y="114" width="94" height="22" fill="#f3f0e8" />
+                <text x="402" y="129">directedBy</text>
+                <rect x="388" y="194" width="94" height="22" fill="#f3f0e8" />
+                <text x="435" y="209">pegiRating</text>
+                <rect x="181" y="264" width="78" height="22" fill="#f3f0e8" />
+                <text x="220" y="279">sequelOf</text>
+                <rect x="351" y="264" width="102" height="22" fill="#f3f0e8" />
+                <text x="402" y="279">availableOn</text>
               </g>
               <g font-size="15" font-weight="600" text-anchor="middle">
                 <rect x="240" y="180" width="150" height="50" fill="#1a1a1c" />
@@ -1024,11 +1150,15 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
               <i>Bethesda Game Studios è uno sviluppatore</i>. Per saperlo
               servono classi e assiomi: il passo successivo.
             </p>
-            <div class="note">
-              Due file separati: lo <b>schema</b> (classi e assiomi, nessun
-              gioco) e i <b>dati</b> (solo fatti, nessuna conclusione). Le
-              conclusioni le aggiunge il reasoner.
-            </div>
+            <p style="font-size: 15.5px; margin-bottom: 6px">
+              Tre file separati:
+            </p>
+            <ul class="b sm">
+              <li><b>schema</b>: classi e assiomi, nessun gioco</li>
+              <li><b>regole</b>: le regole SWRL</li>
+              <li><b>dati</b>: solo fatti, nessuna conclusione</li>
+            </ul>
+            <div class="note">Le conclusioni le aggiunge il reasoner.</div>
           </div>
         </div>
         <div class="foot"><span>Videogame Ontology</span><span>3</span></div>
@@ -1041,11 +1171,19 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
         <p class="lead">
           Tredici classi di primo livello, <b>disgiunte</b> a due a due: niente
           può essere insieme un gioco e una persona.
-          <b>Clicca una classe</b> per vedere cosa ne discende.
         </p>
-        <div class="body" style="flex-direction: column; gap: 14px">
+        <div class="body" style="flex-direction: column; gap: 12px">
           <div class="chips" id="chips"></div>
-          <div class="xp" id="xp"></div>
+          <div class="legend">
+            <span class="cn top">primo livello</span>
+            <span class="cn prim">primitiva</span>
+            <span class="cn def">definita (≡)</span>
+            <span class="cn rule">riempita da una regola SWRL</span>
+          </div>
+          <div class="ctwo">
+            <div class="ctree" id="ctree"></div>
+            <div class="xp" id="xp"></div>
+          </div>
         </div>
         <div class="foot"><span>Videogame Ontology</span><span>4</span></div>
       </section>
@@ -1059,71 +1197,73 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           sé una regola di buon senso. Le prossime diapositive le provano una
           per una.
         </p>
-        <div class="body" style="flex-direction: column; gap: 0">
-          <table>
-            <tr>
-              <th style="width: 150px">Caratteristica</th>
-              <th style="width: 300px">Cosa dice</th>
-              <th>Nel nostro progetto</th>
-            </tr>
-            <tr>
-              <td><b>Inversa</b></td>
-              <td>Basta scrivere una direzione</td>
-              <td>
-                <span class="mono">developedBy</span> ↔
-                <span class="mono">developerOf</span>. Si scrive «Dark Souls
-                developedBy FromSoftware» e FromSoftware diventa
-                <i>sviluppatore</i>.
-              </td>
-            </tr>
-            <tr>
-              <td><b>Dominio e range</b></td>
-              <td>Dà un tipo a chi compare nel fatto</td>
-              <td>
-                Un individuo senza tipo che ha
-                <span class="mono">developedBy</span> è un
-                <span class="mono">VideoGame</span>: il primo GTA, lasciato
-                apposta senza tipo.
-              </td>
-            </tr>
-            <tr>
-              <td><b>Transitiva</b></td>
-              <td>A→B e B→C implicano A→C</td>
-              <td>
-                <span class="mono">sequelOf</span>: si scrive solo il capitolo
-                precedente, la serie intera si ricostruisce.
-                <span class="mono">subsidiaryOf</span>: Bethesda → ZeniMax →
-                Xbox Game Studios → Microsoft.
-              </td>
-            </tr>
-            <tr>
-              <td><b>Funzionale</b></td>
-              <td>Al più un valore</td>
-              <td>
-                <span class="mono">releaseDate</span>,
-                <span class="mono">metacriticScore</span>,
-                <span class="mono">pegiRating</span>: due punteggi per Portal 2
-                sono un errore.
-              </td>
-            </tr>
-            <tr>
-              <td><b>Catena</b></td>
-              <td>Due archi di fila valgono uno</td>
-              <td>
-                <span class="mono">hasRemaster ∘ availableOn ⊑ playableOn</span
-                >: un gioco è giocabile dove è uscita una sua nuova edizione.
-              </td>
-            </tr>
-            <tr>
-              <td><b>Chiave</b></td>
-              <td>Stesso identificativo, stesso individuo</td>
-              <td>
-                <span class="mono">hasWikidataId</span> è la chiave di
-                <span class="mono">VideoGame</span>.
-              </td>
-            </tr>
-          </table>
-          <p style="margin-top: 14px; font-size: 14px; color: var(--muted)">
+        <div class="body" style="flex-direction: column; gap: 10px">
+          <div class="plist">
+            <div class="pitem">
+              <div class="pnum">01</div>
+              <div class="pbody">
+                <h3>Dominio e range</h3>
+                <p class="says">Dà un tipo a chi compare nel fatto</p>
+                <p class="ex">chi ha <span class="mono">developedBy</span> è un <span class="mono">VideoGame</span>: il primo GTA è senza tipo apposta</p>
+              </div>
+              <div class="pgo">diap. 6</div>
+            </div>
+            <div class="pitem">
+              <div class="pnum">02</div>
+              <div class="pbody">
+                <h3>Inversa, transitiva, sottoproprietà</h3>
+                <p class="says">La direzione opposta viene da sola, la serie si ricostruisce, un legame specifico ne implica uno generico</p>
+                <p class="ex"><span class="mono">developedBy</span> ↔ <span class="mono">developerOf</span>; <span class="mono">sequelOf</span>; <span class="mono">protagonistOf ⊑ appearsIn</span></p>
+              </div>
+              <div class="pgo">diap. 7</div>
+            </div>
+            <div class="pitem">
+              <div class="pnum">03</div>
+              <div class="pbody">
+                <h3>Catena</h3>
+                <p class="says">Due archi di fila valgono uno</p>
+                <p class="ex"><span class="mono">hasRemaster ∘ availableOn ⊑ playableOn</span></p>
+              </div>
+              <div class="pgo">diap. 8</div>
+            </div>
+            <div class="pitem">
+              <div class="pnum">04</div>
+              <div class="pbody">
+                <h3>Funzionale</h3>
+                <p class="says">Al più un valore</p>
+                <p class="ex"><span class="mono">pegiRating</span>: due punteggi per Portal 2 sono un errore</p>
+              </div>
+              <div class="pgo">diap. 9</div>
+            </div>
+            <div class="pitem">
+              <div class="pnum">05</div>
+              <div class="pbody">
+                <h3>Asimmetrica e irriflessiva</h3>
+                <p class="says">Se A lo è di B, B non lo è di A; nessuno lo è di sé stesso</p>
+                <p class="ex"><span class="mono">developedBy</span>: nessuno sviluppa sé stesso</p>
+              </div>
+              <div class="pgo">diap. 10</div>
+            </div>
+            <div class="pitem">
+              <div class="pnum">06</div>
+              <div class="pbody">
+                <h3>Disgiunte</h3>
+                <p class="says">Nessun individuo in due classi, due proprietà non legano la stessa coppia</p>
+                <p class="ex">un gioco non è una persona; un remaster non è un prequel</p>
+              </div>
+              <div class="pgo">diap. 11</div>
+            </div>
+            <div class="pitem">
+              <div class="pnum">07</div>
+              <div class="pbody">
+                <h3>Chiave e AllDifferent</h3>
+                <p class="says">Stesso identificativo, stesso individuo; certi individui sono tutti diversi</p>
+                <p class="ex"><span class="mono">hasWikidataId</span> è la chiave di <span class="mono">VideoGame</span></p>
+              </div>
+              <div class="pgo">diap. 12</div>
+            </div>
+          </div>
+          <p style="font-size: 13.5px; color: var(--muted)">
             In tutto 48 object property e 5 datatype property.
           </p>
         </div>
@@ -1432,175 +1572,99 @@ victim(?k, ?v) ^ killer(?k, ?a)
     </div>
 
     <script>
-      /* ---------- classi interattive ---------- */
-      const CLASSES = {
-        VideoGame: [
-          "Un videogioco.",
-          [
-            "Remaster",
-            "SequelGame",
-            "LateEntry",
-            "FirstPartyGame",
-            "ViolentStoryGame",
-            "RealisticViolenceGame",
-            "FantasyViolenceGame",
-            "ClassicGame",
-            "ClassicStillPlayable",
-            "StillPlayable",
-            "Pegi3Game",
-            "Pegi7Game",
-            "Pegi12Game",
-            "Pegi16Game",
-            "Pegi18Game",
-            "AwardWinner",
-            "Adaptation",
-            "HistoricalGame",
-            "SciFiGame",
-            "AuteurGame",
-            "PrequelGame",
-          ],
-          "Un gioco con almeno un'uccisione nella trama è un ViolentStoryGame; con PEGI 16 o 18 diventa RealisticViolenceGame, con PEGI 12 o meno FantasyViolenceGame.",
-        ],
-        Company: [
-          "Uno studio, un editore o un gruppo industriale.",
-          [
-            "Developer",
-            "Publisher",
-            "PlatformHolder",
-            "FoundedByVeterans",
-            "ProlificDeveloper",
-            "FirstPartyStudio",
-          ],
-          "Sviluppatore ed editore non sono disgiunti: sono ruoli della stessa azienda, calcolati dalle inverse.",
-        ],
-        Person: [
-          "Una persona reale.",
-          ["GameDirector", "StudioHead", "ProlificDirector"],
-          "Miyazaki è un GameDirector perché Dark Souls è directedBy lui; è anche StudioHead perché guida FromSoftware.",
-        ],
-        Character: [
-          "Un personaggio di finzione.",
-          [
-            "Human",
-            "Alien",
-            "Synthetic",
-            "PlayerCharacter",
-            "DeceasedCharacter",
-            "Killer",
-            "Protagonist",
-            "Antagonist",
-            "RecurringCharacter",
-            "MultipleKiller",
-            "HistoricalCharacter",
-            "RogueAI",
-          ],
-          "Dei personaggi si scrive solo la specie (umana o aliena): tutto il resto si deduce.",
-        ],
-        Platform: [
-          "Una piattaforma su cui si gioca.",
-          [
-            "ConsolePlatform",
-            "PCPlatform",
-            "PlayStationConsole",
-            "XboxConsole",
-            "NintendoConsole",
-            "CurrentGenerationConsole",
-            "PreviousGenerationConsole",
-          ],
-          "Console e PC sono disgiunti, e così le marche (PlayStation, Xbox, Nintendo): classi primitive, con il tipo scritto nei dati in base a chi costruisce la console.",
-        ],
-        Franchise: [
-          "Una serie di giochi.",
-          [
-            "LongRunningFranchise",
-            "TransmediaFranchise",
-            "FranchiseWithStudioChange",
-          ],
-          "Una serie con almeno tre capitoli è LongRunningFranchise: Portal, con due, no.",
-        ],
-        CreativeWork: [
-          "Un'opera di un altro medium.",
-          ["Novel", "Film", "TVSeries", "Comic", "TabletopGame"],
-          "The Witcher è tratto da una saga letteraria; The Walking Dead da un fumetto.",
-        ],
-        GameEngine: [
-          "Un motore di gioco.",
-          [],
-          "Collega un gioco all'azienda che ha sviluppato il motore (engineDevelopedBy).",
-        ],
-        Award: [
-          "Il premio «gioco dell'anno» di una cerimonia.",
-          [],
-          "Un gioco con un premio è AwardWinner.",
-        ],
-        Genre: [
-          "Un genere.",
-          [],
-          "Il genere «storico» o «fantascienza» non è nei dati: lo si deduce dai personaggi.",
-        ],
-        GameMode: [
-          "Una modalità di gioco.",
-          [],
-          "Per esempio giocatore singolo o multigiocatore.",
-        ],
-        Killing: [
-          "Un'uccisione nella trama di un gioco: vittima, assassino e gioco.",
-          [],
-          "È una classe e non una proprietà perché un'uccisione avviene in un gioco (relazione n-aria).",
-        ],
-        FictionalOrganization: [
-          "Un'organizzazione del mondo di gioco.",
-          [],
-          "Per esempio Aperture Science, che ha costruito GLaDOS.",
-        ],
+      /* ---------- classi interattive: albero fino alle foglie ---------- */
+      const TREE = {"VideoGame": {"k": "top", "d": "Un videogioco", "c": ["Adaptation", "AuteurGame", "AwardWinner", "ClassicGame", "ExternalEngineGame", "FirstPartyGame", "HistoricalGame", "InHouseEngineGame", "MustPlayGame", "Pegi12Game", "Pegi16Game", "Pegi18Game", "Pegi3Game", "Pegi7Game", "PrequelGame", "Remaster", "ReturnAfterDeathGame", "SciFiGame", "SelfPublishedGame", "SequelGame", "StillPlayable", "ViolentStoryGame"]}, "Company": {"k": "top", "d": "Uno studio, un editore o un gruppo industriale", "c": ["Developer", "FoundedByVeterans", "PlatformHolder", "Publisher"]}, "Person": {"k": "top", "d": "Una persona reale", "c": ["GameDirector", "StudioHead"]}, "Character": {"k": "top", "d": "Un personaggio di finzione", "c": ["Alien", "Antagonist", "DeceasedCharacter", "HistoricalCharacter", "Human", "Killer", "PlayerCharacter", "Protagonist", "RecurringCharacter", "Synthetic"]}, "Platform": {"k": "top", "d": "Una piattaforma su cui si gioca", "c": ["ConsolePlatform", "PCPlatform"]}, "Franchise": {"k": "top", "d": "Una serie di giochi", "c": ["FranchiseWithStudioChange", "LongRunningFranchise", "TransmediaFranchise"]}, "GameEngine": {"k": "top", "d": "Un motore di gioco", "c": []}, "Award": {"k": "top", "d": "Il premio Gioco dell'anno di una cerimonia (The Game Awards, BAFTA, D.I.C.E....)", "c": []}, "Genre": {"k": "top", "d": "Un genere", "c": []}, "GameMode": {"k": "top", "d": "Una modalità di gioco", "c": []}, "Killing": {"k": "top", "d": "Un'uccisione nella trama di un gioco: vittima, assassino e gioco (relazione n-aria)", "c": []}, "FictionalOrganization": {"k": "top", "d": "Un'organizzazione del mondo di gioco (per esempio Aperture Science)", "c": []}, "CreativeWork": {"k": "top", "d": "Un'opera di un altro medium (romanzo, film, serie TV)", "c": ["Comic", "Film", "Novel", "TVSeries", "TabletopGame"]}, "ConsolePlatform": {"k": "prim", "d": "Una console", "c": ["CurrentGenerationConsole", "NintendoConsole", "PlayStationConsole", "PreviousGenerationConsole", "XboxConsole"]}, "PCPlatform": {"k": "prim", "d": "Un personal computer", "c": []}, "PlayStationConsole": {"k": "prim", "d": "Una console PlayStation", "c": []}, "XboxConsole": {"k": "prim", "d": "Una console Xbox", "c": []}, "NintendoConsole": {"k": "prim", "d": "Una console Nintendo", "c": []}, "Novel": {"k": "prim", "d": "Un romanzo", "c": []}, "Film": {"k": "prim", "d": "Un film", "c": []}, "TVSeries": {"k": "prim", "d": "Una serie televisiva", "c": []}, "Comic": {"k": "prim", "d": "Un fumetto", "c": []}, "TabletopGame": {"k": "prim", "d": "Un gioco da tavolo o di ruolo cartaceo", "c": []}, "Human": {"k": "prim", "d": "Un personaggio umano", "c": []}, "Alien": {"k": "prim", "d": "Un personaggio di una specie non umana del mondo di gioco", "c": []}, "FirstPartyOnRivalConsole": {"k": "rule", "d": "Un gioco first-party uscito su una console di un altro costruttore", "rr": [["FirstPartyOnRivalConsole", "publishedByGroup(?g, ?h) ^ PlatformHolder(?h) ^ onConsoleOf(?g, ?m) ^ differentFrom(?h, ?m) -> FirstPartyOnRivalConsole(?g)", "Un gioco del gruppo di un costruttore di console, uscito su una console fatta da un altro costruttore."]], "c": []}, "SequelByDifferentStudio": {"k": "rule", "d": "Un seguito sviluppato da uno studio diverso", "rr": [["SequelByDifferentStudio", "sequelOf(?a, ?b) ^ developedBy(?a, ?x) ^ developedBy(?b, ?y) ^ differentFrom(?x, ?y) -> SequelByDifferentStudio(?a)", "Un seguito sviluppato da uno studio diverso da quello del capitolo precedente."]], "c": []}, "EngineChangeSequel": {"k": "rule", "d": "Un seguito che cambia motore", "rr": [["EngineChangeSequel", "sequelOf(?a, ?b) ^ madeWith(?a, ?x) ^ madeWith(?b, ?y) ^ differentFrom(?x, ?y) -> EngineChangeSequel(?a)", "Un seguito che usa un motore diverso da quello del capitolo precedente."]], "c": []}, "ExternalEngineGame": {"k": "rule", "d": "Un gioco fatto con un motore sviluppato da un'altra azienda", "rr": [["ExternalEngine", "madeWith(?g, ?e) ^ engineDevelopedBy(?e, ?m) ^ developedBy(?g, ?d) ^ differentFrom(?m, ?d) -> ExternalEngineGame(?g)", "Un gioco fatto con un motore sviluppato da un'azienda diversa da quella che ha sviluppato il gioco."]], "c": []}, "SelfPublishedGame": {"k": "rule", "d": "Un gioco sviluppato e pubblicato dalla stessa azienda", "rr": [["SelfPublished", "developedBy(?g, ?c) ^ publishedBy(?g, ?c) -> SelfPublishedGame(?g)", "Un gioco sviluppato e pubblicato dalla stessa azienda."]], "c": []}, "InHouseEngineGame": {"k": "rule", "d": "Un gioco fatto con il motore dello stesso studio", "rr": [["InHouseEngine", "madeWith(?g, ?e) ^ engineDevelopedBy(?e, ?d) ^ developedBy(?g, ?d) -> InHouseEngineGame(?g)", "Un gioco fatto con il motore sviluppato dalla stessa azienda."]], "c": []}, "ReturningDirectorSequel": {"k": "rule", "d": "Un seguito con lo stesso regista del predecessore", "rr": [["ReturningDirector", "sequelOf(?a, ?b) ^ directedBy(?a, ?p) ^ directedBy(?b, ?p) -> ReturningDirectorSequel(?a)", "Un seguito diretto dalla stessa persona che ha diretto il capitolo precedente."]], "c": []}, "DefeatedVillain": {"k": "rule", "d": "Un antagonista ucciso dal protagonista", "rr": [["DefeatedVillain", "antagonistOf(?v, ?g) ^ protagonistOf(?h, ?g) ^ killedBy(?v, ?h) -> DefeatedVillain(?v)", "Un antagonista ucciso dal protagonista dello stesso gioco è un cattivo sconfitto."]], "c": []}, "ReturningCharacter": {"k": "rule", "d": "Un personaggio che ricompare in un gioco uscito dopo quello in cui è stato ucciso", "rr": [["ReturnAfterDeath", "victim(?k, ?c) ^ inGame(?k, ?g) ^ appearsIn(?c, ?h) ^ releasedAfter(?h, ?g) -> ReturningCharacter(?c) ^ ReturnAfterDeathGame(?h)", "Un personaggio ucciso in un gioco e presente in un gioco uscito dopo è un personaggio che ritorna; quel gioco è un gioco con un ritorno dopo la morte."]], "c": []}, "ReturnAfterDeathGame": {"k": "rule", "d": "Un gioco uscito dopo la morte di un suo personaggio: prequel, linea temporale alternativa o resurrezione", "rr": [["ReturnAfterDeath", "victim(?k, ?c) ^ inGame(?k, ?g) ^ appearsIn(?c, ?h) ^ releasedAfter(?h, ?g) -> ReturningCharacter(?c) ^ ReturnAfterDeathGame(?h)", "Un personaggio ucciso in un gioco e presente in un gioco uscito dopo è un personaggio che ritorna; quel gioco è un gioco con un ritorno dopo la morte."]], "c": []}, "CurrentGenerationConsole": {"k": "def", "d": "Una console della nona generazione, l'attuale", "df": "ConsolePlatform ⊓ ∃generation.integer[≥ 9]", "c": []}, "PreviousGenerationConsole": {"k": "def", "d": "Una console di ottava generazione o precedente", "df": "ConsolePlatform ⊓ ∃generation.integer[≤ 8]", "c": []}, "ProlificDirector": {"k": "def", "d": "Chi ha diretto almeno tre giochi", "df": "GameDirector ⊓ ≥3 directorOf.VideoGame", "c": []}, "ProlificDeveloper": {"k": "def", "d": "Un'azienda che ha sviluppato almeno cinque giochi", "df": "Developer ⊓ ≥5 developerOf.VideoGame", "c": []}, "FirstPartyStudio": {"k": "def", "d": "Uno studio che è un costruttore di console o una sua controllata", "df": "Developer ⊓ (PlatformHolder ⊔ ∃subsidiaryOf.PlatformHolder)", "c": []}, "HistoricalGame": {"k": "def", "d": "Un gioco con personaggi realmente esistiti: probabilmente ambientato nel passato", "df": "VideoGame ⊓ ∃hasCharacter.HistoricalCharacter", "c": []}, "SciFiGame": {"k": "def", "d": "Un gioco con personaggi alieni o sintetici: probabilmente fantascienza", "df": "VideoGame ⊓ ∃hasCharacter.(Alien ⊔ Synthetic)", "c": []}, "PrequelGame": {"k": "def", "d": "Un gioco la cui storia precede quella di un altro", "df": "VideoGame ⊓ ∃prequelOf.VideoGame", "c": []}, "Synthetic": {"k": "def", "d": "Un personaggio costruito da qualcuno nel mondo di gioco: un'intelligenza artificiale o un robot", "df": "Character ⊓ ∃builtBy.owl:Thing", "c": ["RogueAI"]}, "PlayerCharacter": {"k": "def", "d": "Un personaggio controllato dal giocatore in almeno un gioco", "df": "Character ⊓ ∃playableIn.VideoGame", "c": []}, "Remaster": {"k": "def", "d": "La nuova edizione di un altro gioco", "df": "VideoGame ⊓ ∃remasterOf.VideoGame", "c": []}, "GameDirector": {"k": "def", "d": "Chi ha diretto almeno un gioco", "df": "Person ⊓ ∃directorOf.VideoGame", "c": ["ProlificDirector"]}, "StudioHead": {"k": "def", "d": "Chi guida un'azienda", "df": "Person ⊓ ∃heads.Company", "c": []}, "DeceasedCharacter": {"k": "def", "d": "Un personaggio ucciso nella trama di un gioco", "df": "Character ⊓ ∃victimIn.Killing", "c": ["DefeatedVillain", "ReturningCharacter"]}, "Killer": {"k": "def", "d": "Un personaggio che ha tolto la vita a qualcuno", "df": "Character ⊓ ∃killerIn.Killing", "c": ["MultipleKiller"]}, "Developer": {"k": "def", "d": "Un'azienda che ha sviluppato almeno un gioco", "df": "Company ⊓ ∃developerOf.VideoGame", "c": ["FirstPartyStudio", "ProlificDeveloper"]}, "Publisher": {"k": "def", "d": "Un'azienda che ha pubblicato almeno un gioco", "df": "Company ⊓ ∃publisherOf.VideoGame", "c": []}, "PlatformHolder": {"k": "def", "d": "Un'azienda che costruisce console", "df": "Company ⊓ ∃manufacturerOf.ConsolePlatform", "c": []}, "FoundedByVeterans": {"k": "def", "d": "Un'azienda fondata da chi lavorava per uno sviluppatore", "df": "Company ⊓ ∃foundedBy.∃formerEmployeeOf.Developer", "c": []}, "FirstPartyGame": {"k": "def", "d": "Un gioco pubblicato da un costruttore di console o da una sua controllata", "df": "VideoGame ⊓ ∃publishedBy.(PlatformHolder ⊔ ∃subsidiaryOf.PlatformHolder)", "c": ["FirstPartyOnRivalConsole"]}, "SequelGame": {"k": "def", "d": "Il seguito di un altro gioco", "df": "VideoGame ⊓ ∃sequelOf.VideoGame", "c": ["EngineChangeSequel", "LateEntry", "ReturningDirectorSequel", "SequelByDifferentStudio"]}, "LateEntry": {"k": "def", "d": "Almeno il terzo capitolo di una serie", "df": "SequelGame ⊓ ∃sequelOf.∃sequelOf.VideoGame", "c": []}, "ViolentStoryGame": {"k": "def", "d": "Un gioco nella cui trama qualcuno viene ucciso", "df": "VideoGame ⊓ ∃hasKilling.Killing", "c": ["FantasyViolenceGame", "RealisticViolenceGame"]}, "RealisticViolenceGame": {"k": "def", "d": "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", "df": "ViolentStoryGame ⊓ ∃pegiRating.integer[≥ 16]", "c": []}, "FantasyViolenceGame": {"k": "def", "d": "Un gioco violento classificato PEGI 12 o meno: violenza fantasy, adatta ai ragazzi", "df": "ViolentStoryGame ⊓ ∃pegiRating.integer[≤ 12]", "c": []}, "MustPlayGame": {"k": "def", "d": "Un gioco con almeno 95 su Metacritic", "df": "VideoGame ⊓ ∃metacriticScore.integer[≥ 95]", "c": []}, "AwardWinner": {"k": "def", "d": "Un gioco che ha vinto un premio", "df": "VideoGame ⊓ ∃wonAward.Award", "c": []}, "StillPlayable": {"k": "def", "d": "Un gioco giocabile su una console attuale", "df": "VideoGame ⊓ ∃playableOn.CurrentGenerationConsole", "c": []}, "Adaptation": {"k": "def", "d": "Un gioco tratto da un'opera di un altro medium", "df": "VideoGame ⊓ ∃basedOn.CreativeWork", "c": []}, "AuteurGame": {"k": "def", "d": "Un gioco diretto da chi guida uno studio", "df": "VideoGame ⊓ ∃directedBy.StudioHead", "c": []}, "LongRunningFranchise": {"k": "def", "d": "Una serie con almeno tre capitoli", "df": "Franchise ⊓ ∃includes.LateEntry", "c": []}, "TransmediaFranchise": {"k": "def", "d": "Una serie diventata film o serie TV", "df": "Franchise ⊓ ∃adaptedInto.(Film ⊔ TVSeries)", "c": []}, "FranchiseWithStudioChange": {"k": "def", "d": "Una serie passata a un altro studio", "df": "Franchise ⊓ ∃includes.SequelByDifferentStudio", "c": []}, "Protagonist": {"k": "def", "d": "Il protagonista di un gioco", "df": "Character ⊓ ∃protagonistOf.VideoGame", "c": []}, "Antagonist": {"k": "def", "d": "L'antagonista di un gioco", "df": "Character ⊓ ∃antagonistOf.VideoGame", "c": []}, "RecurringCharacter": {"k": "def", "d": "Un personaggio presente in almeno due giochi", "df": "Character ⊓ ≥2 appearsIn.VideoGame", "c": []}, "RogueAI": {"k": "def", "d": "Un'intelligenza artificiale o un robot antagonista", "df": "Synthetic ⊓ Antagonist", "c": []}, "MultipleKiller": {"k": "def", "d": "Un personaggio che ha ucciso almeno due personaggi", "df": "Killer ⊓ ≥2 kills.Character", "c": []}, "HistoricalCharacter": {"k": "def", "d": "Un personaggio che interpreta una persona reale", "df": "Character ⊓ ∃portrays.Person", "c": []}, "ClassicGame": {"k": "def", "d": "Un gioco uscito prima del 2005", "df": "VideoGame ⊓ ∃releaseDate.dateTime[< 2005-01-01]", "c": ["ClassicStillPlayable"]}, "ClassicStillPlayable": {"k": "def", "d": "Un classico precedente al 2005 giocabile oggi su una console attuale", "df": "ClassicGame ⊓ StillPlayable", "c": []}, "Pegi3Game": {"k": "def", "d": "Un gioco classificato PEGI 3, adatto a tutti", "df": "VideoGame ⊓ ∃pegiRating.{3}", "c": []}, "Pegi7Game": {"k": "def", "d": "Un gioco classificato PEGI 7", "df": "VideoGame ⊓ ∃pegiRating.{7}", "c": []}, "Pegi12Game": {"k": "def", "d": "Un gioco classificato PEGI 12", "df": "VideoGame ⊓ ∃pegiRating.{12}", "c": []}, "Pegi16Game": {"k": "def", "d": "Un gioco classificato PEGI 16", "df": "VideoGame ⊓ ∃pegiRating.{16}", "c": []}, "Pegi18Game": {"k": "def", "d": "Un gioco classificato PEGI 18, solo per adulti", "df": "VideoGame ⊓ ∃pegiRating.{18}", "c": []}};
+      const TOPS = [
+        "VideoGame",
+        "Company",
+        "Person",
+        "Character",
+        "Platform",
+        "Franchise",
+        "GameEngine",
+        "Award",
+        "Genre",
+        "GameMode",
+        "Killing",
+        "FictionalOrganization",
+        "CreativeWork",
+      ];
+      const KIND = {
+        top: "classe di primo livello",
+        prim: "classe primitiva",
+        def: "classe definita (≡)",
+        rule: "classe riempita da una regola SWRL",
       };
-      const PRIM = new Set([
-        "Human",
-        "Alien",
-        "ConsolePlatform",
-        "PCPlatform",
-        "PlayStationConsole",
-        "XboxConsole",
-        "NintendoConsole",
-        "Novel",
-        "Film",
-        "TVSeries",
-        "Comic",
-        "TabletopGame",
-      ]);
       const chips = document.getElementById("chips"),
+        ctree = document.getElementById("ctree"),
         xp = document.getElementById("xp");
-      function pick(name) {
-        [...chips.children].forEach((c) =>
-          c.classList.toggle("on", c.dataset.n === name),
-        );
-        const [d, subs, note] = CLASSES[name];
-        xp.innerHTML =
-          "<h4>" +
-          name +
-          "</h4><p>" +
-          d +
-          "</p>" +
-          (subs.length
-            ? "<div class='row'>" +
-              subs
-                .map(
-                  (s) =>
-                    "<span class='pillc " +
-                    (PRIM.has(s) ? "p" : "d") +
-                    "'>" +
-                    s +
-                    "</span>",
-                )
-                .join("") +
-              "</div>" +
-              "<p style='font-size:13px;color:var(--muted)'>Fondo verde: classe definita (si popola per deduzione). Grigio: primitiva.</p>"
-            : "<p style='color:var(--muted)'>Nessuna sottoclasse.</p>") +
-          "<p>" +
-          note +
-          "</p>";
+      const below = (n) => TREE[n].c.reduce((a, c) => a + 1 + below(c), 0);
+      function cnode(name) {
+        const li = document.createElement("li");
+        const sp = document.createElement("span");
+        sp.className = "cn " + TREE[name].k;
+        sp.dataset.n = name;
+        sp.textContent = name;
+        li.appendChild(sp);
+        if (TREE[name].c.length) {
+          const ul = document.createElement("ul");
+          TREE[name].c.forEach((c) => ul.appendChild(cnode(c)));
+          li.appendChild(ul);
+        }
+        return li;
       }
-      Object.keys(CLASSES).forEach((n) => {
+      function detail(name) {
+        const t = TREE[name];
+        ctree
+          .querySelectorAll(".cn")
+          .forEach((e) => e.classList.toggle("sel", e.dataset.n === name));
+        xp.innerHTML = "";
+        const h = document.createElement("h4");
+        h.textContent = name;
+        xp.appendChild(h);
+        const add = (text, style) => {
+          const p = document.createElement("p");
+          p.textContent = text;
+          if (style) p.style.cssText = style;
+          xp.appendChild(p);
+        };
+        add(
+          KIND[t.k] +
+            (t.c.length ? " · " + below(name) + " sottoclassi" : " · foglia"),
+          "font-size:13px;color:var(--muted)",
+        );
+        add(t.d + ".");
+        if (t.df) {
+          const c = document.createElement("code");
+          c.className = "df";
+          c.textContent = name + " ≡ " + t.df;
+          xp.appendChild(c);
+        }
+        (t.rr || []).forEach(([rn, text, why]) => {
+          add("Si popola con la regola SWRL " + rn + ": " + why);
+          const c = document.createElement("code");
+          c.className = "df";
+          c.textContent = text.replace(" -> ", "\n  -> ").replace(/ \^ /g, " ^\n");
+          c.style.whiteSpace = "pre-wrap";
+          xp.appendChild(c);
+        });
+      }
+      function pick(top) {
+        [...chips.children].forEach((c) =>
+          c.classList.toggle("on", c.dataset.n === top),
+        );
+        ctree.innerHTML = "";
+        const ul = document.createElement("ul");
+        ul.appendChild(cnode(top));
+        ctree.appendChild(ul);
+        ctree.style.setProperty("--cols", below(top) > 12 ? 3 : 1);
+        detail(top);
+      }
+      ctree.addEventListener("click", (e) => {
+        const sp = e.target.closest(".cn");
+        if (sp) detail(sp.dataset.n);
+      });
+      TOPS.forEach((n) => {
         const b = document.createElement("button");
         b.className = "chip";
         b.textContent = n;
@@ -3031,15 +3095,6 @@ victim(?k, ?v) ^ killer(?k, ?a)
             ? document.exitFullscreen()
             : document.documentElement.requestFullscreen();
         }
-      });
-      addEventListener("click", (e) => {
-        if (
-          e.target.closest(
-            "button,input,label,.lst,.xp,a,.gsvg,.rchip,.ttlbox,tr.pick",
-          )
-        )
-          return;
-        go(e.clientX > innerWidth / 3 ? i + 1 : i - 1);
       });
       addEventListener("resize", fit);
       fit();

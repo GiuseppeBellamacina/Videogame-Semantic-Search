@@ -67,7 +67,7 @@ Nessuna risposta è scritta nei dati. Che \emph{Mass Effect} (2007) sia un gioco
 % ---------------------------------------------------------------------------
 \section{Primo passo: dare un nome alle cose}\label{sec:classi}
 
-Abbiamo diviso l'ontologia in due parti, tenute in due file distinti: lo \emph{schema} (classi, proprietà, assiomi; nessun gioco) e i \emph{dati} (solo fatti asseriti, nessuna conclusione). Il reasoner unisce le due parti e ne ricava il resto.
+Abbiamo diviso l'ontologia in tre parti, tenute in tre file distinti: lo \emph{schema} (classi, proprietà, assiomi; nessun gioco), le \emph{regole} (SWRL) e i \emph{dati} (solo fatti asseriti, nessuna conclusione). Il reasoner unisce le tre parti e ne ricava il resto.
 
 Lo schema parte da \nTop{} classi di primo livello, disgiunte a due a due: \cls{VideoGame}, \cls{Company}, \cls{Person}, \cls{Character}, \cls{Platform}, \cls{Franchise}, \cls{GameEngine}, \cls{Award}, \cls{Genre}, \cls{GameMode}, \cls{CreativeWork} (romanzi, film, serie TV) e \cls{Killing} (un'uccisione avvenuta in un gioco) e \cls{FictionalOrganization} (le organizzazioni del mondo di gioco, come Aperture Science). La disgiunzione non è una formalità: un individuo usato sia come gioco sia come opera letteraria rende l'ontologia inconsistente, e il reasoner lo segnala.
 
