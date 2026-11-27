@@ -1,7 +1,7 @@
 \section{Le componenti dell'ontologia}\label{app:componenti}
 
 \begingroup\footnotesize\begin{longtable}{lllp{5.8cm}}
-\caption{Le 78 classi}\\ \toprule
+\caption{Le 81 classi}\\ \toprule
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endfirsthead
 \textbf{Classe} & \textbf{Padre} & \textbf{Tipo} & \textbf{Descrizione} \\ \midrule \endhead \bottomrule \endfoot
 \texttt{VideoGame} & \texttt{--} & primitiva & Un videogioco \\
@@ -19,6 +19,9 @@
 \texttt{CreativeWork} & \texttt{--} & primitiva & Un'opera di un altro medium (romanzo, film, serie TV) \\
 \texttt{ConsolePlatform} & \texttt{Platform} & primitiva & Una console \\
 \texttt{PCPlatform} & \texttt{Platform} & primitiva & Un personal computer \\
+\texttt{PlayStationConsole} & \texttt{ConsolePlatform} & primitiva & Una console PlayStation \\
+\texttt{XboxConsole} & \texttt{ConsolePlatform} & primitiva & Una console Xbox \\
+\texttt{NintendoConsole} & \texttt{ConsolePlatform} & primitiva & Una console Nintendo \\
 \texttt{Novel} & \texttt{CreativeWork} & primitiva & Un romanzo \\
 \texttt{Film} & \texttt{CreativeWork} & primitiva & Un film \\
 \texttt{TVSeries} & \texttt{CreativeWork} & primitiva & Una serie televisiva \\
@@ -26,17 +29,16 @@
 \texttt{TabletopGame} & \texttt{CreativeWork} & primitiva & Un gioco da tavolo o di ruolo cartaceo \\
 \texttt{Human} & \texttt{Character} & primitiva & Un personaggio umano \\
 \texttt{Alien} & \texttt{Character} & primitiva & Un personaggio di una specie non umana del mondo di gioco \\
-\texttt{FirstPartyOnRivalConsole} & \texttt{VideoGame} & regola SWRL & Un gioco first-party uscito su una console di un altro costruttore \\
-\texttt{SequelByDifferentStudio} & \texttt{VideoGame} & regola SWRL & Un seguito sviluppato da uno studio diverso \\
-\texttt{EngineChangeSequel} & \texttt{VideoGame} & regola SWRL & Un seguito che cambia motore \\
+\texttt{FirstPartyOnRivalConsole} & \texttt{FirstPartyGame} & regola SWRL & Un gioco first-party uscito su una console di un altro costruttore \\
+\texttt{SequelByDifferentStudio} & \texttt{SequelGame} & regola SWRL & Un seguito sviluppato da uno studio diverso \\
+\texttt{EngineChangeSequel} & \texttt{SequelGame} & regola SWRL & Un seguito che cambia motore \\
 \texttt{ExternalEngineGame} & \texttt{VideoGame} & regola SWRL & Un gioco fatto con un motore sviluppato da un'altra azienda \\
 \texttt{SelfPublishedGame} & \texttt{VideoGame} & regola SWRL & Un gioco sviluppato e pubblicato dalla stessa azienda \\
 \texttt{InHouseEngineGame} & \texttt{VideoGame} & regola SWRL & Un gioco fatto con il motore dello stesso studio \\
-\texttt{ReturningDirectorSequel} & \texttt{VideoGame} & regola SWRL & Un seguito con lo stesso regista del predecessore \\
+\texttt{ReturningDirectorSequel} & \texttt{SequelGame} & regola SWRL & Un seguito con lo stesso regista del predecessore \\
 \texttt{DefeatedVillain} & \texttt{DeceasedCharacter} & regola SWRL & Un antagonista ucciso dal protagonista \\
 \texttt{ReturningCharacter} & \texttt{DeceasedCharacter} & regola SWRL & Un personaggio che ricompare in un gioco uscito dopo quello in cui è stato ucciso \\
 \texttt{ReturnAfterDeathGame} & \texttt{VideoGame} & regola SWRL & Un gioco uscito dopo la morte di un suo personaggio: prequel, linea temporale alternativa o resurrezione \\
-\texttt{MustPlayGame} & \texttt{VideoGame} & regola SWRL & Un gioco con almeno 95 su Metacritic \\
 \texttt{CurrentGenerationConsole} & \texttt{ConsolePlatform} & definita & Una console della nona generazione, l'attuale \\
 \texttt{PreviousGenerationConsole} & \texttt{ConsolePlatform} & definita & Una console di ottava generazione o precedente \\
 \texttt{ProlificDirector} & \texttt{GameDirector} & definita & Chi ha diretto almeno tre giochi \\
@@ -62,6 +64,7 @@
 \texttt{ViolentStoryGame} & \texttt{VideoGame} & definita & Un gioco nella cui trama qualcuno viene ucciso \\
 \texttt{RealisticViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori \\
 \texttt{FantasyViolenceGame} & \texttt{ViolentStoryGame} & definita & Un gioco violento classificato PEGI 12 o meno: violenza fantasy, adatta ai ragazzi \\
+\texttt{MustPlayGame} & \texttt{VideoGame} & definita & Un gioco con almeno 95 su Metacritic \\
 \texttt{AwardWinner} & \texttt{VideoGame} & definita & Un gioco che ha vinto un premio \\
 \texttt{StillPlayable} & \texttt{VideoGame} & definita & Un gioco giocabile su una console attuale \\
 \texttt{Adaptation} & \texttt{VideoGame} & definita & Un gioco tratto da un'opera di un altro medium \\
@@ -162,6 +165,7 @@
 \textsf{ViolentStoryGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{hasKilling}.\textsf{Killing} \\
 \textsf{RealisticViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\geq 16] \\
 \textsf{FantasyViolenceGame} &\equiv \textsf{ViolentStoryGame} \sqcap \exists\,\textit{pegiRating}.\texttt{integer}[\leq 12] \\
+\textsf{MustPlayGame} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{metacriticScore}.\texttt{integer}[\geq 95] \\
 \textsf{AwardWinner} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{wonAward}.\textsf{Award} \\
 \textsf{StillPlayable} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{playableOn}.\textsf{CurrentGenerationConsole} \\
 \textsf{Adaptation} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{basedOn}.\textsf{CreativeWork} \\
@@ -183,7 +187,7 @@
 \textsf{Pegi16Game} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{pegiRating}.\{16\} \\
 \textsf{Pegi18Game} &\equiv \textsf{VideoGame} \sqcap \exists\,\textit{pegiRating}.\{18\} \\
 \end{align*}\endgroup
-\noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, Killing, FictionalOrganization, CreativeWork; ConsolePlatform, PCPlatform; Novel, Film, TVSeries, Comic, TabletopGame; Human, Alien, Synthetic. Proprietà disgiunte: remasterOf e prequelOf.
+\noindent Disgiunzioni: VideoGame, Company, Person, Character, Platform, Franchise, GameEngine, Award, Genre, GameMode, Killing, FictionalOrganization, CreativeWork; ConsolePlatform, PCPlatform; PlayStationConsole, XboxConsole, NintendoConsole; Novel, Film, TVSeries, Comic, TabletopGame; Human, Alien, Synthetic. Proprietà disgiunte: remasterOf e prequelOf.
 
 \subsection*{Regole SWRL}
 \begin{itemize}\footnotesize
@@ -202,7 +206,6 @@
 \item \textbf{ReleaseOrderChain}: \texttt{releasedAfter(?a, ?b) $\wedge$ sequelOf(?b, ?c) $\rightarrow$ releasedAfter(?a, ?c)}
 \item \textbf{ReturnAfterDeath}: \texttt{victim(?k, ?c) $\wedge$ inGame(?k, ?g) $\wedge$ appearsIn(?c, ?h) $\wedge$ releasedAfter(?h, ?g) $\rightarrow$ ReturningCharacter(?c) $\wedge$ ReturnAfterDeathGame(?h)}
 \item \textbf{SelfPublished}: \texttt{developedBy(?g, ?c) $\wedge$ publishedBy(?g, ?c) $\rightarrow$ SelfPublishedGame(?g)}
-\item \textbf{MustPlay}: \texttt{metacriticScore(?g, ?s) $\wedge$ xsd:integer[>= 95](?s) $\rightarrow$ MustPlayGame(?g)}
 \end{itemize}
 
 \begingroup\footnotesize\begin{longtable}{p{6.5cm}p{3cm}lp{3.5cm}}

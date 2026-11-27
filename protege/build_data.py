@@ -15,6 +15,11 @@ HERE = Path(__file__).resolve().parent
 BASE = Namespace("http://www.videogame-ontology.org/")
 VG = Namespace("http://www.videogame-ontology.org/ontology#")
 WD = Namespace("http://www.wikidata.org/entity/")
+BRANDS = {
+    "Sony Interactive Entertainment": VG.PlayStationConsole,
+    "Microsoft": VG.XboxConsole,
+    "Nintendo": VG.NintendoConsole,
+}
 MODES = {
     "single-player": VG.SinglePlayer,
     "multiplayer": VG.Multiplayer,
@@ -185,6 +190,8 @@ def add_platforms_and_engines(g, ds):
     for key, info in ds["piattaforme"].items():
         s = VG["platform/" + key]
         g.add((s, RDF.type, VG[info["classe"]]))
+        if info["classe"] == "ConsolePlatform":
+            add(g, s, RDF.type, BRANDS.get(info.get("costruttore")))
         g.add((s, RDFS.label, Literal(info["nome"])))
         add(
             g,
@@ -230,6 +237,11 @@ def build(ds):
     g = Graph()
     g.bind("vg", VG)
     g.bind("owl", OWL)
+    for kind in (
+        "award character company engine franchise killing organization "
+        "person platform work"
+    ).split():
+        g.bind(kind, Namespace(f"{VG}{kind}/"))
     ontology = BASE["ontology/dati"]
     g.add((ontology, RDF.type, OWL.Ontology))
     g.add((ontology, RDFS.label, Literal("Videogiochi: dati (solo asserzioni)")))

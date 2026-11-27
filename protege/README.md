@@ -7,9 +7,10 @@ Tutti i file `.ttl` sono generati da script Python con rdflib (`Graph.add`, `BNo
 | File | Contenuto |
 |---|---|
 | `schema.ttl` | **Lo schema vuoto**: classi, proprietà e assiomi, nessun gioco. Generato da `generate_schema.py`. |
-| `regole.ttl` | Le regole SWRL. Generate da `generate_schema.py`. |
+| `regole.ofn` | Le regole SWRL in sintassi funzionale OWL, il formato che Protégé legge con tutti gli atomi (il catalogo punta a questo). `regole.ttl` è la stessa cosa in Turtle, per gli script di verifica. Generati da `generate_schema.py`. |
 | `dati.ttl` | **Solo le asserzioni**: 95 giochi (11 serie e 6 titoli singoli), 28 nuove edizioni, PEGI, personaggi, persone, aziende e piattaforme. Nessuna conclusione. Generato da `build_data.py`. |
 | `videogiochi.ttl` | **Il file da aprire in Protégé**: importa schema, dati e regole. Generato da `generate_tests.py`. |
+| `presentazione/presentazione.html` | La presentazione: un file HTML che si apre nel browser (frecce per scorrere, `F` per lo schermo intero). Le demo mostrano il reasoner passo per passo; cliccando un riquadro di assioma o una riga della tabella delle classi definite compare l'esempio in Turtle. |
 | `test/` | Cinque errori da far trovare a HermiT e un caso di `sameAs` corretto. Generati da `generate_tests.py`. |
 | `fonti/dataset.json` | Il dataset revisionato da cui nasce `dati.ttl`. |
 | `fonti/correzioni.json` | Correzioni manuali, ognuna con l'URL della fonte (per esempio i PEGI presi da pegi.info). |
@@ -94,6 +95,7 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `character/Cortana` | `Synthetic`, `RogueAI` | Nei dati c'è solo `builtBy` Catherine Halsey: chi è costruito da qualcuno è `Synthetic`. In Halo 5 è l'antagonista, quindi IA ribelle. Lo stesso per GLaDOS e Wheatley (Aperture Science). |
 | `character/Link`, `character/Chell` | `PlayerCharacter` | Il giocatore li controlla in almeno un gioco (`playableIn`). |
 | `platform/PlayStation_5` | `CurrentGenerationConsole` | Nei dati c'è solo la generazione (9): la classe è definita come console di generazione ≥ 9. |
+| `platform/PlayStation_4`, `platform/Xbox_One`, `platform/Nintendo_Switch` | `PlayStationConsole`, `XboxConsole`, `NintendoConsole` | Classi primitive e disgiunte (5 + 4 + 14 console): il tipo è scritto nei dati in base al costruttore. Una definizione con nominale sul costruttore portava HermiT da circa 110 a circa 580 secondi, ed è stata scartata. |
 | `character/Ganondorf` | `ReturningCharacter` | Ucciso in Twilight Princess e in Tears of the Kingdom; ricompare in giochi usciti dopo la sua morte. |
 | `Grand_Theft_Auto_San_Andreas`, `The_Legend_of_Zelda_Breath_of_the_Wild` | `ReturnAfterDeathGame` | Catalina, uccisa in GTA III, ricompare in San Andreas; Ganondorf ricompare in Breath of the Wild. |
 | `Halo_Combat_Evolved` | `StillPlayable`, `MustPlayGame`, `AwardWinner` | Il remake Campaign Evolved è su PS5; Metacritic 97; D.I.C.E. 2002. |
@@ -120,6 +122,14 @@ Le classi si cercano nel tab *Classes*, sezione *Instances*; gli individui nel t
 | `Grand_Theft_Auto_V`, `Dark_Souls`, `The_Legend_of_Zelda_Ocarina_of_Time` | `Pegi18Game`, `Pegi16Game`, `Pegi12Game` (e `Pegi3Game`, `Pegi7Game`) | La fascia di età dal solo valore di `pegiRating`, senza bisogno di uccisioni nella trama. |
 | `Grand_Theft_Auto_III`, `Halo_Combat_Evolved`, `The_Legend_of_Zelda_Ocarina_of_Time` | `ClassicGame`, `ClassicStillPlayable` | Usciti prima del 2005 (intervallo di date) e giocabili oggi su una console attuale (catena sul remaster). |
 | `Grand_Theft_Auto_IV`, `Fallout_4` | `EngineChangeSequel` | GTA IV passa da RenderWare a RAGE; Fallout 4 da Gamebryo a Creation Engine. |
+
+## Classi riempite da regole SWRL
+
+Alcune classi non hanno una definizione (`≡`): sono classi primitive, sotto `VideoGame`, `SequelGame` (i tre seguiti), `FirstPartyGame` (`FirstPartyOnRivalConsole`), `DeceasedCharacter` o simili, e i loro individui li mette una regola SWRL (`SequelByDifferentStudio`, `EngineChangeSequel`, `ReturningDirectorSequel`, `ExternalEngineGame`, `InHouseEngineGame`, `SelfPublishedGame`, `FirstPartyOnRivalConsole`, `DefeatedVillain`, `ReturningCharacter`, `ReturnAfterDeathGame`). Non compaiono tra le classi equivalenti, perché una regola non è un assioma di definizione.
+
+- **Dalla classe alla regola:** in *Entities > Classes* il commento della classe finisce con «Si popola con la regola SWRL …».
+- **Dalla regola alla classe:** in *SWRLTab* ogni regola ha un nome e un commento che la spiega; la colonna *Rule* mostra gli atomi, e la testa (dopo `->`) è la classe o la relazione che produce.
+- **Vederla all'opera:** avvia HermiT e apri *Individuals*, per esempio `Fallout_4`: in giallo compare `FirstPartyOnRivalConsole`; nella classe, sotto *Instances*, ci sono tutti gli individui che la regola ha riempito.
 
 ## Test
 

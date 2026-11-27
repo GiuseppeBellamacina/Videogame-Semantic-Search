@@ -1,8 +1,9 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix platform: <http://www.videogame-ontology.org/ontology#platform/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix vg: <http://www.videogame-ontology.org/ontology#> .
 
-<http://www.videogame-ontology.org/ontology#platform/Steam_Deck> a vg:ConsolePlatform,
+platform:Steam_Deck a vg:ConsolePlatform,
         vg:PCPlatform ;
     rdfs:label "Steam Deck" .
 

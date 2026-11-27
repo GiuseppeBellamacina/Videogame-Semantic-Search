@@ -60,7 +60,7 @@ killing:Ganondorf_by_Link_in_The_Legend_of_Zelda_Twilight_Princess a vg:Killing 
 ---
 ## 4. Mass Effect e Fallout 4: giochi di un costruttore di console
 
-**Esempio.** *Fallout 4* e *Mass Effect* sono `FirstPartyGame` e anche `FirstPartyOnRivalConsole`: sono usciti su PlayStation, console di un altro costruttore.
+**Esempio.** *Fallout 4* e *Mass Effect* sono `FirstPartyGame` e anche `FirstPartyOnRivalConsole`: sono usciti su PlayStation, console di un altro costruttore. `FirstPartyOnRivalConsole` è una sottoclasse (primitiva) di `FirstPartyGame`: nell'albero inferito sta sotto di essa e la riempie la regola.
 
 **Nei dati.**
 - *Fallout 4* è pubblicato da Bethesda Softworks.
@@ -276,5 +276,7 @@ L'ultimo è il più interessante: lo stesso assioma che nel caso di Breath of th
 L'idea: `FirstPartyFranchise ≡ Franchise ⊓ ∃includes.VideoGame ⊓ ∀includes.FirstPartyGame`, con per ogni serie un'asserzione di chiusura `includes only {giochi della serie}` (un `owl:oneOf` con i giochi). Nel mondo aperto è l'unico modo per concludere "tutti": senza chiusura, un gioco non nominato potrebbe sempre esistere.
 
 **Funzionava.** HermiT classificava Halo, Super Mario e Zelda come serie interamente first-party, e non GTA, Fallout o Mass Effect (le attese erano calcolate dal dataset in Python, e tutti i 298 controlli passavano).
+
+**Stessa sorte per le marche delle console.** `PlayStationConsole ≡ ConsolePlatform ⊓ ∃manufacturedBy.{Sony Interactive Entertainment}` (e le analoghe per Xbox e Nintendo) classificava correttamente le console, ma il nominale sul costruttore portava il ragionamento da circa 110 a circa 579 secondi. Le tre classi restano, primitive e disgiunte, con il tipo scritto nei dati (5 console Sony, 4 Microsoft, 14 Nintendo).
 
 **Non l'abbiamo tenuta.** Il ragionamento completo passa da circa 110 secondi a circa 580: lo stesso con la chiusura di tutte le serie, con quella di quattro o di una sola (Mass Effect, tre giochi: 575 secondi). Il costo non dipende da quanti giochi ci sono: basta un individuo con un universale su un insieme di nomi (nominali), insieme a inverse, cardinalità e chiavi. Un'ontologia che in Protégé richiede dieci minuti per ogni "Start reasoner" non si può mostrare dal vivo.

@@ -16,6 +16,8 @@ def ontology(iri, comment, imports):
     g = Graph()
     g.bind("vg", VG)
     g.bind("owl", OWL)
+    for kind in "character company platform".split():
+        g.bind(kind, Namespace(f"{VG}{kind}/"))
     g.add((iri, RDF.type, OWL.Ontology))
     g.add((iri, RDFS.comment, Literal(comment)))
     for i in imports:
@@ -120,6 +122,10 @@ def main():
         ["ontology", "ontology/dati", "ontology/regole"],
     )
     g.serialize(destination=HERE / "videogiochi.ttl", format="turtle")
+    # rdflib scrive solo i prefissi usati: Protégé mostra "autogen0" se manca vg
+    path = HERE / "videogiochi.ttl"
+    text = path.read_text(encoding="utf-8")
+    path.write_text(f"@prefix vg: <{VG}> .\n{text}", encoding="utf-8")
     for file, name, comment, fill in TESTS:
         g = ontology(
             BASE[f"ontology/test/{name}"], comment, ["ontology/dati", "ontology/regole"]

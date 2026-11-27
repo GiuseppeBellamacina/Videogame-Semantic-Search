@@ -36,7 +36,9 @@ def merge_imports(file, extra=()):
         if current in seen:
             continue
         seen.add(current)
-        part = Graph().parse(current)
+        part = Graph().parse(
+            current.with_suffix(".ttl") if current.suffix == ".ofn" else current
+        )
         catalog = {
             u.get("name"): (current.parent / u.get("uri")).resolve()
             for u in ET.parse(current.parent / "catalog-v001.xml").iter(CATALOG_URI)

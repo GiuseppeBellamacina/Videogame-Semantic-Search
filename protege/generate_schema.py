@@ -35,6 +35,9 @@ TOP = [
 PRIMITIVE = [
     ("ConsolePlatform", "Platform", "Una console"),
     ("PCPlatform", "Platform", "Un personal computer"),
+    ("PlayStationConsole", "ConsolePlatform", "Una console PlayStation"),
+    ("XboxConsole", "ConsolePlatform", "Una console Xbox"),
+    ("NintendoConsole", "ConsolePlatform", "Una console Nintendo"),
     ("Novel", "CreativeWork", "Un romanzo"),
     ("Film", "CreativeWork", "Un film"),
     ("TVSeries", "CreativeWork", "Una serie televisiva"),
@@ -47,6 +50,7 @@ PRIMITIVE = [
 DISJOINT = [
     [name for name, _ in TOP],
     ["ConsolePlatform", "PCPlatform"],
+    ["PlayStationConsole", "XboxConsole", "NintendoConsole"],
     ["Novel", "Film", "TVSeries", "Comic", "TabletopGame"],
     ["Human", "Alien", "Synthetic"],
 ]
@@ -110,6 +114,7 @@ DEFINED = [
     ("ViolentStoryGame", "VideoGame", "Un gioco nella cui trama qualcuno viene ucciso", all_of("VideoGame", some("hasKilling", "Killing"))),
     ("RealisticViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori", all_of("ViolentStoryGame", some("pegiRating", int_at_least(16)))),
     ("FantasyViolenceGame", "ViolentStoryGame", "Un gioco violento classificato PEGI 12 o meno: violenza fantasy, adatta ai ragazzi", all_of("ViolentStoryGame", some("pegiRating", int_at_most(12)))),
+    ("MustPlayGame", "VideoGame", "Un gioco con almeno 95 su Metacritic", all_of("VideoGame", some("metacriticScore", int_at_least(95)))),
     ("AwardWinner", "VideoGame", "Un gioco che ha vinto un premio", all_of("VideoGame", some("wonAward", "Award"))),
     ("StillPlayable", "VideoGame", "Un gioco giocabile su una console attuale", all_of("VideoGame", some("playableOn", "CurrentGenerationConsole"))),
     ("Adaptation", "VideoGame", "Un gioco tratto da un'opera di un altro medium", all_of("VideoGame", some("basedOn", "CreativeWork"))),
@@ -133,17 +138,16 @@ DEFINED = [
 ]
 
 RULE_TARGETS = [
-    ("FirstPartyOnRivalConsole", "VideoGame", "Un gioco first-party uscito su una console di un altro costruttore"),
-    ("SequelByDifferentStudio", "VideoGame", "Un seguito sviluppato da uno studio diverso"),
-    ("EngineChangeSequel", "VideoGame", "Un seguito che cambia motore"),
+    ("FirstPartyOnRivalConsole", "FirstPartyGame", "Un gioco first-party uscito su una console di un altro costruttore"),
+    ("SequelByDifferentStudio", "SequelGame", "Un seguito sviluppato da uno studio diverso"),
+    ("EngineChangeSequel", "SequelGame", "Un seguito che cambia motore"),
     ("ExternalEngineGame", "VideoGame", "Un gioco fatto con un motore sviluppato da un'altra azienda"),
     ("SelfPublishedGame", "VideoGame", "Un gioco sviluppato e pubblicato dalla stessa azienda"),
     ("InHouseEngineGame", "VideoGame", "Un gioco fatto con il motore dello stesso studio"),
-    ("ReturningDirectorSequel", "VideoGame", "Un seguito con lo stesso regista del predecessore"),
+    ("ReturningDirectorSequel", "SequelGame", "Un seguito con lo stesso regista del predecessore"),
     ("DefeatedVillain", "DeceasedCharacter", "Un antagonista ucciso dal protagonista"),
     ("ReturningCharacter", "DeceasedCharacter", "Un personaggio che ricompare in un gioco uscito dopo quello in cui è stato ucciso"),
     ("ReturnAfterDeathGame", "VideoGame", "Un gioco uscito dopo la morte di un suo personaggio: prequel, linea temporale alternativa o resurrezione"),
-    ("MustPlayGame", "VideoGame", "Un gioco con almeno 95 su Metacritic"),
 ]
 
 # name, domain, range, inverse, characteristics, comment
@@ -215,8 +219,24 @@ RULES = [
     ("ReturnAfterDeath", [("victim", "?k", "?c"), ("inGame", "?k", "?g"), ("appearsIn", "?c", "?h"), ("releasedAfter", "?h", "?g")],
      [("ReturningCharacter", "?c"), ("ReturnAfterDeathGame", "?h")]),
     ("SelfPublished", [("developedBy", "?g", "?c"), ("publishedBy", "?g", "?c")], [("SelfPublishedGame", "?g")]),
-    ("MustPlay", [("metacriticScore", "?g", "?s"), ("xsd:integer", "xsd:minInclusive", 95, "?s")], [("MustPlayGame", "?g")]),
 ]
+RULE_COMMENTS = {
+    "PublisherGroup": "Il gioco appartiene al gruppo del suo editore: è il primo passo, l'editore stesso.",
+    "ParentGroup": "Se l'azienda del gruppo è controllata da un'altra, il gioco appartiene anche al gruppo di questa: si sale un livello alla volta.",
+    "ConsoleMaker": "Un gioco uscito su una console è legato al costruttore di quella console.",
+    "FirstPartyOnRivalConsole": "Un gioco del gruppo di un costruttore di console, uscito su una console fatta da un altro costruttore.",
+    "SequelByDifferentStudio": "Un seguito sviluppato da uno studio diverso da quello del capitolo precedente.",
+    "EngineChangeSequel": "Un seguito che usa un motore diverso da quello del capitolo precedente.",
+    "ExternalEngine": "Un gioco fatto con un motore sviluppato da un'azienda diversa da quella che ha sviluppato il gioco.",
+    "InHouseEngine": "Un gioco fatto con il motore sviluppato dalla stessa azienda.",
+    "ReturningDirector": "Un seguito diretto dalla stessa persona che ha diretto il capitolo precedente.",
+    "KillingEvent": "Da un'uccisione (vittima e assassino) ricava la relazione diretta: la vittima è stata uccisa dall'assassino.",
+    "DefeatedVillain": "Un antagonista ucciso dal protagonista dello stesso gioco è un cattivo sconfitto.",
+    "ReleaseOrder": "Un seguito è uscito dopo il capitolo precedente.",
+    "ReleaseOrderChain": "L'ordine di uscita risale la serie: se A è uscito dopo B e B è seguito di C, allora A è uscito dopo C.",
+    "ReturnAfterDeath": "Un personaggio ucciso in un gioco e presente in un gioco uscito dopo è un personaggio che ritorna; quel gioco è un gioco con un ritorno dopo la morte.",
+    "SelfPublished": "Un gioco sviluppato e pubblicato dalla stessa azienda.",
+}
 # fmt: on
 
 
@@ -255,6 +275,7 @@ def class_expression(g, expr):
         prop, value = args
         g.add((node, RDF.type, OWL.Restriction))
         g.add((node, OWL.onProperty, VG[prop]))
+        # un individuo ("company/Nintendo") oppure un valore di dato
         g.add((node, OWL.hasValue, Literal(value)))
     elif op == "min":
         n, prop, cls = args
@@ -329,7 +350,14 @@ def schema():
     g.add((BASE.ontology, RDFS.label, Literal("Videogiochi: schema")))
     for name, comment in TOP:
         add_class(g, name, None, comment)
+    fired_by = {}
+    for rule, _, head in RULES:
+        for atom in head:
+            if len(atom) == 1 + 1:
+                fired_by.setdefault(atom[0], []).append(rule)
     for name, parent, comment in PRIMITIVE + RULE_TARGETS:
+        if name in fired_by:
+            comment += f". Si popola con la regola SWRL {', '.join(fired_by[name])}"
         add_class(g, name, parent, comment)
     for name, parent, comment, definition in DEFINED:
         assert (
@@ -420,6 +448,18 @@ def rules():
             for arg in atom[1:]:
                 if isinstance(arg, str) and arg.startswith("?"):
                     g.add((VAR[arg[1:]], RDF.type, SWRL.Variable))
+    # le regole ridichiarano le entità che usano: Protégé non traduce gli atomi di quelle che non riconosce
+    data_props = {p[0] for p in DATA_PROPS}
+    for _, body, head in RULES:
+        for pred, *args in body + head:
+            if pred == "differentFrom" or pred.startswith("xsd:"):
+                continue
+            kind = (
+                OWL.Class
+                if len(args) == 1
+                else OWL.DatatypeProperty if pred in data_props else OWL.ObjectProperty
+            )
+            g.add((VG[pred], RDF.type, kind))
     for name, body, head in RULES:
         g.add((VAR[name], RDF.type, SWRL.Imp))
         g.add((VAR[name], RDFS.label, Literal(name)))
@@ -427,7 +467,7 @@ def rules():
             (
                 VAR[name],
                 RDFS.comment,
-                Literal(f"{rule_text(body)} -> {rule_text(head)}"),
+                Literal(RULE_COMMENTS[name]),
             )
         )
         g.add(
@@ -437,6 +477,44 @@ def rules():
             (VAR[name], SWRL.head, swrl_atom_list(g, [swrl_atom(g, *a) for a in head]))
         )
     return g
+
+
+def rules_ofn():
+    """Le stesse regole in sintassi funzionale OWL: è il formato che Protégé legge sicuramente, con atomi."""
+    data_props = {p[0] for p in DATA_PROPS}
+    iri = "<http://www.videogame-ontology.org/ontology/regole#{}>"
+
+    def atom(pred, *args):
+        v = [f"Variable({iri.format(a[1:])})" for a in args if str(a).startswith("?")]
+        if pred == "differentFrom":
+            return f"DifferentIndividualsAtom({' '.join(v)})"
+        if pred.startswith("xsd:"):
+            facet = f'DatatypeRestriction({pred} {args[0]} "{args[1]}"^^{pred})'
+            return f"DataRangeAtom({facet} {v[0]})"
+        if len(args) == 1:
+            return f"ClassAtom(:{pred} {v[0]})"
+        kind = "DataPropertyAtom" if pred in data_props else "ObjectPropertyAtom"
+        return f"{kind}(:{pred} {' '.join(v)})"
+
+    lines = [
+        "Prefix(:=<http://www.videogame-ontology.org/ontology#>)",
+        "Prefix(owl:=<http://www.w3.org/2002/07/owl#>)",
+        "Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)",
+        "Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)",
+        "",
+        "Ontology(<http://www.videogame-ontology.org/ontology/regole>",
+        "Import(<http://www.videogame-ontology.org/ontology>)",
+        'Annotation(rdfs:label "Videogiochi: regole SWRL")',
+        "",
+    ]
+    for name, body, head in RULES:
+        text = RULE_COMMENTS[name]
+        lines.append(
+            f'DLSafeRule(Annotation(rdfs:label "{name}") Annotation(rdfs:comment "{text}")'
+        )
+        lines.append(f"  Body({' '.join(atom(*a) for a in body)})")
+        lines.append(f"  Head({' '.join(atom(*a) for a in head)}))")
+    return "\n".join(lines + [")", ""])
 
 
 FACETS = {
@@ -641,6 +719,7 @@ def appendix(games):
 def main():
     for name, graph in {"schema.ttl": schema(), "regole.ttl": rules()}.items():
         graph.serialize(destination=HERE / name, format="turtle")
+    (HERE / "regole.ofn").write_text(rules_ofn(), encoding="utf-8")
     games = game_rows() if (HERE / "dati.ttl").exists() else []
     (HERE / "relazione" / "appendice.tex").write_text(appendix(games), encoding="utf-8")
     numbers = {"Giochi": len(games)} if games else {}

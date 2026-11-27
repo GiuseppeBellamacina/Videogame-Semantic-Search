@@ -39,17 +39,17 @@ vg:ClassicStillPlayable a owl:Class ;
 
 vg:DefeatedVillain a owl:Class ;
     rdfs:label "DefeatedVillain" ;
-    rdfs:comment "Un antagonista ucciso dal protagonista" ;
+    rdfs:comment "Un antagonista ucciso dal protagonista. Si popola con la regola SWRL DefeatedVillain" ;
     rdfs:subClassOf vg:DeceasedCharacter .
 
 vg:EngineChangeSequel a owl:Class ;
     rdfs:label "EngineChangeSequel" ;
-    rdfs:comment "Un seguito che cambia motore" ;
-    rdfs:subClassOf vg:VideoGame .
+    rdfs:comment "Un seguito che cambia motore. Si popola con la regola SWRL EngineChangeSequel" ;
+    rdfs:subClassOf vg:SequelGame .
 
 vg:ExternalEngineGame a owl:Class ;
     rdfs:label "ExternalEngineGame" ;
-    rdfs:comment "Un gioco fatto con un motore sviluppato da un'altra azienda" ;
+    rdfs:comment "Un gioco fatto con un motore sviluppato da un'altra azienda. Si popola con la regola SWRL ExternalEngine" ;
     rdfs:subClassOf vg:VideoGame .
 
 vg:FantasyViolenceGame a owl:Class ;
@@ -62,21 +62,10 @@ vg:FantasyViolenceGame a owl:Class ;
                                 owl:onDatatype xsd:integer ;
                                 owl:withRestrictions ( [ xsd:maxInclusive 12 ] ) ] ] ) ] .
 
-vg:FirstPartyGame a owl:Class ;
-    rdfs:label "FirstPartyGame" ;
-    rdfs:comment "Un gioco pubblicato da un costruttore di console o da una sua controllata" ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:publishedBy ;
-                        owl:someValuesFrom [ a owl:Class ;
-                                owl:unionOf ( vg:PlatformHolder [ a owl:Restriction ;
-                                            owl:onProperty vg:subsidiaryOf ;
-                                            owl:someValuesFrom vg:PlatformHolder ] ) ] ] ) ] .
-
 vg:FirstPartyOnRivalConsole a owl:Class ;
     rdfs:label "FirstPartyOnRivalConsole" ;
-    rdfs:comment "Un gioco first-party uscito su una console di un altro costruttore" ;
-    rdfs:subClassOf vg:VideoGame .
+    rdfs:comment "Un gioco first-party uscito su una console di un altro costruttore. Si popola con la regola SWRL FirstPartyOnRivalConsole" ;
+    rdfs:subClassOf vg:FirstPartyGame .
 
 vg:FirstPartyStudio a owl:Class ;
     rdfs:label "FirstPartyStudio" ;
@@ -115,7 +104,7 @@ vg:HistoricalGame a owl:Class ;
 
 vg:InHouseEngineGame a owl:Class ;
     rdfs:label "InHouseEngineGame" ;
-    rdfs:comment "Un gioco fatto con il motore dello stesso studio" ;
+    rdfs:comment "Un gioco fatto con il motore dello stesso studio. Si popola con la regola SWRL InHouseEngine" ;
     rdfs:subClassOf vg:VideoGame .
 
 vg:LongRunningFranchise a owl:Class ;
@@ -138,7 +127,12 @@ vg:MultipleKiller a owl:Class ;
 vg:MustPlayGame a owl:Class ;
     rdfs:label "MustPlayGame" ;
     rdfs:comment "Un gioco con almeno 95 su Metacritic" ;
-    rdfs:subClassOf vg:VideoGame .
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:metacriticScore ;
+                        owl:someValuesFrom [ a rdfs:Datatype ;
+                                owl:onDatatype xsd:integer ;
+                                owl:withRestrictions ( [ xsd:minInclusive 95 ] ) ] ] ) ] .
 
 vg:Pegi12Game a owl:Class ;
     rdfs:label "Pegi12Game" ;
@@ -269,18 +263,18 @@ vg:Remaster a owl:Class ;
 
 vg:ReturnAfterDeathGame a owl:Class ;
     rdfs:label "ReturnAfterDeathGame" ;
-    rdfs:comment "Un gioco uscito dopo la morte di un suo personaggio: prequel, linea temporale alternativa o resurrezione" ;
+    rdfs:comment "Un gioco uscito dopo la morte di un suo personaggio: prequel, linea temporale alternativa o resurrezione. Si popola con la regola SWRL ReturnAfterDeath" ;
     rdfs:subClassOf vg:VideoGame .
 
 vg:ReturningCharacter a owl:Class ;
     rdfs:label "ReturningCharacter" ;
-    rdfs:comment "Un personaggio che ricompare in un gioco uscito dopo quello in cui è stato ucciso" ;
+    rdfs:comment "Un personaggio che ricompare in un gioco uscito dopo quello in cui è stato ucciso. Si popola con la regola SWRL ReturnAfterDeath" ;
     rdfs:subClassOf vg:DeceasedCharacter .
 
 vg:ReturningDirectorSequel a owl:Class ;
     rdfs:label "ReturningDirectorSequel" ;
-    rdfs:comment "Un seguito con lo stesso regista del predecessore" ;
-    rdfs:subClassOf vg:VideoGame .
+    rdfs:comment "Un seguito con lo stesso regista del predecessore. Si popola con la regola SWRL ReturningDirector" ;
+    rdfs:subClassOf vg:SequelGame .
 
 vg:RogueAI a owl:Class ;
     rdfs:label "RogueAI" ;
@@ -299,7 +293,7 @@ vg:SciFiGame a owl:Class ;
 
 vg:SelfPublishedGame a owl:Class ;
     rdfs:label "SelfPublishedGame" ;
-    rdfs:comment "Un gioco sviluppato e pubblicato dalla stessa azienda" ;
+    rdfs:comment "Un gioco sviluppato e pubblicato dalla stessa azienda. Si popola con la regola SWRL SelfPublished" ;
     rdfs:subClassOf vg:VideoGame .
 
 vg:TransmediaFranchise a owl:Class ;
@@ -334,11 +328,6 @@ vg:hasSequel a owl:ObjectProperty ;
 vg:madeWith a owl:ObjectProperty ;
     rdfs:domain vg:VideoGame ;
     rdfs:range vg:GameEngine .
-
-vg:metacriticScore a owl:DatatypeProperty,
-        owl:FunctionalProperty ;
-    rdfs:domain vg:VideoGame ;
-    rdfs:range xsd:integer .
 
 vg:onConsoleOf a owl:ObjectProperty ;
     rdfs:comment "Derivata dalle regole: il costruttore di una console su cui esce il gioco" ;
@@ -397,6 +386,17 @@ vg:FictionalOrganization a owl:Class ;
     rdfs:label "FictionalOrganization" ;
     rdfs:comment "Un'organizzazione del mondo di gioco (per esempio Aperture Science)" .
 
+vg:FirstPartyGame a owl:Class ;
+    rdfs:label "FirstPartyGame" ;
+    rdfs:comment "Un gioco pubblicato da un costruttore di console o da una sua controllata" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:publishedBy ;
+                        owl:someValuesFrom [ a owl:Class ;
+                                owl:unionOf ( vg:PlatformHolder [ a owl:Restriction ;
+                                            owl:onProperty vg:subsidiaryOf ;
+                                            owl:someValuesFrom vg:PlatformHolder ] ) ] ] ) ] .
+
 vg:GameDirector a owl:Class ;
     rdfs:label "GameDirector" ;
     rdfs:comment "Chi ha diretto almeno un gioco" ;
@@ -436,6 +436,11 @@ vg:LateEntry a owl:Class ;
                                 owl:onProperty vg:sequelOf ;
                                 owl:someValuesFrom vg:VideoGame ] ] ) ] .
 
+vg:NintendoConsole a owl:Class ;
+    rdfs:label "NintendoConsole" ;
+    rdfs:comment "Una console Nintendo" ;
+    rdfs:subClassOf vg:ConsolePlatform .
+
 vg:Novel a owl:Class ;
     rdfs:label "Novel" ;
     rdfs:comment "Un romanzo" ;
@@ -446,18 +451,15 @@ vg:PCPlatform a owl:Class ;
     rdfs:comment "Un personal computer" ;
     rdfs:subClassOf vg:Platform .
 
+vg:PlayStationConsole a owl:Class ;
+    rdfs:label "PlayStationConsole" ;
+    rdfs:comment "Una console PlayStation" ;
+    rdfs:subClassOf vg:ConsolePlatform .
+
 vg:SequelByDifferentStudio a owl:Class ;
     rdfs:label "SequelByDifferentStudio" ;
-    rdfs:comment "Un seguito sviluppato da uno studio diverso" ;
-    rdfs:subClassOf vg:VideoGame .
-
-vg:SequelGame a owl:Class ;
-    rdfs:label "SequelGame" ;
-    rdfs:comment "Il seguito di un altro gioco" ;
-    owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
-                        owl:onProperty vg:sequelOf ;
-                        owl:someValuesFrom vg:VideoGame ] ) ] .
+    rdfs:comment "Un seguito sviluppato da uno studio diverso. Si popola con la regola SWRL SequelByDifferentStudio" ;
+    rdfs:subClassOf vg:SequelGame .
 
 vg:StillPlayable a owl:Class ;
     rdfs:label "StillPlayable" ;
@@ -479,6 +481,11 @@ vg:TabletopGame a owl:Class ;
     rdfs:label "TabletopGame" ;
     rdfs:comment "Un gioco da tavolo o di ruolo cartaceo" ;
     rdfs:subClassOf vg:CreativeWork .
+
+vg:XboxConsole a owl:Class ;
+    rdfs:label "XboxConsole" ;
+    rdfs:comment "Una console Xbox" ;
+    rdfs:subClassOf vg:ConsolePlatform .
 
 vg:adaptedInto a owl:ObjectProperty ;
     rdfs:domain vg:Franchise ;
@@ -564,6 +571,11 @@ vg:manufacturerOf a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
         owl:ObjectProperty ;
     owl:inverseOf vg:manufacturedBy .
+
+vg:metacriticScore a owl:DatatypeProperty,
+        owl:FunctionalProperty ;
+    rdfs:domain vg:VideoGame ;
+    rdfs:range xsd:integer .
 
 vg:playableIn a owl:ObjectProperty ;
     rdfs:comment "Il personaggio è controllato dal giocatore in quel gioco" ;
@@ -748,16 +760,19 @@ vg:PlatformHolder a owl:Class ;
                         owl:onProperty vg:manufacturerOf ;
                         owl:someValuesFrom vg:ConsolePlatform ] ) ] .
 
+vg:SequelGame a owl:Class ;
+    rdfs:label "SequelGame" ;
+    rdfs:comment "Il seguito di un altro gioco" ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;
+                        owl:onProperty vg:sequelOf ;
+                        owl:someValuesFrom vg:VideoGame ] ) ] .
+
 vg:sequelOf a owl:ObjectProperty,
         owl:TransitiveProperty ;
     rdfs:comment "Asserita solo verso il predecessore diretto" ;
     rdfs:domain vg:VideoGame ;
     rdfs:range vg:VideoGame .
-
-vg:ConsolePlatform a owl:Class ;
-    rdfs:label "ConsolePlatform" ;
-    rdfs:comment "Una console" ;
-    rdfs:subClassOf vg:Platform .
 
 vg:appearsIn a owl:AsymmetricProperty,
         owl:IrreflexiveProperty,
@@ -781,6 +796,11 @@ vg:pegiRating a owl:DatatypeProperty,
         owl:FunctionalProperty ;
     rdfs:domain vg:VideoGame ;
     rdfs:range xsd:integer .
+
+vg:ConsolePlatform a owl:Class ;
+    rdfs:label "ConsolePlatform" ;
+    rdfs:comment "Una console" ;
+    rdfs:subClassOf vg:Platform .
 
 vg:CreativeWork a owl:Class ;
     rdfs:label "CreativeWork" ;
@@ -808,6 +828,9 @@ vg:VideoGame a owl:Class ;
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:ConsolePlatform vg:PCPlatform ) .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( vg:PlayStationConsole vg:XboxConsole vg:NintendoConsole ) .
 
 [] a owl:AllDisjointClasses ;
     owl:members ( vg:Novel vg:Film vg:TVSeries vg:Comic vg:TabletopGame ) .

@@ -4,7 +4,6 @@
 @prefix swrl: <http://www.w3.org/2003/11/swrl#> .
 @prefix var: <http://www.videogame-ontology.org/ontology/regole#> .
 @prefix vg: <http://www.videogame-ontology.org/ontology#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://www.videogame-ontology.org/ontology/regole> a owl:Ontology ;
     rdfs:label "Videogiochi: regole SWRL" ;
@@ -12,7 +11,7 @@
 
 var:ConsoleMaker a swrl:Imp ;
     rdfs:label "ConsoleMaker" ;
-    rdfs:comment "availableOn(?g, ?p) ^ ConsolePlatform(?p) ^ manufacturedBy(?p, ?m) -> onConsoleOf(?g, ?m)" ;
+    rdfs:comment "Un gioco uscito su una console è legato al costruttore di quella console." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:g ;
@@ -37,7 +36,7 @@ var:ConsoleMaker a swrl:Imp ;
 
 var:DefeatedVillain a swrl:Imp ;
     rdfs:label "DefeatedVillain" ;
-    rdfs:comment "antagonistOf(?v, ?g) ^ protagonistOf(?h, ?g) ^ killedBy(?v, ?h) -> DefeatedVillain(?v)" ;
+    rdfs:comment "Un antagonista ucciso dal protagonista dello stesso gioco è un cattivo sconfitto." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:v ;
@@ -62,7 +61,7 @@ var:DefeatedVillain a swrl:Imp ;
 
 var:EngineChangeSequel a swrl:Imp ;
     rdfs:label "EngineChangeSequel" ;
-    rdfs:comment "sequelOf(?a, ?b) ^ madeWith(?a, ?x) ^ madeWith(?b, ?y) ^ differentFrom(?x, ?y) -> EngineChangeSequel(?a)" ;
+    rdfs:comment "Un seguito che usa un motore diverso da quello del capitolo precedente." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:a ;
@@ -91,7 +90,7 @@ var:EngineChangeSequel a swrl:Imp ;
 
 var:ExternalEngine a swrl:Imp ;
     rdfs:label "ExternalEngine" ;
-    rdfs:comment "madeWith(?g, ?e) ^ engineDevelopedBy(?e, ?m) ^ developedBy(?g, ?d) ^ differentFrom(?m, ?d) -> ExternalEngineGame(?g)" ;
+    rdfs:comment "Un gioco fatto con un motore sviluppato da un'azienda diversa da quella che ha sviluppato il gioco." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:g ;
@@ -120,7 +119,7 @@ var:ExternalEngine a swrl:Imp ;
 
 var:FirstPartyOnRivalConsole a swrl:Imp ;
     rdfs:label "FirstPartyOnRivalConsole" ;
-    rdfs:comment "publishedByGroup(?g, ?h) ^ PlatformHolder(?h) ^ onConsoleOf(?g, ?m) ^ differentFrom(?h, ?m) -> FirstPartyOnRivalConsole(?g)" ;
+    rdfs:comment "Un gioco del gruppo di un costruttore di console, uscito su una console fatta da un altro costruttore." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:g ;
@@ -148,7 +147,7 @@ var:FirstPartyOnRivalConsole a swrl:Imp ;
 
 var:InHouseEngine a swrl:Imp ;
     rdfs:label "InHouseEngine" ;
-    rdfs:comment "madeWith(?g, ?e) ^ engineDevelopedBy(?e, ?d) ^ developedBy(?g, ?d) -> InHouseEngineGame(?g)" ;
+    rdfs:comment "Un gioco fatto con il motore sviluppato dalla stessa azienda." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:g ;
@@ -173,7 +172,7 @@ var:InHouseEngine a swrl:Imp ;
 
 var:KillingEvent a swrl:Imp ;
     rdfs:label "KillingEvent" ;
-    rdfs:comment "victim(?k, ?v) ^ killer(?k, ?a) -> killedBy(?v, ?a)" ;
+    rdfs:comment "Da un'uccisione (vittima e assassino) ricava la relazione diretta: la vittima è stata uccisa dall'assassino." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:k ;
@@ -192,30 +191,9 @@ var:KillingEvent a swrl:Imp ;
                     swrl:propertyPredicate vg:killedBy ] ;
             rdf:rest () ] .
 
-var:MustPlay a swrl:Imp ;
-    rdfs:label "MustPlay" ;
-    rdfs:comment "metacriticScore(?g, ?s) ^ xsd:integer[>= 95](?s) -> MustPlayGame(?g)" ;
-    swrl:body [ a swrl:AtomList ;
-            rdf:first [ a swrl:DatavaluedPropertyAtom ;
-                    swrl:argument1 var:g ;
-                    swrl:argument2 var:s ;
-                    swrl:propertyPredicate vg:metacriticScore ] ;
-            rdf:rest [ a swrl:AtomList ;
-                    rdf:first [ a swrl:DataRangeAtom ;
-                            swrl:argument1 var:s ;
-                            swrl:dataRange [ a rdfs:Datatype ;
-                                    owl:onDatatype xsd:integer ;
-                                    owl:withRestrictions ( [ xsd:minInclusive 95 ] ) ] ] ;
-                    rdf:rest () ] ] ;
-    swrl:head [ a swrl:AtomList ;
-            rdf:first [ a swrl:ClassAtom ;
-                    swrl:argument1 var:g ;
-                    swrl:classPredicate vg:MustPlayGame ] ;
-            rdf:rest () ] .
-
 var:ParentGroup a swrl:Imp ;
     rdfs:label "ParentGroup" ;
-    rdfs:comment "publishedByGroup(?g, ?c) ^ subsidiaryOf(?c, ?p) -> publishedByGroup(?g, ?p)" ;
+    rdfs:comment "Se l'azienda del gruppo è controllata da un'altra, il gioco appartiene anche al gruppo di questa: si sale un livello alla volta." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:g ;
@@ -236,7 +214,7 @@ var:ParentGroup a swrl:Imp ;
 
 var:PublisherGroup a swrl:Imp ;
     rdfs:label "PublisherGroup" ;
-    rdfs:comment "publishedBy(?g, ?c) -> publishedByGroup(?g, ?c)" ;
+    rdfs:comment "Il gioco appartiene al gruppo del suo editore: è il primo passo, l'editore stesso." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:g ;
@@ -252,7 +230,7 @@ var:PublisherGroup a swrl:Imp ;
 
 var:ReleaseOrder a swrl:Imp ;
     rdfs:label "ReleaseOrder" ;
-    rdfs:comment "sequelOf(?a, ?b) -> releasedAfter(?a, ?b)" ;
+    rdfs:comment "Un seguito è uscito dopo il capitolo precedente." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:a ;
@@ -268,7 +246,7 @@ var:ReleaseOrder a swrl:Imp ;
 
 var:ReleaseOrderChain a swrl:Imp ;
     rdfs:label "ReleaseOrderChain" ;
-    rdfs:comment "releasedAfter(?a, ?b) ^ sequelOf(?b, ?c) -> releasedAfter(?a, ?c)" ;
+    rdfs:comment "L'ordine di uscita risale la serie: se A è uscito dopo B e B è seguito di C, allora A è uscito dopo C." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:a ;
@@ -289,7 +267,7 @@ var:ReleaseOrderChain a swrl:Imp ;
 
 var:ReturnAfterDeath a swrl:Imp ;
     rdfs:label "ReturnAfterDeath" ;
-    rdfs:comment "victim(?k, ?c) ^ inGame(?k, ?g) ^ appearsIn(?c, ?h) ^ releasedAfter(?h, ?g) -> ReturningCharacter(?c) ^ ReturnAfterDeathGame(?h)" ;
+    rdfs:comment "Un personaggio ucciso in un gioco e presente in un gioco uscito dopo è un personaggio che ritorna; quel gioco è un gioco con un ritorno dopo la morte." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:k ;
@@ -323,7 +301,7 @@ var:ReturnAfterDeath a swrl:Imp ;
 
 var:ReturningDirector a swrl:Imp ;
     rdfs:label "ReturningDirector" ;
-    rdfs:comment "sequelOf(?a, ?b) ^ directedBy(?a, ?p) ^ directedBy(?b, ?p) -> ReturningDirectorSequel(?a)" ;
+    rdfs:comment "Un seguito diretto dalla stessa persona che ha diretto il capitolo precedente." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:a ;
@@ -348,7 +326,7 @@ var:ReturningDirector a swrl:Imp ;
 
 var:SelfPublished a swrl:Imp ;
     rdfs:label "SelfPublished" ;
-    rdfs:comment "developedBy(?g, ?c) ^ publishedBy(?g, ?c) -> SelfPublishedGame(?g)" ;
+    rdfs:comment "Un gioco sviluppato e pubblicato dalla stessa azienda." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:g ;
@@ -368,7 +346,7 @@ var:SelfPublished a swrl:Imp ;
 
 var:SequelByDifferentStudio a swrl:Imp ;
     rdfs:label "SequelByDifferentStudio" ;
-    rdfs:comment "sequelOf(?a, ?b) ^ developedBy(?a, ?x) ^ developedBy(?b, ?y) ^ differentFrom(?x, ?y) -> SequelByDifferentStudio(?a)" ;
+    rdfs:comment "Un seguito sviluppato da uno studio diverso da quello del capitolo precedente." ;
     swrl:body [ a swrl:AtomList ;
             rdf:first [ a swrl:IndividualPropertyAtom ;
                     swrl:argument1 var:a ;
@@ -395,7 +373,63 @@ var:SequelByDifferentStudio a swrl:Imp ;
                     swrl:classPredicate vg:SequelByDifferentStudio ] ;
             rdf:rest () ] .
 
-var:s a swrl:Variable .
+vg:ConsolePlatform a owl:Class .
+
+vg:DefeatedVillain a owl:Class .
+
+vg:EngineChangeSequel a owl:Class .
+
+vg:ExternalEngineGame a owl:Class .
+
+vg:FirstPartyOnRivalConsole a owl:Class .
+
+vg:InHouseEngineGame a owl:Class .
+
+vg:PlatformHolder a owl:Class .
+
+vg:ReturnAfterDeathGame a owl:Class .
+
+vg:ReturningCharacter a owl:Class .
+
+vg:ReturningDirectorSequel a owl:Class .
+
+vg:SelfPublishedGame a owl:Class .
+
+vg:SequelByDifferentStudio a owl:Class .
+
+vg:antagonistOf a owl:ObjectProperty .
+
+vg:appearsIn a owl:ObjectProperty .
+
+vg:availableOn a owl:ObjectProperty .
+
+vg:inGame a owl:ObjectProperty .
+
+vg:killer a owl:ObjectProperty .
+
+vg:manufacturedBy a owl:ObjectProperty .
+
+vg:protagonistOf a owl:ObjectProperty .
+
+vg:subsidiaryOf a owl:ObjectProperty .
+
+vg:directedBy a owl:ObjectProperty .
+
+vg:engineDevelopedBy a owl:ObjectProperty .
+
+vg:killedBy a owl:ObjectProperty .
+
+vg:onConsoleOf a owl:ObjectProperty .
+
+vg:publishedBy a owl:ObjectProperty .
+
+vg:victim a owl:ObjectProperty .
+
+vg:madeWith a owl:ObjectProperty .
+
+vg:publishedByGroup a owl:ObjectProperty .
+
+vg:releasedAfter a owl:ObjectProperty .
 
 var:d a swrl:Variable .
 
@@ -406,6 +440,10 @@ var:k a swrl:Variable .
 var:x a swrl:Variable .
 
 var:y a swrl:Variable .
+
+vg:developedBy a owl:ObjectProperty .
+
+vg:sequelOf a owl:ObjectProperty .
 
 var:v a swrl:Variable .
 

@@ -1,4 +1,5 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix platform: <http://www.videogame-ontology.org/ontology#platform/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix vg: <http://www.videogame-ontology.org/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -8,13 +9,13 @@ vg:Splatoon_2 a [ a owl:Restriction ;
             owl:onProperty vg:availableOn ],
         vg:VideoGame ;
     rdfs:label "Splatoon 2" ;
-    vg:availableOn <http://www.videogame-ontology.org/ontology#platform/Nintendo_NX>,
-        <http://www.videogame-ontology.org/ontology#platform/Nintendo_Switch> .
+    vg:availableOn platform:Nintendo_NX,
+        platform:Nintendo_Switch .
 
 <http://www.videogame-ontology.org/ontology/test/sameas> a owl:Ontology ;
     rdfs:comment "Atteso: consistente; il reasoner deduce NX = Nintendo Switch (NX è il nome in codice della Switch)" ;
     owl:imports <http://www.videogame-ontology.org/ontology/dati>,
         <http://www.videogame-ontology.org/ontology/regole> .
 
-<http://www.videogame-ontology.org/ontology#platform/Nintendo_NX> rdfs:label "NX" .
+platform:Nintendo_NX rdfs:label "NX" .
 

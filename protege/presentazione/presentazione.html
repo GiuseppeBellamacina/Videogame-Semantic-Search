@@ -715,6 +715,35 @@
         text-transform: uppercase;
         color: var(--muted);
       }
+      .ttlbox {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        bottom: 48px;
+        max-height: 250px;
+        overflow: auto;
+        z-index: 6;
+        font-size: 12.5px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+        cursor: pointer;
+      }
+      .ttlbox[hidden] {
+        display: none;
+      }
+      .rchip.ttl {
+        cursor: pointer;
+        text-decoration: underline dotted;
+      }
+      tr.pick {
+        cursor: pointer;
+      }
+      tr.pick:hover td {
+        background: var(--soft);
+      }
+      tr.pick.on td {
+        background: var(--soft);
+        font-weight: 600;
+      }
       .rchip {
         font-size: 10.5px;
         padding: 1px 6px;
@@ -795,86 +824,80 @@
 
       <!-- 2 -->
       <section class="slide">
-        <div class="kicker">La storia</div>
-        <h2>Undici passi, dal semplice al complesso</h2>
+        <div class="kicker">I numeri</div>
+        <h2>L'ontologia in numeri</h2>
         <p class="lead">
-          Ogni passo aggiunge un'idea a quelle di prima. Molte diapositive sono
-          interattive: puoi togliere un fatto e guardare il reasoner cambiare
-          idea.
+          Pochi fatti scritti, molti dedotti: per ogni fatto che mettiamo nei
+          dati, il reasoner ne aggiunge uno da solo.
         </p>
-        <div class="body" style="flex-direction: column; gap: 0">
-          <div class="story">
-            <div>
-              <span
-                >Le domande<small
-                  >a cosa serve un'ontologia dei videogiochi</small
-                ></span
-              >
+        <div class="body">
+          <div class="col stack" style="flex: 0.9">
+            <div class="grid3" style="gap: 18px 22px">
+              <div class="stat">
+                <div class="big">95</div>
+                <span>giochi, più 28 nuove edizioni</span>
+              </div>
+              <div class="stat">
+                <div class="big">330</div>
+                <span>personaggi</span>
+              </div>
+              <div class="stat">
+                <div class="big">125</div>
+                <span>uccisioni raccontate</span>
+              </div>
+              <div class="stat">
+                <div class="big">51</div>
+                <span>aziende</span>
+              </div>
+              <div class="stat">
+                <div class="big">30</div>
+                <span>piattaforme</span>
+              </div>
+              <div class="stat">
+                <div class="big">14</div>
+                <span>motori di gioco</span>
+              </div>
             </div>
-            <div>
-              <span
-                >Una frase di tre parole<small
-                  >la tripla, l'unità dei dati</small
-                ></span
-              >
+            <div class="card">
+              <h3>Lo schema</h3>
+              <p>
+                <b>81 classi</b>, di cui 46 definite, <b>48 proprietà</b> e
+                <b>15 regole</b> SWRL.
+              </p>
             </div>
-            <div>
-              <span
-                >Dare un nome alle cose<small
-                  >le classi e la disgiunzione</small
-                ></span
-              >
-            </div>
-            <div>
-              <span
-                >Collegare le cose<small
-                  >le caratteristiche, in sintesi</small
-                ></span
-              >
-            </div>
-            <div>
-              <span
-                >Le proprietà, una per una<small
-                  >dominio, inversa, catena, funzionale, disgiunzione, chiave ·
-                  <b>interattive</b></small
-                ></span
-              >
-            </div>
-            <div>
-              <span
-                >Il reasoner al lavoro<small
-                  >da un solo fatto, tre conclusioni · <b>interattiva</b></small
-                ></span
-              >
-            </div>
-            <div>
-              <span>Dare un significato<small>le classi definite</small></span>
-            </div>
-            <div>
-              <span
-                >Le restrizioni<small
-                  >cardinalità, valore, unione · <b>interattiva</b></small
-                ></span
-              >
-            </div>
-            <div>
-              <span
-                >Catene, serie e numeri<small
-                  >quattro modi di ragionare · <b>interattiva</b></small
-                ></span
-              >
-            </div>
-            <div>
-              <span
-                >Quando una classe non basta<small>le regole SWRL</small></span
-              >
-            </div>
-            <div>
-              <span
-                >Tutto insieme: Fallout 4<small
-                  >una catena di deduzioni · <b>interattiva</b></small
-                ></span
-              >
+          </div>
+          <div class="col" style="flex: 1.1">
+            <p
+              style="
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: 1.3px;
+                text-transform: uppercase;
+                color: var(--muted);
+                margin-bottom: 10px;
+              "
+            >
+              Triple RDF: scritte e dedotte
+            </p>
+            <svg viewBox="0 0 560 250" width="100%" height="250">
+              <g font-size="14" fill="#1a1a1c">
+                <text x="0" y="22">Dati scritti</text>
+                <rect x="0" y="30" width="360" height="30" fill="#5b574d" />
+                <text x="368" y="52" font-weight="600">5 541</text>
+
+                <text x="0" y="104">Schema e regole</text>
+                <rect x="0" y="112" width="101" height="30" fill="#26565c" />
+                <text x="108" y="134" font-weight="600">1 554</text>
+
+                <text x="0" y="186">Dedotto dal reasoner</text>
+                <rect x="0" y="194" width="348" height="30" fill="#2f5f9e" />
+                <text x="356" y="216" font-weight="600">circa 5 300</text>
+              </g>
+            </svg>
+            <div class="note" style="margin-top: 10px">
+              In tutto circa 12 400 triple: 7 100 scritte (dati, schema e regole) e circa 5 300 dedotte. Dei fatti dedotti, circa 1 400 sono tipi nuovi (<i>Antagonist</i>,
+              <i>DeceasedCharacter</i>, <i>LateEntry</i>…) e gli altri sono
+              relazioni nuove: inverse, serie, gruppi, uccisioni.
             </div>
           </div>
         </div>
@@ -882,73 +905,6 @@
       </section>
 
       <!-- 3 -->
-      <section class="slide">
-        <div class="kicker">Le domande</div>
-        <h2>I fatti ci sono, le risposte no</h2>
-        <p class="lead">
-          Wikipedia e Wikidata dicono chi ha sviluppato un gioco e su che
-          console è uscito. Le cose interessanti non sono scritte in nessun
-          posto: si possono solo <b>dedurre</b>.
-        </p>
-        <div class="body">
-          <div class="col">
-            <p
-              style="
-                font-size: 14px;
-                font-family: var(--mono);
-                color: var(--muted);
-                margin-bottom: 10px;
-                letter-spacing: 1px;
-              "
-            >
-              DOMANDE DI COMPETENZA
-            </p>
-            <ul class="b sm">
-              <li>
-                Quali giochi sono <b>first-party</b>, cioè pubblicati da chi
-                costruisce console?
-              </li>
-              <li>
-                Quali giochi sono fatti da uno studio fondato da
-                <b>veterani</b> della serie?
-              </li>
-              <li>Quali serie sono lunghe, passate di mano, diventate film?</li>
-              <li>Quali personaggi muoiono, e chi li uccide?</li>
-              <li>
-                Quali giochi raccontano una storia <b>violenta</b>, e la
-                violenza è realistica?
-              </li>
-              <li>
-                Quali classici si possono ancora giocare su una console di oggi?
-              </li>
-            </ul>
-          </div>
-          <div class="col stack">
-            <div class="card">
-              <h3>Un esempio</h3>
-              <p>
-                <i>Mass Effect</i> (2007) è un gioco Microsoft uscito anche su
-                una console Sony. Nei dati ci sono solo l'editore, le sue
-                società madri e le piattaforme: che sia first-party su una
-                console rivale lo deve <b>capire il reasoner</b>, mettendo
-                insieme fatti sparsi.
-              </p>
-            </div>
-            <div class="card">
-              <h3>Il nostro dataset</h3>
-              <p>
-                <b>95 giochi</b>: undici serie (Zelda, Super Mario, GTA,
-                Assassin's Creed, Fallout, Halo, Far Cry, The Witcher, Mass
-                Effect, Dark Souls, Portal) e sei titoli singoli, con dati da
-                Wikidata e dalla trama di Wikipedia.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="foot"><span>Videogame Ontology</span><span>3</span></div>
-      </section>
-
-      <!-- 4 -->
       <section class="slide">
         <div class="kicker">Il mattone</div>
         <h2>Una frase di tre parole</h2>
@@ -1075,10 +1031,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
             </div>
           </div>
         </div>
-        <div class="foot"><span>Videogame Ontology</span><span>4</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>3</span></div>
       </section>
 
-      <!-- 5 -->
+      <!-- 4 -->
       <section class="slide">
         <div class="kicker">Le classi</div>
         <h2>Dare un nome alle cose</h2>
@@ -1091,10 +1047,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           <div class="chips" id="chips"></div>
           <div class="xp" id="xp"></div>
         </div>
-        <div class="foot"><span>Videogame Ontology</span><span>5</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>4</span></div>
       </section>
 
-      <!-- 6 -->
+      <!-- 5 -->
       <section class="slide">
         <div class="kicker">Le proprietà</div>
         <h2>Collegare le cose</h2>
@@ -1171,10 +1127,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
             In tutto 48 object property e 5 datatype property.
           </p>
         </div>
-        <div class="foot"><span>Videogame Ontology</span><span>6</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>5</span></div>
       </section>
 
-      <!-- 7 -->
+      <!-- 6 -->
       <section class="slide" data-demo="tipi">
         <div class="kicker">Le proprietà · dominio e range</div>
         <h2>Dominio e range: un tipo gratis</h2>
@@ -1185,10 +1141,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           senza tipo, ma ha uno sviluppatore.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>7</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>6</span></div>
       </section>
 
-      <!-- 8 -->
+      <!-- 7 -->
       <section class="slide" data-demo="inv">
         <div class="kicker">
           Le proprietà · inversa, transitiva, sottoproprietà
@@ -1201,10 +1157,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           generico (<code>subPropertyOf</code>).
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>8</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>7</span></div>
       </section>
 
-      <!-- 9 -->
+      <!-- 8 -->
       <section class="slide" data-demo="catena">
         <div class="kicker">Le proprietà · catena di proprietà</div>
         <h2>La catena: due archi valgono uno</h2>
@@ -1214,10 +1170,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           su una console, anche il gioco originale ci si può giocare.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>9</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>8</span></div>
       </section>
 
-      <!-- 10 -->
+      <!-- 9 -->
       <section class="slide" data-demo="funz">
         <div class="kicker">Le proprietà · funzionale</div>
         <h2>Funzionale: al più un valore</h2>
@@ -1228,10 +1184,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           INCONSISTENTE).
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>10</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>9</span></div>
       </section>
 
-      <!-- 11 -->
+      <!-- 10 -->
       <section class="slide" data-demo="asim">
         <div class="kicker">Le proprietà · asimmetrica e irriflessiva</div>
         <h2>Asimmetrica e irriflessiva</h2>
@@ -1241,10 +1197,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           (<code>IrreflexiveProperty</code>). Le usano 22 proprietà.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>11</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>10</span></div>
       </section>
 
-      <!-- 12 -->
+      <!-- 11 -->
       <section class="slide" data-demo="disg">
         <div class="kicker">Le proprietà · disgiunzione</div>
         <h2>Disgiunte: classi e proprietà</h2>
@@ -1255,10 +1211,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           stessa coppia (un remaster non è un prequel).
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>12</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>11</span></div>
       </section>
 
-      <!-- 13 -->
+      <!-- 12 -->
       <section class="slide" data-demo="chiave">
         <div class="kicker">Le proprietà · chiave e AllDifferent</div>
         <h2>Chiave e AllDifferent</h2>
@@ -1269,10 +1225,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           l'ontologia è inconsistente. Nei dati ne abbiamo sei.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>13</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>12</span></div>
       </section>
 
-      <!-- 14 -->
+      <!-- 13 -->
       <section class="slide" data-demo="zelda">
         <div class="kicker">Il reasoner al lavoro</div>
         <h2>Da un solo fatto, più conclusioni</h2>
@@ -1283,10 +1239,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           da una regola. Poi <b>togli una spunta</b> e riparti.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>14</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>13</span></div>
       </section>
 
-      <!-- 15 -->
+      <!-- 14 -->
       <section class="slide">
         <div class="kicker">Il significato</div>
         <h2>Le classi definite</h2>
@@ -1308,8 +1264,13 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
                 morto.» È quella che hai appena visto scattare.
               </p>
             </div>
+            <pre
+              class="ttl15"
+              id="ttl15"
+              style="font-size: 11.5px; max-height: 215px; overflow: auto"
+            ></pre>
             <div class="note">
-              45 delle 78 classi sono definite: nessuna ha istanze scritte a
+              46 delle 81 classi sono definite: nessuna ha istanze scritte a
               mano, si popolano per deduzione.
             </div>
           </div>
@@ -1319,37 +1280,37 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
                 <th>Costrutto</th>
                 <th>Esempio</th>
               </tr>
-              <tr>
+              <tr class="pick" data-ttl="PlatformHolder">
                 <td>ruolo da un'inversa</td>
                 <td class="mono">
                   PlatformHolder ≡ Company ⊓ ∃manufacturerOf.ConsolePlatform
                 </td>
               </tr>
-              <tr>
+              <tr class="pick" data-ttl="FirstPartyGame">
                 <td>classe su classe</td>
                 <td class="mono">
                   FirstPartyGame ≡ VideoGame ⊓ ∃publishedBy.(PlatformHolder ⊔
                   ∃subsidiaryOf.PlatformHolder)
                 </td>
               </tr>
-              <tr>
+              <tr class="pick" data-ttl="RecurringCharacter">
                 <td>cardinalità</td>
                 <td class="mono">
                   RecurringCharacter ≡ Character ⊓ ≥2 appearsIn.VideoGame
                 </td>
               </tr>
-              <tr>
+              <tr class="pick" data-ttl="Pegi18Game">
                 <td>valore di un dato</td>
                 <td class="mono">Pegi18Game ≡ VideoGame ⊓ ∃pegiRating.{18}</td>
               </tr>
-              <tr>
+              <tr class="pick" data-ttl="ClassicGame">
                 <td>intervallo di date</td>
                 <td class="mono">
                   ClassicGame ≡ VideoGame ⊓ ∃releaseDate.dateTime[&lt;
                   2005-01-01]
                 </td>
               </tr>
-              <tr>
+              <tr class="pick" data-ttl="TransmediaFranchise">
                 <td>unione</td>
                 <td class="mono">
                   TransmediaFranchise ≡ Franchise ⊓ ∃adaptedInto.(Film ⊔
@@ -1359,10 +1320,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
             </table>
           </div>
         </div>
-        <div class="foot"><span>Videogame Ontology</span><span>15</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>14</span></div>
       </section>
 
-      <!-- 16 -->
+      <!-- 15 -->
       <section class="slide" data-demo="restr">
         <div class="kicker">Il significato · restrizioni</div>
         <h2>Le restrizioni, una per una</h2>
@@ -1372,10 +1333,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           >): ogni costrutto delle classi definite, con un esempio dai dati.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>16</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>15</span></div>
       </section>
 
-      <!-- 17 -->
+      <!-- 16 -->
       <section class="slide" data-demo="serie">
         <div class="kicker">Catene, serie e numeri</div>
         <h2>Quattro ragionamenti in un colpo</h2>
@@ -1386,10 +1347,10 @@ vg:Fallout_4 <span class="k">vg:sequelOf</span>    vg:Fallout_3 .</pre>
           >). Prova a togliere il remaster.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>17</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>16</span></div>
       </section>
 
-      <!-- 18 -->
+      <!-- 17 -->
       <section class="slide">
         <div class="kicker">Quando una classe non basta</div>
         <h2>Le regole SWRL</h2>
@@ -1433,21 +1394,20 @@ victim(?k, ?v) ^ killer(?k, ?a)
               </p>
             </div>
             <p style="font-size: 13.5px; color: var(--muted); line-height: 1.5">
-              16 regole in tutto, tra cui
+              15 regole in tutto, tra cui
               <span class="mono">EngineChangeSequel</span>,
               <span class="mono">ExternalEngine</span>,
               <span class="mono">ReturningDirector</span>,
               <span class="mono">DefeatedVillain</span>,
               <span class="mono">ReturnAfterDeath</span>,
-              <span class="mono">SelfPublished</span>,
-              <span class="mono">MustPlay</span>.
+              <span class="mono">SelfPublished</span>.
             </p>
           </div>
         </div>
-        <div class="foot"><span>Videogame Ontology</span><span>18</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>17</span></div>
       </section>
 
-      <!-- 19 -->
+      <!-- 18 -->
       <section class="slide" data-demo="fallout">
         <div class="kicker">Tutto insieme</div>
         <h2>Fallout 4 su PlayStation 4</h2>
@@ -1460,10 +1420,10 @@ victim(?k, ?v) ^ killer(?k, ?a)
           >. Togli un anello della catena.
         </p>
         <div class="demo"></div>
-        <div class="foot"><span>Videogame Ontology</span><span>19</span></div>
+        <div class="foot"><span>Videogame Ontology</span><span>18</span></div>
       </section>
 
-      <!-- 20 -->
+      <!-- 19 -->
       <section class="slide title">
         <div class="kicker">Fine</div>
         <h1>Grazie</h1>
@@ -1541,10 +1501,13 @@ victim(?k, ?v) ^ killer(?k, ?a)
           [
             "ConsolePlatform",
             "PCPlatform",
+            "PlayStationConsole",
+            "XboxConsole",
+            "NintendoConsole",
             "CurrentGenerationConsole",
             "PreviousGenerationConsole",
           ],
-          "Console e PC sono disgiunti. Le marche non sono classi: si ricavano da chi costruisce la console.",
+          "Console e PC sono disgiunti, e così le marche (PlayStation, Xbox, Nintendo): classi primitive, con il tipo scritto nei dati in base a chi costruisce la console.",
         ],
         Franchise: [
           "Una serie di giochi.",
@@ -1596,6 +1559,9 @@ victim(?k, ?v) ^ killer(?k, ?a)
         "Alien",
         "ConsolePlatform",
         "PCPlatform",
+        "PlayStationConsole",
+        "XboxConsole",
+        "NintendoConsole",
         "Novel",
         "Film",
         "TVSeries",
@@ -1702,6 +1668,151 @@ victim(?k, ?v) ^ killer(?k, ?a)
       }
       const inst = (atom, b) => atom.map((x) => (V(x) ? b[x] : x));
 
+      const TTL = {
+        Adaptation:
+          "vg:Adaptation a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:basedOn ;\n      owl:someValuesFrom vg:CreativeWork ] ) ] .",
+        AuteurGame:
+          "vg:AuteurGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:directedBy ;\n      owl:someValuesFrom vg:StudioHead ] ) ] .",
+        AwardWinner:
+          "vg:AwardWinner a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:wonAward ;\n      owl:someValuesFrom vg:Award ] ) ] .",
+        ClassicStillPlayable:
+          "vg:ClassicStillPlayable a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:ClassicGame vg:StillPlayable ) ] .",
+        FantasyViolenceGame:
+          "vg:FantasyViolenceGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:ViolentStoryGame [ a owl:Restriction ;\n      owl:onProperty vg:pegiRating ;\n      owl:someValuesFrom [ a rdfs:Datatype ;\n        owl:onDatatype xsd:integer ;\n        owl:withRestrictions ( [ xsd:maxInclusive 12 ] ) ] ] ) ] .",
+        FirstPartyGame:
+          "vg:FirstPartyGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:publishedBy ;\n      owl:someValuesFrom [ a owl:Class ;\n        owl:unionOf ( vg:PlatformHolder [ a owl:Restriction ;\n          owl:onProperty vg:subsidiaryOf ;\n          owl:someValuesFrom vg:PlatformHolder ] ) ] ] ) ] .",
+        FirstPartyStudio:
+          "vg:FirstPartyStudio a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Developer [ a owl:Class ;\n      owl:unionOf ( vg:PlatformHolder [ a owl:Restriction ;\n        owl:onProperty vg:subsidiaryOf ;\n        owl:someValuesFrom vg:PlatformHolder ] ) ] ) ] .",
+        FoundedByVeterans:
+          "vg:FoundedByVeterans a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Company [ a owl:Restriction ;\n      owl:onProperty vg:foundedBy ;\n      owl:someValuesFrom [ a owl:Restriction ;\n        owl:onProperty vg:formerEmployeeOf ;\n        owl:someValuesFrom vg:Developer ] ] ) ] .",
+        FranchiseWithStudioChange:
+          "vg:FranchiseWithStudioChange a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Franchise [ a owl:Restriction ;\n      owl:onProperty vg:includes ;\n      owl:someValuesFrom vg:SequelByDifferentStudio ] ) ] .",
+        HistoricalGame:
+          "vg:HistoricalGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:hasCharacter ;\n      owl:someValuesFrom vg:HistoricalCharacter ] ) ] .",
+        LongRunningFranchise:
+          "vg:LongRunningFranchise a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Franchise [ a owl:Restriction ;\n      owl:onProperty vg:includes ;\n      owl:someValuesFrom vg:LateEntry ] ) ] .",
+        MultipleKiller:
+          'vg:MultipleKiller a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Killer [ a owl:Restriction ;\n      owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;\n      owl:onClass vg:Character ;\n      owl:onProperty vg:kills ] ) ] .',
+        MustPlayGame:
+          "vg:MustPlayGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:metacriticScore ;\n      owl:someValuesFrom [ a rdfs:Datatype ;\n        owl:onDatatype xsd:integer ;\n        owl:withRestrictions ( [ xsd:minInclusive 95 ] ) ] ] ) ] .",
+        Pegi12Game:
+          "vg:Pegi12Game a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:hasValue 12 ;\n      owl:onProperty vg:pegiRating ] ) ] .",
+        Pegi16Game:
+          "vg:Pegi16Game a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:hasValue 16 ;\n      owl:onProperty vg:pegiRating ] ) ] .",
+        Pegi18Game:
+          "vg:Pegi18Game a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:hasValue 18 ;\n      owl:onProperty vg:pegiRating ] ) ] .",
+        Pegi3Game:
+          "vg:Pegi3Game a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:hasValue 3 ;\n      owl:onProperty vg:pegiRating ] ) ] .",
+        Pegi7Game:
+          "vg:Pegi7Game a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:hasValue 7 ;\n      owl:onProperty vg:pegiRating ] ) ] .",
+        PlayerCharacter:
+          "vg:PlayerCharacter a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Character [ a owl:Restriction ;\n      owl:onProperty vg:playableIn ;\n      owl:someValuesFrom vg:VideoGame ] ) ] .",
+        PrequelGame:
+          "vg:PrequelGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:prequelOf ;\n      owl:someValuesFrom vg:VideoGame ] ) ] .",
+        PreviousGenerationConsole:
+          "vg:PreviousGenerationConsole a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:ConsolePlatform [ a owl:Restriction ;\n      owl:onProperty vg:generation ;\n      owl:someValuesFrom [ a rdfs:Datatype ;\n        owl:onDatatype xsd:integer ;\n        owl:withRestrictions ( [ xsd:maxInclusive 8 ] ) ] ] ) ] .",
+        ProlificDeveloper:
+          'vg:ProlificDeveloper a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Developer [ a owl:Restriction ;\n      owl:minQualifiedCardinality "5"^^xsd:nonNegativeInteger ;\n      owl:onClass vg:VideoGame ;\n      owl:onProperty vg:developerOf ] ) ] .',
+        ProlificDirector:
+          'vg:ProlificDirector a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:GameDirector [ a owl:Restriction ;\n      owl:minQualifiedCardinality "3"^^xsd:nonNegativeInteger ;\n      owl:onClass vg:VideoGame ;\n      owl:onProperty vg:directorOf ] ) ] .',
+        Protagonist:
+          "vg:Protagonist a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Character [ a owl:Restriction ;\n      owl:onProperty vg:protagonistOf ;\n      owl:someValuesFrom vg:VideoGame ] ) ] .",
+        Publisher:
+          "vg:Publisher a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Company [ a owl:Restriction ;\n      owl:onProperty vg:publisherOf ;\n      owl:someValuesFrom vg:VideoGame ] ) ] .",
+        RealisticViolenceGame:
+          "vg:RealisticViolenceGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:ViolentStoryGame [ a owl:Restriction ;\n      owl:onProperty vg:pegiRating ;\n      owl:someValuesFrom [ a rdfs:Datatype ;\n        owl:onDatatype xsd:integer ;\n        owl:withRestrictions ( [ xsd:minInclusive 16 ] ) ] ] ) ] .",
+        RecurringCharacter:
+          'vg:RecurringCharacter a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Character [ a owl:Restriction ;\n      owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;\n      owl:onClass vg:VideoGame ;\n      owl:onProperty vg:appearsIn ] ) ] .',
+        Remaster:
+          "vg:Remaster a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:remasterOf ;\n      owl:someValuesFrom vg:VideoGame ] ) ] .",
+        RogueAI:
+          "vg:RogueAI a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Synthetic vg:Antagonist ) ] .",
+        SciFiGame:
+          "vg:SciFiGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:hasCharacter ;\n      owl:someValuesFrom [ a owl:Class ;\n        owl:unionOf ( vg:Alien vg:Synthetic ) ] ] ) ] .",
+        TransmediaFranchise:
+          "vg:TransmediaFranchise a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Franchise [ a owl:Restriction ;\n      owl:onProperty vg:adaptedInto ;\n      owl:someValuesFrom [ a owl:Class ;\n        owl:unionOf ( vg:Film vg:TVSeries ) ] ] ) ] .",
+        Antagonist:
+          "vg:Antagonist a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Character [ a owl:Restriction ;\n      owl:onProperty vg:antagonistOf ;\n      owl:someValuesFrom vg:VideoGame ] ) ] .",
+        ClassicGame:
+          'vg:ClassicGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:releaseDate ;\n      owl:someValuesFrom [ a rdfs:Datatype ;\n        owl:onDatatype xsd:dateTime ;\n        owl:withRestrictions ( [ xsd:maxExclusive "2005-01-01T00:00:00"^^xsd:dateTime ] ) ] ] ) ] .',
+        CurrentGenerationConsole:
+          "vg:CurrentGenerationConsole a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:ConsolePlatform [ a owl:Restriction ;\n      owl:onProperty vg:generation ;\n      owl:someValuesFrom [ a rdfs:Datatype ;\n        owl:onDatatype xsd:integer ;\n        owl:withRestrictions ( [ xsd:minInclusive 9 ] ) ] ] ) ] .",
+        GameDirector:
+          "vg:GameDirector a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Person [ a owl:Restriction ;\n      owl:onProperty vg:directorOf ;\n      owl:someValuesFrom vg:VideoGame ] ) ] .",
+        HistoricalCharacter:
+          "vg:HistoricalCharacter a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Character [ a owl:Restriction ;\n      owl:onProperty vg:portrays ;\n      owl:someValuesFrom vg:Person ] ) ] .",
+        Killer:
+          "vg:Killer a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Character [ a owl:Restriction ;\n      owl:onProperty vg:killerIn ;\n      owl:someValuesFrom vg:Killing ] ) ] .",
+        LateEntry:
+          "vg:LateEntry a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:SequelGame [ a owl:Restriction ;\n      owl:onProperty vg:sequelOf ;\n      owl:someValuesFrom [ a owl:Restriction ;\n        owl:onProperty vg:sequelOf ;\n        owl:someValuesFrom vg:VideoGame ] ] ) ] .",
+        StillPlayable:
+          "vg:StillPlayable a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:playableOn ;\n      owl:someValuesFrom vg:CurrentGenerationConsole ] ) ] .",
+        StudioHead:
+          "vg:StudioHead a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Person [ a owl:Restriction ;\n      owl:onProperty vg:heads ;\n      owl:someValuesFrom vg:Company ] ) ] .",
+        DeceasedCharacter:
+          "vg:DeceasedCharacter a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Character [ a owl:Restriction ;\n      owl:onProperty vg:victimIn ;\n      owl:someValuesFrom vg:Killing ] ) ] .",
+        ViolentStoryGame:
+          "vg:ViolentStoryGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:hasKilling ;\n      owl:someValuesFrom vg:Killing ] ) ] .",
+        Developer:
+          "vg:Developer a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Company [ a owl:Restriction ;\n      owl:onProperty vg:developerOf ;\n      owl:someValuesFrom vg:VideoGame ] ) ] .",
+        Synthetic:
+          "vg:Synthetic a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Character [ a owl:Restriction ;\n      owl:onProperty vg:builtBy ;\n      owl:someValuesFrom owl:Thing ] ) ] .",
+        PlatformHolder:
+          "vg:PlatformHolder a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:Company [ a owl:Restriction ;\n      owl:onProperty vg:manufacturerOf ;\n      owl:someValuesFrom vg:ConsolePlatform ] ) ] .",
+        SequelGame:
+          "vg:SequelGame a owl:Class ;\n  owl:equivalentClass [ a owl:Class ;\n    owl:intersectionOf ( vg:VideoGame [ a owl:Restriction ;\n      owl:onProperty vg:sequelOf ;\n      owl:someValuesFrom vg:VideoGame ] ) ] .",
+        "sequelOf transitiva":
+          "vg:sequelOf a owl:ObjectProperty, owl:TransitiveProperty .",
+        "availableOn ⊑ playableOn":
+          "vg:availableOn rdfs:subPropertyOf vg:playableOn .",
+        "protagonistOf ⊑ appearsIn":
+          "vg:protagonistOf rdfs:subPropertyOf vg:appearsIn .",
+        catena:
+          "vg:playableOn owl:propertyChainAxiom ( vg:hasRemaster vg:availableOn ) .",
+        "pegiRating funzionale":
+          "vg:pegiRating a owl:DatatypeProperty, owl:FunctionalProperty ;\n  rdfs:domain vg:VideoGame ;\n  rdfs:range xsd:integer .",
+        "developedBy asimmetrica":
+          "vg:developedBy a owl:ObjectProperty, owl:AsymmetricProperty .",
+        "developedBy irriflessiva":
+          "vg:developedBy a owl:ObjectProperty, owl:IrreflexiveProperty .",
+        propertyDisjointWith:
+          "vg:remasterOf owl:propertyDisjointWith vg:prequelOf .",
+        hasKey: "vg:VideoGame owl:hasKey ( vg:hasWikidataId ) .",
+        AllDisjointClasses:
+          "[] a owl:AllDisjointClasses ;\n  owl:members ( vg:ConsolePlatform vg:PCPlatform ) .",
+        AllDifferent:
+          "[] a owl:AllDifferent ;\n  owl:distinctMembers ( vg:Dark_Souls vg:Dark_Souls_II vg:Dark_Souls_III ) .\n# nei dati: tutti i giochi, le aziende, i personaggi...",
+        "domain developedBy": "vg:developedBy rdfs:domain vg:VideoGame .",
+        "range developedBy": "vg:developedBy rdfs:range vg:Company .",
+        "domain heads": "vg:heads rdfs:domain vg:Person .",
+        "range heads": "vg:heads rdfs:range vg:Company .",
+        "domain protagonistOf": "vg:protagonistOf rdfs:domain vg:Character .",
+        "range protagonistOf": "vg:protagonistOf rdfs:range vg:VideoGame .",
+      };
+      const ttlFor = (r) => {
+        const n = r.n.trim();
+        if (TTL[n]) return TTL[n];
+        if (r.kind === "inversa") {
+          const [p, q] = r.t.split(" ↔ ");
+          return "vg:" + p + " owl:inverseOf vg:" + q + " .";
+        }
+        return null;
+      };
+      const showTtl = (text, title) => {
+        let box = document.getElementById("ttlbox");
+        if (!box) {
+          box = document.createElement("pre");
+          box.id = "ttlbox";
+          box.className = "ttlbox";
+          box.title = "clicca per chiudere";
+          box.onclick = () => (box.hidden = true);
+          document.querySelector(".slide.active").appendChild(box);
+        }
+        const slide = document.querySelector(".slide.active");
+        if (box.parentNode !== slide) slide.appendChild(box);
+        box.hidden = false;
+        box.textContent = "# " + title + " (Turtle)\n" + text;
+      };
       const INV = (name, p, q) => ({
         n: name,
         kind: "inversa",
@@ -2585,6 +2696,18 @@ victim(?k, ?v) ^ killer(?k, ?a)
         return o + "</g>";
       }
 
+      document.querySelectorAll("tr.pick").forEach((tr) => {
+        tr.onclick = () => {
+          document
+            .querySelectorAll("tr.pick")
+            .forEach((x) => x.classList.toggle("on", x === tr));
+          document.getElementById("ttl15").textContent = TTL[tr.dataset.ttl];
+        };
+      });
+      document.getElementById("ttl15").textContent = TTL.DeceasedCharacter;
+      document.querySelectorAll("pre[data-ttl]").forEach((p) => {
+        p.textContent = TTL[p.dataset.ttl];
+      });
       function mount(sec) {
         const sc = SCEN[sec.dataset.demo],
           root = sec.querySelector(".demo");
@@ -2608,7 +2731,11 @@ victim(?k, ?v) ^ killer(?k, ?a)
           seen = new Set(),
           rs = sc.rules.filter((r) => !seen.has(r.n) && seen.add(r.n));
         [
-          ["Assiomi OWL", rs.filter((r) => r.kind !== "SWRL"), "owl"],
+          [
+            "Assiomi OWL (clic: Turtle)",
+            rs.filter((r) => r.kind !== "SWRL"),
+            "owl",
+          ],
           ["Regole SWRL", rs.filter((r) => r.kind === "SWRL"), "swrl"],
         ].forEach(([label, list, cls]) => {
           if (!list.length) return;
@@ -2623,6 +2750,12 @@ victim(?k, ?v) ^ killer(?k, ?a)
             c.className = "rchip " + cls;
             c.textContent = r.n;
             if (r.t) c.title = r.t;
+            if (ttlFor(r)) {
+              c.classList.add("ttl");
+              c.title =
+                (r.t ? r.t + " · " : "") + "clicca per vedere il Turtle";
+              c.onclick = () => showTtl(ttlFor(r), r.n.trim());
+            }
             row.appendChild(c);
           });
           rl.appendChild(row);
@@ -2900,7 +3033,12 @@ victim(?k, ?v) ^ killer(?k, ?a)
         }
       });
       addEventListener("click", (e) => {
-        if (e.target.closest("button,input,label,.lst,.xp,a,.gsvg")) return;
+        if (
+          e.target.closest(
+            "button,input,label,.lst,.xp,a,.gsvg,.rchip,.ttlbox,tr.pick",
+          )
+        )
+          return;
         go(e.clientX > innerWidth / 3 ? i + 1 : i - 1);
       });
       addEventListener("resize", fit);
