@@ -1,0 +1,1376 @@
+@prefix : <http://www.videogame-ontology.org/ontology#> .
+@prefix vg: <http://www.videogame-ontology.org/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.videogame-ontology.org/ontology> .
+
+<http://www.videogame-ontology.org/ontology> rdf:type owl:Ontology ;
+                                              rdfs:label "Videogiochi: schema" .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.videogame-ontology.org/ontology#adaptedInto
+vg:adaptedInto rdf:type owl:ObjectProperty ;
+               rdfs:domain vg:Franchise ;
+               rdfs:range vg:CreativeWork .
+
+
+###  http://www.videogame-ontology.org/ontology#antagonistOf
+vg:antagonistOf rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf vg:appearsIn ;
+                owl:inverseOf vg:hasAntagonist ;
+                rdf:type owl:AsymmetricProperty ,
+                         owl:IrreflexiveProperty ;
+                rdfs:domain vg:Character ;
+                rdfs:range vg:VideoGame .
+
+
+###  http://www.videogame-ontology.org/ontology#appearsIn
+vg:appearsIn rdf:type owl:ObjectProperty ;
+             owl:inverseOf vg:hasCharacter ;
+             rdf:type owl:AsymmetricProperty ,
+                      owl:IrreflexiveProperty ;
+             rdfs:domain vg:Character ;
+             rdfs:range vg:VideoGame .
+
+
+###  http://www.videogame-ontology.org/ontology#availableOn
+vg:availableOn rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf vg:playableOn ;
+               owl:inverseOf vg:platformFor ;
+               rdf:type owl:AsymmetricProperty ,
+                        owl:IrreflexiveProperty ;
+               rdfs:domain vg:VideoGame ;
+               rdfs:range vg:Platform .
+
+
+###  http://www.videogame-ontology.org/ontology#basedOn
+vg:basedOn rdf:type owl:ObjectProperty ;
+           rdfs:domain vg:VideoGame ;
+           rdfs:range vg:CreativeWork .
+
+
+###  http://www.videogame-ontology.org/ontology#belongsTo
+vg:belongsTo rdf:type owl:ObjectProperty ;
+             owl:inverseOf vg:includes ;
+             rdf:type owl:AsymmetricProperty ,
+                      owl:IrreflexiveProperty ;
+             rdfs:domain vg:VideoGame ;
+             rdfs:range vg:Franchise .
+
+
+###  http://www.videogame-ontology.org/ontology#builtBy
+vg:builtBy rdf:type owl:ObjectProperty ;
+           rdfs:domain vg:Character ;
+           rdfs:range owl:Thing ;
+           rdfs:comment "Chi ha costruito il personaggio nel mondo di gioco (un altro personaggio o un'organizzazione)" .
+
+
+###  http://www.videogame-ontology.org/ontology#developedBy
+vg:developedBy rdf:type owl:ObjectProperty ;
+               owl:inverseOf vg:developerOf ;
+               rdf:type owl:AsymmetricProperty ,
+                        owl:IrreflexiveProperty ;
+               rdfs:domain vg:VideoGame ;
+               rdfs:range vg:Company .
+
+
+###  http://www.videogame-ontology.org/ontology#developerOf
+vg:developerOf rdf:type owl:ObjectProperty ,
+                        owl:AsymmetricProperty ,
+                        owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#directedBy
+vg:directedBy rdf:type owl:ObjectProperty ;
+              owl:inverseOf vg:directorOf ;
+              rdf:type owl:AsymmetricProperty ,
+                       owl:IrreflexiveProperty ;
+              rdfs:domain vg:VideoGame ;
+              rdfs:range vg:Person .
+
+
+###  http://www.videogame-ontology.org/ontology#directorOf
+vg:directorOf rdf:type owl:ObjectProperty ,
+                       owl:AsymmetricProperty ,
+                       owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#engineDevelopedBy
+vg:engineDevelopedBy rdf:type owl:ObjectProperty ;
+                     rdfs:domain vg:GameEngine ;
+                     rdfs:range vg:Company .
+
+
+###  http://www.videogame-ontology.org/ontology#formerEmployeeOf
+vg:formerEmployeeOf rdf:type owl:ObjectProperty ;
+                    rdfs:domain vg:Person ;
+                    rdfs:range vg:Company .
+
+
+###  http://www.videogame-ontology.org/ontology#foundedBy
+vg:foundedBy rdf:type owl:ObjectProperty ;
+             rdfs:domain vg:Company ;
+             rdfs:range vg:Person .
+
+
+###  http://www.videogame-ontology.org/ontology#hasAntagonist
+vg:hasAntagonist rdf:type owl:ObjectProperty ,
+                          owl:AsymmetricProperty ,
+                          owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#hasCharacter
+vg:hasCharacter rdf:type owl:ObjectProperty ,
+                         owl:AsymmetricProperty ,
+                         owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#hasGameMode
+vg:hasGameMode rdf:type owl:ObjectProperty ;
+               rdfs:domain vg:VideoGame ;
+               rdfs:range vg:GameMode .
+
+
+###  http://www.videogame-ontology.org/ontology#hasGenre
+vg:hasGenre rdf:type owl:ObjectProperty ;
+            rdfs:domain vg:VideoGame ;
+            rdfs:range vg:Genre .
+
+
+###  http://www.videogame-ontology.org/ontology#hasKilling
+vg:hasKilling rdf:type owl:ObjectProperty ;
+              owl:inverseOf vg:inGame ;
+              rdf:type owl:AsymmetricProperty ,
+                       owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#hasRemaster
+vg:hasRemaster rdf:type owl:ObjectProperty ;
+               owl:inverseOf vg:remasterOf .
+
+
+###  http://www.videogame-ontology.org/ontology#hasSequel
+vg:hasSequel rdf:type owl:ObjectProperty ;
+             owl:inverseOf vg:sequelOf .
+
+
+###  http://www.videogame-ontology.org/ontology#heads
+vg:heads rdf:type owl:ObjectProperty ;
+         rdfs:domain vg:Person ;
+         rdfs:range vg:Company .
+
+
+###  http://www.videogame-ontology.org/ontology#inGame
+vg:inGame rdf:type owl:ObjectProperty ,
+                   owl:AsymmetricProperty ,
+                   owl:IrreflexiveProperty ;
+          rdfs:domain vg:Killing ;
+          rdfs:range vg:VideoGame .
+
+
+###  http://www.videogame-ontology.org/ontology#includes
+vg:includes rdf:type owl:ObjectProperty ,
+                     owl:AsymmetricProperty ,
+                     owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#killedBy
+vg:killedBy rdf:type owl:ObjectProperty ;
+            owl:inverseOf vg:kills ;
+            rdfs:domain vg:Character ;
+            rdfs:range vg:Character ;
+            rdfs:comment "Dedotta dalla regola KillingEvent" .
+
+
+###  http://www.videogame-ontology.org/ontology#killer
+vg:killer rdf:type owl:ObjectProperty ;
+          owl:inverseOf vg:killerIn ;
+          rdf:type owl:AsymmetricProperty ,
+                   owl:IrreflexiveProperty ;
+          rdfs:domain vg:Killing ;
+          rdfs:range vg:Character .
+
+
+###  http://www.videogame-ontology.org/ontology#killerIn
+vg:killerIn rdf:type owl:ObjectProperty ,
+                     owl:AsymmetricProperty ,
+                     owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#kills
+vg:kills rdf:type owl:ObjectProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#madeWith
+vg:madeWith rdf:type owl:ObjectProperty ;
+            rdfs:domain vg:VideoGame ;
+            rdfs:range vg:GameEngine .
+
+
+###  http://www.videogame-ontology.org/ontology#manufacturedBy
+vg:manufacturedBy rdf:type owl:ObjectProperty ;
+                  owl:inverseOf vg:manufacturerOf ;
+                  rdf:type owl:AsymmetricProperty ,
+                           owl:IrreflexiveProperty ;
+                  rdfs:domain vg:Platform ;
+                  rdfs:range vg:Company .
+
+
+###  http://www.videogame-ontology.org/ontology#manufacturerOf
+vg:manufacturerOf rdf:type owl:ObjectProperty ,
+                           owl:AsymmetricProperty ,
+                           owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#onConsoleOf
+vg:onConsoleOf rdf:type owl:ObjectProperty ;
+               rdfs:domain vg:VideoGame ;
+               rdfs:range vg:Company ;
+               rdfs:comment "Derivata dalle regole: il costruttore di una console su cui esce il gioco" .
+
+
+###  http://www.videogame-ontology.org/ontology#platformFor
+vg:platformFor rdf:type owl:ObjectProperty ,
+                        owl:AsymmetricProperty ,
+                        owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#playableIn
+vg:playableIn rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf vg:appearsIn ;
+              rdfs:domain vg:Character ;
+              rdfs:range vg:VideoGame ;
+              rdfs:comment "Il personaggio è controllato dal giocatore in quel gioco" .
+
+
+###  http://www.videogame-ontology.org/ontology#playableOn
+vg:playableOn rdf:type owl:ObjectProperty ;
+              rdfs:domain vg:VideoGame ;
+              rdfs:range vg:Platform ;
+              owl:propertyChainAxiom ( vg:hasRemaster
+                                       vg:availableOn
+                                     ) ;
+              rdfs:comment "Disponibile, anche tramite una nuova edizione" .
+
+
+###  http://www.videogame-ontology.org/ontology#portrays
+vg:portrays rdf:type owl:ObjectProperty ;
+            rdfs:domain vg:Character ;
+            rdfs:range vg:Person .
+
+
+###  http://www.videogame-ontology.org/ontology#prequelOf
+vg:prequelOf rdf:type owl:ObjectProperty ;
+             rdfs:domain vg:VideoGame ;
+             rdfs:range vg:VideoGame ;
+             owl:propertyDisjointWith vg:remasterOf ;
+             rdfs:comment "La storia del gioco si svolge prima di quella dell'altro, anche se è uscito dopo" .
+
+
+###  http://www.videogame-ontology.org/ontology#protagonistOf
+vg:protagonistOf rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf vg:appearsIn ;
+                 rdfs:domain vg:Character ;
+                 rdfs:range vg:VideoGame .
+
+
+###  http://www.videogame-ontology.org/ontology#publishedBy
+vg:publishedBy rdf:type owl:ObjectProperty ;
+               owl:inverseOf vg:publisherOf ;
+               rdf:type owl:AsymmetricProperty ,
+                        owl:IrreflexiveProperty ;
+               rdfs:domain vg:VideoGame ;
+               rdfs:range vg:Company .
+
+
+###  http://www.videogame-ontology.org/ontology#publishedByGroup
+vg:publishedByGroup rdf:type owl:ObjectProperty ;
+                    rdfs:domain vg:VideoGame ;
+                    rdfs:range vg:Company ;
+                    rdfs:comment "Derivata dalle regole: l'editore e le aziende che lo controllano" .
+
+
+###  http://www.videogame-ontology.org/ontology#publisherOf
+vg:publisherOf rdf:type owl:ObjectProperty ,
+                        owl:AsymmetricProperty ,
+                        owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#releasedAfter
+vg:releasedAfter rdf:type owl:ObjectProperty ;
+                 rdfs:domain vg:VideoGame ;
+                 rdfs:range vg:VideoGame ;
+                 rdfs:comment "Derivata dalle regole: uscito dopo, nella stessa serie" .
+
+
+###  http://www.videogame-ontology.org/ontology#remasterOf
+vg:remasterOf rdf:type owl:ObjectProperty ;
+              rdfs:domain vg:VideoGame ;
+              rdfs:range vg:VideoGame .
+
+
+###  http://www.videogame-ontology.org/ontology#sequelOf
+vg:sequelOf rdf:type owl:ObjectProperty ,
+                     owl:TransitiveProperty ;
+            rdfs:domain vg:VideoGame ;
+            rdfs:range vg:VideoGame ;
+            rdfs:comment "Asserita solo verso il predecessore diretto" .
+
+
+###  http://www.videogame-ontology.org/ontology#subsidiaryOf
+vg:subsidiaryOf rdf:type owl:ObjectProperty ,
+                         owl:TransitiveProperty ;
+                rdfs:domain vg:Company ;
+                rdfs:range vg:Company .
+
+
+###  http://www.videogame-ontology.org/ontology#victim
+vg:victim rdf:type owl:ObjectProperty ;
+          owl:inverseOf vg:victimIn ;
+          rdf:type owl:AsymmetricProperty ,
+                   owl:IrreflexiveProperty ;
+          rdfs:domain vg:Killing ;
+          rdfs:range vg:Character .
+
+
+###  http://www.videogame-ontology.org/ontology#victimIn
+vg:victimIn rdf:type owl:ObjectProperty ,
+                     owl:AsymmetricProperty ,
+                     owl:IrreflexiveProperty .
+
+
+###  http://www.videogame-ontology.org/ontology#wonAward
+vg:wonAward rdf:type owl:ObjectProperty ;
+            rdfs:domain vg:VideoGame ;
+            rdfs:range vg:Award .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.videogame-ontology.org/ontology#generation
+vg:generation rdf:type owl:DatatypeProperty ,
+                       owl:FunctionalProperty ;
+              rdfs:domain vg:ConsolePlatform ;
+              rdfs:range xsd:integer .
+
+
+###  http://www.videogame-ontology.org/ontology#hasWikidataId
+vg:hasWikidataId rdf:type owl:DatatypeProperty ;
+                 rdfs:domain owl:Thing ;
+                 rdfs:range xsd:string .
+
+
+###  http://www.videogame-ontology.org/ontology#metacriticScore
+vg:metacriticScore rdf:type owl:DatatypeProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain vg:VideoGame ;
+                   rdfs:range xsd:integer .
+
+
+###  http://www.videogame-ontology.org/ontology#pegiRating
+vg:pegiRating rdf:type owl:DatatypeProperty ,
+                       owl:FunctionalProperty ;
+              rdfs:domain vg:VideoGame ;
+              rdfs:range xsd:integer .
+
+
+###  http://www.videogame-ontology.org/ontology#releaseDate
+vg:releaseDate rdf:type owl:DatatypeProperty ,
+                        owl:FunctionalProperty ;
+               rdfs:domain vg:VideoGame ;
+               rdfs:range xsd:dateTime .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.videogame-ontology.org/ontology#Adaptation
+vg:Adaptation rdf:type owl:Class ;
+              owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty vg:basedOn ;
+                                                           owl:someValuesFrom vg:CreativeWork
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+              rdfs:comment "Un gioco tratto da un'opera di un altro medium" ;
+              rdfs:label "Adaptation" .
+
+
+###  http://www.videogame-ontology.org/ontology#Alien
+vg:Alien rdf:type owl:Class ;
+         rdfs:subClassOf vg:Character ;
+         rdfs:comment "Un personaggio di una specie non umana del mondo di gioco" ;
+         rdfs:label "Alien" .
+
+
+###  http://www.videogame-ontology.org/ontology#Antagonist
+vg:Antagonist rdf:type owl:Class ;
+              owl:equivalentClass [ owl:intersectionOf ( vg:Character
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty vg:antagonistOf ;
+                                                           owl:someValuesFrom vg:VideoGame
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+              rdfs:comment "L'antagonista di un gioco" ;
+              rdfs:label "Antagonist" .
+
+
+###  http://www.videogame-ontology.org/ontology#AuteurGame
+vg:AuteurGame rdf:type owl:Class ;
+              owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty vg:directedBy ;
+                                                           owl:someValuesFrom vg:StudioHead
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+              rdfs:comment "Un gioco diretto da chi guida uno studio" ;
+              rdfs:label "AuteurGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#Award
+vg:Award rdf:type owl:Class ;
+         rdfs:comment "Il premio Gioco dell'anno di una cerimonia (The Game Awards, BAFTA, D.I.C.E....)" ;
+         rdfs:label "Award" .
+
+
+###  http://www.videogame-ontology.org/ontology#AwardWinner
+vg:AwardWinner rdf:type owl:Class ;
+               owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                          [ rdf:type owl:Restriction ;
+                                                            owl:onProperty vg:wonAward ;
+                                                            owl:someValuesFrom vg:Award
+                                                          ]
+                                                        ) ;
+                                     rdf:type owl:Class
+                                   ] ;
+               rdfs:comment "Un gioco che ha vinto un premio" ;
+               rdfs:label "AwardWinner" .
+
+
+###  http://www.videogame-ontology.org/ontology#Character
+vg:Character rdf:type owl:Class ;
+             rdfs:comment "Un personaggio di finzione" ;
+             rdfs:label "Character" .
+
+
+###  http://www.videogame-ontology.org/ontology#ClassicGame
+vg:ClassicGame rdf:type owl:Class ;
+               owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                          [ rdf:type owl:Restriction ;
+                                                            owl:onProperty vg:releaseDate ;
+                                                            owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                                                 owl:onDatatype xsd:dateTime ;
+                                                                                 owl:withRestrictions ( [ xsd:maxExclusive "2005-01-01T00:00:00"^^xsd:dateTime
+                                                                                                        ]
+                                                                                                      )
+                                                                               ]
+                                                          ]
+                                                        ) ;
+                                     rdf:type owl:Class
+                                   ] ;
+               rdfs:comment "Un gioco uscito prima del 2005" ;
+               rdfs:label "ClassicGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#ClassicStillPlayable
+vg:ClassicStillPlayable rdf:type owl:Class ;
+                        owl:equivalentClass [ owl:intersectionOf ( vg:ClassicGame
+                                                                   vg:StillPlayable
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ] ;
+                        rdfs:comment "Un classico precedente al 2005 giocabile oggi su una console attuale" ;
+                        rdfs:label "ClassicStillPlayable" .
+
+
+###  http://www.videogame-ontology.org/ontology#Comic
+vg:Comic rdf:type owl:Class ;
+         rdfs:subClassOf vg:CreativeWork ;
+         rdfs:comment "Un fumetto" ;
+         rdfs:label "Comic" .
+
+
+###  http://www.videogame-ontology.org/ontology#Company
+vg:Company rdf:type owl:Class ;
+           rdfs:comment "Uno studio, un editore o un gruppo industriale" ;
+           rdfs:label "Company" .
+
+
+###  http://www.videogame-ontology.org/ontology#ConsolePlatform
+vg:ConsolePlatform rdf:type owl:Class ;
+                   rdfs:subClassOf vg:Platform ;
+                   owl:disjointWith vg:PCPlatform ;
+                   rdfs:comment "Una console" ;
+                   rdfs:label "ConsolePlatform" .
+
+
+###  http://www.videogame-ontology.org/ontology#CreativeWork
+vg:CreativeWork rdf:type owl:Class ;
+                rdfs:comment "Un'opera di un altro medium (romanzo, film, serie TV)" ;
+                rdfs:label "CreativeWork" .
+
+
+###  http://www.videogame-ontology.org/ontology#CurrentGenerationConsole
+vg:CurrentGenerationConsole rdf:type owl:Class ;
+                            owl:equivalentClass [ owl:intersectionOf ( vg:ConsolePlatform
+                                                                       [ rdf:type owl:Restriction ;
+                                                                         owl:onProperty vg:generation ;
+                                                                         owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                                                              owl:onDatatype xsd:integer ;
+                                                                                              owl:withRestrictions ( [ xsd:minInclusive 9
+                                                                                                                     ]
+                                                                                                                   )
+                                                                                            ]
+                                                                       ]
+                                                                     ) ;
+                                                  rdf:type owl:Class
+                                                ] ;
+                            rdfs:comment "Una console della nona generazione, l'attuale" ;
+                            rdfs:label "CurrentGenerationConsole" .
+
+
+###  http://www.videogame-ontology.org/ontology#DeceasedCharacter
+vg:DeceasedCharacter rdf:type owl:Class ;
+                     owl:equivalentClass [ owl:intersectionOf ( vg:Character
+                                                                [ rdf:type owl:Restriction ;
+                                                                  owl:onProperty vg:victimIn ;
+                                                                  owl:someValuesFrom vg:Killing
+                                                                ]
+                                                              ) ;
+                                           rdf:type owl:Class
+                                         ] ;
+                     rdfs:comment "Un personaggio ucciso nella trama di un gioco" ;
+                     rdfs:label "DeceasedCharacter" .
+
+
+###  http://www.videogame-ontology.org/ontology#DefeatedVillain
+vg:DefeatedVillain rdf:type owl:Class ;
+                   rdfs:subClassOf vg:DeceasedCharacter ;
+                   rdfs:comment "Un antagonista ucciso dal protagonista. Si popola con la regola SWRL DefeatedVillain" ;
+                   rdfs:label "DefeatedVillain" .
+
+
+###  http://www.videogame-ontology.org/ontology#Developer
+vg:Developer rdf:type owl:Class ;
+             owl:equivalentClass [ owl:intersectionOf ( vg:Company
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty vg:developerOf ;
+                                                          owl:someValuesFrom vg:VideoGame
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] ;
+             rdfs:comment "Un'azienda che ha sviluppato almeno un gioco" ;
+             rdfs:label "Developer" .
+
+
+###  http://www.videogame-ontology.org/ontology#EngineChangeSequel
+vg:EngineChangeSequel rdf:type owl:Class ;
+                      rdfs:subClassOf vg:SequelGame ;
+                      rdfs:comment "Un seguito che cambia motore. Si popola con la regola SWRL EngineChangeSequel" ;
+                      rdfs:label "EngineChangeSequel" .
+
+
+###  http://www.videogame-ontology.org/ontology#ExternalEngineGame
+vg:ExternalEngineGame rdf:type owl:Class ;
+                      rdfs:subClassOf vg:VideoGame ;
+                      rdfs:comment "Un gioco fatto con un motore sviluppato da un'altra azienda. Si popola con la regola SWRL ExternalEngine" ;
+                      rdfs:label "ExternalEngineGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#FantasyViolenceGame
+vg:FantasyViolenceGame rdf:type owl:Class ;
+                       owl:equivalentClass [ owl:intersectionOf ( vg:ViolentStoryGame
+                                                                  [ rdf:type owl:Restriction ;
+                                                                    owl:onProperty vg:pegiRating ;
+                                                                    owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                                                         owl:onDatatype xsd:integer ;
+                                                                                         owl:withRestrictions ( [ xsd:maxInclusive 12
+                                                                                                                ]
+                                                                                                              )
+                                                                                       ]
+                                                                  ]
+                                                                ) ;
+                                             rdf:type owl:Class
+                                           ] ;
+                       rdfs:comment "Un gioco violento classificato PEGI 12 o meno: violenza fantasy, adatta ai ragazzi" ;
+                       rdfs:label "FantasyViolenceGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#FictionalOrganization
+vg:FictionalOrganization rdf:type owl:Class ;
+                         rdfs:comment "Un'organizzazione del mondo di gioco (per esempio Aperture Science)" ;
+                         rdfs:label "FictionalOrganization" .
+
+
+###  http://www.videogame-ontology.org/ontology#Film
+vg:Film rdf:type owl:Class ;
+        rdfs:subClassOf vg:CreativeWork ;
+        rdfs:comment "Un film" ;
+        rdfs:label "Film" .
+
+
+###  http://www.videogame-ontology.org/ontology#FirstPartyGame
+vg:FirstPartyGame rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty vg:publishedBy ;
+                                                               owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                                    owl:unionOf ( vg:PlatformHolder
+                                                                                                  [ rdf:type owl:Restriction ;
+                                                                                                    owl:onProperty vg:subsidiaryOf ;
+                                                                                                    owl:someValuesFrom vg:PlatformHolder
+                                                                                                  ]
+                                                                                                )
+                                                                                  ]
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:comment "Un gioco pubblicato da un costruttore di console o da una sua controllata" ;
+                  rdfs:label "FirstPartyGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#FirstPartyOnRivalConsole
+vg:FirstPartyOnRivalConsole rdf:type owl:Class ;
+                            rdfs:subClassOf vg:FirstPartyGame ;
+                            rdfs:comment "Un gioco first-party uscito su una console di un altro costruttore. Si popola con la regola SWRL FirstPartyOnRivalConsole" ;
+                            rdfs:label "FirstPartyOnRivalConsole" .
+
+
+###  http://www.videogame-ontology.org/ontology#FirstPartyStudio
+vg:FirstPartyStudio rdf:type owl:Class ;
+                    owl:equivalentClass [ owl:intersectionOf ( vg:Developer
+                                                               [ rdf:type owl:Class ;
+                                                                 owl:unionOf ( vg:PlatformHolder
+                                                                               [ rdf:type owl:Restriction ;
+                                                                                 owl:onProperty vg:subsidiaryOf ;
+                                                                                 owl:someValuesFrom vg:PlatformHolder
+                                                                               ]
+                                                                             )
+                                                               ]
+                                                             ) ;
+                                          rdf:type owl:Class
+                                        ] ;
+                    rdfs:comment "Uno studio che è un costruttore di console o una sua controllata" ;
+                    rdfs:label "FirstPartyStudio" .
+
+
+###  http://www.videogame-ontology.org/ontology#FoundedByVeterans
+vg:FoundedByVeterans rdf:type owl:Class ;
+                     owl:equivalentClass [ owl:intersectionOf ( vg:Company
+                                                                [ rdf:type owl:Restriction ;
+                                                                  owl:onProperty vg:foundedBy ;
+                                                                  owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                                                       owl:onProperty vg:formerEmployeeOf ;
+                                                                                       owl:someValuesFrom vg:Developer
+                                                                                     ]
+                                                                ]
+                                                              ) ;
+                                           rdf:type owl:Class
+                                         ] ;
+                     rdfs:comment "Un'azienda fondata da chi lavorava per uno sviluppatore" ;
+                     rdfs:label "FoundedByVeterans" .
+
+
+###  http://www.videogame-ontology.org/ontology#Franchise
+vg:Franchise rdf:type owl:Class ;
+             rdfs:comment "Una serie di giochi" ;
+             rdfs:label "Franchise" .
+
+
+###  http://www.videogame-ontology.org/ontology#FranchiseWithStudioChange
+vg:FranchiseWithStudioChange rdf:type owl:Class ;
+                             owl:equivalentClass [ owl:intersectionOf ( vg:Franchise
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty vg:includes ;
+                                                                          owl:someValuesFrom vg:SequelByDifferentStudio
+                                                                        ]
+                                                                      ) ;
+                                                   rdf:type owl:Class
+                                                 ] ;
+                             rdfs:comment "Una serie passata a un altro studio" ;
+                             rdfs:label "FranchiseWithStudioChange" .
+
+
+###  http://www.videogame-ontology.org/ontology#GameDirector
+vg:GameDirector rdf:type owl:Class ;
+                owl:equivalentClass [ owl:intersectionOf ( vg:Person
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty vg:directorOf ;
+                                                             owl:someValuesFrom vg:VideoGame
+                                                           ]
+                                                         ) ;
+                                      rdf:type owl:Class
+                                    ] ;
+                rdfs:comment "Chi ha diretto almeno un gioco" ;
+                rdfs:label "GameDirector" .
+
+
+###  http://www.videogame-ontology.org/ontology#GameEngine
+vg:GameEngine rdf:type owl:Class ;
+              rdfs:comment "Un motore di gioco" ;
+              rdfs:label "GameEngine" .
+
+
+###  http://www.videogame-ontology.org/ontology#GameMode
+vg:GameMode rdf:type owl:Class ;
+            rdfs:comment "Una modalità di gioco" ;
+            rdfs:label "GameMode" .
+
+
+###  http://www.videogame-ontology.org/ontology#Genre
+vg:Genre rdf:type owl:Class ;
+         rdfs:comment "Un genere" ;
+         rdfs:label "Genre" .
+
+
+###  http://www.videogame-ontology.org/ontology#HistoricalCharacter
+vg:HistoricalCharacter rdf:type owl:Class ;
+                       owl:equivalentClass [ owl:intersectionOf ( vg:Character
+                                                                  [ rdf:type owl:Restriction ;
+                                                                    owl:onProperty vg:portrays ;
+                                                                    owl:someValuesFrom vg:Person
+                                                                  ]
+                                                                ) ;
+                                             rdf:type owl:Class
+                                           ] ;
+                       rdfs:comment "Un personaggio che interpreta una persona reale" ;
+                       rdfs:label "HistoricalCharacter" .
+
+
+###  http://www.videogame-ontology.org/ontology#HistoricalGame
+vg:HistoricalGame rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty vg:hasCharacter ;
+                                                               owl:someValuesFrom vg:HistoricalCharacter
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:comment "Un gioco con personaggi realmente esistiti: probabilmente ambientato nel passato" ;
+                  rdfs:label "HistoricalGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#Human
+vg:Human rdf:type owl:Class ;
+         rdfs:subClassOf vg:Character ;
+         rdfs:comment "Un personaggio umano" ;
+         rdfs:label "Human" .
+
+
+###  http://www.videogame-ontology.org/ontology#InHouseEngineGame
+vg:InHouseEngineGame rdf:type owl:Class ;
+                     rdfs:subClassOf vg:VideoGame ;
+                     rdfs:comment "Un gioco fatto con il motore dello stesso studio. Si popola con la regola SWRL InHouseEngine" ;
+                     rdfs:label "InHouseEngineGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#Killer
+vg:Killer rdf:type owl:Class ;
+          owl:equivalentClass [ owl:intersectionOf ( vg:Character
+                                                     [ rdf:type owl:Restriction ;
+                                                       owl:onProperty vg:killerIn ;
+                                                       owl:someValuesFrom vg:Killing
+                                                     ]
+                                                   ) ;
+                                rdf:type owl:Class
+                              ] ;
+          rdfs:comment "Un personaggio che ha tolto la vita a qualcuno" ;
+          rdfs:label "Killer" .
+
+
+###  http://www.videogame-ontology.org/ontology#Killing
+vg:Killing rdf:type owl:Class ;
+           rdfs:comment "Un'uccisione nella trama di un gioco: vittima, assassino e gioco (relazione n-aria)" ;
+           rdfs:label "Killing" .
+
+
+###  http://www.videogame-ontology.org/ontology#LateEntry
+vg:LateEntry rdf:type owl:Class ;
+             owl:equivalentClass [ owl:intersectionOf ( vg:SequelGame
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty vg:sequelOf ;
+                                                          owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                                               owl:onProperty vg:sequelOf ;
+                                                                               owl:someValuesFrom vg:VideoGame
+                                                                             ]
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] ;
+             rdfs:comment "Almeno il terzo capitolo di una serie" ;
+             rdfs:label "LateEntry" .
+
+
+###  http://www.videogame-ontology.org/ontology#LongRunningFranchise
+vg:LongRunningFranchise rdf:type owl:Class ;
+                        owl:equivalentClass [ owl:intersectionOf ( vg:Franchise
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty vg:includes ;
+                                                                     owl:someValuesFrom vg:LateEntry
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ] ;
+                        rdfs:comment "Una serie con almeno tre capitoli" ;
+                        rdfs:label "LongRunningFranchise" .
+
+
+###  http://www.videogame-ontology.org/ontology#MultipleKiller
+vg:MultipleKiller rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( vg:Killer
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty vg:kills ;
+                                                               owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                                               owl:onClass vg:Character
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:comment "Un personaggio che ha ucciso almeno due personaggi" ;
+                  rdfs:label "MultipleKiller" .
+
+
+###  http://www.videogame-ontology.org/ontology#MustPlayGame
+vg:MustPlayGame rdf:type owl:Class ;
+                owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty vg:metacriticScore ;
+                                                             owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                                                  owl:onDatatype xsd:integer ;
+                                                                                  owl:withRestrictions ( [ xsd:minInclusive 95
+                                                                                                         ]
+                                                                                                       )
+                                                                                ]
+                                                           ]
+                                                         ) ;
+                                      rdf:type owl:Class
+                                    ] ;
+                rdfs:comment "Un gioco con almeno 95 su Metacritic" ;
+                rdfs:label "MustPlayGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#NintendoConsole
+vg:NintendoConsole rdf:type owl:Class ;
+                   rdfs:subClassOf vg:ConsolePlatform ;
+                   rdfs:comment "Una console Nintendo" ;
+                   rdfs:label "NintendoConsole" .
+
+
+###  http://www.videogame-ontology.org/ontology#Novel
+vg:Novel rdf:type owl:Class ;
+         rdfs:subClassOf vg:CreativeWork ;
+         rdfs:comment "Un romanzo" ;
+         rdfs:label "Novel" .
+
+
+###  http://www.videogame-ontology.org/ontology#PCPlatform
+vg:PCPlatform rdf:type owl:Class ;
+              rdfs:subClassOf vg:Platform ;
+              rdfs:comment "Un personal computer" ;
+              rdfs:label "PCPlatform" .
+
+
+###  http://www.videogame-ontology.org/ontology#Pegi12Game
+vg:Pegi12Game rdf:type owl:Class ;
+              owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty vg:pegiRating ;
+                                                           owl:hasValue 12
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+              rdfs:comment "Un gioco classificato PEGI 12" ;
+              rdfs:label "Pegi12Game" .
+
+
+###  http://www.videogame-ontology.org/ontology#Pegi16Game
+vg:Pegi16Game rdf:type owl:Class ;
+              owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty vg:pegiRating ;
+                                                           owl:hasValue 16
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+              rdfs:comment "Un gioco classificato PEGI 16" ;
+              rdfs:label "Pegi16Game" .
+
+
+###  http://www.videogame-ontology.org/ontology#Pegi18Game
+vg:Pegi18Game rdf:type owl:Class ;
+              owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty vg:pegiRating ;
+                                                           owl:hasValue 18
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+              rdfs:comment "Un gioco classificato PEGI 18, solo per adulti" ;
+              rdfs:label "Pegi18Game" .
+
+
+###  http://www.videogame-ontology.org/ontology#Pegi3Game
+vg:Pegi3Game rdf:type owl:Class ;
+             owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty vg:pegiRating ;
+                                                          owl:hasValue 3
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] ;
+             rdfs:comment "Un gioco classificato PEGI 3, adatto a tutti" ;
+             rdfs:label "Pegi3Game" .
+
+
+###  http://www.videogame-ontology.org/ontology#Pegi7Game
+vg:Pegi7Game rdf:type owl:Class ;
+             owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty vg:pegiRating ;
+                                                          owl:hasValue 7
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] ;
+             rdfs:comment "Un gioco classificato PEGI 7" ;
+             rdfs:label "Pegi7Game" .
+
+
+###  http://www.videogame-ontology.org/ontology#Person
+vg:Person rdf:type owl:Class ;
+          rdfs:comment "Una persona reale" ;
+          rdfs:label "Person" .
+
+
+###  http://www.videogame-ontology.org/ontology#Platform
+vg:Platform rdf:type owl:Class ;
+            rdfs:comment "Una piattaforma su cui si gioca" ;
+            rdfs:label "Platform" .
+
+
+###  http://www.videogame-ontology.org/ontology#PlatformHolder
+vg:PlatformHolder rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( vg:Company
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty vg:manufacturerOf ;
+                                                               owl:someValuesFrom vg:ConsolePlatform
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:comment "Un'azienda che costruisce console" ;
+                  rdfs:label "PlatformHolder" .
+
+
+###  http://www.videogame-ontology.org/ontology#PlayStationConsole
+vg:PlayStationConsole rdf:type owl:Class ;
+                      rdfs:subClassOf vg:ConsolePlatform ;
+                      rdfs:comment "Una console PlayStation" ;
+                      rdfs:label "PlayStationConsole" .
+
+
+###  http://www.videogame-ontology.org/ontology#PlayerCharacter
+vg:PlayerCharacter rdf:type owl:Class ;
+                   owl:equivalentClass [ owl:intersectionOf ( vg:Character
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty vg:playableIn ;
+                                                                owl:someValuesFrom vg:VideoGame
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ] ;
+                   rdfs:comment "Un personaggio controllato dal giocatore in almeno un gioco" ;
+                   rdfs:label "PlayerCharacter" .
+
+
+###  http://www.videogame-ontology.org/ontology#PrequelGame
+vg:PrequelGame rdf:type owl:Class ;
+               owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                          [ rdf:type owl:Restriction ;
+                                                            owl:onProperty vg:prequelOf ;
+                                                            owl:someValuesFrom vg:VideoGame
+                                                          ]
+                                                        ) ;
+                                     rdf:type owl:Class
+                                   ] ;
+               rdfs:comment "Un gioco la cui storia precede quella di un altro" ;
+               rdfs:label "PrequelGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#PreviousGenerationConsole
+vg:PreviousGenerationConsole rdf:type owl:Class ;
+                             owl:equivalentClass [ owl:intersectionOf ( vg:ConsolePlatform
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty vg:generation ;
+                                                                          owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                                                               owl:onDatatype xsd:integer ;
+                                                                                               owl:withRestrictions ( [ xsd:maxInclusive 8
+                                                                                                                      ]
+                                                                                                                    )
+                                                                                             ]
+                                                                        ]
+                                                                      ) ;
+                                                   rdf:type owl:Class
+                                                 ] ;
+                             rdfs:comment "Una console di ottava generazione o precedente" ;
+                             rdfs:label "PreviousGenerationConsole" .
+
+
+###  http://www.videogame-ontology.org/ontology#ProlificDeveloper
+vg:ProlificDeveloper rdf:type owl:Class ;
+                     owl:equivalentClass [ owl:intersectionOf ( vg:Developer
+                                                                [ rdf:type owl:Restriction ;
+                                                                  owl:onProperty vg:developerOf ;
+                                                                  owl:minQualifiedCardinality "5"^^xsd:nonNegativeInteger ;
+                                                                  owl:onClass vg:VideoGame
+                                                                ]
+                                                              ) ;
+                                           rdf:type owl:Class
+                                         ] ;
+                     rdfs:comment "Un'azienda che ha sviluppato almeno cinque giochi" ;
+                     rdfs:label "ProlificDeveloper" .
+
+
+###  http://www.videogame-ontology.org/ontology#ProlificDirector
+vg:ProlificDirector rdf:type owl:Class ;
+                    owl:equivalentClass [ owl:intersectionOf ( vg:GameDirector
+                                                               [ rdf:type owl:Restriction ;
+                                                                 owl:onProperty vg:directorOf ;
+                                                                 owl:minQualifiedCardinality "3"^^xsd:nonNegativeInteger ;
+                                                                 owl:onClass vg:VideoGame
+                                                               ]
+                                                             ) ;
+                                          rdf:type owl:Class
+                                        ] ;
+                    rdfs:comment "Chi ha diretto almeno tre giochi" ;
+                    rdfs:label "ProlificDirector" .
+
+
+###  http://www.videogame-ontology.org/ontology#Protagonist
+vg:Protagonist rdf:type owl:Class ;
+               owl:equivalentClass [ owl:intersectionOf ( vg:Character
+                                                          [ rdf:type owl:Restriction ;
+                                                            owl:onProperty vg:protagonistOf ;
+                                                            owl:someValuesFrom vg:VideoGame
+                                                          ]
+                                                        ) ;
+                                     rdf:type owl:Class
+                                   ] ;
+               rdfs:comment "Il protagonista di un gioco" ;
+               rdfs:label "Protagonist" .
+
+
+###  http://www.videogame-ontology.org/ontology#Publisher
+vg:Publisher rdf:type owl:Class ;
+             owl:equivalentClass [ owl:intersectionOf ( vg:Company
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty vg:publisherOf ;
+                                                          owl:someValuesFrom vg:VideoGame
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] ;
+             rdfs:comment "Un'azienda che ha pubblicato almeno un gioco" ;
+             rdfs:label "Publisher" .
+
+
+###  http://www.videogame-ontology.org/ontology#RealisticViolenceGame
+vg:RealisticViolenceGame rdf:type owl:Class ;
+                         owl:equivalentClass [ owl:intersectionOf ( vg:ViolentStoryGame
+                                                                    [ rdf:type owl:Restriction ;
+                                                                      owl:onProperty vg:pegiRating ;
+                                                                      owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                                                           owl:onDatatype xsd:integer ;
+                                                                                           owl:withRestrictions ( [ xsd:minInclusive 16
+                                                                                                                  ]
+                                                                                                                )
+                                                                                         ]
+                                                                    ]
+                                                                  ) ;
+                                               rdf:type owl:Class
+                                             ] ;
+                         rdfs:comment "Un gioco violento classificato PEGI 16 o 18: violenza realistica, non per minori" ;
+                         rdfs:label "RealisticViolenceGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#RecurringCharacter
+vg:RecurringCharacter rdf:type owl:Class ;
+                      owl:equivalentClass [ owl:intersectionOf ( vg:Character
+                                                                 [ rdf:type owl:Restriction ;
+                                                                   owl:onProperty vg:appearsIn ;
+                                                                   owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                                                   owl:onClass vg:VideoGame
+                                                                 ]
+                                                               ) ;
+                                            rdf:type owl:Class
+                                          ] ;
+                      rdfs:comment "Un personaggio presente in almeno due giochi" ;
+                      rdfs:label "RecurringCharacter" .
+
+
+###  http://www.videogame-ontology.org/ontology#Remaster
+vg:Remaster rdf:type owl:Class ;
+            owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                       [ rdf:type owl:Restriction ;
+                                                         owl:onProperty vg:remasterOf ;
+                                                         owl:someValuesFrom vg:VideoGame
+                                                       ]
+                                                     ) ;
+                                  rdf:type owl:Class
+                                ] ;
+            rdfs:comment "La nuova edizione di un altro gioco" ;
+            rdfs:label "Remaster" .
+
+
+###  http://www.videogame-ontology.org/ontology#ReturnAfterDeathGame
+vg:ReturnAfterDeathGame rdf:type owl:Class ;
+                        rdfs:subClassOf vg:VideoGame ;
+                        rdfs:comment "Un gioco uscito dopo la morte di un suo personaggio: prequel, linea temporale alternativa o resurrezione. Si popola con la regola SWRL ReturnAfterDeath" ;
+                        rdfs:label "ReturnAfterDeathGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#ReturningCharacter
+vg:ReturningCharacter rdf:type owl:Class ;
+                      rdfs:subClassOf vg:DeceasedCharacter ;
+                      rdfs:comment "Un personaggio che ricompare in un gioco uscito dopo quello in cui è stato ucciso. Si popola con la regola SWRL ReturnAfterDeath" ;
+                      rdfs:label "ReturningCharacter" .
+
+
+###  http://www.videogame-ontology.org/ontology#ReturningDirectorSequel
+vg:ReturningDirectorSequel rdf:type owl:Class ;
+                           rdfs:subClassOf vg:SequelGame ;
+                           rdfs:comment "Un seguito con lo stesso regista del predecessore. Si popola con la regola SWRL ReturningDirector" ;
+                           rdfs:label "ReturningDirectorSequel" .
+
+
+###  http://www.videogame-ontology.org/ontology#RogueAI
+vg:RogueAI rdf:type owl:Class ;
+           owl:equivalentClass [ owl:intersectionOf ( vg:Antagonist
+                                                      vg:Synthetic
+                                                    ) ;
+                                 rdf:type owl:Class
+                               ] ;
+           rdfs:comment "Un'intelligenza artificiale o un robot antagonista" ;
+           rdfs:label "RogueAI" .
+
+
+###  http://www.videogame-ontology.org/ontology#SciFiGame
+vg:SciFiGame rdf:type owl:Class ;
+             owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty vg:hasCharacter ;
+                                                          owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                               owl:unionOf ( vg:Alien
+                                                                                             vg:Synthetic
+                                                                                           )
+                                                                             ]
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] ;
+             rdfs:comment "Un gioco con personaggi alieni o sintetici: probabilmente fantascienza" ;
+             rdfs:label "SciFiGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#SelfPublishedGame
+vg:SelfPublishedGame rdf:type owl:Class ;
+                     rdfs:subClassOf vg:VideoGame ;
+                     rdfs:comment "Un gioco sviluppato e pubblicato dalla stessa azienda. Si popola con la regola SWRL SelfPublished" ;
+                     rdfs:label "SelfPublishedGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#SequelByDifferentStudio
+vg:SequelByDifferentStudio rdf:type owl:Class ;
+                           rdfs:subClassOf vg:SequelGame ;
+                           rdfs:comment "Un seguito sviluppato da uno studio diverso. Si popola con la regola SWRL SequelByDifferentStudio" ;
+                           rdfs:label "SequelByDifferentStudio" .
+
+
+###  http://www.videogame-ontology.org/ontology#SequelGame
+vg:SequelGame rdf:type owl:Class ;
+              owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty vg:sequelOf ;
+                                                           owl:someValuesFrom vg:VideoGame
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+              rdfs:comment "Il seguito di un altro gioco" ;
+              rdfs:label "SequelGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#StillPlayable
+vg:StillPlayable rdf:type owl:Class ;
+                 owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                            [ rdf:type owl:Restriction ;
+                                                              owl:onProperty vg:playableOn ;
+                                                              owl:someValuesFrom vg:CurrentGenerationConsole
+                                                            ]
+                                                          ) ;
+                                       rdf:type owl:Class
+                                     ] ;
+                 rdfs:comment "Un gioco giocabile su una console attuale" ;
+                 rdfs:label "StillPlayable" .
+
+
+###  http://www.videogame-ontology.org/ontology#StudioHead
+vg:StudioHead rdf:type owl:Class ;
+              owl:equivalentClass [ owl:intersectionOf ( vg:Person
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty vg:heads ;
+                                                           owl:someValuesFrom vg:Company
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+              rdfs:comment "Chi guida un'azienda" ;
+              rdfs:label "StudioHead" .
+
+
+###  http://www.videogame-ontology.org/ontology#Synthetic
+vg:Synthetic rdf:type owl:Class ;
+             owl:equivalentClass [ owl:intersectionOf ( vg:Character
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty vg:builtBy ;
+                                                          owl:someValuesFrom owl:Thing
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] ;
+             rdfs:comment "Un personaggio costruito da qualcuno nel mondo di gioco: un'intelligenza artificiale o un robot" ;
+             rdfs:label "Synthetic" .
+
+
+###  http://www.videogame-ontology.org/ontology#TVSeries
+vg:TVSeries rdf:type owl:Class ;
+            rdfs:subClassOf vg:CreativeWork ;
+            rdfs:comment "Una serie televisiva" ;
+            rdfs:label "TVSeries" .
+
+
+###  http://www.videogame-ontology.org/ontology#TabletopGame
+vg:TabletopGame rdf:type owl:Class ;
+                rdfs:subClassOf vg:CreativeWork ;
+                rdfs:comment "Un gioco da tavolo o di ruolo cartaceo" ;
+                rdfs:label "TabletopGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#TransmediaFranchise
+vg:TransmediaFranchise rdf:type owl:Class ;
+                       owl:equivalentClass [ owl:intersectionOf ( vg:Franchise
+                                                                  [ rdf:type owl:Restriction ;
+                                                                    owl:onProperty vg:adaptedInto ;
+                                                                    owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                                         owl:unionOf ( vg:Film
+                                                                                                       vg:TVSeries
+                                                                                                     )
+                                                                                       ]
+                                                                  ]
+                                                                ) ;
+                                             rdf:type owl:Class
+                                           ] ;
+                       rdfs:comment "Una serie diventata film o serie TV" ;
+                       rdfs:label "TransmediaFranchise" .
+
+
+###  http://www.videogame-ontology.org/ontology#VideoGame
+vg:VideoGame rdf:type owl:Class ;
+             owl:hasKey ( vg:hasWikidataId
+                        ) ;
+             rdfs:comment "Un videogioco" ;
+             rdfs:label "VideoGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#ViolentStoryGame
+vg:ViolentStoryGame rdf:type owl:Class ;
+                    owl:equivalentClass [ owl:intersectionOf ( vg:VideoGame
+                                                               [ rdf:type owl:Restriction ;
+                                                                 owl:onProperty vg:hasKilling ;
+                                                                 owl:someValuesFrom vg:Killing
+                                                               ]
+                                                             ) ;
+                                          rdf:type owl:Class
+                                        ] ;
+                    rdfs:comment "Un gioco nella cui trama qualcuno viene ucciso" ;
+                    rdfs:label "ViolentStoryGame" .
+
+
+###  http://www.videogame-ontology.org/ontology#XboxConsole
+vg:XboxConsole rdf:type owl:Class ;
+               rdfs:subClassOf vg:ConsolePlatform ;
+               rdfs:comment "Una console Xbox" ;
+               rdfs:label "XboxConsole" .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( vg:Alien
+                vg:Human
+                vg:Synthetic
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( vg:Award
+                vg:Character
+                vg:Company
+                vg:CreativeWork
+                vg:FictionalOrganization
+                vg:Franchise
+                vg:GameEngine
+                vg:GameMode
+                vg:Genre
+                vg:Killing
+                vg:Person
+                vg:Platform
+                vg:VideoGame
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( vg:Comic
+                vg:Film
+                vg:Novel
+                vg:TVSeries
+                vg:TabletopGame
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( vg:NintendoConsole
+                vg:PlayStationConsole
+                vg:XboxConsole
+              )
+] .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi
